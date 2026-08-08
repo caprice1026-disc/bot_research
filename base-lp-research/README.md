@@ -31,7 +31,7 @@ $env:BASE_RPC_URL = "https://mainnet.base.org"
 & .venv\Scripts\python.exe -m base_lp.cli sweep --config configs\base_weth_usdc_005.yaml
 ```
 
-`collect` はデフォルトで500 blockずつ取得し、RPC request間隔を0.25秒、1回の実行時間を90秒に制限します。`results/collection_checkpoint.json` と `data/raw/.../logs.jsonl` に進捗を保存するため、タイムアウトや中断後に同じコマンドを再実行すると完了済みchunkを再取得せず続きから再開します。`--fresh` を指定した場合だけ対象範囲を最初から取り直します。
+`collect` はデフォルトで500 blockずつ取得し、RPC request間隔を0.25秒、1回の実行時間を90秒に制限します。`results/collection_checkpoint.json` と `data/raw/.../logs.jsonl` に進捗を保存するため、タイムアウトや中断後に同じコマンドを再実行すると、block範囲の解決と完了済みchunkの再取得を行わず続きから再開します。`--fresh` を指定した場合だけ対象範囲を最初から取り直します。
 
 必要に応じて、`--chunk-size`、`--request-interval-seconds`、`--rpc-timeout-seconds`、`--rpc-max-retries`、`--max-seconds` で取得負荷と1回の実行時間を調整できます。長期範囲では `--max-seconds 90` のまま繰り返し実行してください。
 

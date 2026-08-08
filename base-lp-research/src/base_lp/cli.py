@@ -74,8 +74,10 @@ def _new_checkpoint(
     block_start: int,
     block_end: int,
     chunk_size: int,
+    pilot_start_utc: str | None = None,
+    pilot_end_utc: str | None = None,
 ) -> dict[str, Any]:
-    return {
+    checkpoint = {
         "status": "running",
         "chain_id": chain_id,
         "pool_address": pool_address.lower(),
@@ -86,6 +88,11 @@ def _new_checkpoint(
         "chunks_completed": 0,
         "logs_collected": 0,
     }
+    if pilot_start_utc is not None:
+        checkpoint["pilot_start_utc"] = pilot_start_utc
+    if pilot_end_utc is not None:
+        checkpoint["pilot_end_utc"] = pilot_end_utc
+    return checkpoint
 
 
 def _checkpoint_matches(
@@ -95,6 +102,8 @@ def _checkpoint_matches(
     block_start: int,
     block_end: int,
     chunk_size: int,
+    pilot_start_utc: str | None = None,
+    pilot_end_utc: str | None = None,
 ) -> bool:
     try:
         next_block = int(checkpoint.get("next_block", -1))
@@ -105,6 +114,8 @@ def _checkpoint_matches(
             and int(checkpoint.get("block_end", -1)) == block_end
             and int(checkpoint.get("chunk_size", -1)) == chunk_size
             and block_start <= next_block <= block_end + 1
+            and (pilot_start_utc is None or checkpoint.get("pilot_start_utc") in {None, pilot_start_utc})
+            and (pilot_end_utc is None or checkpoint.get("pilot_end_utc") in {None, pilot_end_utc})
         )
     except (TypeError, ValueError):
         return False
@@ -120,6 +131,16 @@ def _read_raw_records(path: Path) -> list[LogRecord]:
         raw = json.loads(line)
         records.append(log_record_from_rpc(raw, timestamp=int(raw["timestamp"])))
     return records
+
+
+def _read_checkpoint_candidate(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    try:
+        candidate = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return candidate if isinstance(candidate, dict) else None
 
 
 def _resolve_and_save(config: ResearchConfig, rpc: JsonRpcClient, root: Path) -> PoolMetadata:
@@ -146,6 +167,7 @@ def command_resolve_pool(args: argparse.Namespace) -> int:
 def command_collect(args: argparse.Namespace) -> int:
     root = Path(args.root).resolve()
     config = load_config(Path(args.config).resolve())
+    run_started = time.monotonic()
     chunk_size = config.collection_chunk_size if args.chunk_size is None else args.chunk_size
     request_interval_seconds = (
         config.request_interval_seconds
@@ -158,52 +180,76 @@ def command_collect(args: argparse.Namespace) -> int:
     rpc = _client(config, args.rpc_timeout_seconds, args.rpc_max_retries)
     pool_path = _pool_path(root)
     pool = _load_pool(pool_path) if pool_path.exists() else _resolve_and_save(config, rpc, root)
-    latest = rpc.latest_block()
     start_utc = args.start_utc or config.pilot_start_utc
     end_utc = args.end_utc or config.pilot_end_utc
-    start_block = timestamp_to_block(
-        rpc,
-        _parse_utc(start_utc),
-        latest,
-        request_interval_seconds=request_interval_seconds,
-    )
-    end_block = timestamp_to_block(
-        rpc,
-        _parse_utc(end_utc),
-        latest,
-        request_interval_seconds=request_interval_seconds,
-    )
     raw_dir = root / "data" / "raw" / f"chain={config.chain_id}" / f"pool={pool.pool_address}"
     normalized_dir = root / "data" / "normalized"
     raw_path = raw_dir / "logs.jsonl"
     parquet_path = normalized_dir / "events.parquet"
     checkpoint_path = _checkpoint_path(root)
     checkpoint: dict[str, Any] | None = None
-    if not args.fresh and checkpoint_path.exists() and raw_path.exists():
+    candidate = _read_checkpoint_candidate(checkpoint_path) if not args.fresh and raw_path.exists() else None
+    if candidate is not None:
+        candidate_manifest = _read_checkpoint_candidate(root / "results" / "dataset_manifest.json") or {}
+        candidate_for_match = dict(candidate)
+        manifest_metadata = candidate_manifest.get("metadata", {})
+        if isinstance(manifest_metadata, dict):
+            candidate_for_match.setdefault("pilot_start_utc", manifest_metadata.get("pilot_start_utc"))
+            candidate_for_match.setdefault("pilot_end_utc", manifest_metadata.get("pilot_end_utc"))
         try:
-            candidate = json.loads(checkpoint_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            candidate = None
-        if isinstance(candidate, dict) and _checkpoint_matches(
-            candidate,
+            candidate_start = int(candidate.get("block_start", -1))
+            candidate_end = int(candidate.get("block_end", -1))
+        except (TypeError, ValueError):
+            candidate_start, candidate_end = -1, -1
+        if _checkpoint_matches(
+            candidate_for_match,
+            config.chain_id,
+            pool.pool_address,
+            candidate_start,
+            candidate_end,
+            chunk_size,
+            start_utc,
+            end_utc,
+        ):
+            checkpoint = candidate
+    if checkpoint is not None:
+        start_block = int(checkpoint["block_start"])
+        end_block = int(checkpoint["block_end"])
+    else:
+        latest = rpc.latest_block()
+        start_block = timestamp_to_block(
+            rpc,
+            _parse_utc(start_utc),
+            latest,
+            request_interval_seconds=request_interval_seconds,
+        )
+        end_block = timestamp_to_block(
+            rpc,
+            _parse_utc(end_utc),
+            latest,
+            request_interval_seconds=request_interval_seconds,
+        )
+    fresh_collection = checkpoint is None
+    if fresh_collection:
+        checkpoint = _new_checkpoint(
             config.chain_id,
             pool.pool_address,
             start_block,
             end_block,
             chunk_size,
-        ):
-            checkpoint = candidate
-    fresh_collection = checkpoint is None
-    if fresh_collection:
-        checkpoint = _new_checkpoint(config.chain_id, pool.pool_address, start_block, end_block, chunk_size)
+            start_utc,
+            end_utc,
+        )
         write_jsonl(raw_path, [])
         parquet_path.unlink(missing_ok=True)
+    checkpoint.setdefault("pilot_start_utc", start_utc)
+    checkpoint.setdefault("pilot_end_utc", end_utc)
     records = _read_raw_records(raw_path)
     seen_keys = {record.stable_key for record in records}
     next_block = int(checkpoint["next_block"])
-    run_started = time.monotonic()
     completed = next_block > end_block
-    if not completed:
+    budget_exhausted = time.monotonic() - run_started >= max_runtime_seconds
+    if not completed and not budget_exhausted:
         for chunk in iter_log_chunks(
             rpc,
             pool.pool_address,

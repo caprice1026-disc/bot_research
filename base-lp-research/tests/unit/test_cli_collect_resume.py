@@ -81,7 +81,7 @@ class CollectResumeTests(unittest.TestCase):
             )
             with patch("base_lp.cli._client", return_value=fake_rpc), patch(
                 "base_lp.cli.timestamp_to_block", side_effect=[1, 3]
-            ), patch("base_lp.cli.time.monotonic", side_effect=[0.0, 2.0]):
+            ), patch("base_lp.cli.time.monotonic", side_effect=[0.0, 0.0, 2.0]):
                 self.assertEqual(command_collect(args), 2)
 
             checkpoint = json.loads((root / "results" / "collection_checkpoint.json").read_text(encoding="utf-8"))
@@ -90,8 +90,8 @@ class CollectResumeTests(unittest.TestCase):
 
             args.max_seconds = 10.0
             with patch("base_lp.cli._client", return_value=fake_rpc), patch(
-                "base_lp.cli.timestamp_to_block", side_effect=[1, 3]
-            ), patch("base_lp.cli.time.monotonic", side_effect=[0.0, 0.0, 0.0]):
+                "base_lp.cli.timestamp_to_block", side_effect=AssertionError("resume must not resolve timestamps")
+            ), patch("base_lp.cli.time.monotonic", return_value=0.0):
                 self.assertEqual(command_collect(args), 0)
 
             self.assertEqual(fake_rpc.log_ranges, [(1, 1), (2, 2), (3, 3)])
