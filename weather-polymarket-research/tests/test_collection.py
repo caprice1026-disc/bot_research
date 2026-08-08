@@ -155,6 +155,53 @@ def test_collect_gefs_market_days_is_resumable_and_groups_market_rules(monkeypat
     assert len(fake.calls) == 2
 
 
+def test_collect_gefs_market_days_checkpoints_partial_members_and_fetches_only_missing_member(tmp_path) -> None:
+    class PartialGefsClient:
+        def __init__(self):
+            self.calls = []
+
+        def fetch_target_day_members(self, **kwargs):
+            requested = list(kwargs["ensemble_members"])
+            self.calls.append(requested)
+            target_end = datetime.combine(
+                kwargs["target_date"] + timedelta(days=1),
+                time.min,
+                tzinfo=ZoneInfo("America/New_York"),
+            ).astimezone(timezone.utc)
+            member = requested[0]
+            return [
+                ForecastMember(
+                    station_id="KLGA",
+                    forecast_issue_time=kwargs["issue_time"],
+                    forecast_valid_time=target_end,
+                    received_time=kwargs["issue_time"],
+                    ensemble_member=member,
+                    temperature_f=40.0 + member,
+                )
+            ]
+
+    normalized = tmp_path / "data" / "normalized"
+    normalized.mkdir(parents=True)
+    (normalized / "market_rules.jsonl").write_text(
+        '{"market_id":"m1","target_date":"2026-01-06"}\n',
+        encoding="utf-8",
+    )
+    fake = PartialGefsClient()
+
+    first = collect_gefs_market_days(tmp_path / "data", max_members=2, client=fake)
+    assert first["status"] == "insufficient_data"
+    assert fake.calls == [[0, 1]]
+    assert (normalized / "forecast_members.jsonl").read_text(encoding="utf-8").count("\n") == 1
+
+    second = collect_gefs_market_days(tmp_path / "data", max_members=2, client=fake)
+
+    assert second["status"] == "success"
+    assert fake.calls == [[0, 1], [1]]
+    assert (normalized / "forecast_members.jsonl").read_text(encoding="utf-8").count("\n") == 2
+    checkpoint = json.loads((tmp_path / "results" / "gefs_forecast_manifest.json").read_text(encoding="utf-8"))
+    assert checkpoint["completed_target_dates"] == ["2026-01-06"]
+
+
 def test_collect_polymarket_target_day_prices_persists_price_points(monkeypatch, tmp_path) -> None:
     class FakePolymarketClient:
         def fetch_price_history(self, market_id, token_id, start_ts, end_ts):

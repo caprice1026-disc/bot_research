@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from collections.abc import Iterable
@@ -160,16 +161,24 @@ class GefsGribClient:
         cache_dir: Path | None = None,
         max_retries: int = 3,
         retry_backoff_seconds: float = 1.0,
+        timeout_seconds: float = 60.0,
+        max_workers: int = 4,
     ) -> None:
         if max_retries <= 0:
             raise ValueError("max_retries must be positive")
         if retry_backoff_seconds < 0:
             raise ValueError("retry_backoff_seconds must be non-negative")
+        if timeout_seconds <= 0:
+            raise ValueError("timeout_seconds must be positive")
+        if max_workers <= 0:
+            raise ValueError("max_workers must be positive")
         self.base_url = base_url.rstrip("/")
-        self.client = client or httpx.Client(timeout=60.0)
+        self.client = client or httpx.Client(timeout=timeout_seconds)
         self.cache_dir = Path(cache_dir) if cache_dir is not None else None
         self.max_retries = max_retries
         self.retry_backoff_seconds = retry_backoff_seconds
+        self.timeout_seconds = timeout_seconds
+        self.max_workers = max_workers
 
     def _get(self, key: str, headers: dict[str, str] | None = None) -> httpx.Response:
         url = f"{self.base_url}/{key.lstrip('/')}"
@@ -253,23 +262,48 @@ class GefsGribClient:
         ensemble_members: Iterable[int] = range(21),
         errors: list[str] | None = None,
     ) -> list[ForecastMember]:
-        forecasts: list[ForecastMember] = []
         steps = tmax_steps_for_target_day(issue_time, target_date, timezone_name)
-        for ensemble_member in ensemble_members:
-            try:
-                points: list[dict[str, Any]] = []
-                for step in steps:
-                    key = build_gefs_tmax_key(issue_time, ensemble_member, step)
-                    payload = self.fetch_tmax_message(key)
-                    points.append(decode_grib_point(payload, latitude, longitude))
-                member = target_day_member_from_points(points, station_id, target_date, timezone_name)
-            except (GefsGribError, LookupError, ValueError, RuntimeError) as exc:
-                if errors is None:
-                    raise
-                errors.append(f"member {ensemble_member}: {exc}")
-                continue
-            if member is not None:
-                forecasts.append(member)
+
+        def fetch_member(ensemble_member: int) -> ForecastMember | None:
+            points: list[dict[str, Any]] = []
+            for step in steps:
+                key = build_gefs_tmax_key(issue_time, ensemble_member, step)
+                payload = self.fetch_tmax_message(key)
+                points.append(decode_grib_point(payload, latitude, longitude))
+            return target_day_member_from_points(points, station_id, target_date, timezone_name)
+
+        requested_members = list(ensemble_members)
+        forecasts: list[ForecastMember] = []
+
+        def record_result(ensemble_member: int, result: ForecastMember | None) -> None:
+            if result is not None:
+                forecasts.append(result)
+
+        def record_error(ensemble_member: int, exc: Exception) -> None:
+            if errors is None:
+                raise exc
+            errors.append(f"member {ensemble_member}: {exc}")
+
+        if self.max_workers == 1 or len(requested_members) <= 1:
+            for ensemble_member in requested_members:
+                try:
+                    record_result(ensemble_member, fetch_member(ensemble_member))
+                except (GefsGribError, LookupError, ValueError, RuntimeError) as exc:
+                    record_error(ensemble_member, exc)
+        else:
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                futures = {
+                    executor.submit(fetch_member, ensemble_member): ensemble_member
+                    for ensemble_member in requested_members
+                }
+                for future in as_completed(futures):
+                    ensemble_member = futures[future]
+                    try:
+                        record_result(ensemble_member, future.result())
+                    except (GefsGribError, LookupError, ValueError, RuntimeError) as exc:
+                        record_error(ensemble_member, exc)
+
+        forecasts.sort(key=lambda forecast: forecast.ensemble_member)
         return forecasts
 
 

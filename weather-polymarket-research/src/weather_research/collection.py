@@ -285,6 +285,10 @@ def collect_gefs_market_days(
     max_members: int = 21,
     max_days: int | None = None,
     client: GefsGribClient | None = None,
+    max_workers: int = 4,
+    timeout_seconds: float = 120.0,
+    max_retries: int = 5,
+    retry_backoff_seconds: float = 2.0,
 ) -> dict[str, Any]:
     """Collect one reproducible GEFS issue cycle for every normalized market day.
 
@@ -296,6 +300,14 @@ def collect_gefs_market_days(
         raise ValueError("max_members must be between 1 and 21")
     if max_days is not None and max_days <= 0:
         raise ValueError("max_days must be positive when provided")
+    if max_workers <= 0:
+        raise ValueError("max_workers must be positive")
+    if timeout_seconds <= 0:
+        raise ValueError("timeout_seconds must be positive")
+    if max_retries <= 0:
+        raise ValueError("max_retries must be positive")
+    if retry_backoff_seconds < 0:
+        raise ValueError("retry_backoff_seconds must be non-negative")
     data_dir = Path(output_dir)
     normalized_dir = data_dir / "normalized"
     rules = _read_jsonl(normalized_dir / "market_rules.jsonl")
@@ -303,10 +315,46 @@ def collect_gefs_market_days(
     if max_days is not None:
         target_dates = target_dates[:max_days]
     existing = _read_jsonl(normalized_dir / "forecast_members.jsonl")
-    gefs = client or GefsGribClient(cache_dir=data_dir / "raw" / "gefs-cache")
+    gefs = client or GefsGribClient(
+        cache_dir=data_dir / "raw" / "gefs-cache",
+        max_workers=max_workers,
+        timeout_seconds=timeout_seconds,
+        max_retries=max_retries,
+        retry_backoff_seconds=retry_backoff_seconds,
+    )
     errors: list[str] = []
     attempted: list[str] = []
     completed: list[str] = []
+
+    def write_manifest(
+        status: str,
+        current_target_date: str | None = None,
+    ) -> dict[str, Any]:
+        manifest = {
+            "status": status,
+            "city": city.slug,
+            "station_id": city.station_id,
+            "issue_cycle_hour": issue_cycle_hour,
+            "target_dates": target_dates,
+            "attempted_target_dates": attempted,
+            "completed_target_dates": completed,
+            "current_target_date": current_target_date,
+            "requested_members": len(target_dates) * max_members,
+            "forecast_members": len(existing),
+            "cache_dir": str(data_dir / "raw" / "gefs-cache"),
+            "max_workers": max_workers,
+            "timeout_seconds": timeout_seconds,
+            "max_retries": max_retries,
+            "errors": errors,
+        }
+        results_dir = data_dir.parent / "results"
+        results_dir.mkdir(parents=True, exist_ok=True)
+        (results_dir / "gefs_forecast_manifest.json").write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+        return manifest
+
+    write_manifest("in_progress")
     for target_date_raw in target_dates:
         target = date.fromisoformat(target_date_raw)
         issue_time = issue_time_for_target_date(target, city.timezone, issue_cycle_hour)
@@ -317,11 +365,15 @@ def collect_gefs_market_days(
             and _forecast_target_date(row, city.timezone) == target
             and row.get("forecast_issue_time", "").replace("Z", "+00:00") == issue_time.isoformat()
         ]
-        if len({int(row.get("ensemble_member", -1)) for row in existing_for_target}) >= max_members:
+        existing_member_ids = {int(row.get("ensemble_member", -1)) for row in existing_for_target}
+        if len(existing_member_ids) >= max_members:
             completed.append(target_date_raw)
+            write_manifest("in_progress", target_date_raw)
             continue
         attempted.append(target_date_raw)
+        write_manifest("in_progress", target_date_raw)
         member_errors: list[str] = []
+        pending_members = [member for member in range(max_members) if member not in existing_member_ids]
         forecasts = gefs.fetch_target_day_members(
             issue_time=issue_time,
             target_date=target,
@@ -329,7 +381,7 @@ def collect_gefs_market_days(
             latitude=city.latitude,
             longitude=city.longitude,
             timezone_name=city.timezone,
-            ensemble_members=range(max_members),
+            ensemble_members=pending_members,
             errors=member_errors,
         )
         existing = [
@@ -341,15 +393,18 @@ def collect_gefs_market_days(
                 and row.get("forecast_issue_time", "").replace("Z", "+00:00") == issue_time.isoformat()
             )
         ]
+        existing.extend(existing_for_target)
         existing.extend(forecast.model_dump(mode="json") for forecast in forecasts)
-        if len(forecasts) == max_members and not member_errors:
+        collected_for_target = len(existing_member_ids) + len(forecasts)
+        if collected_for_target >= max_members and not member_errors:
             completed.append(target_date_raw)
         else:
             errors.append(
-                f"{target_date_raw}: {len(forecasts)}/{max_members} members collected"
+                f"{target_date_raw}: {collected_for_target}/{max_members} members collected"
                 + (f" ({'; '.join(member_errors[:3])})" if member_errors else "")
             )
-    _write_jsonl(normalized_dir / "forecast_members.jsonl", existing)
+        _write_jsonl(normalized_dir / "forecast_members.jsonl", existing)
+        write_manifest("in_progress", target_date_raw)
     if not target_dates:
         status = OutcomeStatus.INSUFFICIENT_DATA.value
         errors.append("market_rules.jsonl contains no target dates")
@@ -357,25 +412,7 @@ def collect_gefs_market_days(
         status = OutcomeStatus.INSUFFICIENT_DATA.value
     else:
         status = OutcomeStatus.SUCCESS.value
-    manifest = {
-        "status": status,
-        "city": city.slug,
-        "station_id": city.station_id,
-        "issue_cycle_hour": issue_cycle_hour,
-        "target_dates": target_dates,
-        "attempted_target_dates": attempted,
-        "completed_target_dates": completed,
-        "requested_members": len(target_dates) * max_members,
-        "forecast_members": len(existing),
-        "cache_dir": str(data_dir / "raw" / "gefs-cache"),
-        "errors": errors,
-    }
-    results_dir = data_dir.parent / "results"
-    results_dir.mkdir(parents=True, exist_ok=True)
-    (results_dir / "gefs_forecast_manifest.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
-    return manifest
+    return write_manifest(status)
 
 
 def collect_polymarket_target_day_prices(

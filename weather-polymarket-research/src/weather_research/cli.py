@@ -41,6 +41,10 @@ def build_parser() -> argparse.ArgumentParser:
     gefs_days.add_argument("--issue-cycle-hour", type=int, default=12)
     gefs_days.add_argument("--max-members", type=int, default=21)
     gefs_days.add_argument("--max-days", type=int)
+    gefs_days.add_argument("--max-workers", type=int, default=4)
+    gefs_days.add_argument("--timeout-seconds", type=float, default=120.0)
+    gefs_days.add_argument("--max-retries", type=int, default=5)
+    gefs_days.add_argument("--retry-backoff-seconds", type=float, default=2.0)
     prices_target = commands.add_parser("collect-prices-target", help="collect CLOB prices for a target day")
     prices_target.add_argument("--target-date", required=True)
     prices_target.add_argument("--start-time", required=True)
@@ -80,6 +84,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             issue_cycle_hour=args.issue_cycle_hour,
             max_members=args.max_members,
             max_days=args.max_days,
+            max_workers=args.max_workers,
+            timeout_seconds=args.timeout_seconds,
+            max_retries=args.max_retries,
+            retry_backoff_seconds=args.retry_backoff_seconds,
         )
         print(json.dumps(manifest, ensure_ascii=False))
     elif args.command == "collect-prices-target":

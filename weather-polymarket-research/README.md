@@ -18,14 +18,16 @@ PowerShellで以下を実行します。
 対象日のGEFSメンバーとCLOB価格を追加取得する場合:
 
     .\.venv\Scripts\python.exe -m weather_research.cli collect-gefs-target --target-date 2026-01-06 --issue-time 2026-01-05T12:00:00Z --output-dir data
-    .\.venv\Scripts\python.exe -m weather_research.cli collect-gefs-market-days --output-dir data --issue-cycle-hour 12 --max-members 21
+    .\.venv\Scripts\python.exe -m weather_research.cli collect-gefs-market-days --output-dir data --issue-cycle-hour 12 --max-members 21 --max-workers 4 --timeout-seconds 120 --max-retries 5 --retry-backoff-seconds 2
     .\.venv\Scripts\python.exe -m weather_research.cli collect-prices-target --target-date 2026-01-06 --start-time 2026-01-05T12:00:00Z --end-time 2026-01-07T05:00:00Z --output-dir data
 
 GEFS market-day collection is resumable. It groups duplicate buckets by target
 date, stores raw index/message responses under `data/raw/gefs-cache/`, retries
-transient HTTP failures, and writes normalized members plus
-`results/gefs_forecast_manifest.json`. Use `--max-days` for a bounded smoke run;
-omit it for every date in `market_rules.jsonl`.
+transient HTTP failures, and checkpoints normalized members plus
+`results/gefs_forecast_manifest.json` after each target day. Use `--max-days` for
+a bounded smoke run; omit it for every date in `market_rules.jsonl`. The
+manifest remains `in_progress` if the long-running process is interrupted, and
+the next invocation requests only missing ensemble members.
 
 Backtesting reads all four normalized JSONL artifacts and only emits trades when
 forecast, observation, and price periods align. Level 1 accepts the historical
