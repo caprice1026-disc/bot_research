@@ -13,6 +13,11 @@ PowerShellで以下を実行します。
 
 ## CLI
 
-    .\.venv\Scripts\python.exe -m weather_research.cli --help
+.\.venv\Scripts\python.exe -m weather_research.cli --help
+
+対象日のGEFSメンバーとCLOB価格を追加取得する場合:
+
+    .\.venv\Scripts\python.exe -m weather_research.cli collect-gefs-target --target-date 2026-01-06 --issue-time 2026-01-05T12:00:00Z --output-dir data
+    .\.venv\Scripts\python.exe -m weather_research.cli collect-prices-target --target-date 2026-01-06 --start-time 2026-01-05T12:00:00Z --end-time 2026-01-07T05:00:00Z --output-dir data
 
 収集・バックテストの詳細はリポジトリルートの `.agent/2026-08-09-weather-polymarket-research.md` を参照してください。

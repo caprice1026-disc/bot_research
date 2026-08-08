@@ -21,15 +21,26 @@
 
 NCEIはHTTP 200で応答したが、要求した1年全体の観測を返していない。GEFSもカタログの存在は確認できた一方、GRIB2本体のメンバー値はまだデコードしていない。したがって、観測値が得られたことを予報・確率・損益の結果と混同しない。
 
+## GEFS/CLOBパイロット
+
+追加の再実行可能CLIで、2026-01-06について前日12Z発行のGEFS 21メンバーと、同日の7バケット市場のCLOB価格履歴を取得した。
+
+- GEFSメンバー: 21/21件、36.11〜38.06°F、平均37.14°F
+- CLOB価格ポイント: 249件、7市場
+- GEFS取得: `.idx`のTMAXメッセージだけをHTTP Rangeで取得し、KLGA最近傍格子点を華氏へ変換
+- Point-in-Time: 公開履歴の運用可用性を保守的に `received_time=forecast_issue_time` と仮定
+
+これは単一対象日の結合確認であり、全期間のバックテスト結果ではない。対象日の公式観測が不足しているため、勝敗・PnL・エッジの確定には使っていない。詳細は `results/gefs_forecast_manifest.json` と `results/price_history_manifest.json` に保存した。
+
 ## バックテスト判定
 
 `backtest_summary.json` は `status=insufficient_data`、`reason=no backtest candidates`、`trade_count=0` である。これはゼロ損益の成功ではなく、予報メンバー不足のため候補生成を行わなかったという意味である。`validate-results` は `valid=true` を返す。
 
 ## 次の実装課題
 
-1. NOAA GEFS AWS上のGRIB2から、issue time・cycle・lead time・ensemble memberを保持してKLGA近傍へデコードする。
-2. Polymarket CLOBの価格履歴をtoken単位で取得し、価格時刻が取引時刻以前であることを検証する。
-3. GEFSバケット確率、Gaussian近似、観測結果を市場ルールへ結合し、Point-in-Time候補を生成する。
+1. GEFSの対象日・issue cycleを全市場日へ拡張し、取得済みメッセージのキャッシュと再試行を追加する。
+2. GEFSバケット確率、Gaussian近似、観測結果を市場ルールへ結合し、Point-in-Time候補を生成する。
+3. CLOB価格のask/midと手数料・スリッページを候補へ結合する。
 4. 予報履歴・観測・価格の期間が揃った後にのみLevel 1/2バックテストを再実行する。
 
 実行成果物は `results/dataset_manifest.json`、`results/source_audit.json`、`results/backtest_summary.json`、`results/trades.csv` と `data/normalized/` に保存している。rawスナップショットは再実行ごとに追加保存するが、リポジトリでは動的データとして除外する。

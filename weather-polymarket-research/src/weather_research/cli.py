@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 from .backtest import ExecutionConfig, run_backtest
-from .collection import collect_research_data
+from .collection import collect_gefs_target_day, collect_polymarket_target_day_prices, collect_research_data
 from .config import SOURCE_ENDPOINTS
 from .reporting import validate_results, write_backtest_artifacts
 from .source_audit import audit_sources
@@ -26,6 +26,16 @@ def build_parser() -> argparse.ArgumentParser:
     collect.add_argument("--start-date", required=True)
     collect.add_argument("--end-date", required=True)
     collect.add_argument("--output-dir", type=Path, default=Path("data"))
+    gefs_target = commands.add_parser("collect-gefs-target", help="collect GEFS target-day ensemble members")
+    gefs_target.add_argument("--target-date", required=True)
+    gefs_target.add_argument("--issue-time", required=True)
+    gefs_target.add_argument("--output-dir", type=Path, default=Path("data"))
+    gefs_target.add_argument("--max-members", type=int, default=21)
+    prices_target = commands.add_parser("collect-prices-target", help="collect CLOB prices for a target day")
+    prices_target.add_argument("--target-date", required=True)
+    prices_target.add_argument("--start-time", required=True)
+    prices_target.add_argument("--end-time", required=True)
+    prices_target.add_argument("--output-dir", type=Path, default=Path("data"))
     commands.add_parser("run-backtest", help="run the baseline backtest").add_argument(
         "--results-dir", type=Path, default=Path("results")
     )
@@ -44,6 +54,22 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(result, ensure_ascii=False))
     elif args.command == "collect":
         manifest = collect_research_data(args.output_dir, args.start_date, args.end_date)
+        print(json.dumps(manifest, ensure_ascii=False))
+    elif args.command == "collect-gefs-target":
+        manifest = collect_gefs_target_day(
+            output_dir=args.output_dir,
+            target_date=args.target_date,
+            issue_time=args.issue_time,
+            max_members=args.max_members,
+        )
+        print(json.dumps(manifest, ensure_ascii=False))
+    elif args.command == "collect-prices-target":
+        manifest = collect_polymarket_target_day_prices(
+            output_dir=args.output_dir,
+            target_date=args.target_date,
+            start_time=args.start_time,
+            end_time=args.end_time,
+        )
         print(json.dumps(manifest, ensure_ascii=False))
     elif args.command == "run-backtest":
         result = run_backtest([], ExecutionConfig())

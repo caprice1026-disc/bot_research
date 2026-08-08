@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "target_date": "2026-01-06",
+  "start_time": "2026-01-05T12:00:00+00:00",
+  "end_time": "2026-01-07T05:00:00+00:00",
+  "market_rules": 7,
+  "price_points": 249,
+  "errors": []
+}

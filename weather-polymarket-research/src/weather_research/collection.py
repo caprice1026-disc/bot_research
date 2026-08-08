@@ -11,6 +11,7 @@ from typing import Any
 import httpx
 
 from .collectors.gefs import GefsCatalogClient
+from .collectors.gefs_grib import GefsGribClient
 from .collectors.noaa import NceiClient
 from .collectors.polymarket import CollectionError, PolymarketClient
 from .config import NEW_YORK, SOURCE_ENDPOINTS, CityConfig
@@ -186,6 +187,106 @@ def collect_research_data(
     results_dir = data_dir.parent / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
     (results_dir / "dataset_manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return manifest
+
+
+def collect_gefs_target_day(
+    output_dir: Path,
+    target_date: str,
+    issue_time: str,
+    city: CityConfig = NEW_YORK,
+    max_members: int = 21,
+) -> dict[str, Any]:
+    if max_members <= 0 or max_members > 21:
+        raise ValueError("max_members must be between 1 and 21")
+    parsed_target_date = date.fromisoformat(target_date)
+    parsed_issue_time = datetime.fromisoformat(issue_time.replace("Z", "+00:00"))
+    if parsed_issue_time.tzinfo is None or parsed_issue_time.utcoffset() is None:
+        raise ValueError("issue_time must be timezone-aware")
+    forecasts = GefsGribClient().fetch_target_day_members(
+        issue_time=parsed_issue_time,
+        target_date=parsed_target_date,
+        station_id=city.station_id,
+        latitude=city.latitude,
+        longitude=city.longitude,
+        timezone_name=city.timezone,
+        ensemble_members=range(max_members),
+    )
+    normalized_dir = Path(output_dir) / "normalized"
+    _write_jsonl(normalized_dir / "forecast_members.jsonl", [forecast.model_dump(mode="json") for forecast in forecasts])
+    manifest = {
+        "status": OutcomeStatus.SUCCESS.value if len(forecasts) == max_members else OutcomeStatus.INSUFFICIENT_DATA.value,
+        "city": city.slug,
+        "station_id": city.station_id,
+        "target_date": parsed_target_date.isoformat(),
+        "issue_time": parsed_issue_time.isoformat(),
+        "forecast_members": len(forecasts),
+        "requested_members": max_members,
+        "availability_assumption": "received_time is set to forecast_issue_time for the public historical archive",
+        "reasons": [] if len(forecasts) == max_members else ["one or more GEFS members were unavailable"],
+    }
+    results_dir = Path(output_dir).parent / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    (results_dir / "gefs_forecast_manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return manifest
+
+
+def collect_polymarket_target_day_prices(
+    output_dir: Path,
+    target_date: str,
+    start_time: str,
+    end_time: str,
+) -> dict[str, Any]:
+    start = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+    end = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+    if start.tzinfo is None or start.utcoffset() is None or end.tzinfo is None or end.utcoffset() is None:
+        raise ValueError("start_time and end_time must be timezone-aware")
+    if start >= end:
+        raise ValueError("start_time must be before end_time")
+    rules_path = Path(output_dir) / "normalized" / "market_rules.jsonl"
+    rules = [
+        json.loads(line)
+        for line in rules_path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and json.loads(line)["target_date"] == target_date
+    ]
+    points = []
+    errors: list[str] = []
+    client = PolymarketClient()
+    for rule in rules:
+        try:
+            points.extend(
+                client.fetch_price_history(
+                    market_id=str(rule["market_id"]),
+                    token_id=str(rule["yes_token_id"]),
+                    start_ts=int(start.timestamp()),
+                    end_ts=int(end.timestamp()),
+                )
+            )
+        except (CollectionError, httpx.HTTPError, RuntimeError, ValueError) as exc:
+            errors.append(f"{rule.get('market_id', '<unknown>')}: {exc}")
+    _write_jsonl(Path(output_dir) / "normalized" / "price_points.jsonl", [point.model_dump(mode="json") for point in points])
+    if errors:
+        status = OutcomeStatus.COLLECTION_ERROR.value
+    elif not rules or not points:
+        status = OutcomeStatus.INSUFFICIENT_DATA.value
+    else:
+        status = OutcomeStatus.SUCCESS.value
+    manifest = {
+        "status": status,
+        "target_date": target_date,
+        "start_time": start.isoformat(),
+        "end_time": end.isoformat(),
+        "market_rules": len(rules),
+        "price_points": len(points),
+        "errors": errors,
+    }
+    results_dir = Path(output_dir).parent / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    (results_dir / "price_history_manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     return manifest

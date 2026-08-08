@@ -19,6 +19,8 @@
 - [x] (2026-08-09) 市場ルール、GEFS確率、実行価格、バックテスト指標をテスト先行で実装した。
 - [x] (2026-08-09) Polymarket、GEFSカタログ、NCEI観測の収集器とマニフェストを実装した。
 - [x] (2026-08-09) 実データを取得し、取得不能な予報履歴を `insufficient_data` としてマニフェストとレポートへ記録した。
+- [x] (2026-08-09) NOAA GEFS `.idx` とHTTP Rangeを使うGRIB2 TMAXデコーダ、DST対応の日次メンバー集約、再実行可能な `collect-gefs-target` を実装した。
+- [x] (2026-08-09) 2026-01-06のGEFS 21メンバーと7市場249価格ポイントをパイロット取得し、専用マニフェストへ保存した。
 - [x] (2026-08-09) 全テスト、結果検証、Git差分を確認し、最終成果物と残課題を整理した。
 
 ## Surprises & Discoveries
@@ -43,6 +45,10 @@
   Evidence: 複数年fixtureを追加し、修正前に最後の年だけ返す失敗を再現、修正後は対象期間の365 issue datesを取得した。
 - Observation: 最終実データは432市場、対象期間内425ルール、605観測、0 GEFSメンバーであり、バックテスト候補は生成できない。
   Evidence: `results/dataset_manifest.json` と `reports/research_findings.md`。結果statusは `insufficient_data` で、PnL結論は出していない。
+- Observation: NOAA GEFS `.idx` は2m気温のTMAXメッセージのbyte offsetを提供しており、GRIB2全体ではなく対象メッセージだけをRange取得できる。
+  Evidence: `gefs.20260106/00/atmos/pgrb2ap5/gep01...f003.idx` の `TMAX:2 m above ground` 行と、実デコードされた21メンバーのパイロット結果。
+- Observation: 2026-01-06のパイロットではGEFS 21/21メンバーとCLOB 249価格ポイントを取得できたが、公式観測の対象日カバレッジが不足している。
+  Evidence: `results/gefs_forecast_manifest.json`、`results/price_history_manifest.json`、`data/normalized/forecast_members.jsonl`、`data/normalized/price_points.jsonl`。
 
 ## Decision Log
 
@@ -66,7 +72,7 @@
 
 初期状態では研究コードとデータは存在しなかったため、設計仕様書と本ExecPlanを先に作成し、実装と実データ検証を分離した。最終実行ではPolymarket、CLOB時刻、NCEI、GEFS AWSのsource-auditがすべてHTTP 200となり、市場ルールと観測の正規化まで確認できた。
 
-ただし、NCEI観測は要求期間全体をカバーせず、GEFSはAWS上の365 issue datesを発見しただけでGRIB2メンバーを未デコードである。したがって、バックテストは `status=insufficient_data`、`trade_count=0` とし、ゼロ損益やシグナルを研究成果として扱わない。このフェーズの成果は、KLGAに対応する観測所設定、Point-in-Time制約、再現可能な収集器、データ不足を隠さない検証可能な骨格である。
+ただし、NCEI観測は要求期間全体をカバーせず、全期間のGEFSメンバーと価格履歴も未収集である。したがって、主バックテストは `status=insufficient_data`、`trade_count=0` とし、ゼロ損益や単一日のパイロットを研究成果として扱わない。今回の進展は、KLGAに対応する観測所設定、Point-in-Time制約、RangeベースのGRIB2デコーダ、GEFS/CLOBパイロット、データ不足を隠さない検証可能な骨格である。
 
 ## Context and Orientation
 
@@ -164,6 +170,8 @@ CLIに `source-audit`、`collect`、`run-backtest`、`validate-results` を実�
     weather-polymarket-research/results/source_audit.json
     weather-polymarket-research/results/dataset_manifest.json
     weather-polymarket-research/results/backtest_summary.json
+    weather-polymarket-research/results/gefs_forecast_manifest.json
+    weather-polymarket-research/results/price_history_manifest.json
     weather-polymarket-research/results/trades.csv
     weather-polymarket-research/reports/backtest_report.md
 
@@ -179,7 +187,7 @@ CLIに `source-audit`、`collect`、`run-backtest`、`validate-results` を実�
 
 `src/weather_research/execution.py` では、`executable_yes_price(observed_ask: float, spread: float, slippage: float) -> float` と `net_edge(model_probability: float, observed_ask: float, fee: float, spread: float, slippage: float, uncertainty_buffer: float) -> float` を公開する。
 
-必須依存はPython 3.11以上、`pydantic`、`httpx`、`numpy`、`pytest` とする。Parquetを扱う実データ経路だけが必要になった場合に `duckdb` と `pyarrow` を追加する。Polymarketの注文署名、取引API、秘密鍵は依存に含めない。
+必須依存はPython 3.11以上、`pydantic`、`httpx`、`numpy`、`eccodes`、`tzdata`、`pytest` とする。Parquetを扱う実データ経路だけが必要になった場合に `duckdb` と `pyarrow` を追加する。Polymarketの注文署名、取引API、秘密鍵は依存に含めない。
 
 ## 変更履歴
 

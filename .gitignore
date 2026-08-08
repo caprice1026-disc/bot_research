@@ -207,8 +207,13 @@ base-lp-research/.test-tmp/
 base-lp-research/data/raw/
 base-lp-research/data/normalized/
 base-lp-research/data/derived/
-base-lp-research/results/
 base-lp-research/.cache/
+
+# Keep the human-readable LP report under version control; ignore generated data/results.
+base-lp-research/results/*
+!base-lp-research/results/
+!base-lp-research/results/report.md
+
 weather-polymarket-research/data/raw/
 
 # Marimo

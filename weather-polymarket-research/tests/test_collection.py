@@ -1,10 +1,16 @@
+from datetime import datetime, timezone
+
 from weather_research.collection import (
     build_dataset_manifest,
+    collect_gefs_target_day,
+    collect_polymarket_target_day_prices,
     filter_market_rules_by_target_date,
     observation_coverage_reason,
     select_new_york_markets,
 )
 from weather_research.config import NEW_YORK
+from weather_research.schemas import ForecastMember
+from weather_research.schemas import PricePoint
 from weather_research.schemas import OutcomeStatus
 
 
@@ -45,6 +51,68 @@ def test_observation_coverage_reason_reports_returned_range() -> None:
 def test_new_york_config_matches_polymarket_resolution_station() -> None:
     assert NEW_YORK.station_id == "KLGA"
     assert NEW_YORK.ncei_station_id == "72503014732"
+
+
+def test_collect_gefs_target_day_persists_forecast_members(monkeypatch, tmp_path) -> None:
+    class FakeGefsGribClient:
+        def fetch_target_day_members(self, **kwargs):
+            return [
+                ForecastMember(
+                    station_id="KLGA",
+                    forecast_issue_time=datetime(2026, 1, 5, 12, tzinfo=timezone.utc),
+                    forecast_valid_time=datetime(2026, 1, 7, 5, tzinfo=timezone.utc),
+                    received_time=datetime(2026, 1, 5, 12, tzinfo=timezone.utc),
+                    ensemble_member=0,
+                    temperature_f=40.0,
+                )
+            ]
+
+    monkeypatch.setattr("weather_research.collection.GefsGribClient", FakeGefsGribClient)
+
+    manifest = collect_gefs_target_day(
+        output_dir=tmp_path / "data",
+        target_date="2026-01-06",
+        issue_time="2026-01-05T12:00:00Z",
+        max_members=1,
+    )
+
+    assert manifest["status"] == "success"
+    assert manifest["forecast_members"] == 1
+    assert (tmp_path / "data" / "normalized" / "forecast_members.jsonl").read_text(encoding="utf-8").count("\n") == 1
+    assert (tmp_path / "results" / "gefs_forecast_manifest.json").exists()
+
+
+def test_collect_polymarket_target_day_prices_persists_price_points(monkeypatch, tmp_path) -> None:
+    class FakePolymarketClient:
+        def fetch_price_history(self, market_id, token_id, start_ts, end_ts):
+            return [
+                PricePoint(
+                    market_id=market_id,
+                    token_id=token_id,
+                    timestamp=datetime(2026, 1, 5, 12, 0, 7, tzinfo=timezone.utc),
+                    price=0.4,
+                )
+            ]
+
+    rules_path = tmp_path / "data" / "normalized"
+    rules_path.mkdir(parents=True)
+    (rules_path / "market_rules.jsonl").write_text(
+        '{"market_id":"m1","target_date":"2026-01-06","yes_token_id":"token-1"}\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("weather_research.collection.PolymarketClient", FakePolymarketClient)
+
+    manifest = collect_polymarket_target_day_prices(
+        output_dir=tmp_path / "data",
+        target_date="2026-01-06",
+        start_time="2026-01-05T12:00:00Z",
+        end_time="2026-01-07T05:00:00Z",
+    )
+
+    assert manifest["status"] == "success"
+    assert manifest["price_points"] == 1
+    assert (tmp_path / "data" / "normalized" / "price_points.jsonl").read_text(encoding="utf-8").count("\n") == 1
+    assert (tmp_path / "results" / "price_history_manifest.json").exists()
 
 
 def test_manifest_reports_insufficient_data_when_gefs_history_is_missing() -> None:
