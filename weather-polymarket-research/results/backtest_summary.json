@@ -1,0 +1,7 @@
+{
+  "status": "insufficient_data",
+  "reason": "no backtest candidates",
+  "trade_count": 0,
+  "gross_pnl": 0,
+  "net_pnl": 0
+}

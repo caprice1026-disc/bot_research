@@ -1,0 +1,30 @@
+{
+  "gamma": {
+    "url": "https://gamma-api.polymarket.com/markets?limit=1&offset=0",
+    "checked_at": "2026-08-08T17:04:47.481839+00:00",
+    "status": "ok",
+    "http_status": 200,
+    "content_bytes": 6962
+  },
+  "clob": {
+    "url": "https://clob.polymarket.com/time",
+    "checked_at": "2026-08-08T17:04:47.525436+00:00",
+    "status": "ok",
+    "http_status": 200,
+    "content_bytes": 10
+  },
+  "gefs": {
+    "url": "https://noaa-gefs-pds.s3.amazonaws.com/?list-type=2&prefix=gefs.&delimiter=/",
+    "checked_at": "2026-08-08T17:04:47.791474+00:00",
+    "status": "ok",
+    "http_status": 200,
+    "content_bytes": 64379
+  },
+  "ncei": {
+    "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=72503014732&startDate=2025-08-09&endDate=2026-08-09&format=json&units=standard&limit=1",
+    "checked_at": "2026-08-08T17:04:48.650284+00:00",
+    "status": "ok",
+    "http_status": 200,
+    "content_bytes": 450674
+  }
+}

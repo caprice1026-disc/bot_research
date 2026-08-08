@@ -1,0 +1,48 @@
+{
+  "status": "insufficient_data",
+  "city": "new-york",
+  "station_id": "KLGA",
+  "retrieved_at": "2026-08-08T17:05:53.687512+00:00",
+  "source_results": {
+    "gamma": {
+      "url": "https://gamma-api.polymarket.com/markets?limit=1&offset=0",
+      "checked_at": "2026-08-08T17:05:41.189117+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "content_bytes": 6962
+    },
+    "clob": {
+      "url": "https://clob.polymarket.com/time",
+      "checked_at": "2026-08-08T17:05:41.241268+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "content_bytes": 10
+    },
+    "gefs": {
+      "url": "https://noaa-gefs-pds.s3.amazonaws.com/?list-type=2&prefix=gefs.&delimiter=/",
+      "checked_at": "2026-08-08T17:05:41.530326+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "content_bytes": 64379
+    },
+    "ncei": {
+      "url": "https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=72503014732&startDate=2025-08-09&endDate=2026-08-09&format=json&units=standard&limit=1",
+      "checked_at": "2026-08-08T17:05:42.688746+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "content_bytes": 450674
+    }
+  },
+  "counts": {
+    "markets_raw": 432,
+    "markets_selected": 432,
+    "market_rules": 425,
+    "observations": 605,
+    "forecast_members": 0
+  },
+  "reasons": [
+    "7 valid market rules were outside the requested target-date window",
+    "NCEI observations cover 2025-08-09T00:00:00Z through 2025-08-27T03:51:00Z",
+    "GEFS AWS catalog has 365 issue dates, but GRIB2 members were not decoded"
+  ]
+}

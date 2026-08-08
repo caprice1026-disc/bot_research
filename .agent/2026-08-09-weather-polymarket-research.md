@@ -14,12 +14,12 @@
 - [x] (2026-08-09) 研究文書を読み、初回範囲をNew York・GEFS/NWS/METAR・Polymarket・ベースライン・Level 1–2バックテストに限定した。
 - [x] (2026-08-09) `docs/superpowers/specs/2026-08-09-weather-polymarket-research-design.md` を作成し、設計コミット `7f2a30f` を作成した。
 - [x] (2026-08-09) Polymarket公式API、NOMADS GEFS、NCEI METARの候補エンドポイントを確認した。
-- [ ] 研究ディレクトリのPythonパッケージ、依存関係、取得設定を作成する。
-- [ ] Point-in-Timeスキーマと時点リーク除外をテスト先行で実装する。
-- [ ] 市場ルール、GEFS確率、実行価格、バックテスト指標をテスト先行で実装する。
-- [ ] Polymarket、GEFS、NCEI観測の再実行可能な収集器とマニフェストを実装する。
-- [ ] 実データを取得し、結果を検証してレポートする。取得不能なデータは `insufficient_data` として記録する。
-- [ ] 全テスト、結果検証、Git差分を確認し、最終成果物と残課題を報告する。
+- [x] (2026-08-09) 研究ディレクトリのPythonパッケージ、依存関係、取得設定を作成した。
+- [x] (2026-08-09) Point-in-Timeスキーマと時点リーク除外をテスト先行で実装した。
+- [x] (2026-08-09) 市場ルール、GEFS確率、実行価格、バックテスト指標をテスト先行で実装した。
+- [x] (2026-08-09) Polymarket、GEFSカタログ、NCEI観測の収集器とマニフェストを実装した。
+- [x] (2026-08-09) 実データを取得し、取得不能な予報履歴を `insufficient_data` としてマニフェストとレポートへ記録した。
+- [x] (2026-08-09) 全テスト、結果検証、Git差分を確認し、最終成果物と残課題を整理した。
 
 ## Surprises & Discoveries
 
@@ -31,6 +31,18 @@
   Evidence: 公式ドキュメントはGamma APIを市場・イベント用、CLOB APIを注文板・価格履歴用として案内している。
 - Observation: 公開の天気Bot実装はOpen-Meteoの31メンバーGFSを現在の確率計算に使うが、後知恵なしの履歴予報アーカイブとは別問題である。
   Evidence: 参照READMEは31-member GFS ensembleを説明する一方、この研究では `forecast_issue_time` と `received_time` を必須にして履歴データの利用可否を別途検証する。
+- Observation: Python 3.13の標準venvではensurepipが失敗したが、pipの `--python` オプションで同じvenvへ依存関係を導入できた。
+  Evidence: `python -m pip --python .venv\Scripts\python.exe install -e ".[test]"` が完了し、`.venv\Scripts\python.exe -m pytest -q` は27件成功した。
+- Observation: NCEI Global HourlyのTMP fixtureは0.1°C単位として華氏へ変換する必要がある。
+  Evidence: `278` を27.8°Cとして変換したテスト値は82.04°Fになり、温度単位を暗黙に華氏と扱わない実装にした。
+- Observation: Polymarketの実市場説明はNew York市の決済地点をCentral ParkではなくLaGuardia Airport（KLGA）としている。
+  Evidence: 取得した市場説明とresolution source URLがKLGAを指定していたため、NCEI station `72503014732` へ設定を修正した。
+- Observation: NCEIのKLGA Global Hourly応答はHTTP 200だったが、要求期間の全期間ではなく2025-08-09〜2025-08-27の605件だった。
+  Evidence: `results/dataset_manifest.json` のカバレッジ理由に返却範囲を保存した。後知恵で欠測を補完しない。
+- Observation: NOAA GEFS AWSカタログは2025年と2026年の複数年問い合わせを結合する必要があった。
+  Evidence: 複数年fixtureを追加し、修正前に最後の年だけ返す失敗を再現、修正後は対象期間の365 issue datesを取得した。
+- Observation: 最終実データは432市場、対象期間内425ルール、605観測、0 GEFSメンバーであり、バックテスト候補は生成できない。
+  Evidence: `results/dataset_manifest.json` と `reports/research_findings.md`。結果statusは `insufficient_data` で、PnL結論は出していない。
 
 ## Decision Log
 
@@ -52,7 +64,9 @@
 
 ## Outcomes & Retrospective
 
-初期状態では研究コードとデータは存在しない。設計仕様書と本ExecPlanを先に用意し、実装は以下の受け入れ条件を満たした時点で評価する。実データが取れた場合は対象期間・件数・指標を報告し、取れなかった場合はデータ源ごとのHTTPエラー、空応答、時点整合不能を残す。利益の有無だけを理由にGo/No-Goを決めない。
+初期状態では研究コードとデータは存在しなかったため、設計仕様書と本ExecPlanを先に作成し、実装と実データ検証を分離した。最終実行ではPolymarket、CLOB時刻、NCEI、GEFS AWSのsource-auditがすべてHTTP 200となり、市場ルールと観測の正規化まで確認できた。
+
+ただし、NCEI観測は要求期間全体をカバーせず、GEFSはAWS上の365 issue datesを発見しただけでGRIB2メンバーを未デコードである。したがって、バックテストは `status=insufficient_data`、`trade_count=0` とし、ゼロ損益やシグナルを研究成果として扱わない。このフェーズの成果は、KLGAに対応する観測所設定、Point-in-Time制約、再現可能な収集器、データ不足を隠さない検証可能な骨格である。
 
 ## Context and Orientation
 
@@ -121,9 +135,9 @@ CLIに `source-audit`、`collect`、`run-backtest`、`validate-results` を実�
 
 テストを通した後、次のコマンドを研究ディレクトリで実行する。
 
-    .\.venv\Scripts\python.exe -m weather_research.cli source-audit --city new-york --station KNYC --output results/source_audit.json
-    .\.venv\Scripts\python.exe -m weather_research.cli collect --city new-york --station KNYC --output-dir data
-    .\.venv\Scripts\python.exe -m weather_research.cli run-backtest --data-dir data --results-dir results --report reports/backtest_report.md
+    .\.venv\Scripts\python.exe -m weather_research.cli source-audit --output results/source_audit.json
+    .\.venv\Scripts\python.exe -m weather_research.cli collect --start-date 2025-08-09 --end-date 2026-08-09 --output-dir data
+    .\.venv\Scripts\python.exe -m weather_research.cli run-backtest --results-dir results --report reports/backtest_report.md
     .\.venv\Scripts\python.exe -m weather_research.cli validate-results --results-dir results
 
 `source-audit` は各ソースについてURL、HTTPステータス、取得時刻、観測件数または予報件数、エラーを保存する。`collect` は同じ対象・同じ取得日で再実行しても既存のrawファイルを上書きせず、ファイルハッシュが同じなら再利用する。`run-backtest` は必要なデータが揃わない場合に終了コードを成功としても、JSONの `status` を `insufficient_data` にする。`validate-results` はJSONスキーマ、時点制約、PnL合計、CSV列、statusとreasonの整合性を検証し、`valid: true` を出す。
