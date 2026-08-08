@@ -201,6 +201,16 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Research runtime data (raw/cache outputs are reproducible and not committed)
+base-lp-research/.venv/
+base-lp-research/.test-tmp/
+base-lp-research/data/raw/
+base-lp-research/data/normalized/
+base-lp-research/data/derived/
+base-lp-research/results/
+base-lp-research/.cache/
+weather-polymarket-research/data/raw/
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
