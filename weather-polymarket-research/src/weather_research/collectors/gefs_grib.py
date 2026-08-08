@@ -5,6 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from collections.abc import Iterable
+import hashlib
+import time as time_module
+from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -154,27 +157,90 @@ class GefsGribClient:
         self,
         base_url: str = "https://noaa-gefs-pds.s3.amazonaws.com/",
         client: httpx.Client | None = None,
+        cache_dir: Path | None = None,
+        max_retries: int = 3,
+        retry_backoff_seconds: float = 1.0,
     ) -> None:
+        if max_retries <= 0:
+            raise ValueError("max_retries must be positive")
+        if retry_backoff_seconds < 0:
+            raise ValueError("retry_backoff_seconds must be non-negative")
         self.base_url = base_url.rstrip("/")
         self.client = client or httpx.Client(timeout=60.0)
+        self.cache_dir = Path(cache_dir) if cache_dir is not None else None
+        self.max_retries = max_retries
+        self.retry_backoff_seconds = retry_backoff_seconds
 
     def _get(self, key: str, headers: dict[str, str] | None = None) -> httpx.Response:
-        response = self.client.get(f"{self.base_url}/{key.lstrip('/')}", headers=headers)
-        if response.status_code >= 400:
-            raise GefsGribError(f"GEFS HTTP {response.status_code}: {response.text[:200]}")
-        return response
+        url = f"{self.base_url}/{key.lstrip('/')}"
+        last_error = "unknown error"
+        for attempt in range(self.max_retries):
+            try:
+                response = self.client.get(url, headers=headers)
+            except httpx.HTTPError as exc:
+                last_error = str(exc)
+                retryable = True
+            else:
+                if response.status_code < 400:
+                    return response
+                last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                retryable = response.status_code == 429 or response.status_code >= 500
+            if not retryable or attempt + 1 >= self.max_retries:
+                raise GefsGribError(f"GEFS request failed for {key}: {last_error}")
+            delay = self.retry_backoff_seconds * (2**attempt)
+            if delay:
+                time_module.sleep(delay)
+        raise GefsGribError(f"GEFS request failed for {key}: {last_error}")
+
+    def _cache_path(self, kind: str, key: str, headers: dict[str, str] | None = None) -> Path | None:
+        if self.cache_dir is None:
+            return None
+        material = key + "\n" + repr(sorted((headers or {}).items()))
+        digest = hashlib.sha256(material.encode("utf-8")).hexdigest()
+        suffix = ".idx" if kind == "index" else ".grib2"
+        return self.cache_dir / kind / f"{digest}{suffix}"
+
+    @staticmethod
+    def _read_cache(path: Path | None) -> bytes | None:
+        if path is None or not path.exists():
+            return None
+        try:
+            return path.read_bytes()
+        except OSError:
+            return None
+
+    @staticmethod
+    def _write_cache(path: Path | None, payload: bytes) -> None:
+        if path is None:
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_name(f".{path.name}.tmp")
+        temporary.write_bytes(payload)
+        temporary.replace(path)
 
     def fetch_tmax_message(self, key: str) -> bytes:
-        index_response = self._get(f"{key}.idx")
-        entries = parse_grib_index(index_response.text)
+        index_key = f"{key}.idx"
+        index_path = self._cache_path("index", index_key)
+        index_payload = self._read_cache(index_path)
+        if index_payload is None:
+            index_response = self._get(index_key)
+            index_payload = index_response.content
+            self._write_cache(index_path, index_payload)
+        entries = parse_grib_index(index_payload.decode("utf-8"))
         selected = select_index_entry(entries, short_name="TMAX", level="2 m above ground")
         start, end = find_message_range(entries, selected)
-        if end is None:
-            raise GefsGribError("TMAX message is the last GRIB message; object size is required")
-        response = self._get(key, headers={"Range": f"bytes={start}-{end}"})
+        range_value = f"bytes={start}-{end if end is not None else ''}"
+        headers = {"Range": range_value}
+        message_path = self._cache_path("message", key, headers)
+        message_payload = self._read_cache(message_path)
+        if message_payload is not None:
+            return message_payload
+        response = self._get(key, headers=headers)
         if response.status_code != 206:
             raise GefsGribError("GEFS object server did not honor the requested byte range")
-        return response.content
+        message_payload = response.content
+        self._write_cache(message_path, message_payload)
+        return message_payload
 
     def fetch_target_day_members(
         self,
@@ -185,16 +251,23 @@ class GefsGribClient:
         longitude: float,
         timezone_name: str,
         ensemble_members: Iterable[int] = range(21),
+        errors: list[str] | None = None,
     ) -> list[ForecastMember]:
         forecasts: list[ForecastMember] = []
         steps = tmax_steps_for_target_day(issue_time, target_date, timezone_name)
         for ensemble_member in ensemble_members:
-            points: list[dict[str, Any]] = []
-            for step in steps:
-                key = build_gefs_tmax_key(issue_time, ensemble_member, step)
-                payload = self.fetch_tmax_message(key)
-                points.append(decode_grib_point(payload, latitude, longitude))
-            member = target_day_member_from_points(points, station_id, target_date, timezone_name)
+            try:
+                points: list[dict[str, Any]] = []
+                for step in steps:
+                    key = build_gefs_tmax_key(issue_time, ensemble_member, step)
+                    payload = self.fetch_tmax_message(key)
+                    points.append(decode_grib_point(payload, latitude, longitude))
+                member = target_day_member_from_points(points, station_id, target_date, timezone_name)
+            except (GefsGribError, LookupError, ValueError, RuntimeError) as exc:
+                if errors is None:
+                    raise
+                errors.append(f"member {ensemble_member}: {exc}")
+                continue
             if member is not None:
                 forecasts.append(member)
         return forecasts

@@ -73,6 +73,51 @@ def test_gefs_grib_client_uses_index_range_for_selected_message() -> None:
     ]
 
 
+def test_gefs_grib_client_reuses_cached_index_and_message(tmp_path) -> None:
+    index = "1:0:d=2026010600:TMP:2 m above ground:3 hour fcst:ENS=+1\n2:100:d=2026010600:TMAX:2 m above ground:0-3 hour max fcst:ENS=+1\n3:200:d=2026010600:TMIN:2 m above ground:0-3 hour min fcst:ENS=+1"
+    calls: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request.url.path)
+        if request.url.path.endswith(".idx"):
+            return httpx.Response(200, text=index)
+        return httpx.Response(206, content=b"selected-grib-message")
+
+    client = GefsGribClient(
+        base_url="https://noaa-gefs.test/",
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        cache_dir=tmp_path / "gefs-cache",
+        retry_backoff_seconds=0,
+    )
+
+    assert client.fetch_tmax_message("gefs.20260106/00/member.f003") == b"selected-grib-message"
+    assert client.fetch_tmax_message("gefs.20260106/00/member.f003") == b"selected-grib-message"
+    assert calls == [
+        "/gefs.20260106/00/member.f003.idx",
+        "/gefs.20260106/00/member.f003",
+    ]
+
+
+def test_gefs_grib_client_retries_transient_http_failures() -> None:
+    attempts = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal attempts
+        attempts += 1
+        if attempts < 3:
+            return httpx.Response(503, text="temporary")
+        return httpx.Response(200, text="ok")
+
+    client = GefsGribClient(
+        base_url="https://noaa-gefs.test/",
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        retry_backoff_seconds=0,
+    )
+
+    assert client._get("catalog") .text == "ok"
+    assert attempts == 3
+
+
 def test_decode_grib_point_reads_temperature_and_forecast_times() -> None:
     from weather_research.collectors.gefs_grib import decode_grib_point
 
