@@ -609,14 +609,32 @@ def command_backtest(args: argparse.Namespace) -> int:
     if not manifest_path.exists():
         raise RuntimeError("dataset_manifest.json is missing; collect and validate data first")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if manifest.get("status") != "success":
+    partial_dataset = manifest.get("status") != "success"
+    if partial_dataset and not args.allow_partial:
         summary = {"status": "insufficient_data", "reason": manifest.get("errors", [])}
         write_json(root / "results" / "backtest_summary.json", summary)
         write_report(root / "results" / "report.md", summary)
         print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
         return 2
     pool = _load_pool(_pool_path(root))
-    events = _swap_events(root / "data" / "normalized" / "events.parquet")
+    parquet_path = root / "data" / "normalized" / "events.parquet"
+    if partial_dataset and not parquet_path.exists():
+        raw_path = next((root / "data" / "raw").rglob("logs.jsonl"), None)
+        if raw_path is None:
+            summary = {"status": "insufficient_data", "reason": ["partial dataset raw logs are missing"]}
+            write_json(root / "results" / "backtest_summary.json", summary)
+            write_report(root / "results" / "report.md", summary)
+            print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+            return 2
+        records = _read_raw_records(raw_path)
+        if not validate_log_order(records).valid:
+            summary = {"status": "insufficient_data", "reason": ["partial dataset log order is invalid"]}
+            write_json(root / "results" / "backtest_summary.json", summary)
+            write_report(root / "results" / "report.md", summary)
+            print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+            return 2
+        write_parquet(parquet_path, normalize_event_rows(records))
+    events = _swap_events(parquet_path)
     if not events:
         summary = {"status": "insufficient_data", "reason": ["dataset contains no Swap events"]}
         write_json(root / "results" / "backtest_summary.json", summary)
@@ -656,6 +674,11 @@ def command_backtest(args: argparse.Namespace) -> int:
         else "insufficient_data",
         "counterfactual_mode": config.counterfactual_mode,
         "fee_precision": config.fee_precision,
+        "collection_status": manifest.get("status"),
+        "analysis_scope": "partial_collected_range" if partial_dataset else "complete_dataset",
+        "warnings": ["backtest uses an incomplete collection; do not generalize to the full seven-day window"]
+        if partial_dataset
+        else [],
         "events": len(events),
         "pool": asdict(pool),
         "hodl_terminal_value_usd": hodl,
@@ -790,6 +813,8 @@ def build_parser() -> argparse.ArgumentParser:
             sub.add_argument("--rpc-max-retries", type=int)
             sub.add_argument("--max-seconds", type=float)
             sub.add_argument("--fresh", action="store_true", help="discard the matching checkpoint and restart")
+        if name == "backtest":
+            sub.add_argument("--allow-partial", action="store_true", help="run an exploratory backtest on partial collection data")
         if name == "collect-dune":
             sub.add_argument("--start-utc")
             sub.add_argument("--end-utc")
