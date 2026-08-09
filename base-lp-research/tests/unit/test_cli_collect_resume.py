@@ -81,7 +81,9 @@ class CollectResumeTests(unittest.TestCase):
             )
             with patch("base_lp.cli._client", return_value=fake_rpc), patch(
                 "base_lp.cli.timestamp_to_block", side_effect=[1, 3]
-            ), patch("base_lp.cli.time.monotonic", side_effect=[0.0, 0.0, 2.0]):
+            ), patch("base_lp.cli.time.monotonic", side_effect=[0.0, 0.0, 2.0]), patch(
+                "base_lp.cli._read_raw_records", side_effect=AssertionError("partial collection must not reread JSONL")
+            ), patch("base_lp.cli.sha256_file", side_effect=AssertionError("partial collection must not checksum JSONL")):
                 self.assertEqual(command_collect(args), 2)
 
             checkpoint = json.loads((root / "results" / "collection_checkpoint.json").read_text(encoding="utf-8"))

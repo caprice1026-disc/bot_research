@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import time
@@ -14,6 +15,8 @@ from base_lp.backtest.benchmarks import hodl_terminal_value
 from base_lp.backtest.engine import SimulationConfig, price_token1_per_token0, run_backtest
 from base_lp.config import ResearchConfig, load_config
 from base_lp.data.ingest import iter_log_chunks, normalize_event_rows, timestamp_to_block
+from base_lp.data.dune import DuneClient, DuneError, build_swap_logs_sql, dune_row_to_log_record
+from base_lp.data.events import SWAP_TOPIC
 from base_lp.data.manifest import build_manifest, write_manifest
 from base_lp.data.normalize import log_record_from_rpc
 from base_lp.data.persist import append_jsonl, read_parquet_rows, sha256_file, write_jsonl, write_parquet
@@ -66,6 +69,31 @@ def _load_pool(path: Path) -> PoolMetadata:
 
 def _checkpoint_path(root: Path) -> Path:
     return root / "results" / "collection_checkpoint.json"
+
+
+def _dune_checkpoint_path(root: Path) -> Path:
+    return root / "results" / "dune_collection_checkpoint.json"
+
+
+def _dotenv_value(root: Path, name: str) -> str | None:
+    for candidate in (root / ".env", root.parent / ".env"):
+        if not candidate.exists():
+            continue
+        for line in candidate.read_text(encoding="utf-8").splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#") or "=" not in stripped:
+                continue
+            key, value = stripped.split("=", 1)
+            if key.strip() == name:
+                return value.strip().strip("\"").strip("'")
+    return None
+
+
+def _dune_client(config: ResearchConfig, root: Path) -> DuneClient:
+    api_key = os.environ.get(config.dune_api_env) or _dotenv_value(root, config.dune_api_env)
+    if not api_key:
+        raise RuntimeError(f"missing required Dune API key: {config.dune_api_env}")
+    return DuneClient(api_key)
 
 
 def _new_checkpoint(
@@ -244,8 +272,6 @@ def command_collect(args: argparse.Namespace) -> int:
         parquet_path.unlink(missing_ok=True)
     checkpoint.setdefault("pilot_start_utc", start_utc)
     checkpoint.setdefault("pilot_end_utc", end_utc)
-    records = _read_raw_records(raw_path)
-    seen_keys = {record.stable_key for record in records}
     next_block = int(checkpoint["next_block"])
     completed = next_block > end_block
     budget_exhausted = time.monotonic() - run_started >= max_runtime_seconds
@@ -259,15 +285,13 @@ def command_collect(args: argparse.Namespace) -> int:
             request_interval_seconds=request_interval_seconds,
         ):
             chunk_end = min(next_block + chunk_size - 1, end_block)
-            new_records = [record for record in chunk if record.stable_key not in seen_keys]
-            append_jsonl(raw_path, [asdict(record) for record in new_records])
-            seen_keys.update(record.stable_key for record in new_records)
+            append_jsonl(raw_path, [asdict(record) for record in chunk])
             next_block = chunk_end + 1
             checkpoint.update(
                 {
                     "next_block": next_block,
                     "chunks_completed": int(checkpoint.get("chunks_completed", 0)) + 1,
-                    "logs_collected": len(seen_keys),
+                    "logs_collected": int(checkpoint.get("logs_collected", 0)) + len(chunk),
                     "last_chunk_start": chunk[0].block_number if chunk else chunk_end,
                     "last_chunk_end": chunk[-1].block_number if chunk else chunk_end,
                 }
@@ -280,7 +304,7 @@ def command_collect(args: argparse.Namespace) -> int:
                         "next_block": next_block,
                         "block_end": end_block,
                         "chunks_completed": checkpoint["chunks_completed"],
-                        "logs_collected": len(seen_keys),
+                        "logs_collected": checkpoint["logs_collected"],
                     },
                     ensure_ascii=False,
                     sort_keys=True,
@@ -292,15 +316,14 @@ def command_collect(args: argparse.Namespace) -> int:
     if not completed:
         checkpoint["status"] = "partial"
         write_json(checkpoint_path, checkpoint)
-        records = _read_raw_records(raw_path)
         partial_manifest = build_manifest(
             status="partial",
             source="json-rpc",
             pool=pool,
             block_start=start_block,
             block_end=end_block,
-            row_counts={"logs": len(records), "swaps": 0},
-            checksums={str(raw_path.relative_to(root)): sha256_file(raw_path)},
+            row_counts={"logs": int(checkpoint.get("logs_collected", 0)), "swaps": 0},
+            checksums={},
             errors=["collection_in_progress: rerun collect to resume from the checkpoint"],
             metadata={
                 "pilot_start_utc": start_utc,
@@ -344,6 +367,190 @@ def command_collect(args: argparse.Namespace) -> int:
     )
     manifest_path = root / "results" / "dataset_manifest.json"
     write_manifest(manifest_path, manifest)
+    print(json.dumps(asdict(manifest), ensure_ascii=False, sort_keys=True))
+    return 0 if status == "success" else 2
+
+
+def command_collect_dune(args: argparse.Namespace) -> int:
+    """Collect one bounded Swap-only dataset through one resumable Dune SQL execution."""
+
+    root = Path(args.root).resolve()
+    config = load_config(Path(args.config).resolve())
+    pool_path = _pool_path(root)
+    if not pool_path.exists():
+        raise RuntimeError("pool_metadata.json is missing; resolve the pool once before Dune collection")
+    pool = _load_pool(pool_path)
+    start_utc = args.start_utc or config.pilot_start_utc
+    end_utc = args.end_utc or config.pilot_end_utc
+    page_size = args.page_size
+    poll_interval_seconds = (
+        config.dune_poll_interval_seconds
+        if args.poll_interval_seconds is None
+        else args.poll_interval_seconds
+    )
+    max_wait_seconds = args.max_wait_seconds
+    if page_size <= 0 or poll_interval_seconds < 0 or max_wait_seconds <= 0:
+        raise ValueError("Dune paging and wait timing values must be valid")
+    sql = build_swap_logs_sql(pool.pool_address, start_utc, end_utc)
+    sql_sha256 = hashlib.sha256(sql.encode("utf-8")).hexdigest()
+    raw_path = (
+        root
+        / "data"
+        / "raw"
+        / "source=dune"
+        / f"chain={config.chain_id}"
+        / f"pool={pool.pool_address}"
+        / "logs.jsonl"
+    )
+    parquet_path = root / "data" / "normalized" / "events.parquet"
+    manifest_path = root / "results" / "dataset_manifest.json"
+    checkpoint_path = _dune_checkpoint_path(root)
+    checkpoint = _read_checkpoint_candidate(checkpoint_path) if not getattr(args, "fresh", False) else None
+    matching_checkpoint = (
+        checkpoint
+        if checkpoint
+        and checkpoint.get("pool_address") == pool.pool_address
+        and checkpoint.get("start_utc") == start_utc
+        and checkpoint.get("end_utc") == end_utc
+        and checkpoint.get("sql_sha256") == sql_sha256
+        else None
+    )
+    if checkpoint is not None and matching_checkpoint is None:
+        append_jsonl(root / "results" / "dune_collection_history.jsonl", [checkpoint])
+    if (
+        matching_checkpoint
+        and matching_checkpoint.get("status") == "complete"
+        and raw_path.exists()
+        and manifest_path.exists()
+    ):
+        existing = _read_checkpoint_candidate(manifest_path)
+        if existing and existing.get("status") == "success" and existing.get("source") == "dune-sql":
+            print(json.dumps(existing, ensure_ascii=False, sort_keys=True))
+            return 0
+
+    dune = _dune_client(config, root)
+    execution_id = matching_checkpoint.get("execution_id") if matching_checkpoint else None
+    if not isinstance(execution_id, str) or not execution_id:
+        execution_id = dune.execute_sql(sql)
+        checkpoint = {
+            "status": "submitted",
+            "execution_id": execution_id,
+            "pool_address": pool.pool_address,
+            "start_utc": start_utc,
+            "end_utc": end_utc,
+            "sql_sha256": sql_sha256,
+        }
+        write_json(checkpoint_path, checkpoint)
+    result_columns = [
+        "block_time",
+        "block_number",
+        "block_hash",
+        "topic1",
+        "topic2",
+        "data",
+        "tx_hash",
+        "log_index",
+        "tx_index",
+    ]
+    try:
+        dune.wait_for_completion(
+            execution_id,
+            poll_interval_seconds=poll_interval_seconds,
+            timeout_seconds=max_wait_seconds,
+        )
+        records = [
+            dune_row_to_log_record(
+                {"contract_address": pool.pool_address, "topic0": SWAP_TOPIC, **row},
+            )
+            for row in dune.iter_result_rows(execution_id, page_size=page_size, columns=result_columns)
+        ]
+    except DuneError as exc:
+        error_message = f"dune_collection_error: {exc}"
+        error_manifest = build_manifest(
+            status="collection_error",
+            source="dune-sql",
+            pool=pool,
+            block_start=pool.creation_block,
+            block_end=pool.creation_block,
+            row_counts={"logs": 0, "swaps": 0},
+            checksums={},
+            errors=[error_message],
+            metadata={
+                "dune_execution_id": execution_id,
+                "sql_sha256": sql_sha256,
+                "pilot_start_utc": start_utc,
+                "pilot_end_utc": end_utc,
+                "page_size": page_size,
+                "poll_interval_seconds": poll_interval_seconds,
+                "event_filter": "Swap",
+                "result_columns": result_columns,
+            },
+        )
+        write_manifest(manifest_path, error_manifest)
+        write_json(
+            checkpoint_path,
+            {
+                "status": "result_error",
+                "execution_id": execution_id,
+                "pool_address": pool.pool_address,
+                "start_utc": start_utc,
+                "end_utc": end_utc,
+                "sql_sha256": sql_sha256,
+                "error": error_message,
+            },
+        )
+        print(json.dumps(asdict(error_manifest), ensure_ascii=False, sort_keys=True))
+        return 2
+    records.sort(key=lambda record: record.stable_key)
+    write_jsonl(raw_path, [asdict(record) for record in records])
+    rows = normalize_event_rows(records)
+    errors: list[str] = []
+    status = "success"
+    if not records:
+        status = "insufficient_data"
+        errors.append("Dune returned no Swap logs for the requested UTC window")
+    elif not validate_log_order(records).valid:
+        status = "invalid_dataset"
+        errors.append("Dune log stable keys are not strictly ordered and unique")
+    else:
+        write_parquet(parquet_path, rows)
+    checksums = {str(raw_path.relative_to(root)): sha256_file(raw_path)}
+    if parquet_path.exists() and status == "success":
+        checksums[str(parquet_path.relative_to(root))] = sha256_file(parquet_path)
+    block_start = min((record.block_number for record in records), default=pool.creation_block)
+    block_end = max((record.block_number for record in records), default=pool.creation_block)
+    manifest = build_manifest(
+        status=status,
+        source="dune-sql",
+        pool=pool,
+        block_start=block_start,
+        block_end=block_end,
+        row_counts={"logs": len(records), "swaps": len(rows)},
+        checksums=checksums,
+        errors=errors,
+        metadata={
+            "dune_execution_id": execution_id,
+            "sql_sha256": sql_sha256,
+            "pilot_start_utc": start_utc,
+            "pilot_end_utc": end_utc,
+            "page_size": page_size,
+            "poll_interval_seconds": poll_interval_seconds,
+            "event_filter": "Swap",
+            "result_columns": result_columns,
+        },
+    )
+    write_manifest(manifest_path, manifest)
+    write_json(
+        checkpoint_path,
+        {
+            "status": "complete" if status == "success" else status,
+            "execution_id": execution_id,
+            "pool_address": pool.pool_address,
+            "start_utc": start_utc,
+            "end_utc": end_utc,
+            "sql_sha256": sql_sha256,
+        },
+    )
     print(json.dumps(asdict(manifest), ensure_ascii=False, sort_keys=True))
     return 0 if status == "success" else 2
 
@@ -441,7 +648,16 @@ def command_backtest(args: argparse.Namespace) -> int:
 
 def command_validate(args: argparse.Namespace) -> int:
     root = Path(args.root).resolve()
-    raw_path = next((root / "data" / "raw").rglob("logs.jsonl"), None)
+    manifest = _read_checkpoint_candidate(root / "results" / "dataset_manifest.json") or {}
+    checksum_paths = manifest.get("checksums", {})
+    raw_path = None
+    if isinstance(checksum_paths, dict):
+        raw_path = next(
+            (root / relative for relative in checksum_paths if str(relative).endswith("logs.jsonl")),
+            None,
+        )
+    if raw_path is None or not raw_path.exists():
+        raw_path = next((root / "data" / "raw").rglob("logs.jsonl"), None)
     if raw_path is None:
         raise RuntimeError("raw logs.jsonl not found")
     records = []
@@ -535,6 +751,7 @@ def build_parser() -> argparse.ArgumentParser:
     for name, func in (
         ("resolve-pool", command_resolve_pool),
         ("collect", command_collect),
+        ("collect-dune", command_collect_dune),
         ("validate-data", command_validate),
         ("backtest", command_backtest),
         ("sweep", command_sweep),
@@ -550,6 +767,13 @@ def build_parser() -> argparse.ArgumentParser:
             sub.add_argument("--rpc-max-retries", type=int)
             sub.add_argument("--max-seconds", type=float)
             sub.add_argument("--fresh", action="store_true", help="discard the matching checkpoint and restart")
+        if name == "collect-dune":
+            sub.add_argument("--start-utc")
+            sub.add_argument("--end-utc")
+            sub.add_argument("--page-size", type=int, default=10_000)
+            sub.add_argument("--poll-interval-seconds", type=float)
+            sub.add_argument("--max-wait-seconds", type=float, default=900.0)
+            sub.add_argument("--fresh", action="store_true", help="execute a new Dune SQL request")
         sub.set_defaults(func=func)
     return parser
 

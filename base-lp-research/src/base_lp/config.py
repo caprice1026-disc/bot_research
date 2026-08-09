@@ -36,6 +36,9 @@ class ResearchConfig:
     rpc_timeout_seconds: float = 20.0
     rpc_max_retries: int = 2
     max_runtime_seconds: float = 90.0
+    collection_source: str = "json-rpc"
+    dune_api_env: str = "DUNE_API_KEY"
+    dune_poll_interval_seconds: float = 5.0
 
 
 def load_config(path: Path) -> ResearchConfig:
@@ -69,6 +72,9 @@ def load_config(path: Path) -> ResearchConfig:
             rpc_timeout_seconds=float(raw.get("collection", {}).get("rpc_timeout_seconds", 20.0)),
             rpc_max_retries=int(raw.get("collection", {}).get("rpc_max_retries", 2)),
             max_runtime_seconds=float(raw.get("collection", {}).get("max_runtime_seconds", 90.0)),
+            collection_source=str(raw.get("collection", {}).get("source", "json-rpc")),
+            dune_api_env=str(raw.get("collection", {}).get("dune_api_env", "DUNE_API_KEY")),
+            dune_poll_interval_seconds=float(raw.get("collection", {}).get("dune_poll_interval_seconds", 5.0)),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError(f"invalid research config: {path}") from exc

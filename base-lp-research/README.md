@@ -42,6 +42,23 @@ $env:BASE_RPC_URL = "https://mainnet.base.org"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\collect-until-complete.ps1
 ```
 
+## Duneによる主データ収集
+
+履歴データの主経路はDuneです。`collect-dune`は`base.logs`を対象pool、UTC半開区間、Uniswap v3 Swap topicでDune側に絞り込みます。Base RPCの全block走査やイベントごとのblock timestamp照会は行いません。
+
+`DUNE_API_KEY`（Read権限）は環境変数、またはGit管理外のリポジトリ直下`.env`から読み込みます。キーは出力・manifest・rawデータへ保存されません。実行IDとSQL SHA-256は`results/dune_collection_checkpoint.json`およびmanifestに保存するため、結果取得中に中断しても同じSQLを再実行しません。
+
+```powershell
+& .venv\Scripts\python.exe -m base_lp.cli collect-dune --config configs\base_weth_usdc_005.yaml
+& .venv\Scripts\python.exe -m base_lp.cli validate-data --config configs\base_weth_usdc_005.yaml
+& .venv\Scripts\python.exe -m base_lp.cli backtest --config configs\base_weth_usdc_005.yaml
+& .venv\Scripts\python.exe -m base_lp.cli sweep --config configs\base_weth_usdc_005.yaml
+```
+
+設定の既定期間は2026-06-01から2026-06-08までの7日間です。これは本API keyのデータポイント上限内に収める安全側の初期範囲です。Duneの実行は1回、状態確認は既定5秒間隔、結果取得は10,000行単位です。`--fresh`を付けた場合だけ新しいDune SQL実行を要求します。
+
+`collect`と`collect-until-complete.ps1`は、結果の異常期間を検証するためのRPC補助経路です。bulk historyの自動fallbackには使用しません。RPCのpartial runでは全JSONLの再読込とSHA-256再計算を避け、完了時だけ全体整合性を検証します。
+
 Uniswap v3 pool address は設定に固定せず、Factory の `getPool(tokenA, tokenB, fee)` から解決します。[Uniswap v3 deployments](https://developers.uniswap.org/docs/protocols/v3/deployments)
 
 ## 成果物
