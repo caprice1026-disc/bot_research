@@ -35,6 +35,13 @@ $env:BASE_RPC_URL = "https://mainnet.base.org"
 
 必要に応じて、`--chunk-size`、`--request-interval-seconds`、`--rpc-timeout-seconds`、`--rpc-max-retries`、`--max-seconds` で取得負荷と1回の実行時間を調整できます。長期範囲では `--max-seconds 90` のまま繰り返し実行してください。
 
+長期取得を無人で継続する場合は、`scripts/collect-until-complete.ps1` を使えます。既定では90秒取得ごとに30秒休止し、完全取得時（exit code 0）または想定外エラー時に停止します。`BASE_RPC_URL` を設定してから実行してください。
+
+```powershell
+$env:BASE_RPC_URL = "https://mainnet.base.org"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\collect-until-complete.ps1
+```
+
 Uniswap v3 pool address は設定に固定せず、Factory の `getPool(tokenA, tokenB, fee)` から解決します。[Uniswap v3 deployments](https://developers.uniswap.org/docs/protocols/v3/deployments)
 
 ## 成果物
