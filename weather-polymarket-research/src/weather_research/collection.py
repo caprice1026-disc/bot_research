@@ -289,6 +289,7 @@ def collect_gefs_market_days(
     timeout_seconds: float = 120.0,
     max_retries: int = 5,
     retry_backoff_seconds: float = 2.0,
+    trust_env: bool = False,
 ) -> dict[str, Any]:
     """Collect one reproducible GEFS issue cycle for every normalized market day.
 
@@ -321,6 +322,7 @@ def collect_gefs_market_days(
         timeout_seconds=timeout_seconds,
         max_retries=max_retries,
         retry_backoff_seconds=retry_backoff_seconds,
+        trust_env=trust_env,
     )
     errors: list[str] = []
     attempted: list[str] = []
@@ -345,6 +347,7 @@ def collect_gefs_market_days(
             "max_workers": max_workers,
             "timeout_seconds": timeout_seconds,
             "max_retries": max_retries,
+            "trust_env": trust_env,
             "errors": errors,
         }
         results_dir = data_dir.parent / "results"

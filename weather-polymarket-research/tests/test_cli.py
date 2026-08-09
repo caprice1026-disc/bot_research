@@ -48,7 +48,16 @@ def test_cli_parser_accepts_price_target_day_collection() -> None:
 
 def test_cli_parser_accepts_all_market_day_gefs_collection_and_both_backtest_levels() -> None:
     gefs_args = build_parser().parse_args(
-        ["collect-gefs-market-days", "--max-days", "2", "--max-workers", "4", "--timeout-seconds", "120"]
+        [
+            "collect-gefs-market-days",
+            "--max-days",
+            "2",
+            "--max-workers",
+            "4",
+            "--timeout-seconds",
+            "120",
+            "--trust-env",
+        ]
     )
     backtest_args = build_parser().parse_args(["run-backtest", "--level", "both"])
 
@@ -56,4 +65,5 @@ def test_cli_parser_accepts_all_market_day_gefs_collection_and_both_backtest_lev
     assert gefs_args.issue_cycle_hour == 12
     assert gefs_args.max_workers == 4
     assert gefs_args.timeout_seconds == 120.0
+    assert gefs_args.trust_env is True
     assert backtest_args.level == "both"

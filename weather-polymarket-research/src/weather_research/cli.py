@@ -45,6 +45,11 @@ def build_parser() -> argparse.ArgumentParser:
     gefs_days.add_argument("--timeout-seconds", type=float, default=120.0)
     gefs_days.add_argument("--max-retries", type=int, default=5)
     gefs_days.add_argument("--retry-backoff-seconds", type=float, default=2.0)
+    gefs_days.add_argument(
+        "--trust-env",
+        action="store_true",
+        help="allow HTTP proxy environment variables (disabled by default for direct NOAA access)",
+    )
     prices_target = commands.add_parser("collect-prices-target", help="collect CLOB prices for a target day")
     prices_target.add_argument("--target-date", required=True)
     prices_target.add_argument("--start-time", required=True)
@@ -88,6 +93,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             timeout_seconds=args.timeout_seconds,
             max_retries=args.max_retries,
             retry_backoff_seconds=args.retry_backoff_seconds,
+            trust_env=args.trust_env,
         )
         print(json.dumps(manifest, ensure_ascii=False))
     elif args.command == "collect-prices-target":

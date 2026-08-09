@@ -1,5 +1,6 @@
 import httpx
 import pytest
+import threading
 from datetime import date, datetime, timezone
 from eccodes import codes_get_message, codes_grib_new_from_samples, codes_release, codes_set, codes_set_values
 
@@ -116,6 +117,56 @@ def test_gefs_grib_client_retries_transient_http_failures() -> None:
 
     assert client._get("catalog") .text == "ok"
     assert attempts == 3
+
+
+def test_gefs_grib_client_bypasses_environment_proxy_by_default() -> None:
+    client = GefsGribClient(base_url="https://noaa-gefs.test/")
+
+    assert client.trust_env is False
+
+
+def test_gefs_grib_parallel_fetch_decodes_on_caller_thread(monkeypatch: pytest.MonkeyPatch) -> None:
+    import weather_research.collectors.gefs_grib as module
+
+    issue_time = datetime(2026, 1, 5, 12, tzinfo=timezone.utc)
+    caller_thread = threading.get_ident()
+    decode_threads: list[int] = []
+    monkeypatch.setattr(module, "tmax_steps_for_target_day", lambda *_: [18, 21])
+
+    client = GefsGribClient(
+        base_url="https://noaa-gefs.test/",
+        client=httpx.Client(transport=httpx.MockTransport(lambda _: httpx.Response(500))),
+        max_workers=2,
+    )
+
+    monkeypatch.setattr(client, "fetch_tmax_message", lambda key: key.encode())
+
+    def decode(payload: bytes, latitude: float, longitude: float) -> dict[str, object]:
+        decode_threads.append(threading.get_ident())
+        member = 0 if b"/gec00." in payload else 1
+        return {
+            "temperature_f": 40.0 + member,
+            "issue_time": issue_time,
+            "valid_time": datetime(2026, 1, 6, 6, tzinfo=timezone.utc),
+            "interval_start": datetime(2026, 1, 6, 3, tzinfo=timezone.utc),
+            "interval_end": datetime(2026, 1, 6, 6, tzinfo=timezone.utc),
+            "ensemble_member": member,
+        }
+
+    monkeypatch.setattr(module, "decode_grib_point", decode)
+
+    client.fetch_target_day_members(
+        issue_time=issue_time,
+        target_date=date(2026, 1, 6),
+        station_id="KLGA",
+        latitude=40.77945,
+        longitude=-73.88027,
+        timezone_name="America/New_York",
+        ensemble_members=[0, 1],
+    )
+
+    assert decode_threads
+    assert set(decode_threads) == {caller_thread}
 
 
 def test_decode_grib_point_reads_temperature_and_forecast_times() -> None:
