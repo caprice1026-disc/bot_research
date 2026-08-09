@@ -205,6 +205,13 @@ def command_collect(args: argparse.Namespace) -> int:
     max_runtime_seconds = config.max_runtime_seconds if args.max_seconds is None else args.max_seconds
     if chunk_size <= 0 or request_interval_seconds < 0 or max_runtime_seconds <= 0:
         raise ValueError("chunk size must be positive and timing values must be valid")
+    if config.event_filter not in {"all", "swap"}:
+        raise ValueError(f"unsupported collection event filter: {config.event_filter}")
+    if (args.start_block is None) != (args.end_block is None):
+        raise ValueError("start-block and end-block must be provided together")
+    if args.start_block is not None and (args.start_block < 0 or args.end_block < args.start_block):
+        raise ValueError("block boundaries must be non-negative and ordered")
+    topics = [SWAP_TOPIC] if config.event_filter == "swap" else None
     rpc = _client(config, args.rpc_timeout_seconds, args.rpc_max_retries)
     pool_path = _pool_path(root)
     pool = _load_pool(pool_path) if pool_path.exists() else _resolve_and_save(config, rpc, root)
@@ -229,12 +236,14 @@ def command_collect(args: argparse.Namespace) -> int:
             candidate_end = int(candidate.get("block_end", -1))
         except (TypeError, ValueError):
             candidate_start, candidate_end = -1, -1
+        expected_start_block = args.start_block if args.start_block is not None else candidate_start
+        expected_end_block = args.end_block if args.end_block is not None else candidate_end
         if _checkpoint_matches(
             candidate_for_match,
             config.chain_id,
             pool.pool_address,
-            candidate_start,
-            candidate_end,
+            expected_start_block,
+            expected_end_block,
             chunk_size,
             start_utc,
             end_utc,
@@ -243,6 +252,9 @@ def command_collect(args: argparse.Namespace) -> int:
     if checkpoint is not None:
         start_block = int(checkpoint["block_start"])
         end_block = int(checkpoint["block_end"])
+    elif args.start_block is not None:
+        start_block = args.start_block
+        end_block = args.end_block
     else:
         latest = rpc.latest_block()
         start_block = timestamp_to_block(
@@ -283,6 +295,7 @@ def command_collect(args: argparse.Namespace) -> int:
             end_block,
             chunk_size=chunk_size,
             request_interval_seconds=request_interval_seconds,
+            topics=topics,
         ):
             chunk_end = min(next_block + chunk_size - 1, end_block)
             append_jsonl(raw_path, [asdict(record) for record in chunk])
@@ -322,7 +335,10 @@ def command_collect(args: argparse.Namespace) -> int:
             pool=pool,
             block_start=start_block,
             block_end=end_block,
-            row_counts={"logs": int(checkpoint.get("logs_collected", 0)), "swaps": 0},
+            row_counts={
+                "logs": int(checkpoint.get("logs_collected", 0)),
+                "swaps": int(checkpoint.get("logs_collected", 0)) if topics else 0,
+            },
             checksums={},
             errors=["collection_in_progress: rerun collect to resume from the checkpoint"],
             metadata={
@@ -331,6 +347,7 @@ def command_collect(args: argparse.Namespace) -> int:
                 "next_block": next_block,
                 "request_interval_seconds": request_interval_seconds,
                 "max_runtime_seconds": max_runtime_seconds,
+                "event_filter": config.event_filter,
             },
         )
         write_manifest(root / "results" / "dataset_manifest.json", partial_manifest)
@@ -363,7 +380,11 @@ def command_collect(args: argparse.Namespace) -> int:
         row_counts={"logs": len(records), "swaps": sum(row.get("event_type") == "swap" for row in rows)},
         checksums=checksums,
         errors=errors,
-        metadata={"pilot_start_utc": start_utc, "pilot_end_utc": end_utc},
+        metadata={
+            "pilot_start_utc": start_utc,
+            "pilot_end_utc": end_utc,
+            "event_filter": config.event_filter,
+        },
     )
     manifest_path = root / "results" / "dataset_manifest.json"
     write_manifest(manifest_path, manifest)
@@ -762,6 +783,8 @@ def build_parser() -> argparse.ArgumentParser:
             sub.add_argument("--chunk-size", type=int)
             sub.add_argument("--start-utc")
             sub.add_argument("--end-utc")
+            sub.add_argument("--start-block", type=int)
+            sub.add_argument("--end-block", type=int)
             sub.add_argument("--request-interval-seconds", type=float)
             sub.add_argument("--rpc-timeout-seconds", type=float)
             sub.add_argument("--rpc-max-retries", type=int)

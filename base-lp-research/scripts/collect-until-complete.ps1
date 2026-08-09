@@ -1,8 +1,9 @@
 param(
+    [string]$Root = '',
     [int]$RunSeconds = 90,
     [int]$PauseSeconds = 30,
     [int]$ChunkSize = 500,
-    [double]$RequestIntervalSeconds = 0.1,
+    [double]$RequestIntervalSeconds = 0.25,
     [int]$RpcTimeoutSeconds = 20,
     [int]$RpcMaxRetries = 2
 )
@@ -11,6 +12,10 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $python = Join-Path $projectRoot '.venv\Scripts\python.exe'
 $config = Join-Path $projectRoot 'configs\base_weth_usdc_005.yaml'
+$collectionRoot = $projectRoot
+if (-not [string]::IsNullOrWhiteSpace($Root)) {
+    $collectionRoot = (Resolve-Path -LiteralPath $Root).Path
+}
 
 if (-not (Test-Path -LiteralPath $python)) {
     throw "Python virtual environment was not found: $python"
@@ -24,7 +29,7 @@ Push-Location $projectRoot
 try {
     while ($true) {
         Write-Output ("{0} Starting a bounded collection run." -f (Get-Date -Format o))
-        & $python -m base_lp.cli collect `
+        & $python -m base_lp.cli --root $collectionRoot collect `
             --config $config `
             --chunk-size $ChunkSize `
             --request-interval-seconds $RequestIntervalSeconds `

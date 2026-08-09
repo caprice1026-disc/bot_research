@@ -36,7 +36,8 @@ validation:
   report_lvr_separately: true
   walk_forward: true
 collection:
-  source: dune
+  source: rpc
+  event_filter: swap
   dune_api_env: DUNE_API_KEY
   dune_poll_interval_seconds: 5
   chunk_size: 500

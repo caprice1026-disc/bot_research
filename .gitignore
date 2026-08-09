@@ -209,6 +209,7 @@ base-lp-research/data/raw/
 base-lp-research/data/normalized/
 base-lp-research/data/derived/
 base-lp-research/.cache/
+base-lp-research/runs/
 
 # Keep the human-readable LP report under version control; ignore generated data/results.
 base-lp-research/results/*

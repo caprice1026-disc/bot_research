@@ -50,3 +50,22 @@ Base WETH/USDC 0.05% pool の履歴取得をPublic RPCのブロック走査か�
 - 2026-08-09: 1か月query（2026-06-01〜07-01）は759,888 Swap rowsを返したが、160,000行取得後にconfigured datapoint limitでHTTP 402になった。
 - 2026-08-09: 結果取得を9列へ縮小し、7日query（2026-06-01〜06-08）を実行した。しかし当月上限がすでに尽きており最初の結果ページもHTTP 402となった。実行ID `01KZJDXXQWZ98Z7B5K535TKAPH`をcheckpointに保存し、`collection_error`として停止した。
 - 2026-08-09: `collect-dune`はHTTP 402などを`collection_error`としてmanifestへ保存し、同一実行IDを再利用して新規SQLを発行しない。Dune上限の増額またはreset後に再開する。
+
+## RPC Swap-only fallback continuation
+
+### 目的
+
+Duneのdatapoint上限により、既存の低負荷RPC collectorへ戻し、同じ7日間をSwapイベントだけ取得する。旧RPC生成物を消去せず、`runs/rpc-swap-7d`へ分離する。
+
+### 実装
+
+- `iter_log_chunks` / `collect_logs`にtopic0 filterを追加し、`topics: [[SWAP_TOPIC]]`をJSON-RPCへ渡す。
+- `ResearchConfig.event_filter`を追加し、設定を`source: rpc`、`event_filter: swap`へ戻す。
+- 時刻境界解決が長引く場合に備え、`collect --start-block --end-block`で確認済み境界を直接指定できるようにした。
+- `collect-until-complete.ps1`に`-Root`を追加し、request間隔の既定値を0.25秒へ統一した。
+
+### 実行結果
+
+- 対象境界は公式RPCの少数照会で `46741327`（2026-06-01 00:00:01 UTC）から `47043727`（2026-06-08 00:00:01 UTC）と確認した。
+- `runs/rpc-swap-7d`でbounded runを1回実行し、500 block chunk、513 Swap logsを取得、`next_block=46741827`でpartial checkpointを保存した。
+- 7日分未完了のため、validate/backtest/sweepは未実行。`results/report.md`もpartial状態へ更新した。

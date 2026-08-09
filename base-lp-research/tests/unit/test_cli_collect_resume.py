@@ -21,6 +21,7 @@ def word(value: int) -> str:
 class FakeRpc:
     def __init__(self):
         self.log_ranges = []
+        self.log_topics = []
 
     def latest_block(self):
         return 10
@@ -31,6 +32,7 @@ class FakeRpc:
             start = int(query["fromBlock"], 16)
             end = int(query["toBlock"], 16)
             self.log_ranges.append((start, end))
+            self.log_topics.append(query.get("topics"))
             return [
                 {
                     "blockNumber": hex(start),
@@ -73,6 +75,8 @@ class CollectResumeTests(unittest.TestCase):
                 chunk_size=1,
                 start_utc="2026-07-31T00:00:00Z",
                 end_utc="2026-07-31T00:01:00Z",
+                start_block=1,
+                end_block=3,
                 request_interval_seconds=0.0,
                 rpc_timeout_seconds=None,
                 rpc_max_retries=None,
@@ -97,6 +101,7 @@ class CollectResumeTests(unittest.TestCase):
                 self.assertEqual(command_collect(args), 0)
 
             self.assertEqual(fake_rpc.log_ranges, [(1, 1), (2, 2), (3, 3)])
+            self.assertEqual(fake_rpc.log_topics, [[[SWAP_TOPIC]]] * 3)
             self.assertEqual(
                 json.loads((root / "results" / "dataset_manifest.json").read_text(encoding="utf-8"))["status"],
                 "success",
