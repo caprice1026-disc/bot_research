@@ -213,4 +213,5 @@ G3: gasシナリオとswap frictionを含めても優位性が残るか。残ら
 - `collect` はデフォルト500 block、RPC timeout 20秒、retry 2回、request間隔0.25秒、1回90秒の実行上限とした。
 - `results/collection_checkpoint.json` を chunk 完了ごとに更新し、同じ pool・block範囲・chunk設定で再実行した場合は `next_block` から再開する。中断とcheckpoint更新の境界で同じchunkを再取得しても stable key で重複追加しない。
 - 取得途中は `dataset_manifest.status=partial` とし、backtestが未完成データを成功扱いしないようにした。全範囲完了後だけ Parquet と `status=success` を生成する。
-- 公式RPCに対する実ネットワークの長期pilotはまだ実行せず、unit/integration testで再開と負荷制御の契約を固定した。長期実行は同じCLIを繰り返す運用とする。
+- 同じUTC範囲のcheckpointを再利用する場合は、保存済み `block_start` / `block_end` を使い、timestamp→block解決のRPCを繰り返さない。古いcheckpointにはpartial manifestのUTC metadataをfallbackとして使う。
+- 公式RPCに対する長期pilotはbounded runを開始し、複数回の実行で `next_block=45405627` まで進んだ。全範囲完了前なので、unit/integration testとcheckpointを併用して同じCLIを繰り返す運用とする。

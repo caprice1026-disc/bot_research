@@ -63,3 +63,22 @@ def test_polymarket_client_searches_closed_markets_by_query() -> None:
     )
 
     assert api.search_markets("New York temperature") == [{"id": "m1"}, {"id": "m2"}]
+
+
+def test_polymarket_client_preserves_optional_historical_bid_and_ask_fields() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={"history": {"yes-token": [{"t": 1767351600, "p": 0.40, "b": 0.39, "a": 0.41}]}},
+        )
+
+    api = PolymarketClient(
+        gamma_base_url="https://gamma.test",
+        clob_base_url="https://clob.test",
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+    )
+
+    point = api.fetch_price_history("m1", "yes-token", 1, 2)[0]
+
+    assert point.best_bid == 0.39
+    assert point.best_ask == 0.41

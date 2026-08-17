@@ -23,8 +23,8 @@ strategy:
   safety_margin_usd: 0.01
 capital_usd: 5000
 pilot:
-  start_utc: "2026-05-01T00:00:00Z"
-  end_utc: "2026-07-31T23:59:59Z"
+  start_utc: "2026-06-01T00:00:00Z"
+  end_utc: "2026-06-08T00:00:00Z"
 cost_model:
   include_l2_execution_fee: true
   include_l1_security_fee: true
@@ -36,6 +36,10 @@ validation:
   report_lvr_separately: true
   walk_forward: true
 collection:
+  source: rpc
+  event_filter: swap
+  dune_api_env: DUNE_API_KEY
+  dune_poll_interval_seconds: 5
   chunk_size: 500
   request_interval_seconds: 0.25
   rpc_timeout_seconds: 20

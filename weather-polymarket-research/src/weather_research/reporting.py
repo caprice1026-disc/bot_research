@@ -15,7 +15,12 @@ def _trade_row(trade: Any) -> dict[str, Any]:
         "market_id": trade.market_id,
         "trade_time": trade.trade_time.isoformat(),
         "model_probability": trade.model_probability,
+        "ensemble_probability": trade.ensemble_probability,
+        "gaussian_probability": trade.gaussian_probability,
+        "forecast_member_count": trade.forecast_member_count,
         "observed_ask": trade.observed_ask,
+        "observed_mid": trade.observed_mid,
+        "price_source": trade.price_source,
         "executable_price": trade.executable_price,
         "outcome_yes": trade.outcome_yes,
         "quantity": trade.quantity,
@@ -25,7 +30,14 @@ def _trade_row(trade: Any) -> dict[str, Any]:
     }
 
 
-def write_backtest_artifacts(result: BacktestResult, results_dir: Path, report_path: Path) -> None:
+def write_backtest_artifacts(
+    result: BacktestResult,
+    results_dir: Path,
+    report_path: Path,
+    *,
+    suffix: str = "",
+    metadata: dict[str, Any] | None = None,
+) -> None:
     results_dir.mkdir(parents=True, exist_ok=True)
     rows = [_trade_row(trade) for trade in result.trades]
     summary = {
@@ -35,7 +47,9 @@ def write_backtest_artifacts(result: BacktestResult, results_dir: Path, report_p
         "gross_pnl": sum(row["gross_pnl"] for row in rows),
         "net_pnl": sum(row["net_pnl"] for row in rows),
     }
-    (results_dir / "backtest_summary.json").write_text(
+    if metadata:
+        summary.update(metadata)
+    (results_dir / f"backtest_summary{suffix}.json").write_text(
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
@@ -43,7 +57,12 @@ def write_backtest_artifacts(result: BacktestResult, results_dir: Path, report_p
         "market_id",
         "trade_time",
         "model_probability",
+        "ensemble_probability",
+        "gaussian_probability",
+        "forecast_member_count",
         "observed_ask",
+        "observed_mid",
+        "price_source",
         "executable_price",
         "outcome_yes",
         "quantity",
@@ -51,7 +70,7 @@ def write_backtest_artifacts(result: BacktestResult, results_dir: Path, report_p
         "net_pnl",
         "net_edge",
     ]
-    with (results_dir / "trades.csv").open("w", newline="", encoding="utf-8") as handle:
+    with (results_dir / f"trades{suffix}.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)

@@ -124,6 +124,7 @@ def iter_log_chunks(
     to_block: int,
     chunk_size: int = 2_000,
     request_interval_seconds: float = 0.0,
+    topics: list[str] | None = None,
 ) -> Iterator[list[LogRecord]]:
     if from_block > to_block:
         raise ValueError("from_block must not exceed to_block")
@@ -134,15 +135,16 @@ def iter_log_chunks(
     batch_enabled = hasattr(rpc, "batch_request")
     for chunk_start in range(from_block, to_block + 1, chunk_size):
         chunk_end = min(chunk_start + chunk_size - 1, to_block)
+        log_filter = {
+            "address": pool_address,
+            "fromBlock": hex(chunk_start),
+            "toBlock": hex(chunk_end),
+        }
+        if topics is not None:
+            log_filter["topics"] = [topics]
         raw_logs = rpc.request(
             "eth_getLogs",
-            [
-                {
-                    "address": pool_address,
-                    "fromBlock": hex(chunk_start),
-                    "toBlock": hex(chunk_end),
-                }
-            ],
+            [log_filter],
         )
         pacer.pause()
         block_numbers = sorted({hex_to_int(str(raw["blockNumber"])) for raw in raw_logs})
@@ -162,6 +164,7 @@ def collect_logs(
     to_block: int,
     chunk_size: int = 2_000,
     request_interval_seconds: float = 0.0,
+    topics: list[str] | None = None,
 ) -> list[LogRecord]:
     records: list[LogRecord] = []
     for chunk in iter_log_chunks(
@@ -171,6 +174,7 @@ def collect_logs(
         to_block,
         chunk_size=chunk_size,
         request_interval_seconds=request_interval_seconds,
+        topics=topics,
     ):
         records.extend(chunk)
     records.sort(key=lambda record: record.stable_key)
