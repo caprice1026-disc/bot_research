@@ -217,6 +217,11 @@ base-lp-research/results/*
 
 weather-polymarket-research/data/raw/
 
+# Binance BTCUSDT futures research: verified but reproducible local downloads.
+binance-btcusdt-futures-research/raw/
+binance-btcusdt-futures-research/data/
+binance-btcusdt-futures-research/metadata/
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
