@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "checked_at_utc": "2026-08-17T17:21:00.348011+00:00",
+  "missing_artifacts": [],
+  "invalid_images": [],
+  "invalid_tables": [],
+  "broken_report_links": [],
+  "artifact_hash_mismatches": [],
+  "input_archive_missing": [],
+  "input_archive_hash_mismatches": [],
+  "input_quality_mismatches": [],
+  "provenance_violations": [],
+  "figure_count": 13,
+  "table_count": 24
+}

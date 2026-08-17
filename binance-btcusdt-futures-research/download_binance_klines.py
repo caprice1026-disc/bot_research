@@ -11,6 +11,7 @@ import io
 import json
 from pathlib import Path
 import re
+import math
 import sys
 import time
 from typing import Iterable, Sequence
@@ -117,6 +118,8 @@ def download_bytes(url: str, attempts: int = 3) -> bytes:
             last_error = error
             if attempt + 1 < attempts:
                 time.sleep(2**attempt)
+    if isinstance(last_error, HTTPError):
+        raise last_error
     raise RuntimeError(f"download failed after {attempts} attempts: {url}: {last_error}")
 
 
@@ -174,6 +177,16 @@ def normalize_and_validate(
         open_ms = int(row[0])
         if start_ms <= open_ms < end_ms:
             item = dict(zip(RAW_COLUMNS, row, strict=True))
+            close_ms = int(item["close_time_ms"])
+            if close_ms != open_ms + INTERVAL_MS[interval] - 1:
+                raise ValueError(f"invalid {interval} close_time_ms for {open_ms}")
+            numeric = {name: float(item[name]) for name in ("open", "high", "low", "close", "volume", "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume")}
+            if not all(math.isfinite(value) for value in numeric.values()):
+                raise ValueError(f"non-finite {interval} kline value for {open_ms}")
+            if numeric["high"] < max(numeric["open"], numeric["close"]) or numeric["low"] > min(numeric["open"], numeric["close"]):
+                raise ValueError(f"invalid {interval} OHLC bounds for {open_ms}")
+            if any(numeric[name] < 0 for name in ("volume", "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume")):
+                raise ValueError(f"negative {interval} volume/trade value for {open_ms}")
             item["open_time_utc"] = open_time_utc(open_ms)
             normalized.append(item)
 
@@ -246,6 +259,8 @@ def verify_existing(end_date: date, root: Path) -> dict[str, int]:
         path = root / "data" / f"{SYMBOL}-{interval}-365d.csv"
         with path.open(encoding="utf-8", newline="") as handle:
             rows = list(csv.DictReader(handle))
+        if any(row.get("open_time_utc") != open_time_utc(int(row["open_time_ms"])) for row in rows):
+            raise ValueError(f"open_time_utc is inconsistent in {path}")
         validated = normalize_and_validate(
             [[row[column] for column in RAW_COLUMNS] for row in rows], interval, start_ms, end_ms
         )

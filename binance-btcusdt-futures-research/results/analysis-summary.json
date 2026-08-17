@@ -1,0 +1,307 @@
+{
+  "descriptive": {
+    "return_kurtosis": {
+      "15m": 16.342411295899396,
+      "1h": 57.503729999695494,
+      "1d": 28.63189632949375
+    },
+    "volatility_spillover": {
+      "count": 763,
+      "mean_abs_forward_4h": 0.004719179091774993,
+      "directional_continuation_rate": 0.4600262123197903,
+      "continuation_ci95_low": 0.4108453473132372,
+      "continuation_ci95_high": 0.5032765399737876,
+      "mean_abs_ci95_low": 0.004179108125763528,
+      "mean_abs_ci95_high": 0.00529421053656427,
+      "status": "ok"
+    },
+    "risk": {
+      "bootstrap_samples": 500.0,
+      "median_mdd": -0.6891020017744585,
+      "mdd_5pct": -0.8422037343534536,
+      "half_equity_probability": 0.822
+    },
+    "derivatives": {
+      "all": {
+        "count": 35036,
+        "mean_forward_1h": -7.120938184382742e-05,
+        "median_forward_1h": 0.0,
+        "positive_rate": 0.4999429158579747,
+        "mean_ci95_low": -0.00017421588747383094,
+        "mean_ci95_high": 1.9036741314287336e-05,
+        "status": "ok"
+      },
+      "sharp_drop": {
+        "count": 1052,
+        "mean_forward_1h": 0.00025995490574113613,
+        "median_forward_1h": 0.0004973624486984932,
+        "positive_rate": 0.5399239543726235,
+        "mean_ci95_low": -0.00019195510826953318,
+        "mean_ci95_high": 0.0007719737929303287,
+        "status": "ok"
+      },
+      "oi_drop": {
+        "count": 3504,
+        "mean_forward_1h": -3.9964935967727224e-05,
+        "median_forward_1h": 3.892011932836605e-05,
+        "positive_rate": 0.5082762557077626,
+        "mean_ci95_low": -0.0002777865876639445,
+        "mean_ci95_high": 0.00021763068473876768,
+        "status": "ok"
+      },
+      "funding_top_decile": {
+        "count": 3360,
+        "mean_forward_1h": -0.0003175335364524374,
+        "median_forward_1h": -9.036646875796258e-05,
+        "positive_rate": 0.4857142857142857,
+        "mean_ci95_low": -0.0005668386319480445,
+        "mean_ci95_high": -1.811810365915883e-05,
+        "status": "ok"
+      },
+      "top_trader_long_ratio_top_decile": {
+        "count": 3504,
+        "mean_forward_1h": -9.167916920520043e-05,
+        "median_forward_1h": 0.00018020919190480685,
+        "positive_rate": 0.5236872146118722,
+        "mean_ci95_low": -0.0005070321813303661,
+        "mean_ci95_high": 0.0003117601992186074,
+        "status": "ok"
+      },
+      "global_long_ratio_top_decile": {
+        "count": 3504,
+        "mean_forward_1h": -0.00018695818132707944,
+        "median_forward_1h": 0.0001648509257483664,
+        "positive_rate": 0.5219748858447488,
+        "mean_ci95_low": -0.0005987032247932928,
+        "mean_ci95_high": 0.00014189213740611618,
+        "status": "ok"
+      },
+      "global_long_ratio_bottom_decile": {
+        "count": 3504,
+        "mean_forward_1h": -1.1268840221497173e-05,
+        "median_forward_1h": -4.462481900243e-05,
+        "positive_rate": 0.4925799086757991,
+        "mean_ci95_low": -0.0002030105894773869,
+        "mean_ci95_high": 0.00019837800790494607,
+        "status": "ok"
+      },
+      "taker_buy_ratio_top_decile": {
+        "count": 3502,
+        "mean_forward_1h": 0.0006506279673792745,
+        "median_forward_1h": 0.0005115357590620849,
+        "positive_rate": 0.5985151342090235,
+        "mean_ci95_low": 0.0004926922288726412,
+        "mean_ci95_high": 0.0008037058772267677,
+        "status": "ok"
+      },
+      "taker_buy_ratio_bottom_decile": {
+        "count": 3504,
+        "mean_forward_1h": -0.0007283378039289343,
+        "median_forward_1h": -0.0004872629819112934,
+        "positive_rate": 0.410958904109589,
+        "mean_ci95_low": -0.0009209266430247431,
+        "mean_ci95_high": -0.0005807592494307187,
+        "status": "ok"
+      },
+      "liquidation_proxy": {
+        "count": 161,
+        "mean_forward_1h": 0.0004956245828651844,
+        "median_forward_1h": 0.00033385104747389664,
+        "positive_rate": 0.5341614906832298,
+        "mean_ci95_low": -0.000507332960728757,
+        "mean_ci95_high": 0.0024045790085542723,
+        "status": "ok"
+      }
+    },
+    "cme_gap_status": "insufficient_data: Binance Public Data has no official CME futures series",
+    "liquidation_status": "proxy_only: no official historical liquidation archive"
+  },
+  "regimes": {
+    "selected_hmm_states": 3,
+    "selected_gmm_states": 4,
+    "hmm_seed_mean_ari": 0.9993751207324836,
+    "hmm_seed_min_ari": 0.9989585345541391,
+    "hmm_full_sample_loglik_per_row": -10.7065846995,
+    "pelt_primary_change_points": 14,
+    "descriptive_warning": "full-sample regimes use future distribution information and are not trading signals"
+  },
+  "walk_forward": {
+    "hmm_state_count_locked_from_initial_window": 4,
+    "gmm_state_count_locked_from_initial_window": 4,
+    "prediction_rows": 39791,
+    "first_prediction": "2022-02-01T00:00:00+00:00",
+    "last_prediction": "2026-08-16T23:00:00+00:00",
+    "future_reference_violations": 0,
+    "prediction_feature_unavailable_rows": 1,
+    "hmm_mean_max_probability": 0.9715414008646615,
+    "gmm_mean_max_probability": 0.9245143821124935,
+    "hmm_mean_monthly_seed_ari": 0.6421715088768138,
+    "gmm_mean_monthly_seed_ari": 0.9157942519943678,
+    "hmm_mean_retraining_ari": 0.71592210260035,
+    "gmm_mean_retraining_ari": 0.7698986158251299,
+    "fee5_performance": {
+      "trend": {
+        "total_return": -0.4026304690393385,
+        "sharpe": -0.2261442983526079,
+        "max_drawdown": -0.6332763402173989
+      },
+      "trend_gated": {
+        "total_return": -0.6760345842296721,
+        "sharpe": -0.6996912837191704,
+        "max_drawdown": -0.6910001158397893
+      },
+      "trend_gmm_gated": {
+        "total_return": -0.8867555357995596,
+        "sharpe": -1.2404596093995683,
+        "max_drawdown": -0.8885915000178899
+      },
+      "reversion": {
+        "total_return": -0.991282621827812,
+        "sharpe": -2.0793256329087546,
+        "max_drawdown": -0.9923661003398498
+      },
+      "reversion_gated": {
+        "total_return": -0.9695197928081586,
+        "sharpe": -2.238307853929092,
+        "max_drawdown": -0.972514447807857
+      },
+      "reversion_gmm_gated": {
+        "total_return": -0.9651500699493427,
+        "sharpe": -2.1398330456835946,
+        "max_drawdown": -0.9676935394742426
+      },
+      "buy_hold": {
+        "total_return": 0.6301325300145135,
+        "sharpe": 0.2145395708987249,
+        "max_drawdown": -0.6739257810463717
+      }
+    }
+  },
+  "quality": {
+    "15m": {
+      "rows": 35040,
+      "first": "2025-08-17T00:15:00+00:00",
+      "last": "2026-08-17T00:00:00+00:00",
+      "duplicates": 0,
+      "interval_gaps": 0,
+      "time_semantics": "bar_close_availability_utc"
+    },
+    "1h": {
+      "rows": 58080,
+      "first": "2020-01-01T01:00:00+00:00",
+      "last": "2026-08-17T00:00:00+00:00",
+      "duplicates": 0,
+      "interval_gaps": 0,
+      "time_semantics": "bar_close_availability_utc"
+    },
+    "1d": {
+      "rows": 2420,
+      "first": "2020-01-02T00:00:00+00:00",
+      "last": "2026-08-17T00:00:00+00:00",
+      "duplicates": 0,
+      "interval_gaps": 0,
+      "time_semantics": "bar_close_availability_utc"
+    },
+    "funding": {
+      "rows": 1047,
+      "first": "2025-08-17T00:00:00+00:00",
+      "last": "2026-07-31T16:00:00+00:00",
+      "duplicates": 0
+    },
+    "metrics": {
+      "rows": 105113,
+      "first": "2025-08-17T00:00:00+00:00",
+      "last": "2026-08-16T23:55:00+00:00",
+      "duplicates": 0
+    },
+    "input_manifest": {
+      "kline_1h": {
+        "row_count": 58080,
+        "first_time": "2020-01-01T00:00:00+00:00",
+        "last_time": "2026-08-16T23:00:00+00:00",
+        "duplicates": 0,
+        "interval_gaps": 0,
+        "missing_intervals": 0,
+        "status": "complete",
+        "path": "data\\research\\BTCUSDT-1h-2020-01-01_2026-08-16.csv"
+      },
+      "kline_1d": {
+        "row_count": 2420,
+        "first_time": "2020-01-01T00:00:00+00:00",
+        "last_time": "2026-08-16T00:00:00+00:00",
+        "duplicates": 0,
+        "interval_gaps": 0,
+        "missing_intervals": 0,
+        "status": "complete",
+        "path": "data\\research\\BTCUSDT-1d-2020-01-01_2026-08-16.csv"
+      },
+      "funding_rate": {
+        "row_count": 1047,
+        "first_time": "2025-08-17T00:00:00+00:00",
+        "last_time": "2026-07-31T16:00:00+00:00",
+        "duplicates": 0,
+        "interval_gaps": 0,
+        "missing_intervals": 0,
+        "status": "insufficient_data",
+        "path": "data\\research\\BTCUSDT-funding-2025-08-17_2026-08-16.csv",
+        "note": "monthly archive publication can lag the analysis end date",
+        "missing_periods": []
+      },
+      "metrics": {
+        "row_count": 105113,
+        "first_time": "2025-08-17T00:00:00+00:00",
+        "last_time": "2026-08-16T23:55:00+00:00",
+        "duplicates": 0,
+        "interval_gaps": 3,
+        "missing_intervals": 7,
+        "status": "success_with_warnings",
+        "path": "data\\research\\BTCUSDT-metrics-2025-08-17_2026-08-16.csv",
+        "timestamp_adjustments_within_5s": 3,
+        "cross_archive_boundary_duplicates_removed": 1,
+        "note": "official source gaps are preserved without interpolation",
+        "missing_periods": []
+      }
+    }
+  },
+  "figures": [
+    "01_atr_autocorrelation.png",
+    "01_return_qq.png",
+    "02_seasonality_heatmap.png",
+    "03_candle_anatomy.png",
+    "04_return_volume_scatter.png",
+    "04_volume_profile.png",
+    "05_mtf_context.png",
+    "06_mdd_bootstrap.png",
+    "06_triple_barrier.png",
+    "07_derivatives_events.png",
+    "08_descriptive_hmm_regimes.png",
+    "08_pelt_change_points.png",
+    "09_walk_forward_performance.png"
+  ],
+  "tables": [
+    "01_extreme_candle_aftermath.csv",
+    "01_return_distribution.csv",
+    "02_breakout_fake_rate.csv",
+    "02_seasonality_heatmap.csv",
+    "02_streak_markov.csv",
+    "03_candle_patterns.csv",
+    "03_weekend_dislocation_proxy.csv",
+    "04_volume_breakout_survival.csv",
+    "04_volume_profile.csv",
+    "05_compression_breakout.csv",
+    "05_fractal_cross_timeframe.csv",
+    "05_mtf_rsi_context.csv",
+    "06_mdd_bootstrap.csv",
+    "06_triple_barrier.csv",
+    "07_derivatives_events.csv",
+    "08_pelt_change_points.csv",
+    "08_regime_dwell_times.csv",
+    "08_regime_model_selection.csv",
+    "08_regime_state_statistics.csv",
+    "09_walk_forward_monthly.csv",
+    "09_walk_forward_prediction_provenance.csv",
+    "09_walk_forward_state_outcomes.csv",
+    "09_walk_forward_strategy_performance.csv",
+    "09_walk_forward_transition_matrix.csv"
+  ]
+}

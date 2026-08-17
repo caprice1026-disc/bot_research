@@ -24,9 +24,12 @@ Python 3.13、pandas、NumPy、SciPy、Matplotlib、Seaborn、scikit-learn、hmm
 
 - [x] (2026-08-18 00:00Z) 利用者が研究品質EDA、walk-forward、レポート、main pushを承認し、テストコード不要を指定した。
 - [x] (2026-08-18 00:00Z) Binance Public Dataで月次Funding Rate、日次Metrics、対象期間の実在と列を確認した。
-- [ ] 研究ブランチと依存環境を準備し、入力データ取得を実行する。
-- [ ] 正規化・特徴量・七章EDA・レジーム・walk-forwardを実装する。
-- [ ] 全分析を実行し、レポートと図表を生成・監査する。
+- [x] (2026-08-18 00:25Z) `codex/btc-regime-eda`を`origin/main`から作成し、Python 3.13環境と依存を準備した。
+- [x] (2026-08-18 01:05Z) 1時間足58,080行、日足2,420行、Funding 1,047行、Metrics 105,113行を公式SHA-256検証付きで取得した。
+- [x] (2026-08-18 01:35Z) 正規化・特徴量・七章EDA・HMM/GMM・L2 PELTを実装し実行した。
+- [x] (2026-08-18 02:35Z) レビューで始値時刻索引の先読みを検出し、足終了利用可能時刻、月境界ラベル、GMM、MAE/MFE、直接provenance監査を修正した。
+- [x] (2026-08-18 02:37Z) 2022-02以降39,791時間のHMM/GMM月次walk-forwardを4スレッドで実行し、未来参照0件を確認した。
+- [x] (2026-08-18 02:38Z) 日本語レポート、表24点、図13点を生成し、公式ZIP・成果物hash、画像、リンク、入力品質、時点整合の監査に合格した。
 - [ ] コードとレポートをmainへ統合し、remote mainを検証する。
 
 ## Surprises & Discoveries
@@ -35,6 +38,14 @@ Python 3.13、pandas、NumPy、SciPy、Matplotlib、Seaborn、scikit-learn、hmm
   Evidence: `data/futures/um/monthly/` の一覧に`fundingRate`、`data/futures/um/daily/`の一覧に`metrics`があり、2025-08の実ファイルを取得して列を確認した。
 - Observation: 公式アーカイブに`liquidationSnapshot`はなく、候補URLも404である。
   Evidence: 日次・月次トップレベル一覧に清算カテゴリがなく、2026-08-16の候補チェックサムが404を返した。
+- Observation: 直近1年の公式Metricsには7本の5分足欠測と3行の2秒時刻ずれがある。
+  Evidence: SHA-256検証済み365日分を結合すると105,113行で、期待105,120行との差は7行だった。2025-08-29、2026-02-23、2026-08-12に欠測があり、2026-02-24、03-07、03-18に2秒ずれがあった。
+- Observation: 日次2,420点に対するPELTのRBFコストは5分で完了せず、HMM/GMMではなく変化点探索がボトルネックだった。
+  Evidence: HMM 3状態20反復は1.03秒、GMM 3状態1初期値は0.89秒だった一方、HMM/GMM成果物生成後のRBF PELTが300秒でタイムアウトしたため、平均ベクトル変化を検出するL2コストへ変更した。
+- Observation: レジームの統計的分離は安定していたが、単純な診断戦略の収益改善にはつながらなかった。
+  Evidence: 全期間3状態HMMの5 seed間平均ARIは0.9994だった一方、月次4状態HMMのseed間平均ARIは0.6422まで低下した。5bpsのtrend、trend_gated、reversion、reversion_gatedのtotal returnはそれぞれ-40.26%、-67.60%、-99.13%、-96.95%で、buy-and-holdの63.01%を下回った。
+- Observation: Klineの始値時刻を利用可能時刻としていた初版は、終値・高安・出来高を1本早く使う先読みになっていた。
+  Evidence: CSVの`close_time_ms + 1`を計算索引に変更し、各予測行について`model_fit_end < feature_available_at < prediction_for_end`を保存・直接監査した。修正後39,791行の違反は0件だった。
 
 ## Decision Log
 
@@ -47,10 +58,13 @@ Python 3.13、pandas、NumPy、SciPy、Matplotlib、Seaborn、scikit-learn、hmm
 - Decision: 新しいテストコードを作らず、manifest、データ品質検査、再実行、成果物照合で検証する。
   Rationale: 研究開発としての利用者の明示指示を優先しつつ、結果の再現性は落とさない。
   Date/Author: 2026-08-18 / Codexと利用者。
+- Decision: 月次walk-forwardを最大4スレッドで並列化し、各数値計算ライブラリの内部スレッドは1に制限する。
+  Rationale: 月ごとの学習は独立しており、時点整合性と固定seedを維持したまま計算時間を短縮できる。利用者が並列計算を許可した。
+  Date/Author: 2026-08-18 / Codexと利用者。
 
 ## Outcomes & Retrospective
 
-未完了。最終的なデータ範囲、モデル選択、主要発見、限界、成果物、コミット、remote mainの状態を完了時に記録する。
+分析部分は完了した。1時間足58,080行と日足2,420行は欠測0、直近1年の15分足35,040行も欠測0だった。Metricsは公式欠測7本を保持し、Fundingは月次公開済みの2026-07-31までである。全期間比較はHMM 3状態、GMM 4状態を選択し、PELTは14変化点を得た。walk-forwardは初期窓でHMM/GMMとも4状態に固定し、2022-02から2026-08まで39,791予測、未来参照0、平均最大状態確率はHMM 0.9715、GMM 0.9255だった。ただし月次HMM seed安定性は0.6422に低下し、5bpsの診断戦略は全てbuy-and-holdを下回った。分類安定性は投資優位性の証明ではない。CME窓は公式入力不足、清算は代理条件のみである。Git統合とremote main確認は未完了である。
 
 ## Context and Orientation
 
@@ -71,7 +85,7 @@ Python 3.13、pandas、NumPy、SciPy、Matplotlib、Seaborn、scikit-learn、hmm
     .\.venv\Scripts\python.exe -m pip install -e .
     .\.venv\Scripts\python.exe collect_research_inputs.py --config configs/research.json
 
-受入条件は、1時間足と日足が2020-01-01から2026-08-16まで連続し、直近15分足が35,040行、Metricsが5分間隔で直近1年を覆い、Fundingの実際の終端がmanifestへ明示されることである。不足や404は黙って補間せず、データごとの`complete`または`insufficient_data`を記録する。
+受入条件は、1時間足と日足が2020-01-01から2026-08-16まで連続し、直近15分足が35,040行、Metricsの公式欠測と時刻ずれがmanifestへ定量記録され、Fundingの実際の終端が明示されることである。不足や404は黙って補間せず、データごとの`complete`、`success_with_warnings`、`insufficient_data`を記録する。
 
 ## Milestone 2: 特徴量と記述的EDAを作る
 
@@ -124,8 +138,12 @@ PELTは標準化した収益率とrealized volatilityに適用し、penalty感�
 
 ## Interfaces and Dependencies
 
-`collect_research_inputs.py`は`--config`を受け、`metadata/research-inputs.json`を返す。`run_research.py`は`--config`と`--stage {descriptive,regimes,walk-forward,all,verify}`を受ける。`data.py`は`load_klines(interval) -> DataFrame`、`features.py`は`build_hourly_features(frame) -> DataFrame`、`regimes.py`は`fit_regime_models(features, config) -> RegimeResult`、`walk_forward.py`は`run_walk_forward(features, config) -> DataFrame`、`reporting.py`は`build_report(results, output_dir) -> Path`を提供する。
+`collect_research_inputs.py`は`--config`を受け、`metadata/research-inputs.json`を返す。`run_research.py`は`--config`と`--stage {descriptive,regimes,walk-forward,report,all,verify}`を受ける。`data.py`は`load_klines(interval) -> DataFrame`、`features.py`は`build_hourly_features(frame) -> DataFrame`、`regimes.py`は`fit_regime_models(features, config) -> RegimeResult`、`walk_forward.py`は`run_walk_forward(features, config) -> DataFrame`、`reporting.py`は`build_report(results, output_dir) -> Path`を提供する。
 
 ## Change Note
 
 2026-08-18: 利用者が研究品質EDA、walk-forward、レポート、main push、新規テスト不要を指定したため、データ取得からGit統合までを一つの自己完結した計画として作成した。
+
+2026-08-18: 公式入力の欠測・公開遅延、PELT RBFの計算量、4スレッドwalk-forward、実測結果、成果物監査を反映した。
+
+2026-08-18: コードレビューで発見したKline利用可能時刻の先読みを修正し、GMM walk-forward、予測provenance、公式ZIP・成果物hash監査、追加EDA定義を反映して全結果を再生成した。

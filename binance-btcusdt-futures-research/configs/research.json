@@ -1,0 +1,16 @@
+{
+  "symbol": "BTCUSDT",
+  "history_start": "2020-01-01",
+  "detail_start": "2025-08-17",
+  "end_date_exclusive": "2026-08-17",
+  "random_seed": 42,
+  "candidate_states": [3, 4],
+  "stability_seeds": [42, 43, 44, 45, 46],
+  "walk_forward_start": "2022-01-01",
+  "walk_forward_train_days": 730,
+  "walk_forward_workers": 4,
+  "fee_bps": [0, 5, 10],
+  "bootstrap_samples": 500,
+  "bootstrap_block_bars": 96,
+  "min_cell_count": 30
+}

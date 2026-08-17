@@ -1,28 +1,43 @@
-# Binance BTCUSDT USDⓈ-M Futures Research Data
+# BTCUSDT USD-M Futures Research
 
-Binance公式の公開アーカイブから、`BTCUSDT` 無期限先物の確定済み直近365 UTC日を取得する再現用ディレクトリです。`data/` には日足・1時間足・15分足の結合済みCSVが置かれますが、再生成可能な大容量データのためGitには追加しません。
+Binance Public Data を用いる BTCUSDT USD-M perpetual futures の再現可能なEDA・HMM/GMMレジーム分析・月次walk-forward検証です。生データ、正規化CSV、実行時メタデータは容量と再取得可能性のためGit管理外です。分析結果・レポート・実行コードはGit管理します。
 
-## 取得
+## 対象範囲
 
-リポジトリのルートから次を実行します。
+- 15分足: 2025-08-17 から 2026-08-16（365日）
+- 1時間足・日足: 2020-01-01 から 2026-08-16
+- Funding Rate と Binance Metrics: 15分足と同じ期間（公開遅延・公式欠損は補間しない）
+- 時刻の意味: 各Klineの終値が利用可能になるUTC境界 (`close_time + 1ms`)
 
-```powershell
-python .\binance-btcusdt-futures-research\download_binance_klines.py --end-date YYYY-MM-DD
-```
-
-`--end-date` は範囲に含めないUTC日です。たとえば `2026-08-17` は、2025-08-17 00:00:00 UTCから2026-08-16 23:59:59.999 UTCまでを取得します。月の全期間が対象なら月次ZIP、それ以外は日次ZIPを使い、各ZIPは公式 `.CHECKSUM` とSHA-256照合してから結合します。
-
-出力は次の通りです。
-
-- `data/BTCUSDT-1d-365d.csv` — 365行
-- `data/BTCUSDT-1h-365d.csv` — 8,760行
-- `data/BTCUSDT-15m-365d.csv` — 35,040行
-- `metadata/fetch-YYYY-MM-DD.json` — ソースURL、SHA-256、行数、取得時刻
-
-既存CSVを再ダウンロードせずに検証するには、同じ `--end-date` に `--verify-only` を追加します。
+## 再現手順
 
 ```powershell
-python .\binance-btcusdt-futures-research\download_binance_klines.py --end-date YYYY-MM-DD --verify-only
+cd .\binance-btcusdt-futures-research
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.lock
+.\.venv\Scripts\python.exe -m pip install -e . --no-deps
+
+# まず365日分の全足を取得する
+.\.venv\Scripts\python.exe download_binance_klines.py --end-date 2026-08-17
+.\.venv\Scripts\python.exe download_binance_klines.py --end-date 2026-08-17 --verify-only
+
+# 長期Kline・Funding・Metricsを収集してEDAを実行する
+.\.venv\Scripts\python.exe collect_research_inputs.py --config configs/research.json
+.\.venv\Scripts\python.exe run_research.py --config configs/research.json --stage all
+.\.venv\Scripts\python.exe run_research.py --config configs/research.json --stage verify
+.\.venv\Scripts\python.exe run_research.py --config configs/research.json --stage reproduce-check
+.\.venv\Scripts\python.exe run_research.py --config configs/research.json --stage report
+.\.venv\Scripts\python.exe run_research.py --config configs/research.json --stage verify
 ```
 
-CSVは `open_time_utc` と、元のミリ秒開始時刻を含むBinance Klineの12列を含みます。開始時刻はUTC昇順かつ重複なしで、全期間の足が連続することを検証します。
+`--stage all` は前回の要約を再利用せず、同じ設定で成果物一覧を再構築します。月次fitはCPU 4ワーカー、各ライブラリの内部スレッドは1に制限します。GPUはこのデータ規模・利用ライブラリでは優位性がないため使用しません。
+
+## 出力
+
+- `results/report.md`: 方法・限界・主要テーブルを含むレポート
+- `results/tables/`: CSVの集計結果
+- `results/figures/`: PNG図表
+- `results/manifest.json`: 入力・設定・成果物のSHA-256
+- `results/verification.json`: 画像・CSV・入力ハッシュ・直接将来参照監査
+
+Fundingの遅延、Metricsの公式欠損、清算・CMEギャップ価格の不在は、埋めずに `insufficient_data` または明示的な代理指標として記録します。結果は探索的研究であり、売買推奨や実運用の成績ではありません。

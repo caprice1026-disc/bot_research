@@ -1,0 +1,8 @@
+model,state,episodes,mean_hours,median_hours,max_hours
+HMM,bear_stress,829,13.48854041013269,2.0,818
+HMM,bull_trend,793,32.94325346784363,22.0,178
+HMM,quiet_range,456,45.18640350877193,32.0,343
+GMM,bear_stress,1831,4.326597487711633,1.0,377
+GMM,bull_trend,3520,4.205397727272727,2.0,149
+GMM,quiet_range,2693,5.913479391013739,3.0,65
+GMM,volatile_transition,2579,7.46839860411012,3.0,119

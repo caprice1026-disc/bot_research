@@ -1,0 +1,8 @@
+{
+  "status": "success",
+  "canonical_precision_decimals": 8,
+  "before_sha256": "066e63bdbc478bd0b207b3e521289b3e13d934674e7888d8c1b44cd0681dc31e",
+  "after_sha256": "066e63bdbc478bd0b207b3e521289b3e13d934674e7888d8c1b44cd0681dc31e",
+  "raw_before_sha256": "21dbcd7abe8c6e128ce00b164116f0fd5028744268fc3b695cea9ef5ed7aa6a3",
+  "raw_after_sha256": "21dbcd7abe8c6e128ce00b164116f0fd5028744268fc3b695cea9ef5ed7aa6a3"
+}
