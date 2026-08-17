@@ -25,15 +25,32 @@ RPC URL は環境変数から読み込みます。Base の公式接続先は rat
 ```powershell
 $env:BASE_RPC_URL = "https://mainnet.base.org"
 & .venv\Scripts\python.exe -m base_lp.cli resolve-pool --config configs\base_weth_usdc_005.yaml
-& .venv\Scripts\python.exe -m base_lp.cli collect --config configs\base_weth_usdc_005.yaml --start-utc "2026-07-31T00:00:00Z" --end-utc "2026-07-31T01:00:00Z"
+& .venv\Scripts\python.exe -m base_lp.cli collect --config configs\base_weth_usdc_005.yaml
 & .venv\Scripts\python.exe -m base_lp.cli validate-data --config configs\base_weth_usdc_005.yaml
 & .venv\Scripts\python.exe -m base_lp.cli backtest --config configs\base_weth_usdc_005.yaml
 & .venv\Scripts\python.exe -m base_lp.cli sweep --config configs\base_weth_usdc_005.yaml
 ```
 
-`collect` はデフォルトで500 blockずつ取得し、RPC request間隔を0.25秒、1回の実行時間を90秒に制限します。`results/collection_checkpoint.json` と `data/raw/.../logs.jsonl` に進捗を保存するため、タイムアウトや中断後に同じコマンドを再実行すると完了済みchunkを再取得せず続きから再開します。`--fresh` を指定した場合だけ対象範囲を最初から取り直します。
+`collect` は設定された7日間（2026-06-01から2026-06-08まで）を対象に、Swap topicだけをRPCの`eth_getLogs`へ渡します。デフォルトで500 blockずつ取得し、RPC request間隔を0.25秒、1回の実行時間を90秒に制限します。`results/collection_checkpoint.json` と `data/raw/.../logs.jsonl` に進捗を保存するため、タイムアウトや中断後に同じコマンドを再実行すると、block範囲の解決と完了済みchunkの再取得を行わず続きから再開します。`--fresh` を指定した場合だけ対象範囲を最初から取り直します。
 
 必要に応じて、`--chunk-size`、`--request-interval-seconds`、`--rpc-timeout-seconds`、`--rpc-max-retries`、`--max-seconds` で取得負荷と1回の実行時間を調整できます。長期範囲では `--max-seconds 90` のまま繰り返し実行してください。
+
+時刻からblock境界を解決するRPCが遅い場合は、確認済みの`--start-block`と`--end-block`を指定して初期解決を省略できます。
+
+長期取得を無人で継続する場合は、`scripts/collect-until-complete.ps1` を使えます。既定では90秒取得ごとに30秒休止し、完全取得時（exit code 0）または想定外エラー時に停止します。`BASE_RPC_URL` を設定してから実行してください。
+
+```powershell
+$env:BASE_RPC_URL = "https://mainnet.base.org"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\collect-until-complete.ps1
+```
+
+既存データを保持したまま別rootへ収集する場合は、`-Root runs\rpc-swap-7d`を指定します。
+
+## 低負荷RPCによるSwap収集
+
+現行の主経路は公式Base RPCです。Duneのアカウント側datapoint上限により履歴結果を取得できなかったため、RPCへ戻しています。`collection.event_filter: swap` により、`eth_getLogs`のフィルタを `topics: [[SWAP_TOPIC]]` とし、Mint/Burn/Collectや他のpoolログを取得しません。
+
+RPCのpartial runでは全JSONLの再読込とSHA-256再計算を避け、完了時だけ全体整合性を検証します。公式RPCへ過度な負荷をかけないため、1回90秒、chunk 500、request間隔0.25秒で、取得後30秒休止する再開スクリプトを用意しています。
 
 Uniswap v3 pool address は設定に固定せず、Factory の `getPool(tokenA, tokenB, fee)` から解決します。[Uniswap v3 deployments](https://developers.uniswap.org/docs/protocols/v3/deployments)
 

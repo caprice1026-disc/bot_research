@@ -97,8 +97,27 @@ class PolymarketClient:
         for item in history:
             try:
                 timestamp = datetime.fromtimestamp(float(item["t"]), tz=timezone.utc)
-                price = float(item["p"])
+                price = float(item["p"]) if item.get("p") is not None else None
+                best_bid = next(
+                    (float(item[key]) for key in ("best_bid", "bid", "b") if item.get(key) is not None),
+                    None,
+                )
+                best_ask = next(
+                    (float(item[key]) for key in ("best_ask", "ask", "a") if item.get(key) is not None),
+                    None,
+                )
             except (KeyError, TypeError, ValueError, OverflowError) as exc:
                 raise CollectionError("CLOB history contains an invalid point") from exc
-            points.append(PricePoint(market_id=market_id, token_id=token_id, timestamp=timestamp, price=price))
+            if price is None and best_ask is None:
+                raise CollectionError("CLOB history point has neither price nor best ask")
+            points.append(
+                PricePoint(
+                    market_id=market_id,
+                    token_id=token_id,
+                    timestamp=timestamp,
+                    price=price,
+                    best_bid=best_bid,
+                    best_ask=best_ask,
+                )
+            )
         return points

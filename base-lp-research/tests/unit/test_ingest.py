@@ -94,6 +94,31 @@ class IngestTests(unittest.TestCase):
         self.assertGreaterEqual(sleep.call_count, 2)
         self.assertTrue(all(call.args == (0.25,) for call in sleep.call_args_list))
 
+    def test_iter_log_chunks_can_filter_topic0_at_rpc(self):
+        class FilterRecordingRpc:
+            def __init__(self):
+                self.log_query = None
+
+            def request(self, method, params):
+                if method == "eth_getLogs":
+                    self.log_query = params[0]
+                    return []
+                raise AssertionError(method)
+
+        rpc = FilterRecordingRpc()
+        list(
+            iter_log_chunks(
+                rpc,
+                "0x" + "ab" * 20,
+                10,
+                10,
+                chunk_size=1,
+                topics=[SWAP_TOPIC],
+            )
+        )
+
+        self.assertEqual(rpc.log_query["topics"], [[SWAP_TOPIC]])
+
 
 if __name__ == "__main__":
     unittest.main()
