@@ -12,7 +12,7 @@
 - [x] (2026-08-17 00:00Z) 設計仕様を `docs/superpowers/specs/2026-08-17-binance-btcusdt-futures-data-design.md` として作成し、利用者の承認を得た。
 - [x] (2026-08-17 13:52Z) 取得・結合・検証ロジックをテスト駆動で実装した。単体テストは5件通過した。
 - [x] (2026-08-17 13:53Z) 公式アーカイブから3足種を取得し、CSVとメタデータを検証した。日足365行、1時間足8,760行、15分足35,040行である。
-- [ ] `.gitignore` を監査・更新し、コードのみをコミットして既存の未プッシュコミットとともにプッシュする。
+- [x] (2026-08-17 13:58Z) `.gitignore` を監査・更新し、コードのみをコミットして既存の未プッシュコミットとともに `origin/codex/base-uniswap-v3-lp-research` へプッシュした。
 
 ## Surprises & Discoveries
 
@@ -35,7 +35,7 @@
 
 ## Outcomes & Retrospective
 
-未完了。最終更新時に、生成CSVの行数・時間境界・チェックサム検証結果、Gitで追跡するファイル、リモートへのプッシュ結果をここへ記録する。
+完了。2026-08-17 UTC実行で、対象期間は2025-08-17 00:00:00 UTCから2026-08-16 23:59:59.999 UTCとなった。`data/BTCUSDT-1d-365d.csv` は365行、`data/BTCUSDT-1h-365d.csv` は8,760行、`data/BTCUSDT-15m-365d.csv` は35,040行である。全126アーカイブを公式SHA-256と照合し、保存済みCSVの再検証も通過した。`raw/`、`data/`、`metadata/` は無視し、取得器、テスト、README、設計書、ExecPlan、`.gitignore` は追跡した。コミット `b74f764` を含め、既存の未プッシュコミットを `origin/codex/base-uniswap-v3-lp-research` へプッシュした。
 
 ## 背景と構成
 
