@@ -1,0 +1,47 @@
+chain:
+  name: base
+  chain_id: 8453
+  rpc_env: BASE_RPC_URL
+protocol: uniswap_v3
+pool:
+  token_pair: WETH/USDC
+  factory: "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"
+  token0: "0x4200000000000000000000000000000000000006"
+  token1: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+  fee_tier: 500
+  address_resolution: factory_getPool
+backtest:
+  event_granularity: swap
+  counterfactual_mode: C0
+  fee_precision: P0
+  execution_latency_blocks: 1
+strategy:
+  name: threshold_reset
+  half_width_pct: 0.5
+  trigger_ratio: 0.85
+  cooldown_seconds: 60
+  safety_margin_usd: 0.01
+capital_usd: 5000
+pilot:
+  start_utc: "2026-06-01T00:00:00Z"
+  end_utc: "2026-06-08T00:00:00Z"
+cost_model:
+  include_l2_execution_fee: true
+  include_l1_security_fee: true
+  include_inventory_swap_fee: true
+  include_price_impact: true
+  include_slippage_mev_proxy: true
+validation:
+  benchmark: hodl
+  report_lvr_separately: true
+  walk_forward: true
+collection:
+  source: rpc
+  event_filter: swap
+  dune_api_env: DUNE_API_KEY
+  dune_poll_interval_seconds: 5
+  chunk_size: 500
+  request_interval_seconds: 0.25
+  rpc_timeout_seconds: 20
+  rpc_max_retries: 2
+  max_runtime_seconds: 90

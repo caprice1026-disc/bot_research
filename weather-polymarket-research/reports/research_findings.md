@@ -44,3 +44,10 @@ NCEIはHTTP 200で応答したが、要求した1年全体の観測を返して�
 4. 予報履歴・観測・価格の期間が揃った後にのみLevel 1/2バックテストを再実行する。
 
 実行成果物は `results/dataset_manifest.json`、`results/source_audit.json`、`results/backtest_summary.json`、`results/trades.csv` と `data/normalized/` に保存している。rawスナップショットは再実行ごとに追加保存するが、リポジトリでは動的データとして除外する。
+## 継続実装 2026-08-09
+
+GEFSについて、`.idx`のTMAX 2 m above groundメッセージだけをHTTP Rangeで取得し、indexとmessageを `data/raw/gefs-cache/` にキャッシュする処理を追加した。429、5xx、通信失敗は最大3回まで指数バックオフで再試行する。`collect-gefs-market-days` は `market_rules.jsonl` の重複bucketを対象日へ集約し、既定12Z issue cycleを選択して中断後に同じ対象日・memberを再利用する。
+
+`candidate_builder.py` はensemble bucket確率、Gaussian近似、整数°Fへ丸めたNCEI日次最高気温、CLOB価格をPIT候補へ結合する。履歴APIの `p` は過去askではないためLevel 1では価格プロキシ、Level 2ではbest ask必須として分離した。手数料、spread、slippageは `ExecutionConfig` と候補の観測quoteへ適用する。
+
+現在の保存観測期間は2025-08-09から2025-08-27で、GEFS/CLOBパイロットの2026-01-06とは揃っていない。実データCLIのLevel 1/2はこの不一致を理由に `insufficient_data`、trade_count 0として `results/backtest_summary.json` とレベル2成果物へ保存した。実行したテストは61件成功、`validate-results` は `valid: true` である。

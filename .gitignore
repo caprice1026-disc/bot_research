@@ -204,10 +204,13 @@ cython_debug/
 # Research runtime data (raw/cache outputs are reproducible and not committed)
 base-lp-research/.venv/
 base-lp-research/.test-tmp/
+base-lp-research/pytest-cache-files-*/
+pytest-cache-files-*/
 base-lp-research/data/raw/
 base-lp-research/data/normalized/
 base-lp-research/data/derived/
 base-lp-research/.cache/
+base-lp-research/runs/
 
 # Keep the human-readable LP report under version control; ignore generated data/results.
 base-lp-research/results/*
@@ -216,6 +219,15 @@ base-lp-research/results/*
 
 weather-polymarket-research/data/raw/
 
+# Binance BTCUSDT futures research: verified but reproducible local downloads.
+binance-btcusdt-futures-research/raw/
+binance-btcusdt-futures-research/data/
+binance-btcusdt-futures-research/metadata/
+
+# Local runtime output from research packages.
+base-lp-research/runs/
+binance-btcusdt-futures-research/.task-tmp*/
+binance-btcusdt-futures-research/.matplotlib/
 # Marimo
 marimo/_static/
 marimo/_lsp/

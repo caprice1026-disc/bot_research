@@ -1,0 +1,2 @@
+count,mean_abs_forward_4h,directional_continuation_rate,continuation_ci95_low,continuation_ci95_high,mean_abs_ci95_low,mean_abs_ci95_high,status
+763,0.004719179091774993,0.4600262123197903,0.4108453473132372,0.5032765399737876,0.004179108125763528,0.00529421053656427,ok
