@@ -40,6 +40,7 @@ class ExchangeAccountSnapshot:
     entry_price: Decimal | None
     unrealized_pnl: Decimal
     open_orders: list[dict[str, Any]]
+    unknown_exposure: bool = False
 
 
 class TradingExchange(Protocol):
@@ -62,3 +63,7 @@ class TradingExchange(Protocol):
     def close_position(self, coin: str) -> dict[str, Any] | None: ...
 
     def cancel_bot_orders(self, coin: str, cloids: list[str]) -> list[dict[str, Any]]: ...
+
+    def get_user_fills(self, start_time_ms: int, end_time_ms: int) -> list[dict[str, Any]]: ...
+
+    def get_user_funding(self, start_time_ms: int, end_time_ms: int) -> list[dict[str, Any]]: ...

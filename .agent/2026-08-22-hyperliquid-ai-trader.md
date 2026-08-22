@@ -13,9 +13,10 @@
 - [x] (2026-08-22 18:22+09:00) `hyperliquid-testnet-research` を `hyperliquid-ai-trader` へ改名し、既存接続確認を維持した。
 - [x] (2026-08-22 18:31+09:00) 設定、Proxy解除、市場特徴量、Risk EngineをTDDで実装した。
 - [x] (2026-08-22 18:48+09:00) 取引所抽象化、Hyperliquid bracket注文、SQLite永続化をTDDで実装した。
-- [ ] Gemini Trader/Reviewer、ローカルrunner、レポートをTDDで実装する。
-- [ ] 全テスト、Dry-run、二シフトCanary、cleanup検証を完了する。
-- [ ] Canary成果をmainへ初回pushする。
+- [x] (2026-08-22 22:28+09:00) Gemini Trader/Reviewer、ローカルrunner、CLI、レポートをTDDで実装し、実GeminiのTrader/Reviewer単発検証に成功した。
+- [x] (2026-08-22 22:43+09:00) 36 Trader・6 Reviewerの加速Dry-runを完走し、注文0件、Trader成功10件、rate limit例外26件、Reviewer成功1件、rate limit例外5件をSQLiteへ正確に保存した。
+- [x] (2026-08-22 22:55+09:00) 開始済みCanaryをユーザー指示で停止した。第1シフトはGemini rate limitにより発注0件で、停止後のPreflightは建玉0・未約定注文0を確認した。
+- [x] (2026-08-22 22:57+09:00) 実Canaryの完遂を待たず、ユーザーの明示指示により現在の実装をmainへ反映する。
 - [ ] 三時間運転を完了し、匿名化要約をmainへ再pushする。
 
 ## Surprises & Discoveries
@@ -26,6 +27,12 @@
   Evidence: Proxyを使わない読み取り専用Info API呼び出しの `marginSummary` と `assetPositions` を確認した。
 - Observation: 公式SDK 0.24.0は `bulk_orders` の `normalTpsl` grouping、IOC注文、trigger TP/SL、Client Order IDをサポートする。
   Evidence: 導入済みSDKのシグネチャと公式 `examples/basic_tpsl.py` を確認した。
+- Observation: `.env` の `GEMINI_MODEL=gemini-3.6-flash` は実際に利用可能で、Trader Function CallingとReviewer Structured Outputの双方に成功した。
+  Evidence: モデル利用可能性preflight、単発Trader、証拠ゼロのReviewer Patchを同じモデル名で実行した。秘密値は出力していない。
+- Observation: 36シフトを待ち時間なしでGemini無料枠へ集中させると短時間quotaに達する。
+  Evidence: Dry-run `dry-run-20260822T223424-df0b1141` は10 simulated、26 `rate_limited`、Reviewer 1 accepted、5 `rate_limited` で完了し、固定判断へフォールバックしなかった。
+- Observation: Canary第1シフトもGeminiの生成時点でrate limitとなり、発注は作られなかった。ユーザーはこの既存実行の停止とmain反映を指示した。
+  Evidence: `canary-20260822T225024-937f1719` のslot 0は `mandatory_entry_exception/rate_limited`、ordersは0件。停止後の実Preflightは `account_clean=true`。
 
 ## Decision Log
 
@@ -68,10 +75,10 @@ Traderは市場観測からLONGまたはSHORTをFunction Callとして提案す�
 
     git status -sb
     hyperliquid-ai-trader\.venv\Scripts\python.exe -m pytest hyperliquid-ai-trader\tests -q --basetemp <unique-path>
-    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli preflight --env-file .env
-    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli dry-run --cycles 36 --interval-seconds 0
-    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli canary --cycles 2
-    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli run-local --duration-hours 3
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli --env-file .env preflight
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli --env-file .env dry-run --cycles 36 --interval-seconds 0
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli --env-file .env canary --cycles 2
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli --env-file .env run-local --cycles 36 --interval-seconds 300
 
 Canaryと三時間運転は、同じPowerShellプロセス内で三つのProxy変数を解除してから起動する。各段階後に `git status`、`git diff --check`、pytest、秘密情報検査を実行する。
 
@@ -98,3 +105,5 @@ Git管理する成果物はソース、テスト、prompts、初期strategy、RE
 ## 変更履歴
 
 - 2026-08-22: ユーザー承認済み計画をPLANS.md形式へ展開して初版を作成した。
+- 2026-08-22: 実Gemini検証と加速Dry-runの実績、短時間quotaの観測を追記した。
+- 2026-08-22: CanaryはGemini quotaにより実注文前に停止したため、三時間テストは手動実行手順のみを引き渡す方針へ変更した。

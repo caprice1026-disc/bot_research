@@ -62,6 +62,14 @@ class FakeInfoClient:
         assert address == "0xabc"
         return [{"coin": "BTC", "cloid": "0x" + "f" * 32, "oid": 9}]
 
+    def user_fills_by_time(self, address: str, start: int, end: int, aggregate_by_time: bool) -> list[dict]:
+        assert (address, start, end, aggregate_by_time) == ("0xabc", 1_000, 2_000, True)
+        return [{"coin": "BTC", "tid": 7, "time": 1_500}]
+
+    def user_funding_history(self, address: str, start: int, end: int) -> list[dict]:
+        assert (address, start, end) == ("0xabc", 1_000, 2_000)
+        return [{"time": 1_500, "delta": {"usdc": "0.1"}}]
+
 
 def _plan(side: Side = Side.LONG) -> OrderPlan:
     decision = TradeDecision(
@@ -215,3 +223,23 @@ def test_market_observation_and_account_are_parsed_from_sdk_shapes() -> None:
     assert account.withdrawable == Decimal("900")
     assert account.position_size == Decimal("0.005")
     assert account.open_orders[0]["cloid"] == "0x" + "f" * 32
+    assert adapter.get_user_fills(1_000, 2_000)[0]["tid"] == 7
+    assert adapter.get_user_funding(1_000, 2_000)[0]["delta"]["usdc"] == "0.1"
+
+
+def test_account_snapshot_flags_non_target_positions_as_unknown_exposure() -> None:
+    class OtherPositionInfo(FakeInfoClient):
+        def user_state(self, address: str) -> dict:
+            state = super().user_state(address)
+            state["assetPositions"].append(
+                {"position": {"coin": "ETH", "szi": "0.25", "entryPx": "2500"}}
+            )
+            return state
+
+    adapter = HyperliquidAdapter(
+        info_client=OtherPositionInfo(),
+        exchange_client=FakeExchangeClient(_successful_response()),
+        account_address="0xabc",
+    )
+
+    assert adapter.get_account_snapshot("BTC").unknown_exposure is True

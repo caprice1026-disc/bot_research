@@ -4,11 +4,18 @@ from __future__ import annotations
 
 from decimal import Decimal
 import hashlib
+import os
 from typing import Any
 
+from eth_account import Account
+from hyperliquid.exchange import Exchange
+from hyperliquid.info import Info
+from hyperliquid.utils.constants import TESTNET_API_URL
 from hyperliquid.utils.types import Cloid
 
+from ..config import Settings
 from ..models import BookLevel, Candle, OrderPlan, Side
+from ..proxy import clear_invalid_loopback_proxies
 from .base import BracketResult, ExchangeAccountSnapshot, MarketObservation
 
 
@@ -25,6 +32,23 @@ def make_cloids(run_id: str, slot: int) -> dict[str, str]:
 
 def _round_price(price: Decimal) -> float:
     return float(f"{float(price):.5g}")
+
+
+def create_hyperliquid_adapter(settings: Settings) -> "HyperliquidAdapter":
+    clear_invalid_loopback_proxies(os.environ)
+    wallet = Account.from_key(settings.private_key)
+    info = Info(TESTNET_API_URL, skip_ws=True, timeout=15.0)
+    exchange = Exchange(
+        wallet,
+        TESTNET_API_URL,
+        account_address=settings.wallet_address,
+        timeout=15.0,
+    )
+    return HyperliquidAdapter(
+        info_client=info,
+        exchange_client=exchange,
+        account_address=settings.wallet_address,
+    )
 
 
 class HyperliquidAdapter:
@@ -85,14 +109,17 @@ class HyperliquidAdapter:
         position_size = Decimal("0")
         entry_price: Decimal | None = None
         unrealized_pnl = Decimal("0")
+        unknown_exposure = False
         for wrapper in state.get("assetPositions", []):
             position = wrapper.get("position", {})
+            candidate_size = Decimal(str(position.get("szi", "0")))
             if position.get("coin") == coin:
-                position_size = Decimal(str(position.get("szi", "0")))
+                position_size = candidate_size
                 raw_entry = position.get("entryPx")
                 entry_price = Decimal(str(raw_entry)) if raw_entry is not None else None
                 unrealized_pnl = Decimal(str(position.get("unrealizedPnl", "0")))
-                break
+            elif candidate_size != 0:
+                unknown_exposure = True
         return ExchangeAccountSnapshot(
             equity=Decimal(str(margin.get("accountValue", "0"))),
             withdrawable=Decimal(str(state.get("withdrawable", "0"))),
@@ -100,6 +127,7 @@ class HyperliquidAdapter:
             entry_price=entry_price,
             unrealized_pnl=unrealized_pnl,
             open_orders=list(self.info.frontend_open_orders(self.account_address)),
+            unknown_exposure=unknown_exposure,
         )
 
     def set_leverage(self, coin: str, leverage: int, margin_mode: str) -> None:
@@ -205,3 +233,16 @@ class HyperliquidAdapter:
 
     def query_order(self, cloid: str) -> Any:
         return self.info.query_order_by_cloid(self.account_address, Cloid.from_str(cloid))
+
+    def get_user_fills(self, start_time_ms: int, end_time_ms: int) -> list[dict[str, Any]]:
+        return list(
+            self.info.user_fills_by_time(
+                self.account_address,
+                start_time_ms,
+                end_time_ms,
+                aggregate_by_time=True,
+            )
+        )
+
+    def get_user_funding(self, start_time_ms: int, end_time_ms: int) -> list[dict[str, Any]]:
+        return list(self.info.user_funding_history(self.account_address, start_time_ms, end_time_ms))

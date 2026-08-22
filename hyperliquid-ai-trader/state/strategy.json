@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "parent_version": null,
+  "market_hypothesis": "短期BTC価格はモメンタム、板の偏り、ボラティリティの一致時に方向性を持つという初期仮説。",
+  "active_rules": [],
+  "failure_modes": [],
+  "confidence_calibration": {
+    "long": 0.0,
+    "short": 0.0
+  },
+  "last_review_cycle": 0
+}

@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from hyperliquid_ai_trader.features import FeatureError, build_market_features
+from hyperliquid_ai_trader.features import (
+    FeatureError,
+    build_market_features,
+    estimate_mfe_mae_pct,
+)
 from hyperliquid_ai_trader.models import BookLevel, Candle
 
 
@@ -74,3 +78,25 @@ def test_build_market_features_rejects_crossed_or_empty_book() -> None:
             funding=0.0,
             open_interest=1.0,
         )
+
+
+def test_mfe_mae_estimate_respects_long_and_short_direction() -> None:
+    candles = [
+        Candle(1_000, 100, 102, 99, 101, 1),
+        Candle(2_000, 101, 105, 98, 102, 1),
+    ]
+
+    assert estimate_mfe_mae_pct(
+        candles=candles,
+        side="long",
+        entry_price=100.0,
+        start_ms=1_000,
+        end_ms=3_000,
+    ) == pytest.approx((5.0, 2.0))
+    assert estimate_mfe_mae_pct(
+        candles=candles,
+        side="short",
+        entry_price=100.0,
+        start_ms=1_000,
+        end_ms=3_000,
+    ) == pytest.approx((2.0, 5.0))

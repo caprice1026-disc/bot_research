@@ -219,6 +219,13 @@ base-lp-research/results/*
 
 weather-polymarket-research/data/raw/
 
+# Hyperliquid AI Trader runtime evidence. Sanitized canary/run-local reports are
+# reviewed and staged explicitly; local databases and exploratory reports stay local.
+hyperliquid-ai-trader/data/
+hyperliquid-ai-trader/logs/
+hyperliquid-ai-trader/reports/dry-run-*
+hyperliquid-ai-trader/reports/report-*
+
 # Binance BTCUSDT futures research: verified but reproducible local downloads.
 binance-btcusdt-futures-research/raw/
 binance-btcusdt-futures-research/data/

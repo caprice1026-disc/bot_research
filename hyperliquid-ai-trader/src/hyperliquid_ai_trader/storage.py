@@ -55,6 +55,17 @@ class SQLiteStore:
                 PRIMARY KEY (run_id, slot),
                 FOREIGN KEY (run_id) REFERENCES runs(run_id)
             );
+            CREATE TABLE IF NOT EXISTS decisions (
+                run_id TEXT NOT NULL,
+                slot INTEGER NOT NULL,
+                arguments_json TEXT NOT NULL,
+                prompt_hash TEXT NOT NULL,
+                model TEXT NOT NULL,
+                temperature REAL NOT NULL,
+                created_at_ms INTEGER NOT NULL,
+                PRIMARY KEY (run_id, slot),
+                FOREIGN KEY (run_id, slot) REFERENCES cycles(run_id, slot)
+            );
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 run_id TEXT NOT NULL,
@@ -87,6 +98,22 @@ class SQLiteStore:
                 equity TEXT NOT NULL,
                 withdrawable TEXT NOT NULL,
                 mark TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS funding_payments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                run_id TEXT NOT NULL,
+                funding_id TEXT NOT NULL UNIQUE,
+                amount TEXT NOT NULL,
+                timestamp_ms INTEGER NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS episode_metrics (
+                run_id TEXT NOT NULL,
+                slot INTEGER NOT NULL,
+                mfe_pct TEXT NOT NULL,
+                mae_pct TEXT NOT NULL,
+                method TEXT NOT NULL,
+                PRIMARY KEY (run_id, slot),
+                FOREIGN KEY (run_id, slot) REFERENCES cycles(run_id, slot)
             );
             CREATE TABLE IF NOT EXISTS reviews (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,6 +155,36 @@ class SQLiteStore:
                 payload_json TEXT NOT NULL
             );
             """
+        )
+        self.connection.commit()
+
+    def record_decision(
+        self,
+        *,
+        run_id: str,
+        slot: int,
+        arguments: dict[str, Any],
+        prompt_hash: str,
+        model: str,
+        temperature: float,
+        created_at_ms: int,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT INTO decisions
+                (run_id, slot, arguments_json, prompt_hash, model, temperature, created_at_ms)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(run_id, slot) DO NOTHING
+            """,
+            (
+                run_id,
+                slot,
+                _json(arguments),
+                prompt_hash,
+                model,
+                temperature,
+                created_at_ms,
+            ),
         )
         self.connection.commit()
 
@@ -231,12 +288,141 @@ class SQLiteStore:
         )
         self.connection.commit()
 
+    def record_fill(
+        self,
+        *,
+        run_id: str,
+        slot: int,
+        fill_id: str,
+        side: str,
+        size: Decimal,
+        price: Decimal,
+        fee: Decimal,
+        closed_pnl: Decimal,
+        timestamp_ms: int,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT OR IGNORE INTO fills
+                (run_id, slot, fill_id, side, size, price, fee, closed_pnl, timestamp_ms)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                run_id,
+                slot,
+                fill_id,
+                side,
+                str(size),
+                str(price),
+                str(fee),
+                str(closed_pnl),
+                timestamp_ms,
+            ),
+        )
+        self.connection.commit()
+
+    def record_funding(
+        self,
+        *,
+        run_id: str,
+        funding_id: str,
+        amount: Decimal,
+        timestamp_ms: int,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT OR IGNORE INTO funding_payments
+                (run_id, funding_id, amount, timestamp_ms)
+            VALUES (?, ?, ?, ?)
+            """,
+            (run_id, funding_id, str(amount), timestamp_ms),
+        )
+        self.connection.commit()
+
+    def record_equity(
+        self,
+        *,
+        run_id: str,
+        timestamp_ms: int,
+        equity: Decimal,
+        withdrawable: Decimal,
+        mark: Decimal,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT INTO equity_snapshots
+                (run_id, timestamp_ms, equity, withdrawable, mark)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (run_id, timestamp_ms, str(equity), str(withdrawable), str(mark)),
+        )
+        self.connection.commit()
+
+    def record_episode_metric(
+        self,
+        *,
+        run_id: str,
+        slot: int,
+        mfe_pct: Decimal,
+        mae_pct: Decimal,
+        method: str,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT INTO episode_metrics (run_id, slot, mfe_pct, mae_pct, method)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(run_id, slot) DO NOTHING
+            """,
+            (run_id, slot, str(mfe_pct), str(mae_pct), method),
+        )
+        self.connection.commit()
+
+    def finish_run(
+        self,
+        *,
+        run_id: str,
+        completed_at_ms: int,
+        final_equity: Decimal,
+        final_mark: Decimal,
+        status: str,
+    ) -> None:
+        self.connection.execute(
+            """
+            UPDATE runs
+            SET completed_at_ms=?, final_equity=?, final_mark=?, status=?
+            WHERE run_id=?
+            """,
+            (completed_at_ms, str(final_equity), str(final_mark), status, run_id),
+        )
+        self.connection.commit()
+
     def known_cloids(self, run_id: str) -> set[str]:
         rows = self.connection.execute(
             "SELECT cloid FROM orders WHERE run_id=?",
             (run_id,),
         ).fetchall()
         return {str(row["cloid"]) for row in rows}
+
+    def slot_for_oid(self, run_id: str, oid: int) -> int | None:
+        row = self.connection.execute(
+            "SELECT slot FROM orders WHERE run_id=? AND oid=? ORDER BY id LIMIT 1",
+            (run_id, oid),
+        ).fetchone()
+        return int(row["slot"]) if row else None
+
+    def realized_net_pnl(self, run_id: str) -> Decimal:
+        fills = self.connection.execute(
+            "SELECT closed_pnl, fee FROM fills WHERE run_id=?",
+            (run_id,),
+        ).fetchall()
+        funding = self.connection.execute(
+            "SELECT amount FROM funding_payments WHERE run_id=?",
+            (run_id,),
+        ).fetchall()
+        return (
+            sum((Decimal(str(row["closed_pnl"])) - Decimal(str(row["fee"])) for row in fills), Decimal("0"))
+            + sum((Decimal(str(row["amount"])) for row in funding), Decimal("0"))
+        )
 
     def save_strategy_version(
         self,
@@ -276,6 +462,79 @@ class SQLiteStore:
             (run_id,),
         ).fetchone()
         return json.loads(row["state_json"]) if row else None
+
+    def recent_closed_trades(self, run_id: str, *, limit: int) -> list[dict[str, Any]]:
+        rows = self.connection.execute(
+            """
+            SELECT id, slot, side, size, price, fee, closed_pnl, timestamp_ms
+            FROM fills
+            WHERE run_id=? AND CAST(closed_pnl AS REAL) != 0
+            ORDER BY timestamp_ms DESC LIMIT ?
+            """,
+            (run_id, limit),
+        ).fetchall()
+        return [dict(row) for row in reversed(rows)]
+
+    def record_review(
+        self,
+        *,
+        run_id: str,
+        review_index: int,
+        created_at_ms: int,
+        model: str,
+        status: str,
+        input_payload: dict[str, Any],
+        output_payload: dict[str, Any] | None,
+        error_type: str | None,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT INTO reviews
+                (run_id, review_index, created_at_ms, model, status, input_json, output_json, error_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(run_id, review_index) DO NOTHING
+            """,
+            (
+                run_id,
+                review_index,
+                created_at_ms,
+                model,
+                status,
+                _json(input_payload),
+                _json(output_payload) if output_payload is not None else None,
+                error_type,
+            ),
+        )
+        self.connection.commit()
+
+    def record_patch(
+        self,
+        *,
+        run_id: str,
+        base_version: int,
+        next_version: int | None,
+        patch: dict[str, Any],
+        accepted: bool,
+        reason: str,
+        created_at_ms: int,
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT INTO patches
+                (run_id, base_version, next_version, patch_json, accepted, reason, created_at_ms)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                run_id,
+                base_version,
+                next_version,
+                _json(patch),
+                int(accepted),
+                reason,
+                created_at_ms,
+            ),
+        )
+        self.connection.commit()
 
     def get_cycle(self, run_id: str, slot: int) -> dict[str, Any] | None:
         row = self.connection.execute(

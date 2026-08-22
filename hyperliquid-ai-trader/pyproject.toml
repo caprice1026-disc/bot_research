@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "Auditable Gemini-driven Hyperliquid Testnet trader"
 requires-python = ">=3.12"
 dependencies = [
+  "google-genai>=1,<2",
   "hyperliquid-python-sdk>=0.20,<1",
   "python-dotenv>=1,<2",
 ]
@@ -19,6 +20,7 @@ test = [
 
 [project.scripts]
 hl-testnet-check = "hl_testnet_check.cli:main"
+hl-ai-trader = "hyperliquid_ai_trader.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

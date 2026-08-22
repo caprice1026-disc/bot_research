@@ -11,6 +11,32 @@ class FeatureError(ValueError):
     """Raised when a reliable feature snapshot cannot be built."""
 
 
+def estimate_mfe_mae_pct(
+    *,
+    candles: list[Candle],
+    side: str,
+    entry_price: float,
+    start_ms: int,
+    end_ms: int,
+) -> tuple[float, float] | None:
+    """Estimate favorable/adverse excursion from overlapping one-minute bars."""
+
+    if entry_price <= 0 or side not in {"long", "short"}:
+        return None
+    episode = [candle for candle in candles if start_ms <= candle.timestamp_ms < end_ms]
+    if not episode:
+        return None
+    highest = max(candle.high for candle in episode)
+    lowest = min(candle.low for candle in episode)
+    if side == "long":
+        mfe = max(0.0, (highest - entry_price) / entry_price * 100.0)
+        mae = max(0.0, (entry_price - lowest) / entry_price * 100.0)
+    else:
+        mfe = max(0.0, (entry_price - lowest) / entry_price * 100.0)
+        mae = max(0.0, (highest - entry_price) / entry_price * 100.0)
+    return mfe, mae
+
+
 def _return(closes: list[float], minutes: int) -> float:
     previous = closes[-1 - minutes]
     if previous <= 0:

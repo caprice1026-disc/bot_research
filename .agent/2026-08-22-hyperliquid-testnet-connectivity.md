@@ -11,7 +11,7 @@
 - [x] (2026-08-22 17:12+09:00) リポジトリ構成、`.env` の変数設定状態、Python環境、公式APIと公式SDKの `noop` 対応を確認した。
 - [x] (2026-08-22 17:12+09:00) 設計を `docs/superpowers/specs/2026-08-22-hyperliquid-testnet-connectivity-design.md` に記録した。
 - [x] (2026-08-22 17:18+09:00) TDDで設定検証、接続結果分類、CLI、公式SDK境界を実装し、各機能について失敗から成功へのテスト遷移を確認した。
-- [x] (2026-08-22 17:19+09:00) `hyperliquid-testnet-research/.venv` を作り、公式SDK 0.24.0、pip 24.3.1、テスト依存を導入した。
+- [x] (2026-08-22 17:19+09:00) `hyperliquid-ai-trader/.venv`（当初名 `hyperliquid-testnet-research/.venv`）を作り、公式SDK 0.24.0、pip 24.3.1、テスト依存を導入した。
 - [x] (2026-08-22 17:23+09:00) 全12テストを通し、テストネットで公開Info API、署名者の対象ウォレットへの紐付け、署名付き `noop` を実行した。
 - [x] (2026-08-22 17:23+09:00) 結果JSON、README、計画の実績欄を最終状態へ更新した。
 
@@ -42,23 +42,23 @@
 
 ## Outcomes & Retrospective
 
-専用の `hyperliquid-testnet-research/` にPythonパッケージ、12件の単体テスト、README、専用 `.venv`、実接続証跡を作成した。公式SDK 0.24.0による最終実行では `https://api.hyperliquid-testnet.xyz` へ到達し、市場210件のメタデータ、対象アカウント状態、署名者が対象アカウントへ認可されたagentであること、署名付き `noop` がすべて成功した。注文や送金は実行していない。
+専用の `hyperliquid-ai-trader/`（当初名 `hyperliquid-testnet-research/`）にPythonパッケージ、12件の単体テスト、README、専用 `.venv`、実接続証跡を作成した。公式SDK 0.24.0による最終実行では `https://api.hyperliquid-testnet.xyz` へ到達し、市場210件のメタデータ、対象アカウント状態、署名者が対象アカウントへ認可されたagentであること、署名付き `noop` がすべて成功した。注文や送金は実行していない。
 
 Python 3.13の `ensurepip` は環境のACL制約で失敗したが、システムpipの対象Python指定により仮想環境を削除せず復旧できた。この代替手順はREADMEへ残した。
 
 ## Context and Orientation
 
-作業ルートは `C:\Users\Hodaka\Downloads\div\bot_research` である。秘密情報はこのルートの `.env` にあり、既存 `.gitignore` は `.env` と `.venv` を除外している。新しいコードはすべて `hyperliquid-testnet-research/` に置く。Pythonパッケージ名は `hl_testnet_check` とし、エントリーポイントは `python -m hl_testnet_check.cli` とする。
+作業ルートは `C:\Users\Hodaka\Downloads\div\bot_research` である。秘密情報はこのルートの `.env` にあり、既存 `.gitignore` は `.env` と `.venv` を除外している。コードは現在 `hyperliquid-ai-trader/` に置く。Pythonパッケージ名は `hl_testnet_check` とし、エントリーポイントは `python -m hl_testnet_check.cli` とする。
 
 HyperliquidのInfo APIは市場やユーザー状態を読む公開HTTP APIである。Exchange APIは署名付きアクションを送るHTTP APIである。`noop` は「何もしない」署名付きアクションで、資産や注文を変更しないが、再送攻撃防止用の一意な数値であるnonceを消費する。APIウォレットはマスターアカウントの代わりに署名するため承認された別アドレスであり、ユーザー状態の照会にはAPIウォレットでなくマスターアカウントを使う。
 
 ## Plan of Work
 
-最初のマイルストーンでは、`hyperliquid-testnet-research/tests/test_connection_check.py` を先に作り、まだ存在しない `hl_testnet_check.connection` の公開インターフェースを呼ぶ。環境変数不足、不正ウォレット、公開API成功、署名付き `noop` 成功、外部APIエラーの振る舞いをテストし、実装前に意図した理由で失敗することを確認する。
+最初のマイルストーンでは、`hyperliquid-ai-trader/tests/test_connection_check.py` を先に作り、まだ存在しない `hl_testnet_check.connection` の公開インターフェースを呼ぶ。環境変数不足、不正ウォレット、公開API成功、署名付き `noop` 成功、外部APIエラーの振る舞いをテストし、実装前に意図した理由で失敗することを確認する。
 
 次のマイルストーンでは、`src/hl_testnet_check/connection.py` に純粋な設定検証と、SDK境界を受け取る接続オーケストレーターを実装する。`src/hl_testnet_check/cli.py` は `.env` の読込、公式SDKの `Info` と `Exchange` の組み立て、秘密情報を含まないJSONの表示と保存だけを担当する。SDKの実ネットワーク呼び出しは単体テストで行わず、テスト後の統合実行で一度だけ行う。
 
-最後のマイルストーンでは、`hyperliquid-testnet-research/.venv` を作成し、`pyproject.toml` の依存を導入する。専用Pythonで全テストを実行してからCLIを実行する。CLIが終了コード0、公開API成功、`noop` 成功を返すことを受け入れ条件とする。READMEにはPowerShellでの作成、インストール、再実行、出力項目、`noop` のnonce消費を記載する。
+最後のマイルストーンでは、`hyperliquid-ai-trader/.venv` を作成し、`pyproject.toml` の依存を導入する。専用Pythonで全テストを実行してからCLIを実行する。CLIが終了コード0、公開API成功、`noop` 成功を返すことを受け入れ条件とする。READMEにはPowerShellでの作成、インストール、再実行、出力項目、`noop` のnonce消費を記載する。
 
 ## Concrete Steps
 
@@ -66,19 +66,19 @@ HyperliquidのInfo APIは市場やユーザー状態を読む公開HTTP APIで�
 
 まずテストと最小パッケージ設定を作り、次を実行する。
 
-    python -m pytest hyperliquid-testnet-research\tests -q -p no:cacheprovider
+    python -m pytest hyperliquid-ai-trader\tests -q -p no:cacheprovider
 
 実装前は `ModuleNotFoundError: No module named 'hl_testnet_check'` または未実装関数による失敗を期待する。次に `src/hl_testnet_check/connection.py` と `cli.py` を実装し、同じコマンドが成功するまで最小修正する。
 
 仮想環境と依存を導入する。
 
-    python -m venv hyperliquid-testnet-research\.venv
-    hyperliquid-testnet-research\.venv\Scripts\python.exe -m pip install -e "hyperliquid-testnet-research[test]"
+    python -m venv hyperliquid-ai-trader\.venv
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m pip install -e "hyperliquid-ai-trader[test]"
 
 その後、専用Pythonで単体テストと実接続を実行する。
 
-    hyperliquid-testnet-research\.venv\Scripts\python.exe -m pytest hyperliquid-testnet-research\tests -q -p no:cacheprovider
-    hyperliquid-testnet-research\.venv\Scripts\python.exe -m hl_testnet_check.cli --env-file .env --output hyperliquid-testnet-research\results\connection_check.json
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m pytest hyperliquid-ai-trader\tests -q -p no:cacheprovider
+    hyperliquid-ai-trader\.venv\Scripts\python.exe -m hl_testnet_check.cli --env-file .env --output hyperliquid-ai-trader\results\connection_check.json
 
 成功時のJSONは `overall_status` が `ok`、`network` が `testnet`、`public_api.ok` と `signed_noop.ok` がともに `true` になる。秘密鍵、署名、完全な環境変数値は含まれない。
 
@@ -94,7 +94,7 @@ HyperliquidのInfo APIは市場やユーザー状態を読む公開HTTP APIで�
 
 ## Artifacts and Notes
 
-最終成果物は `hyperliquid-testnet-research/pyproject.toml`、`README.md`、`src/hl_testnet_check/`、`tests/`、`results/connection_check.json` である。秘密鍵は成果物に含めていない。最終証跡は次のとおりである。
+最終成果物は `hyperliquid-ai-trader/pyproject.toml`、`README.md`、`src/hl_testnet_check/`、`tests/`、`results/connection_check.json` である。秘密鍵は成果物に含めていない。最終証跡は次のとおりである。
 
     12 passed in 0.38s
     12 passed in 0.34s (immediate second run)

@@ -81,6 +81,15 @@ def test_store_persists_cycle_order_and_strategy_evidence() -> None:
         model="bootstrap",
         created_at_ms=2_000,
     )
+    store.record_patch(
+        run_id="run-002",
+        base_version=1,
+        next_version=2,
+        patch={"base_version": 1, "operations": []},
+        accepted=True,
+        reason="review accepted",
+        created_at_ms=3_000,
+    )
 
     assert store.known_cloids("run-002") == {"0x" + "a" * 32}
     assert store.load_latest_strategy("run-002") == state
@@ -88,4 +97,38 @@ def test_store_persists_cycle_order_and_strategy_evidence() -> None:
     assert cycle is not None
     assert cycle["status"] == "ordered"
     assert cycle["decision"]["side"] == "long"
+    patch = store.connection.execute(
+        "SELECT accepted, next_version FROM patches WHERE run_id='run-002'"
+    ).fetchone()
+    assert (patch["accepted"], patch["next_version"]) == (1, 2)
+    store.close()
+
+
+def test_store_records_validated_decision_before_risk_or_execution() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-decision",
+        mode="dry_run",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+    assert store.reserve_cycle("run-decision", 0, scheduled_at_ms=1_000, strategy_version=1)
+
+    store.record_decision(
+        run_id="run-decision",
+        slot=0,
+        arguments={"side": "long", "stop_loss_pct": "0.05"},
+        prompt_hash="f" * 64,
+        model="gemini-test",
+        temperature=0.7,
+        created_at_ms=1_100,
+    )
+
+    row = store.connection.execute(
+        "SELECT * FROM decisions WHERE run_id='run-decision' AND slot=0"
+    ).fetchone()
+    assert row["model"] == "gemini-test"
+    assert row["arguments_json"] == '{"side": "long", "stop_loss_pct": "0.05"}'
     store.close()
