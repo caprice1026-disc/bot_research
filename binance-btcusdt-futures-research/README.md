@@ -31,6 +31,7 @@ python -m venv .venv
 ## 出力
 
 - `results/report.md`: 方法・限界・主要テーブルを含むレポート
+- `results/eda_interpretation.md`: EDA結果の解釈、研究上の含意、制約
 - `results/tables/`: CSVの集計結果
 - `results/figures/`: PNG図表
 - `results/manifest.json`: 入力・設定・成果物のSHA-256
