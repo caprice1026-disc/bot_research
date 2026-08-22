@@ -1,0 +1,19 @@
+{
+  "overall_status": "ok",
+  "network": "testnet",
+  "api_url": "https://api.hyperliquid-testnet.xyz",
+  "account": {
+    "signer_matches_target": false,
+    "signer_role": "agent",
+    "signer_authorized_for_target": true
+  },
+  "public_api": {
+    "ok": true,
+    "market_count": 210,
+    "user_state_ok": true
+  },
+  "signed_noop": {
+    "ok": true,
+    "response_status": "ok"
+  }
+}

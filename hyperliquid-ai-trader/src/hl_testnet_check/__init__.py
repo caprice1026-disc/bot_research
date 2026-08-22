@@ -1,0 +1,1 @@
+"""Hyperliquid testnet connectivity checks."""

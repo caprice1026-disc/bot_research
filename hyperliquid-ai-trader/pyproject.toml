@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hyperliquid-ai-trader"
+version = "0.1.0"
+description = "Auditable Gemini-driven Hyperliquid Testnet trader"
+requires-python = ">=3.12"
+dependencies = [
+  "hyperliquid-python-sdk>=0.20,<1",
+  "python-dotenv>=1,<2",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8,<9",
+]
+
+[project.scripts]
+hl-testnet-check = "hl_testnet_check.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra -p no:cacheprovider"
