@@ -57,6 +57,8 @@ class TradingService:
         self.daily_realized_pnl = Decimal("0")
         self.started_at_ms = 0
         self.last_slot = 0
+        self.execution_halted = False
+        self.execution_halt_reason: str | None = None
 
     def initialize(self, *, now_ms: int) -> None:
         market = self.exchange.get_market_observation(self.settings.coin, now_ms=now_ms)
@@ -99,6 +101,12 @@ class TradingService:
 
         if not self.cleanup():
             return self._fail_cycle(slot, "cleanup_failed", "cleanup_failed")
+        if self.execution_halted:
+            return self._fail_cycle(
+                slot,
+                "execution_halted",
+                self.execution_halt_reason or "prior_execution_failure",
+            )
 
         try:
             self.sync_exchange_evidence(now_ms=scheduled_at_ms)
@@ -214,6 +222,14 @@ class TradingService:
                 error_type=execution.error_type,
                 completed_at_ms=scheduled_at_ms,
             )
+            if not execution.success and execution.error_type in {
+                "protection_rejected",
+                "partial_fill",
+                "ambiguous_response",
+                "exchange_rejected",
+            }:
+                self.execution_halted = True
+                self.execution_halt_reason = execution.error_type
             return CycleResult(slot, status, execution.error_type)
         except AgentDecisionError as exc:
             return self._fail_cycle(slot, "mandatory_entry_exception", exc.error_type, features.to_prompt_dict())
@@ -262,7 +278,18 @@ class TradingService:
                 oid = int(fill.get("oid", 0))
                 slot = self.store.slot_for_oid(self.run_id, oid)
                 if slot is None:
-                    slot = self.last_slot
+                    slot = self.store.slot_for_unmapped_fill(
+                        self.run_id,
+                        timestamp_ms=int(fill.get("time", now_ms)),
+                    )
+                if slot is None:
+                    slot = -1
+                    self.store.record_event(
+                        run_id=self.run_id,
+                        timestamp_ms=int(fill.get("time", now_ms)),
+                        event_type="unmatched_fill",
+                        payload={"oid": oid, "fill_id": str(fill.get("tid", ""))},
+                    )
                 direction = str(fill.get("dir", ""))
                 side = "long" if "Long" in direction else "short" if "Short" in direction else str(fill.get("side", "unknown"))
                 fill_id = str(fill.get("tid") or f"{fill.get('hash', '')}:{oid}:{fill.get('time', 0)}")

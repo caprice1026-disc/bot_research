@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import replace
+from decimal import Decimal
 import json
 import os
 from pathlib import Path
@@ -90,6 +91,18 @@ def preflight_check(
     )
     if not account_clean:
         raise PreflightError("account has an unknown existing position or order")
+    if settings.expected_account_mode and account.account_mode != settings.expected_account_mode:
+        raise PreflightError(
+            f"account mode {account.account_mode} does not match expected "
+            f"{settings.expected_account_mode}"
+        )
+    if account.equity <= 0 and account.spot_usdc > 0:
+        raise PreflightError(
+            f"Spot USDC {account.spot_usdc} is available, but Perp accountValue is 0; "
+            "run transfer-to-perp --amount <USDC> before trading"
+        )
+    if account.equity <= 0:
+        raise PreflightError("account has no usable collateral")
 
     return {
         "status": "ok",
@@ -98,6 +111,10 @@ def preflight_check(
         "trader_model": settings.trader_model,
         "reviewer_model": settings.reviewer_model,
         "equity": str(account.equity),
+        "available_collateral": str(account.withdrawable),
+        "spot_usdc": str(account.spot_usdc),
+        "account_mode": account.account_mode,
+        "collateral_source": account.collateral_source,
         "mark": str(market.mark),
         "size_decimals": market.size_decimals,
         "account_clean": True,
@@ -110,6 +127,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--env-file", type=Path, default=_default_env_file())
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("preflight", help="Validate Testnet, account, signer, and Gemini models")
+
+    transfer = subparsers.add_parser(
+        "transfer-to-perp",
+        help="Explicitly transfer Spot USDC to the Perp account on Testnet",
+    )
+    transfer.add_argument("--amount", type=Decimal, required=True)
 
     dry_run = subparsers.add_parser("dry-run", help="Run accelerated no-order cycles")
     dry_run.add_argument("--cycles", type=int, default=36)
@@ -239,6 +262,40 @@ def run_cli(argv: Sequence[str] | None = None) -> int:
     gateway = GeminiGateway(api_key=settings.gemini_api_key)
     signer_address = Account.from_key(settings.private_key).address
     try:
+        if args.command == "transfer-to-perp":
+            if args.amount <= 0:
+                raise PreflightError("transfer amount must be positive")
+            account = adapter.get_account_snapshot(settings.coin)
+            if account.account_mode == "unifiedAccount":
+                raise PreflightError(
+                    "account is unifiedAccount; Spot USDC is already shared collateral and "
+                    "does not require Spot-to-Perp transfer"
+                )
+            role_response = adapter.info.user_role(signer_address)
+            if not _authorized_for_wallet(
+                role_response=role_response,
+                signer_address=signer_address,
+                wallet_address=settings.wallet_address,
+            ):
+                raise PreflightError("signer is not authorized for the configured wallet")
+            if account.position_size != 0 or account.open_orders or account.unknown_exposure:
+                raise PreflightError("account must have no positions or open orders before transfer")
+            if args.amount > account.spot_usdc:
+                raise PreflightError(
+                    f"transfer amount {args.amount} exceeds Spot USDC {account.spot_usdc}"
+                )
+            response = adapter.transfer_usd_class(args.amount, to_perp=True)
+            time.sleep(1)
+            after = adapter.get_account_snapshot(settings.coin)
+            result = {
+                "status": "ok" if response.get("status") == "ok" else "error",
+                "transferred_usdc": str(args.amount),
+                "perp_equity": str(after.equity),
+                "perp_withdrawable": str(after.withdrawable),
+                "spot_usdc": str(after.spot_usdc),
+            }
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["status"] == "ok" else 1
         preflight = preflight_check(
             settings=settings,
             adapter=adapter,

@@ -46,7 +46,7 @@ def generate_report(store: SQLiteStore, run_id: str) -> dict[str, Any]:
         (run_id,),
     ).fetchall()
     cycle_rows = store.connection.execute(
-        "SELECT slot, strategy_version, decision_json, status FROM cycles WHERE run_id=? ORDER BY slot",
+        "SELECT slot, scheduled_at_ms, strategy_version, decision_json, status FROM cycles WHERE run_id=? ORDER BY slot",
         (run_id,),
     ).fetchall()
 
@@ -54,24 +54,42 @@ def generate_report(store: SQLiteStore, run_id: str) -> dict[str, Any]:
     fees = sum(float(row["fee"]) for row in fills)
     funding = sum(float(row["amount"]) for row in funding_rows)
     net_pnl = gross_pnl - fees + funding
-    closed = [float(row["closed_pnl"]) for row in fills if float(row["closed_pnl"]) != 0]
+    slot_metrics: dict[int, dict[str, float]] = defaultdict(lambda: {"gross": 0.0, "fees": 0.0})
+    for row in fills:
+        slot = int(row["slot"])
+        slot_metrics[slot]["gross"] += float(row["closed_pnl"])
+        slot_metrics[slot]["fees"] += float(row["fee"])
+    slot_net = {
+        slot: values["gross"] - values["fees"]
+        for slot, values in slot_metrics.items()
+    }
+    closed_slots = [slot for slot, values in slot_metrics.items() if values["gross"] != 0]
+    closed = [slot_net[slot] for slot in closed_slots]
     wins = [value for value in closed if value > 0]
     losses = [value for value in closed if value < 0]
     win_rate = len(wins) / len(closed) if closed else None
     profit_factor = sum(wins) / abs(sum(losses)) if losses else None
 
-    pnl_by_slot: dict[int, float] = defaultdict(float)
+    cycle_by_slot = {int(row["slot"]): row for row in cycle_rows}
     pnl_by_side: dict[str, float] = defaultdict(float)
-    for row in fills:
-        closed_pnl = float(row["closed_pnl"])
-        pnl_by_slot[int(row["slot"])] += closed_pnl
-        if closed_pnl:
-            pnl_by_side[str(row["side"])] += closed_pnl
+    for slot in closed_slots:
+        cycle = cycle_by_slot.get(slot)
+        decision = json.loads(cycle["decision_json"]) if cycle and cycle["decision_json"] else {}
+        side = str(decision.get("side") or "unknown")
+        pnl_by_side[side] += slot_net[slot]
 
-    abstain_groups: dict[str, dict[str, float | int]] = {
-        "true": {"cycles": 0, "net_closed_pnl": 0.0},
-        "false": {"cycles": 0, "net_closed_pnl": 0.0},
-    }
+    def _empty_group() -> dict[str, float | int]:
+        return {"cycles": 0, "gross_closed_pnl": 0.0, "fees": 0.0, "net_closed_pnl": 0.0}
+
+    def _add_group(groups: dict[str, dict[str, float | int]], key: str, slot: int) -> None:
+        values = slot_metrics.get(slot, {"gross": 0.0, "fees": 0.0})
+        group = groups.setdefault(key, _empty_group())
+        group["cycles"] += 1
+        group["gross_closed_pnl"] += values["gross"]
+        group["fees"] += values["fees"]
+        group["net_closed_pnl"] += values["gross"] - values["fees"]
+
+    abstain_groups: dict[str, dict[str, float | int]] = {"true": _empty_group(), "false": _empty_group()}
     strategy_groups: dict[str, dict[str, float | int]] = {}
     confidence_groups: dict[str, dict[str, float | int]] = {}
     statuses: dict[str, int] = defaultdict(int)
@@ -81,22 +99,13 @@ def generate_report(store: SQLiteStore, run_id: str) -> dict[str, Any]:
             continue
         decision = json.loads(row["decision_json"])
         slot = int(row["slot"])
-        pnl = pnl_by_slot[slot]
         abstain_key = "true" if decision.get("would_abstain") else "false"
-        abstain_groups[abstain_key]["cycles"] += 1
-        abstain_groups[abstain_key]["net_closed_pnl"] += pnl
+        _add_group(abstain_groups, abstain_key, slot)
         version = str(row["strategy_version"])
-        version_group = strategy_groups.setdefault(version, {"cycles": 0, "net_closed_pnl": 0.0})
-        version_group["cycles"] += 1
-        version_group["net_closed_pnl"] += pnl
+        _add_group(strategy_groups, version, slot)
         confidence = float(decision.get("confidence", 0))
         confidence_key = _bucket(confidence)
-        confidence_group = confidence_groups.setdefault(
-            confidence_key,
-            {"cycles": 0, "net_closed_pnl": 0.0},
-        )
-        confidence_group["cycles"] += 1
-        confidence_group["net_closed_pnl"] += pnl
+        _add_group(confidence_groups, confidence_key, slot)
 
     initial_equity = float(run["initial_equity"])
     final_equity = float(run["final_equity"] or run["initial_equity"])
@@ -125,7 +134,7 @@ def generate_report(store: SQLiteStore, run_id: str) -> dict[str, Any]:
             "win_rate": win_rate,
             "profit_factor": profit_factor,
             "max_drawdown_pct": _max_drawdown(equities),
-            "closed_episode_count": len(closed),
+            "closed_episode_count": len(closed_slots),
         },
         "direction": dict(sorted(pnl_by_side.items())),
         "confidence_buckets": dict(sorted(confidence_groups.items())),
@@ -143,7 +152,7 @@ def generate_report(store: SQLiteStore, run_id: str) -> dict[str, Any]:
             "usdc_flat_pnl": 0.0,
         },
         "measurement_notes": {
-            "pnl": "confirmed fills, fees, and user funding only",
+            "pnl": "confirmed fills, fees, and user funding only; grouped net_closed_pnl includes fill fees and excludes run-level funding",
             "mfe_mae": "MFE/MAE is estimated from 1m candles when available; it is not tick-exact",
         },
     }

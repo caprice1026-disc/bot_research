@@ -11,11 +11,16 @@ class FakeExchangeClient:
         self.response = response
         self.requests: list[dict] | None = None
         self.grouping: str | None = None
+        self.usd_transfer_request: tuple[float, bool] | None = None
 
     def bulk_orders(self, requests: list[dict], grouping: str) -> dict:
         self.requests = requests
         self.grouping = grouping
         return self.response
+
+    def usd_class_transfer(self, amount: float, to_perp: bool) -> dict:
+        self.usd_transfer_request = (amount, to_perp)
+        return {"status": "ok"}
 
 
 class FakeInfoClient:
@@ -58,9 +63,17 @@ class FakeInfoClient:
             ],
         }
 
+    def query_user_abstraction_state(self, address: str) -> str:
+        assert address == "0xabc"
+        return "default"
+
     def frontend_open_orders(self, address: str) -> list[dict]:
         assert address == "0xabc"
         return [{"coin": "BTC", "cloid": "0x" + "f" * 32, "oid": 9}]
+
+    def spot_user_state(self, address: str) -> dict:
+        assert address == "0xabc"
+        return {"balances": [{"coin": "USDC", "total": "2689.31777457"}]}
 
     def user_fills_by_time(self, address: str, start: int, end: int, aggregate_by_time: bool) -> list[dict]:
         assert (address, start, end, aggregate_by_time) == ("0xabc", 1_000, 2_000, True)
@@ -159,6 +172,25 @@ def test_short_bracket_uses_buy_reduce_only_protection() -> None:
     assert stop_loss["is_buy"] is True
 
 
+def test_trigger_waiting_status_is_accepted_as_protection() -> None:
+    response = _successful_response()
+    response["response"]["data"]["statuses"][1] = "waitingForTrigger"
+    response["response"]["data"]["statuses"][2] = "waitingForTrigger"
+    client = FakeExchangeClient(response)
+    adapter = HyperliquidAdapter(info_client=object(), exchange_client=client, account_address="0xabc")
+
+    result = adapter.place_bracket(
+        coin="BTC",
+        plan=_plan(),
+        run_id="run-001",
+        slot=10,
+        max_entry_slippage_bps=Decimal("50"),
+    )
+
+    assert result.success is True
+    assert result.requires_recovery is False
+
+
 def test_partial_entry_fill_requires_recovery() -> None:
     client = FakeExchangeClient(_successful_response(total_size="0.004"))
     adapter = HyperliquidAdapter(info_client=object(), exchange_client=client, account_address="0xabc")
@@ -204,6 +236,40 @@ def test_client_order_ids_are_stable_per_slot_and_distinct_per_leg() -> None:
     assert all(value.startswith("0x") and len(value) == 34 for value in first.values())
 
 
+def test_spot_to_perp_transfer_uses_sdk_usd_class_transfer() -> None:
+    client = FakeExchangeClient(_successful_response())
+    adapter = HyperliquidAdapter(
+        info_client=FakeInfoClient(),
+        exchange_client=client,
+        account_address="0xabc",
+    )
+
+    result = adapter.transfer_usd_class(Decimal("2000"), to_perp=True)
+
+    assert result == {"status": "ok"}
+    assert client.usd_transfer_request == (2000.0, True)
+
+
+def test_spot_to_perp_transfer_rejects_agent_wallet_before_sdk_call() -> None:
+    client = FakeExchangeClient(_successful_response())
+    client.account_address = "0x" + "a" * 40
+    client.wallet = type("Wallet", (), {"address": "0x" + "b" * 40})()
+    adapter = HyperliquidAdapter(
+        info_client=FakeInfoClient(),
+        exchange_client=client,
+        account_address=client.account_address,
+    )
+
+    try:
+        adapter.transfer_usd_class(Decimal("2000"), to_perp=True)
+    except RuntimeError as exc:
+        assert "Agent Wallet" in str(exc)
+    else:
+        raise AssertionError("agent wallet transfer should be rejected before SDK call")
+
+    assert client.usd_transfer_request is None
+
+
 def test_market_observation_and_account_are_parsed_from_sdk_shapes() -> None:
     adapter = HyperliquidAdapter(
         info_client=FakeInfoClient(),
@@ -220,11 +286,38 @@ def test_market_observation_and_account_are_parsed_from_sdk_shapes() -> None:
     assert market.bids[0].price == 50000.0
     assert market.asks[0].price == 50020.0
     assert account.equity == Decimal("1000")
+    assert account.spot_usdc == Decimal("2689.31777457")
     assert account.withdrawable == Decimal("900")
     assert account.position_size == Decimal("0.005")
     assert account.open_orders[0]["cloid"] == "0x" + "f" * 32
     assert adapter.get_user_fills(1_000, 2_000)[0]["tid"] == 7
     assert adapter.get_user_funding(1_000, 2_000)[0]["delta"]["usdc"] == "0.1"
+
+
+def test_unified_account_uses_spot_clearinghouse_collateral_and_perp_positions() -> None:
+    class UnifiedInfoClient(FakeInfoClient):
+        def query_user_abstraction_state(self, address: str) -> str:
+            return "unifiedAccount"
+
+        def spot_user_state(self, address: str) -> dict:
+            return {
+                "balances": [{"coin": "USDC", "token": 0, "total": "2689.3", "hold": "3.3"}],
+                "tokenToAvailableAfterMaintenance": [[0, "2400.0"]],
+            }
+
+    adapter = HyperliquidAdapter(
+        info_client=UnifiedInfoClient(),
+        exchange_client=FakeExchangeClient(_successful_response()),
+        account_address="0xabc",
+    )
+
+    account = adapter.get_account_snapshot("BTC")
+
+    assert account.account_mode == "unifiedAccount"
+    assert account.collateral_source == "spotClearinghouseState"
+    assert account.equity == Decimal("2689.3")
+    assert account.withdrawable == Decimal("2400.0")
+    assert account.spot_usdc == Decimal("2689.3")
 
 
 def test_account_snapshot_flags_non_target_positions_as_unknown_exposure() -> None:

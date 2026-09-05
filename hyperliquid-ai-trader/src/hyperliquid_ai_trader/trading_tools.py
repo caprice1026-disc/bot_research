@@ -178,6 +178,12 @@ class TradingTools:
             elif "simulated" in status_payload:
                 status = "simulated"
                 oid = None
+            elif status_payload == "waitingForTrigger":
+                status = "waiting_for_trigger"
+                oid = None
+            elif status_payload == "waitingForFill":
+                status = "waiting_for_fill"
+                oid = None
             elif "error" in status_payload:
                 status = "error"
                 oid = None

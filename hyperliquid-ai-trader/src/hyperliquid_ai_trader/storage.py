@@ -410,6 +410,28 @@ class SQLiteStore:
         ).fetchone()
         return int(row["slot"]) if row else None
 
+    def slot_for_unmapped_fill(self, run_id: str, *, timestamp_ms: int) -> int | None:
+        """Find the newest ordered episode that has not recorded a closing fill."""
+        row = self.connection.execute(
+            """
+            SELECT c.slot
+            FROM cycles AS c
+            WHERE c.run_id=?
+              AND c.scheduled_at_ms<=?
+              AND c.status IN ('ordered', 'simulated')
+              AND NOT EXISTS (
+                  SELECT 1 FROM fills AS f
+                  WHERE f.run_id=c.run_id
+                    AND f.slot=c.slot
+                    AND CAST(f.closed_pnl AS REAL) != 0
+              )
+            ORDER BY c.scheduled_at_ms DESC
+            LIMIT 1
+            """,
+            (run_id, timestamp_ms),
+        ).fetchone()
+        return int(row["slot"]) if row else None
+
     def realized_net_pnl(self, run_id: str) -> Decimal:
         fills = self.connection.execute(
             "SELECT closed_pnl, fee FROM fills WHERE run_id=?",
@@ -533,6 +555,23 @@ class SQLiteStore:
                 reason,
                 created_at_ms,
             ),
+        )
+        self.connection.commit()
+
+    def record_event(
+        self,
+        *,
+        run_id: str,
+        timestamp_ms: int,
+        event_type: str,
+        payload: dict[str, Any],
+    ) -> None:
+        self.connection.execute(
+            """
+            INSERT INTO events (run_id, timestamp_ms, event_type, payload_json)
+            VALUES (?, ?, ?, ?)
+            """,
+            (run_id, timestamp_ms, event_type, _json(payload)),
         )
         self.connection.commit()
 

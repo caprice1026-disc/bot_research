@@ -124,12 +124,14 @@ def test_report_uses_fills_fees_funding_and_equity_drawdown() -> None:
     assert report["performance"]["funding"] == pytest.approx(0.1)
     assert report["performance"]["net_pnl"] == pytest.approx(2.5)
     assert report["performance"]["win_rate"] == pytest.approx(0.5)
-    assert report["performance"]["profit_factor"] == pytest.approx(2.5)
+    assert report["performance"]["profit_factor"] == pytest.approx(4.6 / 2.2)
     assert report["performance"]["max_drawdown_pct"] == pytest.approx(100 * 5 / 1010)
     assert report["benchmarks"]["btc_buy_and_hold_pnl"] == pytest.approx(20.0)
     assert report["benchmarks"]["usdc_flat_pnl"] == 0.0
-    assert report["would_abstain"]["true"]["net_closed_pnl"] == pytest.approx(-2.0)
-    assert report["strategy_versions"]["1"]["net_closed_pnl"] == pytest.approx(5.0)
+    assert report["would_abstain"]["true"]["net_closed_pnl"] == pytest.approx(-2.2)
+    assert report["would_abstain"]["true"]["fees"] == pytest.approx(0.2)
+    assert report["strategy_versions"]["1"]["net_closed_pnl"] == pytest.approx(4.6)
+    assert report["strategy_versions"]["1"]["fees"] == pytest.approx(0.4)
     assert report["excursion"]["episode_count"] == 2
     assert report["excursion"]["average_mfe_pct"] == pytest.approx(1.0)
     assert report["excursion"]["average_mae_pct"] == pytest.approx(0.5)

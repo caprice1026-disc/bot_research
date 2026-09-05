@@ -30,7 +30,17 @@ python -m pip --python .venv\Scripts\python.exe install pip
 python -m pip --python .venv\Scripts\python.exe install -e ".[test]"
 ```
 
-設定は親ディレクトリの `.env` から読みます。秘密値はプロジェクトへ複製しません。設定項目は [`.env.example`](.env.example) を参照してください。`GEMINI_MODEL` をTrader/Reviewer共通値として使い、必要な場合だけ `TRADER_MODEL`、`REVIEWER_MODEL` で個別に上書きできます。利用できないモデルへ暗黙にフォールバックしません。
+設定は親ディレクトリの `.env` から読みます。`HL_test_wallet` は資金を持つHyperliquid Testnetの親（取引）口座アドレス、`HL_test_wallet_private_key` はその口座に認可されたAgent Walletの秘密鍵です。秘密値はプロジェクトへ複製しません。設定項目は [`.env.example`](.env.example) を参照してください。`GEMINI_MODEL` をTrader/Reviewer共通値として使い、必要な場合だけ `TRADER_MODEL`、`REVIEWER_MODEL` で個別に上書きできます。利用できないモデルへ暗黙にフォールバックしません。
+
+HyperliquidのUnified AccountではSpot USDCとPerp担保が共有されます。preflightは `userAbstraction` を自動取得し、Unified Accountなら `spotClearinghouseState` のUSDC `total` と `tokenToAvailableAfterMaintenance` をequity/available collateralとして使います。Perpの `clearinghouseState` は建玉・未実現損益・注文確認に引き続き使います。
+
+Standard AccountでのみSpot→Perp内部移管が必要になる場合があります。内部移管はAgent Walletには許可されないため、現在の「親口座アドレス＋Agent秘密鍵」設定ではCLIがSDKへ送信する前に停止します。Standard Accountを親アカウントの秘密鍵で操作する一時的な環境で、対象口座に建玉・注文がないことを確認したうえで次を実行します。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.cli --env-file ..\.env transfer-to-perp --amount 2000
+```
+
+移管コマンドは指定額を超えて移さず、自動では実行しません。Unified Accountで実行すると「移管不要」として終了します。移管後に `preflight` を再実行してPerp `equity` と `available_collateral` を確認してください。
 
 Gemini無料枠の対象モデル、quota、入力データの取り扱いは変更される可能性があります。運転前に[公式料金表](https://ai.google.dev/gemini-api/docs/pricing)とGoogle AI Studioの対象プロジェクトquotaを確認してください。
 

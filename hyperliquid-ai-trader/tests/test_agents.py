@@ -88,7 +88,7 @@ def test_trader_rejects_multiple_function_calls_without_executing_any() -> None:
     assert len(gateway.prompts) == 3
 
 
-def test_trader_retries_rate_limit_then_returns_valid_decision() -> None:
+def test_trader_stops_after_rate_limit_without_retrying() -> None:
     sleeps: list[float] = []
     gateway = SequenceGateway(
         [ModelGatewayError("rate_limited", retryable=True), [_valid_call()]]
@@ -102,11 +102,32 @@ def test_trader_retries_rate_limit_then_returns_valid_decision() -> None:
         sleeper=sleeps.append,
     )
 
-    envelope = agent.decide({"market": {"mid": 50000}})
+    with pytest.raises(AgentDecisionError, match="rate_limited"):
+        agent.decide({"market": {"mid": 50000}})
 
-    assert envelope.decision.side is Side.LONG
-    assert len(gateway.prompts) == 2
-    assert sleeps == [1.0]
+    assert len(gateway.prompts) == 1
+    assert sleeps == []
+
+
+def test_trader_does_not_burn_retries_on_rate_limit() -> None:
+    sleeps: list[float] = []
+    gateway = SequenceGateway(
+        [ModelGatewayError("rate_limited", retryable=True), [_valid_call()]]
+    )
+    agent = TraderAgent(
+        gateway=gateway,
+        model="gemini-test",
+        temperature=0.7,
+        constitution="fixed",
+        max_attempts=3,
+        sleeper=sleeps.append,
+    )
+
+    with pytest.raises(AgentDecisionError, match="rate_limited"):
+        agent.decide({"market": {"mid": 50000}})
+
+    assert len(gateway.prompts) == 1
+    assert sleeps == []
 
 
 def test_trader_rejects_unknown_function_and_out_of_range_confidence() -> None:

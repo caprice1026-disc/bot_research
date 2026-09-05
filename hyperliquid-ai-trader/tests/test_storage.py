@@ -132,3 +132,37 @@ def test_store_records_validated_decision_before_risk_or_execution() -> None:
     assert row["model"] == "gemini-test"
     assert row["arguments_json"] == '{"side": "long", "stop_loss_pct": "0.05"}'
     store.close()
+
+
+def test_slot_for_unmapped_close_fill_uses_latest_open_episode() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-close-slot",
+        mode="testnet_live",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+    assert store.reserve_cycle("run-close-slot", 0, scheduled_at_ms=1_000, strategy_version=1)
+    assert store.reserve_cycle("run-close-slot", 1, scheduled_at_ms=301_000, strategy_version=1)
+    store.complete_cycle(
+        run_id="run-close-slot", slot=0, status="ordered", features={}, decision={"side": "long"},
+        prompt_hash="a" * 64, model="test", error_type=None, completed_at_ms=2_000,
+    )
+    store.complete_cycle(
+        run_id="run-close-slot", slot=1, status="reserved", features={}, decision=None,
+        prompt_hash=None, model=None, error_type=None, completed_at_ms=0,
+    )
+    assert store.record_order(
+        run_id="run-close-slot", slot=0, leg="entry", cloid="0x" + "a" * 32,
+        status="filled", size=Decimal("0.005"), price=Decimal("50000"), oid=123,
+    ) is None
+
+    assert store.slot_for_unmapped_fill("run-close-slot", timestamp_ms=200_000) == 0
+    store.record_fill(
+        run_id="run-close-slot", slot=0, fill_id="close-0", side="long", size=Decimal("0.005"),
+        price=Decimal("50100"), fee=Decimal("0.1"), closed_pnl=Decimal("0.5"), timestamp_ms=200_000,
+    )
+    assert store.slot_for_unmapped_fill("run-close-slot", timestamp_ms=400_000) is None
+    store.close()

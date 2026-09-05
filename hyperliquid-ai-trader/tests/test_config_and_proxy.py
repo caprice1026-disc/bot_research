@@ -68,6 +68,29 @@ def test_shared_gemini_model_from_env_applies_to_both_agents() -> None:
     assert settings.reviewer_model == "gemini-custom-free-tier"
 
 
+def test_expected_account_mode_is_optional_and_validated() -> None:
+    settings = Settings.from_mapping(
+        {
+            "HL_test_wallet": "0x" + "1" * 40,
+            "HL_test_wallet_private_key": "0x" + "2" * 64,
+            "GEMINI_API_KEY": "gemini-test-key",
+            "HL_EXPECTED_ACCOUNT_MODE": "unifiedAccount",
+        }
+    )
+
+    assert settings.expected_account_mode == "unifiedAccount"
+
+    with pytest.raises(ConfigError, match="account mode"):
+        Settings.from_mapping(
+            {
+                "HL_test_wallet": "0x" + "1" * 40,
+                "HL_test_wallet_private_key": "0x" + "2" * 64,
+                "GEMINI_API_KEY": "gemini-test-key",
+                "HL_EXPECTED_ACCOUNT_MODE": "not-a-mode",
+            }
+        )
+
+
 def test_proxy_cleanup_removes_only_known_dead_loopback_values() -> None:
     environ = {
         "HTTP_PROXY": "http://127.0.0.1:9",

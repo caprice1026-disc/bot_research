@@ -153,7 +153,7 @@ class TraderAgent:
                 return DecisionEnvelope(decision, prompt_hash, self.model)
             except ModelGatewayError as exc:
                 last_error = exc.error_type
-                if not exc.retryable:
+                if not exc.retryable or exc.error_type == "rate_limited":
                     break
             except AgentDecisionError as exc:
                 last_error = exc.error_type
@@ -206,7 +206,7 @@ class ReviewerAgent:
                 return ReviewEnvelope(state, patch, prompt_hash, self.model)
             except ModelGatewayError as exc:
                 last_error = exc.error_type
-                if not exc.retryable:
+                if not exc.retryable or exc.error_type == "rate_limited":
                     break
             except StrategyPatchError:
                 last_error = "invalid_strategy_patch"

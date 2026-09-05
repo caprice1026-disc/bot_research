@@ -14,6 +14,7 @@ from hyperliquid_ai_trader.exchange.base import (
 from hyperliquid_ai_trader.models import BookLevel, Candle, Side, TradeDecision
 from hyperliquid_ai_trader.runner import LocalRunner, TradingService
 from hyperliquid_ai_trader.storage import SQLiteStore
+from hyperliquid_ai_trader.exchange.hyperliquid import make_cloids
 
 
 def _settings() -> Settings:
@@ -116,6 +117,23 @@ class FailingAgent:
 
     def decide(self, context: dict) -> DecisionEnvelope:
         raise AgentDecisionError("rate_limited")
+
+
+class ProtectionFailureExchange(FakeExchange):
+    def __init__(self) -> None:
+        self.place_calls = 0
+
+    def place_bracket(self, **kwargs) -> BracketResult:
+        self.place_calls += 1
+        cloids = make_cloids(kwargs["run_id"], kwargs["slot"])
+        return BracketResult(
+            success=False,
+            requires_recovery=True,
+            error_type="protection_rejected",
+            cloids=cloids,
+            statuses=[{"filled": {"totalSz": "0.005", "oid": 1}}, "waitingForTrigger", {"error": "badTrigger"}],
+            filled_size=Decimal("0.005"),
+        )
 
 
 def test_run_once_is_idempotent_and_records_simulated_decision() -> None:
@@ -227,6 +245,36 @@ def test_run_once_records_market_transport_failure_and_allows_scheduler_to_conti
 
     assert result.status == "mandatory_entry_exception"
     assert result.error_type == "market_data_error"
+    store.close()
+
+
+def test_execution_protection_failure_halts_future_entries() -> None:
+    settings = _settings()
+    settings = Settings.from_mapping({
+        "HL_test_wallet": "0x" + "1" * 40,
+        "HL_test_wallet_private_key": "0x" + "2" * 64,
+        "GEMINI_API_KEY": "gemini-test-key",
+        "EXECUTION_MODE": "testnet_live",
+    })
+    store = _store()
+    exchange = ProtectionFailureExchange()
+    service = TradingService(
+        settings=settings,
+        exchange=exchange,
+        trader=FixedAgent(),
+        reviewer=None,
+        store=store,
+        run_id="run-halt",
+        git_sha="abc",
+    )
+    service.initialize(now_ms=1_000)
+
+    first = service.run_once(slot=0, scheduled_at_ms=1_000)
+    second = service.run_once(slot=1, scheduled_at_ms=301_000)
+
+    assert first.error_type == "protection_rejected"
+    assert second.status == "execution_halted"
+    assert exchange.place_calls == 1
     store.close()
 
 

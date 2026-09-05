@@ -18,6 +18,12 @@
 - [x] (2026-08-22 22:55+09:00) 開始済みCanaryをユーザー指示で停止した。第1シフトはGemini rate limitにより発注0件で、停止後のPreflightは建玉0・未約定注文0を確認した。
 - [x] (2026-08-22 22:57+09:00) 実Canaryの完遂を待たず、ユーザーの明示指示により現在の実装をmainへ反映する。
 - [ ] 三時間運転を完了し、匿名化要約をmainへ再pushする。
+- [x] (2026-08-25) Testnetの残高不一致を調査し、Spot USDCとPerp証拠金の分離が根本原因であることを確認した。
+- [x] (2026-08-25) Spot残高の取得、残高0時のpreflight停止、明示的なSpot→Perp移管CLIを追加した。自動移管は行わない。
+- [x] (2026-08-25) Agent Walletでの移管試行が拒否されることを再現し、SDK送信前に権限不足を明示する検証を追加した。
+- [x] (2026-08-25) Unified Accountを実口座で確認し、担保をspotClearinghouseStateから取得するよう修正した。
+- [x] (2026-09-05) 実行レビューを反映し、`waitingForTrigger` 保護注文を受付済みとして扱うよう修正した。
+- [x] (2026-09-05) 保護注文・部分約定・応答不明の再発注停止、未紐付け決済fillの候補限定、429同一シフト再試行停止、費用込みグループ損益を追加し、75テストを通過した。
 
 ## Surprises & Discoveries
 
@@ -33,6 +39,16 @@
   Evidence: Dry-run `dry-run-20260822T223424-df0b1141` は10 simulated、26 `rate_limited`、Reviewer 1 accepted、5 `rate_limited` で完了し、固定判断へフォールバックしなかった。
 - Observation: Canary第1シフトもGeminiの生成時点でrate limitとなり、発注は作られなかった。ユーザーはこの既存実行の停止とmain反映を指示した。
   Evidence: `canary-20260822T225024-937f1719` のslot 0は `mandatory_entry_exception/rate_limited`、ordersは0件。停止後の実Preflightは `account_clean=true`。
+- Observation: 現在の設定は親口座とAgent Walletの正しい組み合わせで、認可も成立している。一方、Perp口座は0 USDCで、Spot口座に2689.31777457 USDCが存在する。
+  Evidence: Agent署名者は `role=agent` かつ `data.user` が `HL_test_wallet` と一致。Info APIの `user_state` は `accountValue=0`、`withdrawable=0`、`assetPositions=[]`、`frontend_open_orders=[]`。`spot_user_state` はUSDC total=2689.31777457を返した。
+- Observation: Spot→Perp内部移管はAgent Walletでは許可されない。
+  Evidence: 公式Python SDKの `basic_send_asset.py` は `exchange.account_address != exchange.wallet.address` の場合にAgentはinternal transfer不可として停止する。実際のCLI試行後もSDK送信前に同じ条件で拒否し、口座はSpot=2689.31777457、Perp=0のまま。
+- Observation: 対象Testnet口座はUnified Accountであるため、Spot USDCがPerp担保として共有される。
+  Evidence: `query_user_abstraction_state` は `unifiedAccount`、`spot_user_state` はUSDC total=2689.31777457、tokenToAvailableAfterMaintenance[USDC]=2689.31777457、Perp `user_state` はaccountValue=0を返した。公式ドキュメントもUnified/Portfolio Marginではspot clearinghouse stateを残高・holdの情報源と説明している。
+- Observation: HyperliquidのBracket注文レスポンスでは、未発火のTP/SLが `waitingForTrigger` 文字列で返る。これを `resting` だけで判定すると、正常な保護注文を失敗扱いする。
+  Evidence: 公式Exchange APIの注文ステータス仕様と、実行時の19シフト連続 `protection_rejected`、保存されたTP/SL `unknown` を照合した。
+- Observation: 429を同一シフト内で再試行すると、無料枠の残りをさらに消費し、1時間運転の判断サンプルを減らす。
+  Evidence: 直前の36シフトで17件の `rate_limited` が発生し、今回の修正では429を即時記録して次シフトへ進むテストを追加した。
 
 ## Decision Log
 
@@ -48,10 +64,22 @@
 - Decision: Canary後にmainへ初回pushし、三時間運転後に匿名化要約を二回目のcommit/pushで追加する。
   Rationale: 実装を早期に保全しつつ、長時間実験結果をコード変更と分離するため。
   Date/Author: 2026-08-22 / User
+- Decision: Spot→Perp移管は自動化せず、金額必須の明示CLIとして提供する。
+  Rationale: Spot資金をPerp証拠金へ移すのは外部状態を変更するため、誤移管を避けつつ、残高0をpreflightで見逃さないため。
+  Date/Author: 2026-08-25 / Codex
+- Decision: Unified Accountでは移管せず、Spot ClearinghouseのUSDCをequity/available collateralに使う。
+  Rationale: Unified AccountはSpotとPerpでUSDC担保を共有する仕様であり、旧Standard Account向け移管を行うと誤った外部状態変更になるため。
+  Date/Author: 2026-08-25 / Codex
+- Decision: `waitingForTrigger` と `waitingForFill` は保護注文受付済みとして扱い、保護注文系の確定失敗後は同一Runの新規発注を停止する。
+  Rationale: 受付待ち状態を拒否と誤認せず、同一執行障害による連続発注と手数料損失を防ぐため。
+  Date/Author: 2026-09-05 / Codex
+- Decision: confidence・strategy・would_abstain別の `net_closed_pnl` はfill手数料を差し引いた取引単位で集計する。
+  Rationale: 直前レポートのグループ損益が手数料を含まず、全体Net PnLと比較できなかったため。
+  Date/Author: 2026-09-05 / Codex
 
 ## Outcomes & Retrospective
 
-未完了。各マイルストーン完了時に、実装結果、検証証跡、残課題を追記する。
+レビュー修正の単体検証は完了した。1時間Testnet運転の結果、終了cleanup、建玉・未約定注文ゼロ、約定・手数料の照合を追記する。
 
 ## Context and Orientation
 

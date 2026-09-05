@@ -49,6 +49,7 @@ class Settings:
     private_key: str = field(repr=False)
     gemini_api_key: str = field(repr=False)
     network: str = "testnet"
+    expected_account_mode: str | None = None
     coin: str = "BTC"
     margin_mode: str = "isolated"
     leverage: int = 5
@@ -101,12 +102,17 @@ class Settings:
             raise ConfigError("LEVERAGE must be at least 1")
 
         shared_model = (values.get("GEMINI_MODEL") or "gemini-3.6-flash").strip()
+        expected_account_mode = (values.get("HL_EXPECTED_ACCOUNT_MODE") or "").strip() or None
+        valid_account_modes = {"unifiedAccount", "portfolioMargin", "disabled", "default", "dexAbstraction"}
+        if expected_account_mode is not None and expected_account_mode not in valid_account_modes:
+            raise ConfigError("HL_EXPECTED_ACCOUNT_MODE must be a supported account mode")
 
         return cls(
             wallet_address=_required(values, "HL_test_wallet"),
             private_key=_required(values, "HL_test_wallet_private_key"),
             gemini_api_key=_required(values, "GEMINI_API_KEY"),
             network=network,
+            expected_account_mode=expected_account_mode,
             coin=(values.get("TRADING_COIN") or "BTC").strip().upper(),
             margin_mode=margin_mode,
             leverage=leverage,

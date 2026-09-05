@@ -41,12 +41,17 @@ class ExchangeAccountSnapshot:
     unrealized_pnl: Decimal
     open_orders: list[dict[str, Any]]
     unknown_exposure: bool = False
+    spot_usdc: Decimal = Decimal("0")
+    account_mode: str = "default"
+    collateral_source: str = "perpClearinghouseState"
 
 
 class TradingExchange(Protocol):
     def get_market_observation(self, coin: str, *, now_ms: int) -> MarketObservation: ...
 
     def get_account_snapshot(self, coin: str) -> ExchangeAccountSnapshot: ...
+
+    def transfer_usd_class(self, amount: Decimal, *, to_perp: bool) -> dict[str, Any]: ...
 
     def set_leverage(self, coin: str, leverage: int, margin_mode: str) -> None: ...
 

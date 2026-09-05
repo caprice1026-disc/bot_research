@@ -51,6 +51,13 @@ def create_hyperliquid_adapter(settings: Settings) -> "HyperliquidAdapter":
     )
 
 
+def _is_accepted_protection_status(status: Any) -> bool:
+    """Hyperliquid returns trigger orders as waitingForTrigger before they fire."""
+    if isinstance(status, str):
+        return status in {"waitingForTrigger", "waitingForFill"}
+    return isinstance(status, dict) and "resting" in status
+
+
 class HyperliquidAdapter:
     def __init__(self, *, info_client: Any, exchange_client: Any, account_address: str) -> None:
         self.info = info_client
@@ -120,15 +127,69 @@ class HyperliquidAdapter:
                 unrealized_pnl = Decimal(str(position.get("unrealizedPnl", "0")))
             elif candidate_size != 0:
                 unknown_exposure = True
+        account_mode_reader = getattr(self.info, "query_user_abstraction_state", None)
+        account_mode = "default"
+        if callable(account_mode_reader):
+            raw_mode = account_mode_reader(self.account_address)
+            if not isinstance(raw_mode, str) or not raw_mode:
+                raise RuntimeError("Hyperliquid returned an invalid account abstraction mode")
+            account_mode = raw_mode
+
+        spot_usdc = Decimal("0")
+        spot_available_usdc = Decimal("0")
+        spot_user_state = getattr(self.info, "spot_user_state", None)
+        if callable(spot_user_state):
+            spot_state = spot_user_state(self.account_address)
+            balances = spot_state.get("balances", []) if isinstance(spot_state, dict) else []
+            for balance in balances:
+                if isinstance(balance, dict) and balance.get("coin") == "USDC":
+                    spot_usdc = Decimal(str(balance.get("total", "0")))
+                    fallback_available = spot_usdc - Decimal(str(balance.get("hold", "0")))
+                    spot_available_usdc = fallback_available
+                    break
+            if isinstance(spot_state, dict):
+                for token, amount in spot_state.get("tokenToAvailableAfterMaintenance", []):
+                    if int(token) == 0:
+                        spot_available_usdc = Decimal(str(amount))
+                        break
+
+        if account_mode == "unifiedAccount":
+            equity = spot_usdc
+            withdrawable = spot_available_usdc
+            collateral_source = "spotClearinghouseState"
+        elif account_mode == "portfolioMargin":
+            raise RuntimeError("portfolioMargin account mode is not supported in v0.1")
+        elif account_mode in {"disabled", "default", "dexAbstraction"}:
+            equity = Decimal(str(margin.get("accountValue", "0")))
+            withdrawable = Decimal(str(state.get("withdrawable", "0")))
+            collateral_source = "perpClearinghouseState"
+        else:
+            raise RuntimeError(f"unknown account abstraction mode: {account_mode}")
+
         return ExchangeAccountSnapshot(
-            equity=Decimal(str(margin.get("accountValue", "0"))),
-            withdrawable=Decimal(str(state.get("withdrawable", "0"))),
+            equity=equity,
+            withdrawable=withdrawable,
             position_size=position_size,
             entry_price=entry_price,
             unrealized_pnl=unrealized_pnl,
             open_orders=list(self.info.frontend_open_orders(self.account_address)),
             unknown_exposure=unknown_exposure,
+            spot_usdc=spot_usdc,
+            account_mode=account_mode,
+            collateral_source=collateral_source,
         )
+
+    def transfer_usd_class(self, amount: Decimal, *, to_perp: bool) -> dict[str, Any]:
+        signer = getattr(getattr(self.exchange, "wallet", None), "address", None)
+        if isinstance(signer, str) and signer.lower() != self.account_address.lower():
+            raise RuntimeError(
+                "Spot-to-Perp internal transfer requires the main account private key; "
+                "Agent Wallet keys can place orders but cannot perform internal transfers"
+            )
+        response = self.exchange.usd_class_transfer(float(amount), to_perp)
+        if not isinstance(response, dict):
+            raise RuntimeError("USD class transfer returned an invalid response")
+        return response
 
     def set_leverage(self, coin: str, leverage: int, margin_mode: str) -> None:
         response = self.exchange.update_leverage(leverage, coin, margin_mode == "cross")
@@ -214,7 +275,7 @@ class HyperliquidAdapter:
                 statuses,
                 filled_size,
             )
-        if any(not isinstance(status, dict) or "resting" not in status for status in statuses[1:]):
+        if any(not _is_accepted_protection_status(status) for status in statuses[1:]):
             return BracketResult(
                 False,
                 True,
