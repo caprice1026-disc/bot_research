@@ -24,6 +24,7 @@
 - [x] (2026-08-25) Unified Accountを実口座で確認し、担保をspotClearinghouseStateから取得するよう修正した。
 - [x] (2026-09-05) 実行レビューを反映し、`waitingForTrigger` 保護注文を受付済みとして扱うよう修正した。
 - [x] (2026-09-05) 保護注文・部分約定・応答不明の再発注停止、未紐付け決済fillの候補限定、429同一シフト再試行停止、費用込みグループ損益を追加し、75テストを通過した。
+- [x] (2026-09-06) 実Fillの `dir` と直前entry fillを使って未紐付け決済のシフト帰属を修正し、Gemini SDKの既定再試行を1回へ制限した。77テストを通過した。
 
 ## Surprises & Discoveries
 
@@ -49,6 +50,12 @@
   Evidence: 公式Exchange APIの注文ステータス仕様と、実行時の19シフト連続 `protection_rejected`、保存されたTP/SL `unknown` を照合した。
 - Observation: 429を同一シフト内で再試行すると、無料枠の残りをさらに消費し、1時間運転の判断サンプルを減らす。
   Evidence: 直前の36シフトで17件の `rate_limited` が発生し、今回の修正では429を即時記録して次シフトへ進むテストを追加した。
+- Observation: `userFillsByTime` の決済fillには `dir` と `startPosition` があり、時系列上の直前entry fillでシフトを特定できる。
+  Evidence: 前回1時間RunのTestnet履歴で、short entry→short close→short entry→short close→long entry→long closeの順序を確認した。従来の「最新ordered cycle」推定ではcloseを隣のslotへ誤帰属していた。
+- Observation: 現在のgoogle-genai SDKはHTTP retry未指定時に初回を含む最大5試行を設定する。
+  Evidence: 専用venvの`google.genai._api_client`既定値と`HttpRetryOptions(attempts=1)`の動作を確認した。
+- Observation: Gemini 3.6 Flashは公式モデル一覧でStableかつFunction Calling/Structured Outputs対応、料金表のStandard Free Tierでは入力・出力・キャッシュが無料。ただしRPM/TPM/RPDはプロジェクト・モデル依存で固定値ではない。
+  Evidence: 2026-09-06に公式モデル仕様、料金表、レート制限、Billing FAQを確認。実際のquotaはAI Studio Dashboardで確認する必要がある。
 
 ## Decision Log
 
@@ -76,10 +83,16 @@
 - Decision: confidence・strategy・would_abstain別の `net_closed_pnl` はfill手数料を差し引いた取引単位で集計する。
   Rationale: 直前レポートのグループ損益が手数料を含まず、全体Net PnLと比較できなかったため。
   Date/Author: 2026-09-05 / Codex
+- Decision: 未紐付け決済fillは、方向が分かる場合は同方向の未決済entry fillを時刻順に照合し、entry情報が無い場合だけ従来のcycle候補へfallbackする。
+  Rationale: 前回Runで隣接slotへの誤帰属を再現し、DBスキーマを増やさずに実約定順序を使える最小修正とした。
+  Date/Author: 2026-09-06 / Codex
+- Decision: google-genai SDKのHTTP retry attemptsを1に固定する。
+  Rationale: 無料枠の429に対するSDK内部の暗黙再試行を止め、外側のRun記録と1リクエスト1試行の挙動を一致させるため。
+  Date/Author: 2026-09-06 / Codex
 
 ## Outcomes & Retrospective
 
-レビュー修正の単体検証は完了した。1時間Testnet運転の結果、終了cleanup、建玉・未約定注文ゼロ、約定・手数料の照合を追記する。
+レビュー修正の単体検証は完了した（77 passed）。前回1時間Runの実Fill時系列を再照合し、close帰属の回帰テストを追加した。次回Testnet運転では429の暗黙再試行がなく、確定fillの方向・entry順序に基づくレポートを確認する。
 
 ## Context and Orientation
 
@@ -135,3 +148,4 @@ Git管理する成果物はソース、テスト、prompts、初期strategy、RE
 - 2026-08-22: ユーザー承認済み計画をPLANS.md形式へ展開して初版を作成した。
 - 2026-08-22: 実Gemini検証と加速Dry-runの実績、短時間quotaの観測を追記した。
 - 2026-08-22: CanaryはGemini quotaにより実注文前に停止したため、三時間テストは手動実行手順のみを引き渡す方針へ変更した。
+- 2026-09-06: 前回Runのclose fill誤帰属をentry時系列照合へ修正し、Gemini SDKの暗黙retryを無効化した。公式Free Tierの料金・quota条件をREADMEへ追記した。

@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import json
 
 from hyperliquid_ai_trader.gemini_gateway import GeminiGateway
+import hyperliquid_ai_trader.gemini_gateway as gemini_gateway
 
 
 class FakeModels:
@@ -88,3 +89,16 @@ def test_gemini_gateway_requests_structured_reviewer_patch() -> None:
     config = client.models.kwargs["config"]
     assert config.response_mime_type == "application/json"
     assert config.response_json_schema["properties"]["operations"]["type"] == "array"
+
+
+def test_gemini_client_uses_one_sdk_attempt_to_preserve_free_quota(monkeypatch) -> None:
+    captured: dict = {}
+
+    def fake_client(**kwargs):
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(gemini_gateway.genai, "Client", fake_client)
+    GeminiGateway(api_key="test-key")
+
+    assert captured["http_options"].retry_options.attempts == 1

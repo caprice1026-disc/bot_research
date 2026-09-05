@@ -78,6 +78,10 @@ class GeminiGateway:
                     timeout=30_000,
                     client_args={"trust_env": False},
                     async_client_args={"trust_env": False},
+                    # The outer agent records a single bounded attempt too;
+                    # disable the SDK's default 5-attempt retry loop so 429s
+                    # do not silently consume the Free Tier quota.
+                    retry_options=types.HttpRetryOptions(attempts=1),
                 ),
             )
         else:

@@ -166,3 +166,36 @@ def test_slot_for_unmapped_close_fill_uses_latest_open_episode() -> None:
     )
     assert store.slot_for_unmapped_fill("run-close-slot", timestamp_ms=400_000) is None
     store.close()
+
+
+def test_slot_for_unmapped_close_fill_follows_latest_matching_entry_fill() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-close-entry-order",
+        mode="testnet_live",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+    for slot, scheduled_at_ms in ((0, 1_000), (1, 301_000)):
+        assert store.reserve_cycle("run-close-entry-order", slot, scheduled_at_ms=scheduled_at_ms, strategy_version=1)
+        store.complete_cycle(
+            run_id="run-close-entry-order", slot=slot, status="ordered", features={},
+            decision={"side": "short"}, prompt_hash="a" * 64, model="test",
+            error_type=None, completed_at_ms=scheduled_at_ms,
+        )
+        store.record_fill(
+            run_id="run-close-entry-order", slot=slot, fill_id=f"entry-{slot}", side="short",
+            size=Decimal("0.005"), price=Decimal("50000"), fee=Decimal("0.1"),
+            closed_pnl=Decimal("0"), timestamp_ms=scheduled_at_ms,
+        )
+
+    assert store.slot_for_unmapped_fill("run-close-entry-order", timestamp_ms=350_000, side="short") == 1
+    store.record_fill(
+        run_id="run-close-entry-order", slot=1, fill_id="close-1", side="short",
+        size=Decimal("0.005"), price=Decimal("49900"), fee=Decimal("0.1"),
+        closed_pnl=Decimal("0.5"), timestamp_ms=350_000,
+    )
+    assert store.slot_for_unmapped_fill("run-close-entry-order", timestamp_ms=400_000, side="short") == 0
+    store.close()

@@ -410,8 +410,41 @@ class SQLiteStore:
         ).fetchone()
         return int(row["slot"]) if row else None
 
-    def slot_for_unmapped_fill(self, run_id: str, *, timestamp_ms: int) -> int | None:
-        """Find the newest ordered episode that has not recorded a closing fill."""
+    def slot_for_unmapped_fill(
+        self,
+        run_id: str,
+        *,
+        timestamp_ms: int,
+        side: str | None = None,
+    ) -> int | None:
+        """Find the open episode whose matching entry precedes an unmapped close."""
+        if side in {"long", "short"}:
+            row = self.connection.execute(
+                """
+                SELECT entry.slot
+                FROM fills AS entry
+                JOIN cycles AS c
+                  ON c.run_id=entry.run_id AND c.slot=entry.slot
+                WHERE entry.run_id=?
+                  AND entry.side=?
+                  AND entry.timestamp_ms<=?
+                  AND CAST(entry.closed_pnl AS REAL)=0
+                  AND c.status IN ('ordered', 'simulated')
+                  AND NOT EXISTS (
+                      SELECT 1 FROM fills AS close_fill
+                      WHERE close_fill.run_id=entry.run_id
+                        AND close_fill.slot=entry.slot
+                        AND CAST(close_fill.closed_pnl AS REAL) != 0
+                  )
+                ORDER BY entry.timestamp_ms DESC, entry.id DESC
+                LIMIT 1
+                """,
+                (run_id, side, timestamp_ms),
+            ).fetchone()
+            if row is not None:
+                return int(row["slot"])
+
+        # Fallback for an entry that is not available in the current API window.
         row = self.connection.execute(
             """
             SELECT c.slot

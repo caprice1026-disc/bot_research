@@ -42,7 +42,17 @@ Standard AccountでのみSpot→Perp内部移管が必要になる場合があ�
 
 移管コマンドは指定額を超えて移さず、自動では実行しません。Unified Accountで実行すると「移管不要」として終了します。移管後に `preflight` を再実行してPerp `equity` と `available_collateral` を確認してください。
 
-Gemini無料枠の対象モデル、quota、入力データの取り扱いは変更される可能性があります。運転前に[公式料金表](https://ai.google.dev/gemini-api/docs/pricing)とGoogle AI Studioの対象プロジェクトquotaを確認してください。
+### Gemini無料枠（2026-09-06確認）
+
+公式ドキュメント上、`gemini-3.6-flash` はStableモデルで、Function CallingとStructured Outputsをサポートしています。[モデル仕様](https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash)
+
+料金表ではStandardのFree Tierについて、入力・出力（thinking tokensを含む）・context cachingが無料です。一方、無料枠ではGoogle Search/Maps groundingはAPIでは利用できず、Free Tierの入力はGoogle製品改善に利用される扱いです。従って、このBotはニュースgroundingを使わず、市場の加工済み特徴量だけを送ります。秘密鍵やAPIキーはプロンプトに含めません。[公式料金表](https://ai.google.dev/gemini-api/docs/pricing)
+
+無料枠に固定の「安全なRPM/RPD」をコードへ埋め込むことはできません。RPM（分あたりリクエスト）、TPM（分あたりトークン）、RPD（1日あたりリクエスト）はモデル・プロジェクト・利用階層で変わり、APIキー単位ではなくプロジェクト単位です。RPDはPacific時間の深夜にリセットされ、表示値も保証値ではありません。実際の値は、対象プロジェクトを選んだGoogle AI StudioのDashboard > Rate limitsで運転前に確認してください。[公式レート制限](https://ai.google.dev/gemini-api/docs/rate-limits)
+
+この実験の最大呼び出し数は、1時間でTrader 12 + Reviewer 2 = 14回、3時間で36 + 6 = 42回、24時間連続なら288 + 48 = 336回です。これはRPDを保証する数ではありません。前回の429多発を悪化させないよう、`google-genai` SDKの既定再試行（最大5回）を無効化し、各呼び出しは1回だけ試行して記録します。429時は同じシフトで再発注せず、次シフトへ進みます。
+
+無料枠は「無料料金」でも「無制限」ではありません。別のAPIキーを作っても同じプロジェクトのquotaは共有されます。モデル変更時は`.env`の`TRADER_MODEL`/`REVIEWER_MODEL`を変更し、`preflight`でモデルの存在を確認したうえで、AI Studioの当日quotaと上記の予定呼び出し数を比較してください。無料枠の上限値はGoogle側で変更され得るため、固定値をREADMEやコードへ複製しません。[Billing FAQ](https://ai.google.dev/gemini-api/docs/billing)
 
 ## 実行
 
