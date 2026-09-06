@@ -242,3 +242,62 @@ def test_recent_closed_trades_includes_entry_fee_and_net_pnl() -> None:
         }
     ]
     store.close()
+
+
+def test_record_event_deduplicates_identical_sync_events() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-events",
+        mode="testnet_live",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+
+    payload = {"oid": 123, "fill_id": "fill-1"}
+    store.record_event(run_id="run-events", timestamp_ms=2_000, event_type="unmatched_fill", payload=payload)
+    store.record_event(run_id="run-events", timestamp_ms=2_000, event_type="unmatched_fill", payload=payload)
+
+    count = store.connection.execute(
+        "SELECT COUNT(*) FROM events WHERE run_id=?", ("run-events",)
+    ).fetchone()[0]
+    assert count == 1
+    store.close()
+
+
+def test_closed_trade_context_includes_decision_and_new_trade_filter() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-review-context",
+        mode="testnet_live",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+    assert store.reserve_cycle("run-review-context", 0, scheduled_at_ms=1_000, strategy_version=1)
+    store.complete_cycle(
+        run_id="run-review-context", slot=0, status="ordered",
+        features={"spread_bps": 4.0, "costs": {"estimated_round_trip_cost_bps": 13.0}},
+        decision={"side": "long", "confidence": "0.8", "would_abstain": False, "thesis": "momentum"},
+        prompt_hash="a" * 64, model="test", error_type=None, completed_at_ms=1_000,
+    )
+    store.record_fill(
+        run_id="run-review-context", slot=0, fill_id="context-close", side="long",
+        size=Decimal("0.005"), price=Decimal("50100"), fee=Decimal("0.2"),
+        closed_pnl=Decimal("0.5"), timestamp_ms=2_000,
+    )
+
+    closed = store.recent_closed_trades("run-review-context", limit=10, include_context=True)
+    assert closed[0]["decision"]["confidence"] == "0.8"
+    assert closed[0]["features"]["costs"]["estimated_round_trip_cost_bps"] == 13.0
+    assert store.new_closed_trades_since_review("run-review-context", closed) == closed
+
+    store.record_review(
+        run_id="run-review-context", review_index=1, created_at_ms=3_000,
+        model="review", status="accepted_no_change",
+        input_payload={"strategy": {}, "closed_trades": closed}, output_payload=None, error_type=None,
+    )
+    assert store.new_closed_trades_since_review("run-review-context", closed) == []
+    store.close()

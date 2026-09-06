@@ -26,6 +26,7 @@
 - [x] (2026-09-05) 保護注文・部分約定・応答不明の再発注停止、未紐付け決済fillの候補限定、429同一シフト再試行停止、費用込みグループ損益を追加し、75テストを通過した。
 - [x] (2026-09-06) 実Fillの `dir` と直前entry fillを使って未紐付け決済のシフト帰属を修正し、Gemini SDKの既定再試行を1回へ制限した。77テストを通過した。
 - [x] (2026-09-06) Trader/Reviewerを役割別モデルへ分離し、429時だけ指定フォールバックを1回実行する経路、fee込み取引単位のReviewer入力、確定取引が増えないレビューのスキップを追加した。全82テストを通過した。
+- [x] (2026-09-06) Traderを`gemini-3.5-flash-lite`へ固定し、3.1フォールバックを設定から外した。見送り時の発注抑止、TAKER_FEE_PCTとspreadからの推定往復コスト、2時間Reviewer間隔、新規取引のみのReviewer入力、同一監査イベント重複抑止を追加した。全86テストとTestnet preflightを通過した。
 
 ## Surprises & Discoveries
 
@@ -57,6 +58,10 @@
   Evidence: 専用venvの`google.genai._api_client`既定値と`HttpRetryOptions(attempts=1)`の動作を確認した。
 - Observation: 24時間連続運転ではTrader 288回、Reviewer 48回の呼び出しとなり、DashboardでReviewerモデルのRPDが20の場合は30分間隔を維持できない。
   Evidence: 5分/30分スケジュールから算出。Traderを`gemini-3.5-flash-lite`、Reviewerを`gemini-3.6-flash`、429時の両フォールバックを`gemini-3.1-flash-lite`とする設定を`.env`へ追加した。
+- Observation: 前回Runでは総fee 5.392170 USDCに対してgross PnL 0.274982 USDCであり、費用を上回るedgeがなかった。Traderが`would_abstain`を返しても常に注文していたため、実運転の見送り判断が反映されていなかった。
+  Evidence: Run `run-local-20260906T123038-b5523f65` の匿名化レポートと、`MANDATORY_ENTRY`がTradingServiceで未使用だったことを照合した。
+- Observation: `sync_exchange_evidence`の同一期間再取得により、同じ`unmatched_fill`イベントが繰り返し保存されていた。
+  Evidence: 前回Runのeventsで同一`oid`/`fill_id`/`event_type`/payloadが291件記録されていた。record_eventをpayload単位の存在確認付きINSERTへ変更した。
 - Observation: Reviewerへ渡す直近取引はentry/closeの全fill feeを合算し、slot単位のgross/net PnLへ集約しないと戦略比較を誤る。また、同じclosed trade集合で毎回レビューするとquotaを消費する。
   Evidence: 新規回帰テストでentry fee 0.1とclose fee 0.2をnet 0.2へ集約し、同一集合の2回目レビューを`skipped_no_new_trades`として保存することを確認した。
 - Observation: Gemini 3.6 Flashは公式モデル一覧でStableかつFunction Calling/Structured Outputs対応、料金表のStandard Free Tierでは入力・出力・キャッシュが無料。ただしRPM/TPM/RPDはプロジェクト・モデル依存で固定値ではない。
@@ -100,10 +105,16 @@
 - Decision: Reviewerは新しい確定取引がないシフトではモデルを呼ばず、`skipped_no_new_trades`を保存する。
   Rationale: 戦略入力が同一のレビューで無料枠を消費せず、30分/2時間間隔の運転差を追跡可能にするため。
   Date/Author: 2026-09-06 / Codex
+- Decision: Traderが`would_abstain=true`で`MANDATORY_ENTRY=false`の場合は、仮想判断だけを保存し発注を行わない。現行Testnet `.env`は`MANDATORY_ENTRY=false`とする。
+  Rationale: 取引コストが優位性を上回る場面で不要な往復feeを発生させず、見送り判断の成績を独立に評価するため。
+  Date/Author: 2026-09-06 / User and Codex
+- Decision: Traderは`gemini-3.5-flash-lite`、Reviewerは`gemini-3.6-flash`とし、3.1 Flash-Liteフォールバックを設定しない。Reviewer間隔は7200秒とする。
+  Rationale: Traderの高スループットとReviewerの品質を分け、無料枠のRPD消費を抑えながら3.1の出力品質に依存しないため。
+  Date/Author: 2026-09-06 / User and Codex
 
 ## Outcomes & Retrospective
 
-レビュー修正の単体検証は完了した（82 passed）。前回1時間Runの実Fill時系列を再照合し、close帰属・役割別モデルの429フォールバック・fee込みReviewer集約・新規取引なしスキップの回帰テストを追加した。次回Testnet運転ではTraderのLite主モデル、Reviewerの指定モデル、429時の実フォールバックモデルをSQLiteのdecision/reviewへ記録する。
+レビュー修正の単体検証は完了した（86 passed）。前回2時間Runの実績を基に、Traderの見送りを実発注へ反映し、費用情報を入力・cycle証跡へ保存し、Reviewerへ新規確定取引と判断理由・市場特徴量を渡すようにした。前回Runで確認した重複監査イベントも抑止する。次回Testnet運転ではフォールバックなしで429を記録し、見送り件数とfee差引後損益を確認する。
 
 ## Context and Orientation
 
@@ -161,3 +172,4 @@ Git管理する成果物はソース、テスト、prompts、初期strategy、RE
 - 2026-08-22: CanaryはGemini quotaにより実注文前に停止したため、三時間テストは手動実行手順のみを引き渡す方針へ変更した。
 - 2026-09-06: 前回Runのclose fill誤帰属をentry時系列照合へ修正し、Gemini SDKの暗黙retryを無効化した。公式Free Tierの料金・quota条件をREADMEへ追記した。
 - 2026-09-06: 無料枠向けのTrader/Reviewer主モデルと429フォールバックを環境変数化し、fee込み取引集約とReviewerのquota節約スキップを実装した。
+- 2026-09-06: Traderを3.5 Flash-Liteへ固定して3.1フォールバックを外し、見送り実行、TAKER_FEE/spreadコスト入力、2時間Reviewer、判断付き新規取引レビュー、監査イベント重複抑止を追加した。

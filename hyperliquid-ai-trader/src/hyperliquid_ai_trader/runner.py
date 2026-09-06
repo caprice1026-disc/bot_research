@@ -144,8 +144,19 @@ class TradingService:
             withdrawable=account.withdrawable,
             mark=observation.mark,
         )
+        costs = {
+            "taker_fee_pct": float(self.settings.taker_fee_pct),
+            "taker_fee_bps": float(self.settings.taker_fee_pct * Decimal("100")),
+            "spread_bps": features.spread_bps,
+            "estimated_round_trip_cost_bps": float(
+                self.settings.taker_fee_pct * Decimal("200") + Decimal(str(features.spread_bps))
+            ),
+            "max_entry_slippage_bps": float(self.settings.max_entry_slippage_bps),
+        }
+        feature_payload = {**features.to_prompt_dict(), "costs": costs}
         context = {
             "market": features.to_prompt_dict(),
+            "costs": costs,
             "account": {
                 "equity": str(account.equity),
                 "withdrawable": str(account.withdrawable),
@@ -188,6 +199,19 @@ class TradingService:
                 temperature=float(getattr(self.trader, "temperature", 0.0)),
                 created_at_ms=scheduled_at_ms,
             )
+            if decision.would_abstain and not self.settings.mandatory_entry:
+                self.store.complete_cycle(
+                    run_id=self.run_id,
+                    slot=slot,
+                    status="abstained",
+                    features=feature_payload,
+                    decision=decision_payload,
+                    prompt_hash=envelope.prompt_hash,
+                    model=envelope.model,
+                    error_type=None,
+                    completed_at_ms=scheduled_at_ms,
+                )
+                return CycleResult(slot, "abstained")
             tools = TradingTools(
                 exchange=self.exchange,
                 risk_engine=RiskEngine(self.settings),
@@ -215,7 +239,7 @@ class TradingService:
                 run_id=self.run_id,
                 slot=slot,
                 status=status,
-                features=features.to_prompt_dict(),
+                features=feature_payload,
                 decision=decision_payload,
                 prompt_hash=envelope.prompt_hash,
                 model=envelope.model,
@@ -236,7 +260,7 @@ class TradingService:
                 slot,
                 "mandatory_entry_exception",
                 exc.error_type,
-                features.to_prompt_dict(),
+                feature_payload,
                 model=getattr(self.trader, "last_model", getattr(self.trader, "model", None)),
             )
         except RiskRejected:
@@ -244,13 +268,13 @@ class TradingService:
                 slot,
                 "mandatory_entry_exception",
                 "risk_rejected",
-                features.to_prompt_dict(),
+                feature_payload,
                 decision=decision_payload,
                 prompt_hash=envelope.prompt_hash if envelope is not None else None,
                 model=envelope.model if envelope is not None else None,
             )
         except ToolRejected:
-            return self._fail_cycle(slot, "mandatory_entry_exception", "tool_rejected", features.to_prompt_dict())
+            return self._fail_cycle(slot, "mandatory_entry_exception", "tool_rejected", feature_payload)
 
     def _fail_cycle(
         self,
@@ -410,9 +434,11 @@ class TradingService:
             return
         self.sync_exchange_evidence(now_ms=now_ms)
         strategy = self.store.load_latest_strategy(self.run_id) or initial_strategy()
-        closed = self.store.recent_closed_trades(self.run_id, limit=100)
-        review_input = {"strategy": strategy, "closed_trades": closed}
-        if not self.store.has_new_closed_trades(self.run_id, closed):
+        closed = self.store.recent_closed_trades(self.run_id, limit=100, include_context=True)
+        new_closed = self.store.new_closed_trades_since_review(self.run_id, closed)
+        review_input = {"strategy": strategy, "closed_trades": new_closed}
+        if not new_closed:
+            review_input["closed_trades"] = closed
             self.store.record_review(
                 run_id=self.run_id,
                 review_index=review_index,
@@ -427,37 +453,40 @@ class TradingService:
         try:
             result = self.reviewer.review(
                 strategy=strategy,
-                closed_trades=closed,
+                closed_trades=new_closed,
                 review_cycle=review_cycle,
             )
-            self.store.save_strategy_version(
-                run_id=self.run_id,
-                version=int(result.state["version"]),
-                parent_version=int(strategy["version"]),
-                state=result.state,
-                patch=result.patch,
-                model=result.model,
-                created_at_ms=now_ms,
-            )
+            changed = bool(result.patch.get("operations"))
+            if changed:
+                self.store.save_strategy_version(
+                    run_id=self.run_id,
+                    version=int(result.state["version"]),
+                    parent_version=int(strategy["version"]),
+                    state=result.state,
+                    patch=result.patch,
+                    model=result.model,
+                    created_at_ms=now_ms,
+                )
             self.store.record_review(
                 run_id=self.run_id,
                 review_index=review_index,
                 created_at_ms=now_ms,
                 model=result.model,
-                status="accepted",
+                status="accepted" if changed else "accepted_no_change",
                 input_payload=review_input,
                 output_payload=result.patch,
                 error_type=None,
             )
-            self.store.record_patch(
-                run_id=self.run_id,
-                base_version=int(strategy["version"]),
-                next_version=int(result.state["version"]),
-                patch=result.patch,
-                accepted=True,
-                reason="review accepted",
-                created_at_ms=now_ms,
-            )
+            if changed:
+                self.store.record_patch(
+                    run_id=self.run_id,
+                    base_version=int(strategy["version"]),
+                    next_version=int(result.state["version"]),
+                    patch=result.patch,
+                    accepted=True,
+                    reason="review accepted",
+                    created_at_ms=now_ms,
+                )
         except AgentDecisionError as exc:
             self.store.record_review(
                 run_id=self.run_id,

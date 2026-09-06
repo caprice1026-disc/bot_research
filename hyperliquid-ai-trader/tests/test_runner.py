@@ -4,6 +4,8 @@ from decimal import Decimal
 from pathlib import Path
 import uuid
 
+import pytest
+
 from hyperliquid_ai_trader.agents import AgentDecisionError, DecisionEnvelope, ReviewEnvelope
 from hyperliquid_ai_trader.config import Settings
 from hyperliquid_ai_trader.exchange.base import (
@@ -136,6 +138,34 @@ class ProtectionFailureExchange(FakeExchange):
         )
 
 
+class AbstainingAgent(FixedAgent):
+    def decide(self, context: dict) -> DecisionEnvelope:
+        envelope = super().decide(context)
+        decision = envelope.decision
+        return DecisionEnvelope(
+            decision=TradeDecision(
+                side=decision.side,
+                stop_loss_pct=decision.stop_loss_pct,
+                take_profit_pct=decision.take_profit_pct,
+                confidence=decision.confidence,
+                thesis=decision.thesis,
+                would_abstain=True,
+                abstain_reason="cost exceeds expected edge",
+            ),
+            prompt_hash=envelope.prompt_hash,
+            model=envelope.model,
+        )
+
+
+class CapturingAgent(FixedAgent):
+    def __init__(self) -> None:
+        self.context: dict | None = None
+
+    def decide(self, context: dict) -> DecisionEnvelope:
+        self.context = context
+        return super().decide(context)
+
+
 def test_run_once_is_idempotent_and_records_simulated_decision() -> None:
     store = _store()
     service = TradingService(
@@ -245,6 +275,81 @@ def test_run_once_records_market_transport_failure_and_allows_scheduler_to_conti
 
     assert result.status == "mandatory_entry_exception"
     assert result.error_type == "market_data_error"
+    store.close()
+
+
+def test_run_once_skips_order_when_agent_abstains_and_entry_is_optional() -> None:
+    settings = Settings.from_mapping({
+        "HL_test_wallet": "0x" + "1" * 40,
+        "HL_test_wallet_private_key": "0x" + "2" * 64,
+        "GEMINI_API_KEY": "gemini-test-key",
+        "EXECUTION_MODE": "testnet_live",
+        "MANDATORY_ENTRY": "false",
+    })
+
+    class CountingExchange(FakeExchange):
+        def __init__(self) -> None:
+            self.place_calls = 0
+
+        def place_bracket(self, **kwargs) -> BracketResult:
+            self.place_calls += 1
+            return BracketResult(
+                success=True,
+                requires_recovery=False,
+                error_type=None,
+                cloids={},
+                statuses=[],
+                filled_size=Decimal("0.005"),
+            )
+
+    store = _store()
+    exchange = CountingExchange()
+    service = TradingService(
+        settings=settings,
+        exchange=exchange,
+        trader=AbstainingAgent(),
+        reviewer=None,
+        store=store,
+        run_id="run-abstain",
+        git_sha="abc",
+    )
+    service.initialize(now_ms=1_000)
+
+    result = service.run_once(slot=0, scheduled_at_ms=1_000)
+
+    assert result.status == "abstained"
+    assert exchange.place_calls == 0
+    cycle = store.get_cycle("run-abstain", 0)
+    assert cycle["status"] == "abstained"
+    assert cycle["decision"]["would_abstain"] is True
+    store.close()
+
+
+def test_trader_context_includes_fee_and_spread_cost_estimate() -> None:
+    settings = Settings.from_mapping({
+        "HL_test_wallet": "0x" + "1" * 40,
+        "HL_test_wallet_private_key": "0x" + "2" * 64,
+        "GEMINI_API_KEY": "gemini-test-key",
+        "TAKER_FEE_PCT": "0.045",
+    })
+    store = _store()
+    trader = CapturingAgent()
+    service = TradingService(
+        settings=settings,
+        exchange=FakeExchange(),
+        trader=trader,
+        reviewer=None,
+        store=store,
+        run_id="run-cost-context",
+        git_sha="abc",
+    )
+    service.initialize(now_ms=1_000)
+    service.run_once(slot=0, scheduled_at_ms=1_000)
+
+    costs = trader.context["costs"]
+    assert costs["taker_fee_bps"] == pytest.approx(4.5)
+    assert costs["spread_bps"] == pytest.approx(90.49773755656108)
+    assert costs["estimated_round_trip_cost_bps"] == pytest.approx(99.49773755656108)
     store.close()
 
 
@@ -463,4 +568,8 @@ def test_review_skips_when_no_new_closed_trade_exists() -> None:
         "SELECT status, error_type FROM reviews WHERE run_id='run-review-skip' AND review_index=2"
     ).fetchone()
     assert dict(status) == {"status": "skipped_no_new_trades", "error_type": None}
+    version_count = store.connection.execute(
+        "SELECT COUNT(*) FROM strategy_versions WHERE run_id='run-review-skip'"
+    ).fetchone()[0]
+    assert version_count == 1
     store.close()

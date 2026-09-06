@@ -518,7 +518,13 @@ class SQLiteStore:
         ).fetchone()
         return json.loads(row["state_json"]) if row else None
 
-    def recent_closed_trades(self, run_id: str, *, limit: int) -> list[dict[str, Any]]:
+    def recent_closed_trades(
+        self,
+        run_id: str,
+        *,
+        limit: int,
+        include_context: bool = False,
+    ) -> list[dict[str, Any]]:
         rows = self.connection.execute(
             """
             SELECT id, slot, side, size, price, fee, closed_pnl, timestamp_ms
@@ -575,13 +581,30 @@ class SQLiteStore:
                 }
             )
         closed.sort(key=lambda item: (int(item["timestamp_ms"]), int(item["id"])))
-        return closed[-max(0, limit) :]
+        closed = closed[-max(0, limit) :]
+        if include_context:
+            for item in closed:
+                cycle = self.connection.execute(
+                    """
+                    SELECT decision_json, features_json FROM cycles
+                    WHERE run_id=? AND slot=?
+                    """,
+                    (run_id, item["slot"]),
+                ).fetchone()
+                if cycle is not None:
+                    item["decision"] = json.loads(cycle["decision_json"]) if cycle["decision_json"] else {}
+                    item["features"] = json.loads(cycle["features_json"]) if cycle["features_json"] else {}
+        return closed
 
-    def has_new_closed_trades(self, run_id: str, closed_trades: list[dict[str, Any]]) -> bool:
-        """Return whether the latest review input did not already contain these trades."""
+    def new_closed_trades_since_review(
+        self,
+        run_id: str,
+        closed_trades: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        """Filter closed trades already included in the latest Reviewer input."""
         current_ids = {str(trade["id"]) for trade in closed_trades if trade.get("id") is not None}
         if not current_ids:
-            return False
+            return []
         row = self.connection.execute(
             """
             SELECT input_json FROM reviews
@@ -590,14 +613,18 @@ class SQLiteStore:
             (run_id,),
         ).fetchone()
         if row is None:
-            return True
+            return list(closed_trades)
         try:
             payload = json.loads(row["input_json"])
             previous = payload.get("closed_trades", [])
             previous_ids = {str(trade["id"]) for trade in previous if trade.get("id") is not None}
         except (TypeError, ValueError, AttributeError, KeyError):
-            return True
-        return bool(current_ids - previous_ids)
+            return list(closed_trades)
+        return [trade for trade in closed_trades if str(trade.get("id")) not in previous_ids]
+
+    def has_new_closed_trades(self, run_id: str, closed_trades: list[dict[str, Any]]) -> bool:
+        """Return whether the latest review input did not already contain these trades."""
+        return bool(self.new_closed_trades_since_review(run_id, closed_trades))
 
     def record_review(
         self,
@@ -668,12 +695,17 @@ class SQLiteStore:
         event_type: str,
         payload: dict[str, Any],
     ) -> None:
+        payload_json = _json(payload)
         self.connection.execute(
             """
             INSERT INTO events (run_id, timestamp_ms, event_type, payload_json)
-            VALUES (?, ?, ?, ?)
+            SELECT ?, ?, ?, ?
+            WHERE NOT EXISTS (
+                SELECT 1 FROM events
+                WHERE run_id=? AND event_type=? AND payload_json=?
+            )
             """,
-            (run_id, timestamp_ms, event_type, _json(payload)),
+            (run_id, timestamp_ms, event_type, payload_json, run_id, event_type, payload_json),
         )
         self.connection.commit()
 

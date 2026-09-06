@@ -25,7 +25,10 @@ def test_settings_apply_aggressive_testnet_defaults() -> None:
     assert settings.max_position_notional_usd == Decimal("250")
     assert settings.max_daily_loss_pct == Decimal("20")
     assert settings.max_drawdown_pct == Decimal("25")
-    assert settings.trader_model == "gemini-3.6-flash"
+    assert settings.trader_model == "gemini-3.5-flash-lite"
+    assert settings.reviewer_model == "gemini-3.6-flash"
+    assert settings.review_interval_seconds == 7200
+    assert settings.taker_fee_pct == Decimal("0.045")
     assert settings.execution_mode == "dry_run"
 
 

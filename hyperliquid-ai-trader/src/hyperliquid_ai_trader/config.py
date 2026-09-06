@@ -68,15 +68,16 @@ class Settings:
     max_take_profit_pct: Decimal = Decimal("2.00")
     max_hold_seconds: int = 300
     trader_interval_seconds: int = 300
-    review_interval_seconds: int = 1800
+    review_interval_seconds: int = 7200
     mandatory_entry: bool = True
-    trader_model: str = "gemini-3.6-flash"
+    trader_model: str = "gemini-3.5-flash-lite"
     reviewer_model: str = "gemini-3.6-flash"
     trader_fallback_model: str | None = None
     reviewer_fallback_model: str | None = None
     trader_temperature: float = 0.7
     reviewer_temperature: float = 0.4
     execution_mode: str = "dry_run"
+    taker_fee_pct: Decimal = Decimal("0.045")
     max_entry_slippage_bps: Decimal = Decimal("50")
     database_path: str = "data/trader.db"
     strategy_path: str = "state/strategy.json"
@@ -99,16 +100,19 @@ class Settings:
         max_sl = _decimal(values, "MAX_STOP_LOSS_PCT", "1.00")
         min_tp = _decimal(values, "MIN_TAKE_PROFIT_PCT", "0.10")
         max_tp = _decimal(values, "MAX_TAKE_PROFIT_PCT", "2.00")
+        taker_fee_pct = _decimal(values, "TAKER_FEE_PCT", "0.045")
         if min_sl <= 0 or max_sl < min_sl:
             raise ConfigError("stop loss range is invalid")
         if min_tp <= 0 or max_tp < min_tp:
             raise ConfigError("take profit range is invalid")
+        if taker_fee_pct < 0:
+            raise ConfigError("TAKER_FEE_PCT cannot be negative")
 
         leverage = _integer(values, "LEVERAGE", 5)
         if leverage < 1:
             raise ConfigError("LEVERAGE must be at least 1")
 
-        shared_model = (values.get("GEMINI_MODEL") or "gemini-3.6-flash").strip()
+        shared_model = _optional(values, "GEMINI_MODEL")
         expected_account_mode = (values.get("HL_EXPECTED_ACCOUNT_MODE") or "").strip() or None
         valid_account_modes = {"unifiedAccount", "portfolioMargin", "disabled", "default", "dexAbstraction"}
         if expected_account_mode is not None and expected_account_mode not in valid_account_modes:
@@ -133,15 +137,16 @@ class Settings:
             max_take_profit_pct=max_tp,
             max_hold_seconds=_integer(values, "MAX_HOLD_SECONDS", 300),
             trader_interval_seconds=_integer(values, "TRADER_INTERVAL_SECONDS", 300),
-            review_interval_seconds=_integer(values, "REVIEW_INTERVAL_SECONDS", 1800),
+            review_interval_seconds=_integer(values, "REVIEW_INTERVAL_SECONDS", 7200),
             mandatory_entry=_boolean(values, "MANDATORY_ENTRY", True),
-            trader_model=(values.get("TRADER_MODEL") or shared_model).strip(),
-            reviewer_model=(values.get("REVIEWER_MODEL") or shared_model).strip(),
+            trader_model=(values.get("TRADER_MODEL") or shared_model or "gemini-3.5-flash-lite").strip(),
+            reviewer_model=(values.get("REVIEWER_MODEL") or shared_model or "gemini-3.6-flash").strip(),
             trader_fallback_model=_optional(values, "TRADER_FALLBACK_MODEL"),
             reviewer_fallback_model=_optional(values, "REVIEWER_FALLBACK_MODEL"),
             trader_temperature=float(values.get("TRADER_TEMPERATURE") or "0.7"),
             reviewer_temperature=float(values.get("REVIEWER_TEMPERATURE") or "0.4"),
             execution_mode=execution_mode,
+            taker_fee_pct=taker_fee_pct,
             max_entry_slippage_bps=_decimal(values, "MAX_ENTRY_SLIPPAGE_BPS", "50"),
             database_path=(values.get("DATABASE_PATH") or "data/trader.db").strip(),
             strategy_path=(values.get("STRATEGY_PATH") or "state/strategy.json").strip(),
