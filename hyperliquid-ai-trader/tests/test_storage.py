@@ -199,3 +199,46 @@ def test_slot_for_unmapped_close_fill_follows_latest_matching_entry_fill() -> No
     )
     assert store.slot_for_unmapped_fill("run-close-entry-order", timestamp_ms=400_000, side="short") == 0
     store.close()
+
+
+def test_recent_closed_trades_includes_entry_fee_and_net_pnl() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-review-fees",
+        mode="testnet_live",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+    assert store.reserve_cycle("run-review-fees", 0, scheduled_at_ms=1_000, strategy_version=1)
+    store.complete_cycle(
+        run_id="run-review-fees", slot=0, status="ordered", features={}, decision={"side": "long"},
+        prompt_hash="a" * 64, model="test", error_type=None, completed_at_ms=1_000,
+    )
+    store.record_fill(
+        run_id="run-review-fees", slot=0, fill_id="entry-fee", side="long", size=Decimal("0.005"),
+        price=Decimal("50000"), fee=Decimal("0.1"), closed_pnl=Decimal("0"), timestamp_ms=1_001,
+    )
+    store.record_fill(
+        run_id="run-review-fees", slot=0, fill_id="close-fee", side="long", size=Decimal("0.005"),
+        price=Decimal("50100"), fee=Decimal("0.2"), closed_pnl=Decimal("0.5"), timestamp_ms=2_000,
+    )
+
+    trades = store.recent_closed_trades("run-review-fees", limit=10)
+
+    assert trades == [
+        {
+            "id": 2,
+            "slot": 0,
+            "side": "long",
+            "size": "0.005",
+            "price": "50100",
+                "fee": "0.3",
+                "gross_pnl": "0.5",
+                "closed_pnl": "0.5",
+                "net_pnl": "0.2",
+            "timestamp_ms": 2_000,
+        }
+    ]
+    store.close()

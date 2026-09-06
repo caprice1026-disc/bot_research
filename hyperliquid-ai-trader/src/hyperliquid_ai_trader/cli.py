@@ -79,7 +79,16 @@ def preflight_check(
     ):
         raise PreflightError("signer is not authorized for the configured wallet")
 
-    for model in dict.fromkeys((settings.trader_model, settings.reviewer_model)):
+    for model in dict.fromkeys(
+        model
+        for model in (
+            settings.trader_model,
+            settings.trader_fallback_model,
+            settings.reviewer_model,
+            settings.reviewer_fallback_model,
+        )
+        if model
+    ):
         gateway.validate_model(model)
 
     market = adapter.get_market_observation(settings.coin, now_ms=now_ms)
@@ -104,7 +113,7 @@ def preflight_check(
     if account.equity <= 0:
         raise PreflightError("account has no usable collateral")
 
-    return {
+    result = {
         "status": "ok",
         "network": "testnet",
         "coin": settings.coin,
@@ -120,6 +129,11 @@ def preflight_check(
         "account_clean": True,
         "signer_authorized": True,
     }
+    if settings.trader_fallback_model:
+        result["trader_fallback_model"] = settings.trader_fallback_model
+    if settings.reviewer_fallback_model:
+        result["reviewer_fallback_model"] = settings.reviewer_fallback_model
+    return result
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -196,12 +210,14 @@ def _run_session(
     trader = TraderAgent(
         gateway=gateway,
         model=settings.trader_model,
+        fallback_model=settings.trader_fallback_model,
         temperature=settings.trader_temperature,
         constitution=constitution,
     )
     reviewer = ReviewerAgent(
         gateway=gateway,
         model=settings.reviewer_model,
+        fallback_model=settings.reviewer_fallback_model,
         temperature=settings.reviewer_temperature,
         constitution=reviewer_prompt,
     )

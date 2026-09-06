@@ -121,6 +121,7 @@ class TraderAgent:
         *,
         gateway: TraderGateway,
         model: str,
+        fallback_model: str | None = None,
         temperature: float,
         constitution: str,
         max_attempts: int = 3,
@@ -128,10 +129,12 @@ class TraderAgent:
     ) -> None:
         self.gateway = gateway
         self.model = model
+        self.fallback_model = fallback_model
         self.temperature = temperature
         self.constitution = constitution.strip()
         self.max_attempts = max_attempts
         self.sleeper = sleeper
+        self.last_model = model
 
     def decide(self, context: dict[str, Any]) -> DecisionEnvelope:
         prompt = self.constitution + "\n\nCURRENT_CONTEXT\n" + json.dumps(
@@ -142,23 +145,34 @@ class TraderAgent:
         )
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
         last_error = "model_error"
-        for attempt in range(self.max_attempts):
-            try:
-                calls = self.gateway.generate_trade(
-                    prompt=prompt,
-                    model=self.model,
-                    temperature=self.temperature,
-                )
-                decision = _parse_call(calls)
-                return DecisionEnvelope(decision, prompt_hash, self.model)
-            except ModelGatewayError as exc:
-                last_error = exc.error_type
-                if not exc.retryable or exc.error_type == "rate_limited":
-                    break
-            except AgentDecisionError as exc:
-                last_error = exc.error_type
-            if attempt + 1 < self.max_attempts:
-                self.sleeper(float(2**attempt))
+        candidates = [self.model]
+        if self.fallback_model and self.fallback_model != self.model:
+            candidates.append(self.fallback_model)
+        for model_index, model in enumerate(candidates):
+            self.last_model = model
+            attempts = self.max_attempts if model_index == 0 else 1
+            for attempt in range(attempts):
+                try:
+                    calls = self.gateway.generate_trade(
+                        prompt=prompt,
+                        model=model,
+                        temperature=self.temperature,
+                    )
+                    decision = _parse_call(calls)
+                    return DecisionEnvelope(decision, prompt_hash, model)
+                except ModelGatewayError as exc:
+                    last_error = exc.error_type
+                    if exc.error_type == "rate_limited" and model_index + 1 < len(candidates):
+                        break
+                    if not exc.retryable or exc.error_type == "rate_limited":
+                        break
+                except AgentDecisionError as exc:
+                    last_error = exc.error_type
+                if attempt + 1 < attempts:
+                    self.sleeper(float(2**attempt))
+            if last_error == "rate_limited" and model_index + 1 < len(candidates):
+                continue
+            break
         raise AgentDecisionError(last_error)
 
 
@@ -168,6 +182,7 @@ class ReviewerAgent:
         *,
         gateway: ReviewGateway,
         model: str,
+        fallback_model: str | None = None,
         temperature: float,
         constitution: str,
         max_attempts: int = 3,
@@ -175,10 +190,12 @@ class ReviewerAgent:
     ) -> None:
         self.gateway = gateway
         self.model = model
+        self.fallback_model = fallback_model
         self.temperature = temperature
         self.constitution = constitution.strip()
         self.max_attempts = max_attempts
         self.sleeper = sleeper
+        self.last_model = model
 
     def review(
         self,
@@ -195,21 +212,32 @@ class ReviewerAgent:
         )
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
         last_error = "review_error"
-        for attempt in range(self.max_attempts):
-            try:
-                patch = self.gateway.generate_review(
-                    prompt=prompt,
-                    model=self.model,
-                    temperature=self.temperature,
-                )
-                state = apply_strategy_patch(strategy, patch, review_cycle=review_cycle)
-                return ReviewEnvelope(state, patch, prompt_hash, self.model)
-            except ModelGatewayError as exc:
-                last_error = exc.error_type
-                if not exc.retryable or exc.error_type == "rate_limited":
-                    break
-            except StrategyPatchError:
-                last_error = "invalid_strategy_patch"
-            if attempt + 1 < self.max_attempts:
-                self.sleeper(float(2**attempt))
+        candidates = [self.model]
+        if self.fallback_model and self.fallback_model != self.model:
+            candidates.append(self.fallback_model)
+        for model_index, model in enumerate(candidates):
+            self.last_model = model
+            attempts = self.max_attempts if model_index == 0 else 1
+            for attempt in range(attempts):
+                try:
+                    patch = self.gateway.generate_review(
+                        prompt=prompt,
+                        model=model,
+                        temperature=self.temperature,
+                    )
+                    state = apply_strategy_patch(strategy, patch, review_cycle=review_cycle)
+                    return ReviewEnvelope(state, patch, prompt_hash, model)
+                except ModelGatewayError as exc:
+                    last_error = exc.error_type
+                    if exc.error_type == "rate_limited" and model_index + 1 < len(candidates):
+                        break
+                    if not exc.retryable or exc.error_type == "rate_limited":
+                        break
+                except StrategyPatchError:
+                    last_error = "invalid_strategy_patch"
+                if attempt + 1 < attempts:
+                    self.sleeper(float(2**attempt))
+            if last_error == "rate_limited" and model_index + 1 < len(candidates):
+                continue
+            break
         raise AgentDecisionError(last_error)

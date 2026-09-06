@@ -25,6 +25,7 @@
 - [x] (2026-09-05) 実行レビューを反映し、`waitingForTrigger` 保護注文を受付済みとして扱うよう修正した。
 - [x] (2026-09-05) 保護注文・部分約定・応答不明の再発注停止、未紐付け決済fillの候補限定、429同一シフト再試行停止、費用込みグループ損益を追加し、75テストを通過した。
 - [x] (2026-09-06) 実Fillの `dir` と直前entry fillを使って未紐付け決済のシフト帰属を修正し、Gemini SDKの既定再試行を1回へ制限した。77テストを通過した。
+- [x] (2026-09-06) Trader/Reviewerを役割別モデルへ分離し、429時だけ指定フォールバックを1回実行する経路、fee込み取引単位のReviewer入力、確定取引が増えないレビューのスキップを追加した。全82テストを通過した。
 
 ## Surprises & Discoveries
 
@@ -54,6 +55,10 @@
   Evidence: 前回1時間RunのTestnet履歴で、short entry→short close→short entry→short close→long entry→long closeの順序を確認した。従来の「最新ordered cycle」推定ではcloseを隣のslotへ誤帰属していた。
 - Observation: 現在のgoogle-genai SDKはHTTP retry未指定時に初回を含む最大5試行を設定する。
   Evidence: 専用venvの`google.genai._api_client`既定値と`HttpRetryOptions(attempts=1)`の動作を確認した。
+- Observation: 24時間連続運転ではTrader 288回、Reviewer 48回の呼び出しとなり、DashboardでReviewerモデルのRPDが20の場合は30分間隔を維持できない。
+  Evidence: 5分/30分スケジュールから算出。Traderを`gemini-3.5-flash-lite`、Reviewerを`gemini-3.6-flash`、429時の両フォールバックを`gemini-3.1-flash-lite`とする設定を`.env`へ追加した。
+- Observation: Reviewerへ渡す直近取引はentry/closeの全fill feeを合算し、slot単位のgross/net PnLへ集約しないと戦略比較を誤る。また、同じclosed trade集合で毎回レビューするとquotaを消費する。
+  Evidence: 新規回帰テストでentry fee 0.1とclose fee 0.2をnet 0.2へ集約し、同一集合の2回目レビューを`skipped_no_new_trades`として保存することを確認した。
 - Observation: Gemini 3.6 Flashは公式モデル一覧でStableかつFunction Calling/Structured Outputs対応、料金表のStandard Free Tierでは入力・出力・キャッシュが無料。ただしRPM/TPM/RPDはプロジェクト・モデル依存で固定値ではない。
   Evidence: 2026-09-06に公式モデル仕様、料金表、レート制限、Billing FAQを確認。実際のquotaはAI Studio Dashboardで確認する必要がある。
 
@@ -89,10 +94,16 @@
 - Decision: google-genai SDKのHTTP retry attemptsを1に固定する。
   Rationale: 無料枠の429に対するSDK内部の暗黙再試行を止め、外側のRun記録と1リクエスト1試行の挙動を一致させるため。
   Date/Author: 2026-09-06 / Codex
+- Decision: Traderは`gemini-3.5-flash-lite`、Reviewerは`gemini-3.6-flash`を主モデルとし、429時だけ`gemini-3.1-flash-lite`へ1回フォールバックする。
+  Rationale: 高頻度Traderを高RPDのLiteへ寄せ、レビュー品質を確保しつつ、無料枠の429を同一シフトの無制限再試行にしないため。
+  Date/Author: 2026-09-06 / User and Codex
+- Decision: Reviewerは新しい確定取引がないシフトではモデルを呼ばず、`skipped_no_new_trades`を保存する。
+  Rationale: 戦略入力が同一のレビューで無料枠を消費せず、30分/2時間間隔の運転差を追跡可能にするため。
+  Date/Author: 2026-09-06 / Codex
 
 ## Outcomes & Retrospective
 
-レビュー修正の単体検証は完了した（77 passed）。前回1時間Runの実Fill時系列を再照合し、close帰属の回帰テストを追加した。次回Testnet運転では429の暗黙再試行がなく、確定fillの方向・entry順序に基づくレポートを確認する。
+レビュー修正の単体検証は完了した（82 passed）。前回1時間Runの実Fill時系列を再照合し、close帰属・役割別モデルの429フォールバック・fee込みReviewer集約・新規取引なしスキップの回帰テストを追加した。次回Testnet運転ではTraderのLite主モデル、Reviewerの指定モデル、429時の実フォールバックモデルをSQLiteのdecision/reviewへ記録する。
 
 ## Context and Orientation
 
@@ -149,3 +160,4 @@ Git管理する成果物はソース、テスト、prompts、初期strategy、RE
 - 2026-08-22: 実Gemini検証と加速Dry-runの実績、短時間quotaの観測を追記した。
 - 2026-08-22: CanaryはGemini quotaにより実注文前に停止したため、三時間テストは手動実行手順のみを引き渡す方針へ変更した。
 - 2026-09-06: 前回Runのclose fill誤帰属をentry時系列照合へ修正し、Gemini SDKの暗黙retryを無効化した。公式Free Tierの料金・quota条件をREADMEへ追記した。
+- 2026-09-06: 無料枠向けのTrader/Reviewer主モデルと429フォールバックを環境変数化し、fee込み取引集約とReviewerのquota節約スキップを実装した。

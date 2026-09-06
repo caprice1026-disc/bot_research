@@ -30,7 +30,7 @@ python -m pip --python .venv\Scripts\python.exe install pip
 python -m pip --python .venv\Scripts\python.exe install -e ".[test]"
 ```
 
-設定は親ディレクトリの `.env` から読みます。`HL_test_wallet` は資金を持つHyperliquid Testnetの親（取引）口座アドレス、`HL_test_wallet_private_key` はその口座に認可されたAgent Walletの秘密鍵です。秘密値はプロジェクトへ複製しません。設定項目は [`.env.example`](.env.example) を参照してください。`GEMINI_MODEL` をTrader/Reviewer共通値として使い、必要な場合だけ `TRADER_MODEL`、`REVIEWER_MODEL` で個別に上書きできます。利用できないモデルへ暗黙にフォールバックしません。
+設定は親ディレクトリの `.env` から読みます。`HL_test_wallet` は資金を持つHyperliquid Testnetの親（取引）口座アドレス、`HL_test_wallet_private_key` はその口座に認可されたAgent Walletの秘密鍵です。秘密値はプロジェクトへ複製しません。設定項目は [`.env.example`](.env.example) を参照してください。TraderとReviewerは `TRADER_MODEL` / `REVIEWER_MODEL` で個別に指定し、429（rate limit）の場合だけ各 `*_FALLBACK_MODEL` を1回試します。その他のエラーや応答形式不正ではモデルを暗黙に切り替えません。フォールバックも含め、preflightで全モデルの存在を確認します。
 
 HyperliquidのUnified AccountではSpot USDCとPerp担保が共有されます。preflightは `userAbstraction` を自動取得し、Unified Accountなら `spotClearinghouseState` のUSDC `total` と `tokenToAvailableAfterMaintenance` をequity/available collateralとして使います。Perpの `clearinghouseState` は建玉・未実現損益・注文確認に引き続き使います。
 
@@ -44,15 +44,15 @@ Standard AccountでのみSpot→Perp内部移管が必要になる場合があ�
 
 ### Gemini無料枠（2026-09-06確認）
 
-公式ドキュメント上、`gemini-3.6-flash` はStableモデルで、Function CallingとStructured Outputsをサポートしています。[モデル仕様](https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash)
+公式ドキュメント上、`gemini-3.5-flash-lite` は低遅延・高スループットのStableモデルで、Function CallingとStructured Outputsをサポートしています。Reviewerにはより余裕のある `gemini-3.6-flash` を選べます。[Traderモデル仕様](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite)
 
 料金表ではStandardのFree Tierについて、入力・出力（thinking tokensを含む）・context cachingが無料です。一方、無料枠ではGoogle Search/Maps groundingはAPIでは利用できず、Free Tierの入力はGoogle製品改善に利用される扱いです。従って、このBotはニュースgroundingを使わず、市場の加工済み特徴量だけを送ります。秘密鍵やAPIキーはプロンプトに含めません。[公式料金表](https://ai.google.dev/gemini-api/docs/pricing)
 
 無料枠に固定の「安全なRPM/RPD」をコードへ埋め込むことはできません。RPM（分あたりリクエスト）、TPM（分あたりトークン）、RPD（1日あたりリクエスト）はモデル・プロジェクト・利用階層で変わり、APIキー単位ではなくプロジェクト単位です。RPDはPacific時間の深夜にリセットされ、表示値も保証値ではありません。実際の値は、対象プロジェクトを選んだGoogle AI StudioのDashboard > Rate limitsで運転前に確認してください。[公式レート制限](https://ai.google.dev/gemini-api/docs/rate-limits)
 
-この実験の最大呼び出し数は、1時間でTrader 12 + Reviewer 2 = 14回、3時間で36 + 6 = 42回、24時間連続なら288 + 48 = 336回です。これはRPDを保証する数ではありません。前回の429多発を悪化させないよう、`google-genai` SDKの既定再試行（最大5回）を無効化し、各呼び出しは1回だけ試行して記録します。429時は同じシフトで再発注せず、次シフトへ進みます。
+この実験の最大呼び出し数は、1時間でTrader 12 + Reviewer 2 = 14回、3時間で36 + 6 = 42回、24時間連続なら288 + 48 = 336回です。これはRPDを保証する数ではありません。`google-genai` SDKの再試行は`attempts=1`を明示し、429時だけ同じシフト内でフォールバックモデルを1回試します。フォールバックも失敗した場合は発注せず記録します。Reviewerの実運転は30分間隔だと1日48回になるため、Dashboardに表示されるReviewerモデルのRPDが20の場合は、2時間間隔（またはLiteモデル）へ調整してください。
 
-無料枠は「無料料金」でも「無制限」ではありません。別のAPIキーを作っても同じプロジェクトのquotaは共有されます。モデル変更時は`.env`の`TRADER_MODEL`/`REVIEWER_MODEL`を変更し、`preflight`でモデルの存在を確認したうえで、AI Studioの当日quotaと上記の予定呼び出し数を比較してください。無料枠の上限値はGoogle側で変更され得るため、固定値をREADMEやコードへ複製しません。[Billing FAQ](https://ai.google.dev/gemini-api/docs/billing)
+無料枠は「無料料金」でも「無制限」ではありません。別のAPIキーを作っても同じプロジェクトのquotaは共有されます。モデル変更時は`.env`の4つのモデル変数を変更し、`preflight`でモデルの存在を確認したうえで、AI Studioの当日quotaと上記の予定呼び出し数を比較してください。無料枠の上限値はGoogle側で変更され得るため、固定値をREADMEやコードへ複製しません。[Billing FAQ](https://ai.google.dev/gemini-api/docs/billing)
 
 ## 実行
 

@@ -19,9 +19,11 @@ class SequenceGateway:
     def __init__(self, outcomes: list[object]) -> None:
         self.outcomes = list(outcomes)
         self.prompts: list[str] = []
+        self.models: list[str] = []
 
     def generate_trade(self, *, prompt: str, model: str, temperature: float) -> list[FunctionCall]:
         self.prompts.append(prompt)
+        self.models.append(model)
         outcome = self.outcomes.pop(0)
         if isinstance(outcome, Exception):
             raise outcome
@@ -34,6 +36,19 @@ class ReviewGateway:
 
     def generate_review(self, *, prompt: str, model: str, temperature: float) -> dict:
         return self.patch
+
+
+class SequenceReviewGateway:
+    def __init__(self, outcomes: list[object]) -> None:
+        self.outcomes = list(outcomes)
+        self.models: list[str] = []
+
+    def generate_review(self, *, prompt: str, model: str, temperature: float) -> dict:
+        self.models.append(model)
+        outcome = self.outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome  # type: ignore[return-value]
 
 
 def _valid_call() -> FunctionCall:
@@ -130,6 +145,23 @@ def test_trader_does_not_burn_retries_on_rate_limit() -> None:
     assert sleeps == []
 
 
+def test_trader_uses_configured_fallback_after_rate_limit() -> None:
+    gateway = SequenceGateway([ModelGatewayError("rate_limited", retryable=True), [_valid_call()]])
+    agent = TraderAgent(
+        gateway=gateway,
+        model="gemini-3.5-flash-lite",
+        fallback_model="gemini-3.1-flash-lite",
+        temperature=0.7,
+        constitution="fixed",
+        sleeper=lambda _: None,
+    )
+
+    envelope = agent.decide({"market": {"mid": 50000}})
+
+    assert envelope.model == "gemini-3.1-flash-lite"
+    assert gateway.models == ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
+
+
 def test_trader_rejects_unknown_function_and_out_of_range_confidence() -> None:
     unknown = FunctionCall(name="withdraw", args={})
     bad_confidence = _valid_call()
@@ -179,3 +211,21 @@ def test_reviewer_applies_allowlisted_patch_to_new_version() -> None:
     assert result.state["version"] == 2
     assert result.patch == patch
     assert len(result.prompt_hash) == 64
+
+
+def test_reviewer_uses_configured_fallback_after_rate_limit() -> None:
+    patch = {"base_version": 1, "summary": "no change", "operations": []}
+    gateway = SequenceReviewGateway([ModelGatewayError("rate_limited", retryable=True), patch])
+    reviewer = ReviewerAgent(
+        gateway=gateway,
+        model="gemini-3.6-flash",
+        fallback_model="gemini-3.1-flash-lite",
+        temperature=0.4,
+        constitution="review only strategy evidence",
+        sleeper=lambda _: None,
+    )
+
+    result = reviewer.review(strategy=initial_strategy(), closed_trades=[{"id": 1}], review_cycle=6)
+
+    assert result.model == "gemini-3.1-flash-lite"
+    assert gateway.models == ["gemini-3.6-flash", "gemini-3.1-flash-lite"]

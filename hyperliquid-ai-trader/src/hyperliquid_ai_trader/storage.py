@@ -523,12 +523,81 @@ class SQLiteStore:
             """
             SELECT id, slot, side, size, price, fee, closed_pnl, timestamp_ms
             FROM fills
-            WHERE run_id=? AND CAST(closed_pnl AS REAL) != 0
-            ORDER BY timestamp_ms DESC LIMIT ?
+            WHERE run_id=?
+            ORDER BY timestamp_ms ASC, id ASC
             """,
-            (run_id, limit),
+            (run_id,),
         ).fetchall()
-        return [dict(row) for row in reversed(rows)]
+        grouped: dict[int, dict[str, Any]] = {}
+        for row in rows:
+            slot = int(row["slot"])
+            item = grouped.setdefault(
+                slot,
+                {
+                    "id": int(row["id"]),
+                    "slot": slot,
+                    "side": str(row["side"]),
+                    "size": str(row["size"]),
+                    "price": str(row["price"]),
+                    "fee": Decimal("0"),
+                    "gross_pnl": Decimal("0"),
+                    "timestamp_ms": int(row["timestamp_ms"]),
+                },
+            )
+            item["fee"] += Decimal(str(row["fee"]))
+            item["gross_pnl"] += Decimal(str(row["closed_pnl"]))
+            if Decimal(str(row["closed_pnl"])) != 0:
+                item["id"] = int(row["id"])
+                item["side"] = str(row["side"])
+                item["size"] = str(row["size"])
+                item["price"] = str(row["price"])
+                item["timestamp_ms"] = int(row["timestamp_ms"])
+
+        closed: list[dict[str, Any]] = []
+        for item in grouped.values():
+            gross = item["gross_pnl"]
+            if gross == 0:
+                continue
+            fee = item["fee"]
+            closed.append(
+                {
+                    "id": item["id"],
+                    "slot": item["slot"],
+                    "side": item["side"],
+                    "size": item["size"],
+                    "price": item["price"],
+                    "fee": str(fee),
+                    "gross_pnl": str(gross),
+                    # Keep this legacy key for report/backward compatibility.
+                    "closed_pnl": str(gross),
+                    "net_pnl": str(gross - fee),
+                    "timestamp_ms": item["timestamp_ms"],
+                }
+            )
+        closed.sort(key=lambda item: (int(item["timestamp_ms"]), int(item["id"])))
+        return closed[-max(0, limit) :]
+
+    def has_new_closed_trades(self, run_id: str, closed_trades: list[dict[str, Any]]) -> bool:
+        """Return whether the latest review input did not already contain these trades."""
+        current_ids = {str(trade["id"]) for trade in closed_trades if trade.get("id") is not None}
+        if not current_ids:
+            return False
+        row = self.connection.execute(
+            """
+            SELECT input_json FROM reviews
+            WHERE run_id=? ORDER BY review_index DESC LIMIT 1
+            """,
+            (run_id,),
+        ).fetchone()
+        if row is None:
+            return True
+        try:
+            payload = json.loads(row["input_json"])
+            previous = payload.get("closed_trades", [])
+            previous_ids = {str(trade["id"]) for trade in previous if trade.get("id") is not None}
+        except (TypeError, ValueError, AttributeError, KeyError):
+            return True
+        return bool(current_ids - previous_ids)
 
     def record_review(
         self,

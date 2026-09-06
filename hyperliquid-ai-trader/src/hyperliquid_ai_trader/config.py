@@ -43,6 +43,11 @@ def _boolean(values: Mapping[str, str | None], name: str, default: bool) -> bool
     raise ConfigError(f"{name} must be true or false")
 
 
+def _optional(values: Mapping[str, str | None], name: str) -> str | None:
+    value = (values.get(name) or "").strip()
+    return value or None
+
+
 @dataclass(frozen=True)
 class Settings:
     wallet_address: str
@@ -67,6 +72,8 @@ class Settings:
     mandatory_entry: bool = True
     trader_model: str = "gemini-3.6-flash"
     reviewer_model: str = "gemini-3.6-flash"
+    trader_fallback_model: str | None = None
+    reviewer_fallback_model: str | None = None
     trader_temperature: float = 0.7
     reviewer_temperature: float = 0.4
     execution_mode: str = "dry_run"
@@ -130,6 +137,8 @@ class Settings:
             mandatory_entry=_boolean(values, "MANDATORY_ENTRY", True),
             trader_model=(values.get("TRADER_MODEL") or shared_model).strip(),
             reviewer_model=(values.get("REVIEWER_MODEL") or shared_model).strip(),
+            trader_fallback_model=_optional(values, "TRADER_FALLBACK_MODEL"),
+            reviewer_fallback_model=_optional(values, "REVIEWER_FALLBACK_MODEL"),
             trader_temperature=float(values.get("TRADER_TEMPERATURE") or "0.7"),
             reviewer_temperature=float(values.get("REVIEWER_TEMPERATURE") or "0.4"),
             execution_mode=execution_mode,

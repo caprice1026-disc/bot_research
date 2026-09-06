@@ -232,7 +232,13 @@ class TradingService:
                 self.execution_halt_reason = execution.error_type
             return CycleResult(slot, status, execution.error_type)
         except AgentDecisionError as exc:
-            return self._fail_cycle(slot, "mandatory_entry_exception", exc.error_type, features.to_prompt_dict())
+            return self._fail_cycle(
+                slot,
+                "mandatory_entry_exception",
+                exc.error_type,
+                features.to_prompt_dict(),
+                model=getattr(self.trader, "last_model", getattr(self.trader, "model", None)),
+            )
         except RiskRejected:
             return self._fail_cycle(
                 slot,
@@ -405,6 +411,19 @@ class TradingService:
         self.sync_exchange_evidence(now_ms=now_ms)
         strategy = self.store.load_latest_strategy(self.run_id) or initial_strategy()
         closed = self.store.recent_closed_trades(self.run_id, limit=100)
+        review_input = {"strategy": strategy, "closed_trades": closed}
+        if not self.store.has_new_closed_trades(self.run_id, closed):
+            self.store.record_review(
+                run_id=self.run_id,
+                review_index=review_index,
+                created_at_ms=now_ms,
+                model=getattr(self.reviewer, "last_model", getattr(self.reviewer, "model", "unknown")),
+                status="skipped_no_new_trades",
+                input_payload=review_input,
+                output_payload=None,
+                error_type=None,
+            )
+            return
         try:
             result = self.reviewer.review(
                 strategy=strategy,
@@ -426,7 +445,7 @@ class TradingService:
                 created_at_ms=now_ms,
                 model=result.model,
                 status="accepted",
-                input_payload={"strategy": strategy, "closed_trades": closed},
+                input_payload=review_input,
                 output_payload=result.patch,
                 error_type=None,
             )
@@ -444,9 +463,9 @@ class TradingService:
                 run_id=self.run_id,
                 review_index=review_index,
                 created_at_ms=now_ms,
-                model=getattr(self.reviewer, "model", "unknown"),
+                model=getattr(self.reviewer, "last_model", getattr(self.reviewer, "model", "unknown")),
                 status="rejected",
-                input_payload={"strategy": strategy, "closed_trades": closed},
+                input_payload=review_input,
                 output_payload=None,
                 error_type=exc.error_type,
             )

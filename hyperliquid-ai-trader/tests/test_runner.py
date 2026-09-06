@@ -4,7 +4,7 @@ from decimal import Decimal
 from pathlib import Path
 import uuid
 
-from hyperliquid_ai_trader.agents import AgentDecisionError, DecisionEnvelope
+from hyperliquid_ai_trader.agents import AgentDecisionError, DecisionEnvelope, ReviewEnvelope
 from hyperliquid_ai_trader.config import Settings
 from hyperliquid_ai_trader.exchange.base import (
     BracketResult,
@@ -416,3 +416,51 @@ def test_scheduler_waits_for_slot_boundary_before_cleanup_and_review() -> None:
     assert service.cycle_times == [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0]
     assert service.review_times == [30.0]
     assert service.cleanup_times == [30.0, 35.0]
+
+
+def test_review_skips_when_no_new_closed_trade_exists() -> None:
+    class CountingReviewer:
+        model = "gemini-review"
+
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def review(self, *, strategy, closed_trades, review_cycle):
+            self.calls += 1
+            state = dict(strategy)
+            state.update(
+                {
+                    "version": strategy["version"] + 1,
+                    "parent_version": strategy["version"],
+                    "last_review_cycle": review_cycle,
+                }
+            )
+            return ReviewEnvelope(
+                state=state,
+                patch={"base_version": strategy["version"], "summary": "unchanged", "operations": []},
+                prompt_hash="b" * 64,
+                model=self.model,
+            )
+
+    store = _store()
+    reviewer = CountingReviewer()
+    service = TradingService(
+        settings=_settings(),
+        exchange=FakeExchange(),
+        trader=FixedAgent(),
+        reviewer=reviewer,
+        store=store,
+        run_id="run-review-skip",
+        git_sha="abc",
+    )
+    service.initialize(now_ms=1_000)
+
+    service.review_once(review_index=1, review_cycle=1, now_ms=2_000)
+    service.review_once(review_index=2, review_cycle=2, now_ms=3_000)
+
+    assert reviewer.calls == 1
+    status = store.connection.execute(
+        "SELECT status, error_type FROM reviews WHERE run_id='run-review-skip' AND review_index=2"
+    ).fetchone()
+    assert dict(status) == {"status": "skipped_no_new_trades", "error_type": None}
+    store.close()

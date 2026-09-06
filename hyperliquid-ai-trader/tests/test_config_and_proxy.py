@@ -68,6 +68,23 @@ def test_shared_gemini_model_from_env_applies_to_both_agents() -> None:
     assert settings.reviewer_model == "gemini-custom-free-tier"
 
 
+def test_settings_parse_role_specific_fallback_models() -> None:
+    settings = Settings.from_mapping(
+        {
+            "HL_test_wallet": "0x" + "1" * 40,
+            "HL_test_wallet_private_key": "0x" + "2" * 64,
+            "GEMINI_API_KEY": "gemini-test-key",
+            "TRADER_MODEL": "gemini-3.5-flash-lite",
+            "TRADER_FALLBACK_MODEL": "gemini-3.1-flash-lite",
+            "REVIEWER_MODEL": "gemini-3.6-flash",
+            "REVIEWER_FALLBACK_MODEL": "gemini-3.1-flash-lite",
+        }
+    )
+
+    assert settings.trader_fallback_model == "gemini-3.1-flash-lite"
+    assert settings.reviewer_fallback_model == "gemini-3.1-flash-lite"
+
+
 def test_expected_account_mode_is_optional_and_validated() -> None:
     settings = Settings.from_mapping(
         {
