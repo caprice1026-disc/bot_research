@@ -4,16 +4,22 @@ import asyncio
 import sys
 import time
 from datetime import datetime, timezone
+from decimal import Decimal
 from types import SimpleNamespace
 
+from btc5m.clock import ReceiveStamp
 from btc5m.collectors.live import (
+    EventWriterPool,
     binance_stream_url,
     coinbase_subscribe_payloads,
     collection_status,
     hyperliquid_subscribe_payloads,
+    missing_channels,
     stale_sources,
 )
 from btc5m.collectors.polymarket import MarketIdentity, active_token_ids
+from btc5m.coverage import CoverageTracker
+from btc5m.events import RawEvent
 
 
 def test_binance_combined_stream_contains_trade_and_book_ticker() -> None:
@@ -80,6 +86,157 @@ def test_collection_status_marks_a_source_that_stopped_after_one_event_partial()
     assert collection_status(("binance",), {"binance": 1}, (), stale) == "partial"
 
 
+def test_missing_channels_reports_chainlink_one_sided_stop() -> None:
+    assert missing_channels(
+        ("chainlink",), {"chainlink/chainlink_twap_30": 3}
+    ) == ["chainlink/chainlink_twap_60"]
+
+
+def test_event_writer_flushes_after_a_slow_save_without_losing_rows(tmp_path) -> None:
+    from btc5m.collectors import live
+
+    event_counts: dict[str, int] = {}
+    event_counts_by_type: dict[str, int] = {}
+    event_paths: set = set()
+    last_received: dict[str, float] = {}
+    last_channels: dict[str, float] = {}
+    tracker = CoverageTracker(max_gap_seconds=1)
+    received = ReceiveStamp(datetime(2026, 9, 7, tzinfo=timezone.utc), time.monotonic_ns())
+    event = RawEvent.from_message(
+        source="binance",
+        symbol="BTCUSDT",
+        event_type="book_ticker",
+        payload={"u": 1},
+        received=received,
+        source_event_ts=1_700_000_000_000,
+        source_publish_ts=None,
+        sequence_id="1",
+        price=None,
+        bid=Decimal("100"),
+        ask=Decimal("101"),
+        bid_size=None,
+        ask_size=None,
+    )
+    original_append = live.append_jsonl_rows
+
+    def delayed_append(path, rows):
+        time.sleep(0.01)
+        original_append(path, rows)
+
+    live.append_jsonl_rows = delayed_append
+
+    async def run() -> None:
+        pool = EventWriterPool(
+            output_root=tmp_path,
+            sources=("binance",),
+            event_counts=event_counts,
+            event_counts_by_type=event_counts_by_type,
+            event_paths=event_paths,
+            last_received_monotonic=last_received,
+            last_received_by_channel=last_channels,
+            coverage_tracker=tracker,
+            error_sink=None,
+            queue_maxsize=1,
+        )
+        await pool.start()
+        await pool.submit([event], connection_id="binance-1")
+        await pool.close()
+
+    try:
+        asyncio.run(run())
+    finally:
+        live.append_jsonl_rows = original_append
+
+    assert event_counts == {"binance": 1}
+    assert event_counts_by_type == {"binance/book_ticker": 1}
+    saved = next(tmp_path.rglob("events.jsonl"))
+    assert '"connection_id": "binance-1"' in saved.read_text(encoding="utf-8")
+
+
+def test_collect_public_reports_chainlink_one_sided_stop(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    from btc5m.collectors import live
+
+    received = ReceiveStamp(datetime.now(timezone.utc), time.monotonic_ns())
+    event = RawEvent.from_message(
+        source="chainlink",
+        symbol="btc/usd",
+        event_type="chainlink_twap_30",
+        payload={"symbol": "btc/usd", "value": "100"},
+        received=received,
+        source_event_ts=1_700_000_000_000,
+        source_publish_ts=None,
+        sequence_id="30-1",
+        price=Decimal("100"),
+        bid=None,
+        ask=None,
+        bid_size=None,
+        ask_size=None,
+    )
+
+    async def one_sided(*args, **kwargs) -> None:
+        await kwargs["writers"].submit([event], connection_id="chainlink-1")
+        await kwargs["stop"].wait()
+
+    monkeypatch.setattr(live, "run_polymarket_source", one_sided)
+    result = asyncio.run(
+        live.collect_public(
+            ("chainlink",),
+            tmp_path,
+            1,
+            max_stale_seconds=0.1,
+        )
+    )
+
+    assert result["status"] == "partial"
+    assert result["missing_channels"] == ["chainlink/chainlink_twap_60"]
+
+
+def test_market_discovery_failure_is_logged_and_does_not_stop_chainlink(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    from btc5m.collectors import live
+
+    errors: list[str] = []
+    stop = asyncio.Event()
+
+    class Client:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return None
+
+        def list_markets(self, **kwargs):
+            raise RuntimeError("catalog unavailable")
+
+    monkeypatch.setitem(sys.modules, "polymarket", SimpleNamespace(AsyncPublicClient=Client))
+
+    async def run() -> None:
+        task = asyncio.create_task(
+            live.run_polymarket_source(
+                tmp_path,
+                stop,
+                include_market=True,
+                include_chainlink=False,
+                market_refresh_seconds=0.1,
+                error_sink=errors.append,
+            )
+        )
+        await asyncio.sleep(0.02)
+        stop.set()
+        await task
+
+    asyncio.run(run())
+
+    assert any("polymarket_market_discovery" in error for error in errors)
+    connection_log = tmp_path / "logs" / "connections.jsonl"
+    assert "polymarket_market_discovery" in connection_log.read_text(encoding="utf-8")
+
+
 def test_collect_public_marks_a_collector_that_stops_without_events_error(
     monkeypatch,
     tmp_path,
@@ -144,8 +301,11 @@ def test_polymarket_source_refreshes_subscription_for_next_market(
     stop = asyncio.Event()
     subscriptions: list[tuple[str, ...]] = []
     discovery_calls = 0
+    sdk_drops: dict[str, int] = {}
 
     class EmptyStream:
+        dropped = 2
+
         def __aiter__(self):
             return self
 
@@ -194,7 +354,103 @@ def test_polymarket_source_refreshes_subscription_for_next_market(
             include_market=True,
             include_chainlink=False,
             market_refresh_seconds=0.1,
+            sdk_drop_counts=sdk_drops,
         )
     )
 
     assert subscriptions == [("u1", "d1"), ("u1", "d1", "u2", "d2")]
+    assert sdk_drops == {"polymarket": 2}
+
+
+def test_chainlink_subscription_is_not_restarted_by_market_refresh(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    from btc5m.collectors import live
+
+    now = datetime.now(timezone.utc)
+    now_us = int(now.timestamp() * 1_000_000)
+    markets = [MarketIdentity("current", "c1", "u1", "d1", now_us, now_us + 300_000_000)]
+    stop = asyncio.Event()
+    market_subscriptions = 0
+    chainlink_subscriptions = 0
+
+    class EmptyMarketStream:
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            raise StopAsyncIteration
+
+    class WaitingChainlinkStream:
+        dropped = 0
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            await stop.wait()
+            raise StopAsyncIteration
+
+    class Subscription:
+        def __init__(self, stream):
+            self.stream = stream
+
+        async def __aenter__(self):
+            return self.stream
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return None
+
+    class Client:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return None
+
+        async def subscribe(self, specs):
+            nonlocal market_subscriptions, chainlink_subscriptions
+            if hasattr(specs[0], "token_ids"):
+                market_subscriptions += 1
+                if market_subscriptions >= 2 and chainlink_subscriptions >= 1:
+                    stop.set()
+                return Subscription(EmptyMarketStream())
+            chainlink_subscriptions += 1
+            return Subscription(WaitingChainlinkStream())
+
+    async def discover(client):
+        await asyncio.sleep(0)
+        return markets
+
+    monkeypatch.setitem(
+        sys.modules, "polymarket", SimpleNamespace(AsyncPublicClient=Client)
+    )
+    monkeypatch.setattr(live, "discover_btc_5m_markets", discover)
+    monkeypatch.setattr(
+        live,
+        "build_market_specs",
+        lambda token_ids: (SimpleNamespace(token_ids=tuple(token_ids)),),
+    )
+    monkeypatch.setattr(
+        live,
+        "build_chainlink_specs",
+        lambda: (SimpleNamespace(window_seconds=30), SimpleNamespace(window_seconds=60)),
+    )
+
+    async def invoke() -> None:
+        await asyncio.wait_for(
+            live.run_polymarket_source(
+                tmp_path,
+                stop,
+                include_market=True,
+                include_chainlink=True,
+                market_refresh_seconds=0.1,
+            ),
+            timeout=2.0,
+        )
+
+    asyncio.run(invoke())
+
+    assert market_subscriptions == 2
+    assert chainlink_subscriptions == 1

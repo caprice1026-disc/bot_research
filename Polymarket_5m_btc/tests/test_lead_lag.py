@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from btc5m.events import parse_source_timestamp
 from btc5m.research.lead_lag import event_study
 
 
@@ -30,8 +31,20 @@ def _row(
 
 def test_event_study_uses_receive_time_and_signed_response() -> None:
     external = [
-        _row("binance", "2026-09-07T00:00:00.000000Z", "100"),
-        _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.000000Z",
+            "100",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.500000Z",
+            "101",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
     ]
     polymarket = [
         _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50"),
@@ -47,7 +60,8 @@ def test_event_study_uses_receive_time_and_signed_response() -> None:
 
     assert result.status == "exploratory"
     assert result.event_count == 1
-    assert result.observations_by_horizon == {100: 0, 200: 1}
+    assert result.observations_by_horizon == {100: 1, 200: 1}
+    assert result.mean_signed_response_by_horizon[100] == pytest.approx(0.0)
     assert result.mean_signed_response_by_horizon[200] == pytest.approx(0.10)
 
 
@@ -223,3 +237,94 @@ def test_event_study_does_not_use_tail_for_uncovered_horizon() -> None:
     assert result.status == "insufficient_data"
     assert result.observations_by_horizon == {5_000: 0}
     assert result.mean_signed_response_by_horizon[5_000] is None
+
+
+def test_event_study_rejects_stale_lookback_and_deduplicates_same_shock() -> None:
+    external = [
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.000000Z",
+            "100",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.500000Z",
+            "101",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.510000Z",
+            "101.1",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
+        _row("coinbase", "2026-09-07T00:00:00.511000Z", "101.2"),
+        _row("binance", "2026-09-07T00:00:03.000000Z", "102"),
+    ]
+    polymarket = [
+        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50"),
+        _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.60"),
+        _row("polymarket", "2026-09-07T00:00:03.200000Z", "0.70"),
+    ]
+
+    result = event_study(
+        external,
+        polymarket,
+        shock_return=0.005,
+        lookback_ms=500,
+        max_shock_age_ms=100,
+        shock_cooldown_ms=100,
+        horizons_ms=(200,),
+    )
+
+    assert result.event_count == 1
+    assert result.shock_provenance == {"binance/trade": 1}
+
+
+def test_event_study_does_not_cross_a_reported_gap() -> None:
+    external = [
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.000000Z",
+            "100",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
+        _row(
+            "binance",
+            "2026-09-07T00:00:00.500000Z",
+            "101",
+            symbol="BTCUSDT",
+            event_type="agg_trade",
+        ),
+    ]
+    polymarket = [
+        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50"),
+        _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.60"),
+    ]
+    gaps = [
+        {
+            "source": "binance",
+            "channel": "trade",
+            "symbol": "BTCUSDT",
+            "start_ts": parse_source_timestamp(
+                "2026-09-07T00:00:00.250000Z"
+            ),
+            "end_ts": parse_source_timestamp("2026-09-07T00:00:00.450000Z"),
+        }
+    ]
+
+    result = event_study(
+        external,
+        polymarket,
+        shock_return=0.005,
+        horizons_ms=(200,),
+        gap_intervals=gaps,
+    )
+
+    assert result.event_count == 0
+    assert result.reason == "no_external_shocks"

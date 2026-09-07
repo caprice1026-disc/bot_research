@@ -18,6 +18,7 @@ from btc5m.ingestion.pmxt import (
 from btc5m.io import load_rows, write_json
 from btc5m.quality import validate_events
 from btc5m.research.lead_lag import event_study
+from btc5m.research.selection import select_run
 from btc5m.storage import compact_jsonl_to_parquet
 
 app = typer.Typer(
@@ -34,12 +35,22 @@ def collect(
         60, min=1, help="Bounded collection duration."
     ),
     output_root: Path = typer.Option(Path("data"), help="Output directory."),
+    gap_threshold_seconds: float = typer.Option(
+        5.0, min=0.001, help="Receive gap interval threshold."
+    ),
 ) -> None:
     """Collect public market events."""
     from btc5m.collectors.live import collect_public
 
     selected = parse_sources(sources)
-    manifest = asyncio.run(collect_public(selected, output_root, duration_seconds))
+    manifest = asyncio.run(
+        collect_public(
+            selected,
+            output_root,
+            duration_seconds,
+            gap_threshold_seconds=gap_threshold_seconds,
+        )
+    )
     typer.echo(json.dumps({**manifest, "output": str(output_root)}))
     if manifest["status"] != "ok":
         raise typer.Exit(code=1)
@@ -86,6 +97,49 @@ def lead_lag(
     write_json(output_path, result.to_dict())
     output_path.with_suffix(".md").write_text(result.to_markdown(), encoding="utf-8")
     typer.echo(json.dumps(result.to_dict(), ensure_ascii=False))
+
+
+@app.command("select-5m")
+def select_5m(
+    input_root: Path = typer.Option(..., "--input-root"),
+    output_root: Path = typer.Option(..., "--output-root"),
+    lookback_ms: int = typer.Option(500, "--lookback-ms", min=0),
+    horizons_ms: str = typer.Option(
+        "100,250,500,1000,2000,5000",
+        "--horizons-ms",
+        help="Comma-separated evaluation horizons.",
+    ),
+    chainlink_history_seconds: int = typer.Option(
+        60, "--chainlink-history-seconds", min=0
+    ),
+    max_gap_seconds: float = typer.Option(5.0, "--max-gap-seconds", min=0.001),
+    copy_events: bool = typer.Option(
+        False,
+        "--copy-events",
+        help="Copy selected rows to output_root/raw; default keeps the raw run in place.",
+    ),
+) -> None:
+    """Select exact 5-minute markets and produce coverage-aware artifacts."""
+    try:
+        horizons = tuple(
+            int(value.strip())
+            for value in horizons_ms.split(",")
+            if value.strip()
+        )
+    except ValueError as exc:
+        raise typer.BadParameter("horizons-ms must be comma-separated integers") from exc
+    report = select_run(
+        input_root,
+        output_root,
+        lookback_ms=lookback_ms,
+        horizons_ms=horizons,
+        chainlink_history_seconds=chainlink_history_seconds,
+        max_gap_seconds=max_gap_seconds,
+        copy_events=copy_events,
+    )
+    typer.echo(json.dumps(report, ensure_ascii=False, default=str))
+    if report["status"] != "ready":
+        raise typer.Exit(code=1)
 
 
 @app.command("ingest-pmxt")

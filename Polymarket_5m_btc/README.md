@@ -17,7 +17,8 @@ Every live row retains `sequence_id` as the source-side duplicate candidate and
 `receive_id` as a local ingestion identifier. They are intentionally different:
 a replay should have a new `receive_id` while keeping the same source sequence.
 Polymarket rows also retain `market_id` and token `symbol`, so UP and DOWN
-observations are never treated as one price series.
+observations are never treated as one price series. `connection_id` identifies
+the websocket/SDK connection that delivered the row and is not a duplicate key.
 
 ## Checks
 
@@ -43,11 +44,35 @@ re-subscribes with current and newly discovered five-minute token IDs. Its
 `collection_manifest.json` is scoped to the current run: `ok` requires events
 from every requested source and no recorded errors; `partial`, `no_events`, or
 `error` must not be used as research success. The `collect` command also exits
-with code 1 for those non-`ok` states.
+with code 1 for those non-`ok` states. Market subscription and Chainlink
+subscriptions are separate: market refresh does not restart Chainlink. The
+run also writes `logs/connections.jsonl` (UTC time, source, connection ID,
+state, reason), `logs/gaps.jsonl` (channel receive gaps), and records SDK
+subscription `dropped` counters when the installed SDK exposes them. Use
+`--gap-threshold-seconds` to control the interval threshold independently of
+the final stale-source threshold.
 
 If only external venues are needed:
 
     .venv\Scripts\python.exe -m btc5m collect --sources binance,coinbase,hyperliquid --duration-seconds 60 --output-root .\data\raw_staging
+
+## Exact 5-minute market selection
+
+The raw run is never overwritten. The selector accepts only the exact
+`btc-updown-5m-<epoch>` slug, so `15m` markets are excluded even if a catalog
+question contains the text `5m`. It streams event JSONL instead of loading a
+multi-gigabyte run into memory, writes a separate selected raw tree, and marks
+each market eligible only when the lookback/history window through the largest
+evaluation horizon is continuous. Chainlink 60-second features require the
+configured history window as well.
+
+    .venv\Scripts\python.exe -m btc5m select-5m --input-root .\data\runs\stage-a-2h-20260907T053816Z --output-root .\data\selected\stage-a-2h-20260907T053816Z --copy-events
+
+`selection_manifest.json` contains selected/excluded market IDs, per-channel
+first/last receive time, gap intervals, and `insufficient_data` when no market
+passes continuity. Without `--copy-events`, the same manifest is produced as
+an index while leaving the raw input in place; `--copy-events` creates the
+explicit filtered copy under `output-root/raw`.
 
 ## Historical coverage
 

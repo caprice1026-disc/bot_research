@@ -18,6 +18,7 @@ def test_cli_help_mentions_research_commands() -> None:
         "compact",
         "validate",
         "fixture",
+        "select-5m",
         "lead-lag",
         "event-study",
     ):

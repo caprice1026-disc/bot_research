@@ -42,6 +42,33 @@ def test_raw_event_serializes_decimal_and_raw_payload() -> None:
     assert row["local_receive_ts"] == "2026-09-07T00:00:00.000000Z"
 
 
+def test_raw_event_preserves_connection_id_separately_from_receive_id() -> None:
+    event = RawEvent.from_message(
+        source="binance",
+        symbol="BTCUSDT",
+        event_type="book_ticker",
+        payload={"u": 7},
+        received=ReceiveStamp(
+            datetime(2026, 9, 7, tzinfo=timezone.utc),
+            123,
+        ),
+        source_event_ts=1_700_000_000_123,
+        source_publish_ts=None,
+        sequence_id="7",
+        price=None,
+        bid=Decimal("100"),
+        ask=Decimal("101"),
+        bid_size=None,
+        ask_size=None,
+        connection_id="binance-connection-1",
+    )
+
+    row = event.to_row()
+
+    assert row["connection_id"] == "binance-connection-1"
+    assert row["receive_id"] != row["connection_id"]
+
+
 def test_source_sequence_is_stable_while_receive_id_changes_on_replay() -> None:
     first = RawEvent.from_message(
         source="polymarket",
@@ -95,6 +122,18 @@ def test_partition_path_and_append_jsonl(tmp_path) -> None:
         "source": "coinbase",
         "value": 1,
     }
+
+
+def test_append_jsonl_rows_writes_a_batch(tmp_path) -> None:
+    from btc5m.storage import append_jsonl_rows, read_jsonl
+
+    path = tmp_path / "batch.jsonl"
+    append_jsonl_rows(path, [{"source": "a", "value": 1}, {"source": "a", "value": 2}])
+
+    assert read_jsonl(path) == [
+        {"source": "a", "value": 1},
+        {"source": "a", "value": 2},
+    ]
 
 
 def test_empty_compaction_creates_readable_parquet(tmp_path) -> None:

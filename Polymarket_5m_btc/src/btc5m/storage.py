@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable, Iterator, Mapping
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import polars as pl
 
@@ -23,6 +24,7 @@ CANONICAL_COLUMNS = (
     "bid_size",
     "ask_size",
     "receive_id",
+    "connection_id",
     "raw_payload",
 )
 
@@ -42,6 +44,7 @@ _EMPTY_SCHEMA = {
     "bid_size": pl.String,
     "ask_size": pl.String,
     "receive_id": pl.String,
+    "connection_id": pl.String,
     "raw_payload": pl.String,
 }
 
@@ -73,22 +76,30 @@ def partition_path(root: Path, source: str, received: datetime) -> Path:
 
 
 def append_jsonl(path: Path, row: Mapping[str, Any]) -> None:
+    append_jsonl_rows(path, (row,))
+
+
+def append_jsonl_rows(path: Path, rows: Iterable[Mapping[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8", newline="\n") as handle:
-        handle.write(
-            json.dumps(dict(row), ensure_ascii=False, sort_keys=True, default=str)
-        )
-        handle.write("\n")
+        for row in rows:
+            handle.write(
+                json.dumps(dict(row), ensure_ascii=False, sort_keys=True, default=str)
+            )
+            handle.write("\n")
+
+
+def iter_jsonl(path: Path) -> Iterator[dict[str, Any]]:
+    if not path.exists():
+        return
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip():
+                yield json.loads(line)
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-    rows: list[dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if line.strip():
-            rows.append(json.loads(line))
-    return rows
+    return list(iter_jsonl(path))
 
 
 def compact_jsonl_to_parquet(input_path: Path, output_path: Path) -> int:

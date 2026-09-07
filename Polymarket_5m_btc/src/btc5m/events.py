@@ -82,6 +82,7 @@ class RawEvent:
     raw_payload: Mapping[str, Any]
     market_id: str | None = None
     receive_id: str | None = None
+    connection_id: str | None = None
 
     @classmethod
     def from_message(
@@ -102,6 +103,7 @@ class RawEvent:
         ask_size: Decimal | None,
         market_id: str | None = None,
         receive_id: str | None = None,
+        connection_id: str | None = None,
     ) -> RawEvent:
         if not source:
             raise ValueError("source must be non-empty")
@@ -128,6 +130,7 @@ class RawEvent:
             raw_payload=dict(payload),
             market_id=market_id,
             receive_id=resolved_receive_id,
+            connection_id=connection_id,
         )
 
     @classmethod
@@ -148,6 +151,7 @@ class RawEvent:
         ask_size: Decimal | None = None,
         market_id: str | None = None,
         receive_id: str | None = None,
+        connection_id: str | None = None,
     ) -> RawEvent:
         """Build an event without inventing a local receive timestamp.
 
@@ -176,6 +180,7 @@ class RawEvent:
             raw_payload=dict(payload),
             market_id=market_id,
             receive_id=receive_id,
+            connection_id=connection_id,
         )
 
     def to_row(self) -> dict[str, object]:
@@ -199,6 +204,7 @@ class RawEvent:
             "bid_size": _decimal_text(self.bid_size),
             "ask_size": _decimal_text(self.ask_size),
             "receive_id": self.receive_id,
+            "connection_id": self.connection_id,
             "raw_payload": json.dumps(
                 self.raw_payload,
                 ensure_ascii=False,

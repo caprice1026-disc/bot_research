@@ -33,6 +33,7 @@
 - [x] receive-time lead-lag 分析、fixture report、README、CLI を完成させる。
 - [x] default tests、fixture E2E、public smoke を検証した。Git pushのみ残る。
 - [x] (2026-09-07) 段階Aとして、系列識別、Polymarket quote意味論、Binance bookTicker、horizon coverage、重複識別、収集manifest、rolling subscription、market master永続化を修復した。
+- [x] (2026-09-07) 5分市場の厳密な選別、受信空白・接続状態・SDK drop監視、保存処理分離、障害注入テスト、切断安全なlead-lag評価を追加する。
 
 ## Surprises & Discoveries
 
@@ -383,6 +384,29 @@ The live collector refreshes market discovery on a bounded interval, preserves p
 - [x] (2026-09-07) Step 6: Run focused tests, then the full suite, ruff, pyright, fixture, public smoke, and diff checks.
 - [x] (2026-09-07) Step 7: Commit the Stage A changes, push `main`, and verify the remote SHA.
 
+### Task 9: データ選別・収集継続性・分析鮮度の修復
+
+Files:
+
+- Create: `Polymarket_5m_btc/src/btc5m/coverage.py`
+- Create: `Polymarket_5m_btc/src/btc5m/research/selection.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/events.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/storage.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/collectors/common.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/collectors/polymarket.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/collectors/live.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/research/lead_lag.py`
+- Modify: `Polymarket_5m_btc/src/btc5m/cli.py`
+- Create/modify: tests for strict market filtering, gap selection, writer delay, reconnect/Chainlink isolation, discovery failure, and shock deduplication.
+
+受信原本は保持したまま、market masterからslugが厳密な`btc-updown-5m-<epoch>`に一致する市場だけを選別する。選別成果物は対象market、必要な履歴窓、lookbackから各horizonまでのcoverage判定、チャネル別gap intervalを含み、Chainlink 60秒の特徴量では履歴窓をcoverage条件に含める。Polymarket market subscriptionとChainlink TWAP subscriptionを別タスク・別接続として維持し、接続ID、再接続理由、受信queueの保存遅延、SDK handleの`dropped`件数をログへ出す。lead-lagは許容gapを跨ぐreturnを捨て、horizon内に新しいquoteがなくても連続性が確認できればゼロ反応を計上し、同一方向のshock候補をcooldownで一つにまとめる。
+
+- [x] Step 1: strict 5m parser、streaming JSONL、coverage/gap tracker、connection metadataのfailing testを追加する。
+- [x] Step 2: 保存処理をsource別の非同期writerへ分離し、接続・停止・SDK dropをmanifest/logへ記録する。
+- [x] Step 3: Chainlinkをmarket refreshから分離し、market discovery failureと片側停止を別々に報告する。
+- [x] Step 4: selection commandとgap-aware lead-lag、shock age/cooldown、normal no-responseを実装する。
+- [x] Step 5: 障害注入テスト、既存suite、ruff、pyright、fixtureを実行し、今回runの選別manifestを生成する。
+
 ## Validation and Acceptance
 
 From Polymarket_5m_btc/, the following commands must work after installation:
@@ -477,3 +501,9 @@ No runtime dependency reads wallet keys or submits orders.
 2026-09-07: Implemented and pushed Stage A measurement-integrity repairs in `ff103e6`, including market-aware series, quote-safe price-change handling, official Binance bookTicker routing, horizon coverage, replay identity separation, per-run collection status, rolling market subscriptions, and restart-safe market master upsert.
 
 2026-09-07: A follow-up review found that those series were still aggregated across UP/DOWN tokens and quote/trade bases, and a source that sent one event then went quiet could remain `ok`. The follow-up separates results by market/token/price basis, suppresses a mixed-series aggregate, records per-source receive freshness, and makes unexpected collector termination or a 90-second stale source non-`ok`.
+
+2026-09-07: The next measurement repair made market discovery strict to `btc-updown-5m-<epoch>`, so the selected 2-hour run contains 26 five-minute markets and excludes 9 fifteen-minute markets. The selected copy contains 3,867,260 rows and 1,773 channel gap intervals; all 26 selected markets are `insufficient_data` because the required history/forward window is not continuous. The raw input run remains unchanged.
+
+2026-09-07: Source persistence now uses per-source bounded async queues and batched JSONL writes in worker threads. `connection_id` is separate from `sequence_id` and `receive_id`; connection logs include reconnect reasons and SDK handle `dropped` counts when available. Chainlink 30s/60s subscriptions are maintained independently of rolling market refresh. Gap-aware lead-lag rejects stale lookbacks and cross-gap returns, counts confirmed zero-response horizons, and deduplicates shock candidates with a cooldown.
+
+2026-09-07: Fault-injection coverage includes pause/recovery, one-sided Chainlink stop, market-discovery failure, delayed persistence, SDK drop reporting, strict market switching, and Chainlink subscription isolation. The final offline suite has 63 passing tests; the live Binance smoke was correctly `error` with zero events because the environment refused the network connection, and its reconnect log was preserved.

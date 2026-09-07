@@ -313,6 +313,101 @@ def test_reconnect_runner_reports_stream_errors() -> None:
     assert errors == [("binance", "simulated failure")]
 
 
+def test_reconnect_runner_reports_pause_recovery_with_connection_ids() -> None:
+    stop = asyncio.Event()
+    lifecycle: list[tuple[str, str, str]] = []
+    calls = 0
+
+    async def paused_stream():
+        yield {"id": 1}
+        raise ConnectionError("pause")
+
+    async def recovered_stream():
+        yield {"id": 2}
+        stop.set()
+
+    def connect():
+        nonlocal calls
+        calls += 1
+        return paused_stream() if calls == 1 else recovered_stream()
+
+    asyncio.run(
+        reconnect_forever(
+            "fixture",
+            connect,
+            lambda message, stamp: asyncio.sleep(0),
+            stop,
+            reconnect_base_seconds=0,
+            reconnect_max_seconds=0,
+            connection_id_factory=lambda: f"connection-{calls + 1}",
+            on_connect=lambda source, connection_id: lifecycle.append(
+                ("connect", source, connection_id)
+            ),
+            on_disconnect=lambda source, connection_id, reason: lifecycle.append(
+                ("disconnect", source, f"{connection_id}:{reason}")
+            ),
+        )
+    )
+
+    assert [item[0] for item in lifecycle] == [
+        "connect",
+        "disconnect",
+        "connect",
+        "disconnect",
+    ]
+    assert lifecycle[0][2] != lifecycle[2][2]
+    assert "pause" in lifecycle[1][2]
+
+
+def test_reconnect_runner_keeps_chainlink_lifecycle_independent() -> None:
+    stop = asyncio.Event()
+    calls = {"market": 0, "chainlink": 0}
+    errors: list[str] = []
+
+    async def market_stream():
+        yield {"id": "market"}
+        raise ConnectionError("market-only")
+
+    async def chainlink_stream():
+        yield {"id": "chainlink"}
+        stop.set()
+
+    def market_connect():
+        calls["market"] += 1
+        return market_stream()
+
+    def chainlink_connect():
+        calls["chainlink"] += 1
+        return chainlink_stream()
+
+    async def run_both() -> None:
+        await asyncio.gather(
+            reconnect_forever(
+                "market",
+                market_connect,
+                lambda message, stamp: asyncio.sleep(0),
+                stop,
+                reconnect_base_seconds=0,
+                reconnect_max_seconds=0,
+                on_error=lambda source, error: errors.append(f"{source}:{error}"),
+            ),
+            reconnect_forever(
+                "chainlink",
+                chainlink_connect,
+                lambda message, stamp: asyncio.sleep(0),
+                stop,
+                reconnect_base_seconds=0,
+                reconnect_max_seconds=0,
+            ),
+        )
+
+    asyncio.run(run_both())
+
+    assert calls["chainlink"] == 1
+    assert calls["market"] >= 1
+    assert errors and errors[0].startswith("market:")
+
+
 def test_market_identity_extracts_five_minute_window_and_tokens() -> None:
     identity = market_identity_from_mapping(
         {

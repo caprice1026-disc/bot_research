@@ -11,7 +11,7 @@ from typing import Any, Mapping
 from btc5m.clock import ReceiveStamp
 from btc5m.events import RawEvent
 
-_WINDOW_RE = re.compile(r"(?:5m|5-min|5min)[-_](\d{10,13})", re.IGNORECASE)
+_WINDOW_RE = re.compile(r"^btc-updown-5m-(\d{10,13})$", re.IGNORECASE)
 
 
 @dataclass(frozen=True, slots=True)
@@ -199,7 +199,7 @@ def parse_polymarket_message(
 
 
 def _window_from_slug(slug: str) -> tuple[int, int] | None:
-    match = _WINDOW_RE.search(slug)
+    match = _WINDOW_RE.fullmatch(slug.strip())
     if match is None:
         return None
     raw = int(match.group(1))
@@ -210,12 +210,6 @@ def _window_from_slug(slug: str) -> tuple[int, int] | None:
 
 def market_identity_from_mapping(market: Mapping[str, Any]) -> MarketIdentity | None:
     slug = str(market.get("slug") or "")
-    question = str(market.get("question") or "")
-    text = f"{slug} {question}".lower()
-    if "btc" not in text or not any(
-        marker in text for marker in ("5m", "5-min", "5min")
-    ):
-        return None
     window = _window_from_slug(slug)
     if window is None:
         return None
