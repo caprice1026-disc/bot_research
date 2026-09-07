@@ -1,9 +1,14 @@
-# ExecPlans
+# 作業方針
 
-When writing complex features or significant refactors, use an ExecPlan (as described in PLANS.md) from design to implementation.
+作業ディレクトリは、指定がなければリポジトリのルートとする。
 
-Please write the Exec Plan in Japanese.
-Also, please create the Exec Plan under the .agent directory.
+複雑な機能追加・大規模リファクタリングでは、`PLANS.md` に従う日本語のExecPlanを `.agent/` に作成・更新する。既存計画を参考にし、同じ内容の計画を別形式で重複作成しない。調査、文書修正、局所的な小変更には計画書を必須としない。
 
-Please refer to existing Exec Plans in the .agent directory for examples.
-Unless otherwise specified, the working directory is set to the root directory of the repository.
+明確な依頼・承認済みの範囲では、通常の可逆的な作業を進める。Skillsにある一律の設計承認、質問、テスト追加を小変更へ機械的に適用しない。質問は、結果を左右する情報不足や必要な権限がある場合に限定する。Skillsは実際の作業内容に応じて選び、ユーザーの明示的な指示を優先する。
+
+# 研究・実行の検証
+
+- 既存のREADME・runner・検証コマンドを先に確認する。バッチ再実行は記録済みの成功分を除外し、失敗・未処理分を対象にする。
+- 指定された市場・期間・データ条件を維持する。不足データを捏造せず、成果物の正常性と評価に必要なデータ充足を分けて報告する。データ不足によるゼロ取引は収益評価の成功としない。
+- 変更に対応する既存テストと成果物検証を実行する。新規テストは重要な挙動・回帰リスクを確認する場合に追加し、文書のみの変更では差分・参照を確認する。
+- 完了報告には実施内容、検証結果、残る制約を記す。依頼に外部反映が含まれる場合は、その反映も確認する。バックグラウンド起動のみの依頼では起動確認までを完了範囲とする。
