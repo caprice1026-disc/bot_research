@@ -81,7 +81,7 @@ SL 25%、20秒前 exit、stake $10 などの売買パラメータは初期段階
 
 Python 3.12 を研究・データ処理・本番 bot で統一する。
 
-Python 環境管理には uv を使う。
+Python 環境管理には、先ほど作成した `.venv` と pip を使う。
 
 依存関係候補:
 
@@ -110,7 +110,7 @@ Python 環境管理には uv を使う。
 - ruff
 - pyright
 
-uv.lock は Git 管理する。旧 py-clob-client ではなく、Polymarket の unified SDK を優先する。ただし、公式仕様と実際に利用可能なパッケージの整合性は実装時に検証する。
+依存関係は `requirements.txt` と `requirements-dev.txt` に固定する。旧 py-clob-client ではなく、Polymarket の unified SDK を優先する。ただし、公式仕様と実際に利用可能なパッケージの整合性は実装時に検証する。
 
 ---
 
@@ -194,7 +194,8 @@ archive の coverage はダウンロード前に検査し、連続性を仮定�
 ディレクトリ構成:
 
 - pyproject.toml
-- uv.lock
+- requirements.txt
+- requirements-dev.txt
 - README.md
 - config/research.yaml
 - config/live.yaml
@@ -629,13 +630,13 @@ Binance、Coinbase、Hyperliquid が同方向なら confidence を高め、相�
 
 最小 CLI 候補:
 
-- uv run btc5m collect
-- uv run btc5m ingest-pmxt --start 2026-06-01 --end 2026-07-01
-- uv run btc5m build-features
-- uv run btc5m event-study
-- uv run btc5m fit --model logistic
-- uv run btc5m backtest --model logistic
-- uv run btc5m paper
+- .venv\\Scripts\\python.exe -m btc5m collect
+- .venv\\Scripts\\python.exe -m btc5m ingest-pmxt --start 2026-06-01 --end 2026-07-01
+- .venv\\Scripts\\python.exe -m btc5m build-features
+- .venv\\Scripts\\python.exe -m btc5m event-study
+- .venv\\Scripts\\python.exe -m btc5m fit --model logistic
+- .venv\\Scripts\\python.exe -m btc5m backtest --model logistic
+- .venv\\Scripts\\python.exe -m btc5m paper
 
 ---
 
@@ -750,4 +751,3 @@ real-time で signal だけを出し、実注文はしない。
 - event-time の edge と receive-time の tradable edge を分離する。
 - 研究結果は exploratory signal であり、十分な検証前の投資助言ではない。
 - 実注文・秘密鍵・資金移動は別の明示的な承認なしに実行しない。
-

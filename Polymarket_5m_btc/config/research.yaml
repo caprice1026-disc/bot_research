@@ -1,0 +1,7 @@
+timezone: UTC
+data_root: data
+minimum_sources: 2
+shock_return: 0.001
+horizons_ms: [100, 250, 500, 1000, 2000, 5000]
+historical_policy: no_synthetic_fill
+result_states: [insufficient_data, exploratory, ready_for_next_gate]

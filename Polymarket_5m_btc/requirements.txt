@@ -1,0 +1,8 @@
+polymarket-client[quant]>=0.9,<0.10
+websockets>=13,<16
+httpx>=0.27,<1
+orjson>=3.10,<4
+pydantic>=2,<3
+PyYAML>=6,<7
+typer>=0.12,<1
+rich>=13,<14

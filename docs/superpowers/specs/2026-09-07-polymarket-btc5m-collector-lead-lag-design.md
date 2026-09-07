@@ -35,7 +35,7 @@ All new code, configuration, tests, data, and reports live below `Polymarket_5m_
 
 ### Runtime
 
-The requested target is Python 3.12. The current host exposes Python 3.13 only and the already-created environment has no pip because ensurepip hit a host temporary-directory permission error. The project will declare a compatible Python range and record the actual interpreter in manifests. Dependency installation will prefer uv when available; implementation must not claim Python 3.12-specific validation when it ran under 3.13.
+The requested target is Python 3.12. The current host exposes Python 3.13 only. The project will declare a compatible Python range and record the actual interpreter in manifests. Dependency installation uses the existing `.venv` and pip, with `requirements.txt` and `requirements-dev.txt`; implementation must not claim Python 3.12-specific validation when it ran under 3.13.
 
 ### Raw capture format
 
@@ -153,4 +153,3 @@ The milestone is accepted when:
 ## Follow-up boundary
 
 After this milestone is verified, the next design/plan can add resolver-aware feature construction and calibrated q_external. Execution simulation, paper trading, and any live order path remain separate milestones.
-

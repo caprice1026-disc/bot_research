@@ -1,0 +1,6 @@
+sources: [polymarket, chainlink, binance, coinbase, hyperliquid]
+duration_seconds: 60
+output_root: data/raw_staging
+reconnect_base_seconds: 1
+reconnect_max_seconds: 30
+trading_enabled: false
