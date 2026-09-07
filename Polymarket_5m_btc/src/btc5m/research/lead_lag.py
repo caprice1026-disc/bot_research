@@ -12,12 +12,25 @@ from btc5m.events import parse_source_timestamp
 
 
 @dataclass(frozen=True, slots=True)
+class SeriesLeadLagResult:
+    observations_by_horizon: dict[int, int]
+    mean_signed_response_by_horizon: dict[int, float | None]
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "observations_by_horizon": self.observations_by_horizon,
+            "mean_signed_response_by_horizon": self.mean_signed_response_by_horizon,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class LeadLagResult:
     status: str
     reason: str | None
     event_count: int
     observations_by_horizon: dict[int, int]
     mean_signed_response_by_horizon: dict[int, float | None]
+    series_results: dict[str, SeriesLeadLagResult]
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -26,6 +39,9 @@ class LeadLagResult:
             "event_count": self.event_count,
             "observations_by_horizon": self.observations_by_horizon,
             "mean_signed_response_by_horizon": self.mean_signed_response_by_horizon,
+            "series_results": {
+                label: result.to_dict() for label, result in self.series_results.items()
+            },
         }
 
     def to_markdown(self) -> str:
@@ -44,11 +60,20 @@ class LeadLagResult:
             f"{('n/a' if self.mean_signed_response_by_horizon[horizon] is None else f'{self.mean_signed_response_by_horizon[horizon]:.8f}')} |"
             for horizon in sorted(self.observations_by_horizon)
         )
+        if self.series_results:
+            lines.extend(["", "## Isolated market series", ""])
+            for label, result in sorted(self.series_results.items()):
+                lines.extend([f"### `{label}`", ""])
+                lines.extend(
+                    f"| {horizon} | {result.observations_by_horizon[horizon]} | "
+                    f"{('n/a' if result.mean_signed_response_by_horizon[horizon] is None else f'{result.mean_signed_response_by_horizon[horizon]:.8f}')} |"
+                    for horizon in sorted(result.observations_by_horizon)
+                )
         lines.extend(
             [
                 "",
-                "This report is receive-time safe for the observed rows. It is not a "
-                "profitability or trading result.",
+                "Responses are isolated by market, token, and price basis. This is not "
+                "a profitability or trading result.",
             ]
         )
         return "\n".join(lines) + "\n"
@@ -75,7 +100,14 @@ def _row_price(row: Mapping[str, object]) -> float | None:
     event_type = str(row.get("event_type") or "").lower()
     bid = _float_value(row.get("bid"))
     ask = _float_value(row.get("ask"))
-    quote_events = {"book", "best_bid_ask", "book_ticker", "bbo", "ticker", "price_change"}
+    quote_events = {
+        "book",
+        "best_bid_ask",
+        "book_ticker",
+        "bbo",
+        "ticker",
+        "price_change",
+    }
     trade_events = {"agg_trade", "trade", "last_trade_price", "market_trade"}
     if event_type in quote_events:
         if bid is None or ask is None:
@@ -89,6 +121,22 @@ def _row_price(row: Mapping[str, object]) -> float | None:
     if bid is None or ask is None:
         return None
     return (bid + ask) / 2.0
+
+
+def _price_basis(row: Mapping[str, object]) -> str:
+    event_type = str(row.get("event_type") or "").lower()
+    if event_type in {
+        "book",
+        "best_bid_ask",
+        "book_ticker",
+        "bbo",
+        "ticker",
+        "price_change",
+    }:
+        return "quote_mid"
+    if event_type in {"agg_trade", "trade", "last_trade_price", "market_trade"}:
+        return "trade"
+    return "price"
 
 
 def _raw_mapping(row: Mapping[str, object]) -> Mapping[str, object]:
@@ -129,8 +177,10 @@ def _series(
     rows: Iterable[Mapping[str, object]],
     *,
     include_source: bool,
-) -> dict[tuple[str, ...], list[tuple[int, float]]]:
-    grouped: dict[tuple[str, ...], list[tuple[int, float, int]]] = defaultdict(list)
+) -> dict[tuple[str, str, str, str], list[tuple[int, float]]]:
+    grouped: dict[tuple[str, str, str, str], list[tuple[int, float, int]]] = (
+        defaultdict(list)
+    )
     for order, row in enumerate(rows):
         timestamp = _receive_us(row)
         price = _row_price(row)
@@ -138,12 +188,54 @@ def _series(
             continue
         market_id, symbol = _series_identity(row)
         source = str(row.get("source") or "") if include_source else ""
-        key = (source, market_id, symbol)
+        key = (source, market_id, symbol, _price_basis(row))
         grouped[key].append((timestamp, price, order))
     return {
-        key: [(timestamp, price) for timestamp, price, _ in sorted(values, key=lambda item: (item[0], item[2]))]
+        key: [
+            (timestamp, price)
+            for timestamp, price, _ in sorted(
+                values, key=lambda item: (item[0], item[2])
+            )
+        ]
         for key, values in grouped.items()
     }
+
+
+def _series_label(key: tuple[str, str, str, str]) -> str:
+    _, market_id, symbol, basis = key
+    return "/".join((market_id or "unknown-market", symbol or "unknown-token", basis))
+
+
+def _measure_series(
+    event_times: Sequence[tuple[int, float]],
+    series: Sequence[tuple[int, float]],
+    horizons: Sequence[int],
+) -> SeriesLeadLagResult:
+    sums = {horizon: 0.0 for horizon in horizons}
+    counts = {horizon: 0 for horizon in horizons}
+    market_times = [timestamp for timestamp, _ in series]
+    market_prices = [price for _, price in series]
+    for event_time, direction in event_times:
+        pre_index = bisect_right(market_times, event_time) - 1
+        if pre_index < 0:
+            continue
+        pre_price = market_prices[pre_index]
+        for horizon in horizons:
+            deadline = event_time + horizon * 1_000
+            if market_times[-1] < deadline:
+                continue
+            post_index = bisect_right(market_times, deadline) - 1
+            if post_index <= pre_index:
+                continue
+            sums[horizon] += (market_prices[post_index] - pre_price) * direction
+            counts[horizon] += 1
+    return SeriesLeadLagResult(
+        observations_by_horizon=counts,
+        mean_signed_response_by_horizon={
+            horizon: (sums[horizon] / counts[horizon] if counts[horizon] else None)
+            for horizon in horizons
+        },
+    )
 
 
 def event_study(
@@ -166,9 +258,7 @@ def event_study(
     market = _series(market_input, include_source=False)
     horizons = tuple(sorted({int(horizon) for horizon in horizons_ms if horizon >= 0}))
     empty_counts = {horizon: 0 for horizon in horizons}
-    empty_means: dict[int, float | None] = {
-        horizon: None for horizon in horizons
-    }
+    empty_means: dict[int, float | None] = {horizon: None for horizon in horizons}
     if not external or not market:
         return LeadLagResult(
             status="insufficient_data",
@@ -180,6 +270,7 @@ def event_study(
             event_count=0,
             observations_by_horizon=empty_counts,
             mean_signed_response_by_horizon=empty_means,
+            series_results={},
         )
 
     event_times: list[tuple[int, float]] = []
@@ -187,9 +278,9 @@ def event_study(
     for series in external.values():
         external_times = [timestamp for timestamp, _ in series]
         for index, (timestamp, price) in enumerate(series):
-            previous_index = bisect_right(
-                external_times, timestamp - lookback_us, 0, index
-            ) - 1
+            previous_index = (
+                bisect_right(external_times, timestamp - lookback_us, 0, index) - 1
+            )
             if previous_index < 0:
                 continue
             previous_price = series[previous_index][1]
@@ -200,31 +291,21 @@ def event_study(
                 event_times.append((timestamp, 1.0 if move > 0 else -1.0))
     event_times = sorted(set(event_times))
 
-    sums = {horizon: 0.0 for horizon in horizons}
-    counts = {horizon: 0 for horizon in horizons}
-    for event_time, direction in event_times:
-        for series in market.values():
-            market_times = [timestamp for timestamp, _ in series]
-            market_prices = [price for _, price in series]
-            pre_index = bisect_right(market_times, event_time) - 1
-            if pre_index < 0:
-                continue
-            pre_price = market_prices[pre_index]
-            for horizon in horizons:
-                deadline = event_time + horizon * 1_000
-                if market_times[-1] < deadline:
-                    continue
-                post_index = bisect_right(market_times, deadline) - 1
-                if post_index <= pre_index:
-                    continue
-                response = (market_prices[post_index] - pre_price) * direction
-                sums[horizon] += response
-                counts[horizon] += 1
-
-    means = {
-        horizon: (sums[horizon] / counts[horizon] if counts[horizon] else None)
-        for horizon in horizons
+    series_results = {
+        _series_label(key): _measure_series(event_times, series, horizons)
+        for key, series in market.items()
     }
+    aggregate = (
+        next(iter(series_results.values())) if len(series_results) == 1 else None
+    )
+    counts = (
+        aggregate.observations_by_horizon if aggregate is not None else empty_counts
+    )
+    means = (
+        aggregate.mean_signed_response_by_horizon
+        if aggregate is not None
+        else empty_means
+    )
     if not event_times:
         return LeadLagResult(
             status="insufficient_data",
@@ -232,11 +313,27 @@ def event_study(
             event_count=0,
             observations_by_horizon=counts,
             mean_signed_response_by_horizon=means,
+            series_results=series_results,
         )
     return LeadLagResult(
-        status="exploratory" if any(counts.values()) else "insufficient_data",
-        reason=None if any(counts.values()) else "no_overlapping_market_response",
+        status=(
+            "exploratory"
+            if any(
+                count
+                for result in series_results.values()
+                for count in result.observations_by_horizon.values()
+            )
+            else "insufficient_data"
+        ),
+        reason=(
+            None
+            if len(series_results) == 1 and any(counts.values())
+            else "series_separated"
+            if len(series_results) > 1
+            else "no_overlapping_market_response"
+        ),
         event_count=len(event_times),
         observations_by_horizon=counts,
         mean_signed_response_by_horizon=means,
+        series_results=series_results,
     )

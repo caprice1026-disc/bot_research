@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import sys
+import time
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
@@ -10,6 +11,7 @@ from btc5m.collectors.live import (
     coinbase_subscribe_payloads,
     collection_status,
     hyperliquid_subscribe_payloads,
+    stale_sources,
 )
 from btc5m.collectors.polymarket import MarketIdentity, active_token_ids
 
@@ -57,12 +59,28 @@ def test_market_refresh_keeps_current_and_next_five_minute_tokens() -> None:
 
 def test_collection_status_does_not_call_empty_or_partial_runs_ok() -> None:
     assert collection_status(("binance",), {}, ()) == "no_events"
-    assert collection_status(("binance",), {"binance": 1}, ("network error",)) == "partial"
+    assert (
+        collection_status(("binance",), {"binance": 1}, ("network error",)) == "partial"
+    )
     assert collection_status(("binance", "coinbase"), {"binance": 1}, ()) == "partial"
     assert collection_status(("binance",), {"binance": 1}, ()) == "ok"
 
 
-def test_collect_public_does_not_count_preexisting_files_as_current_events(
+def test_collection_status_marks_a_source_that_stopped_after_one_event_partial() -> (
+    None
+):
+    stale = stale_sources(
+        ("binance",),
+        {"binance": 10.0},
+        now_monotonic=101.0,
+        max_stale_seconds=90.0,
+    )
+
+    assert stale == ["binance"]
+    assert collection_status(("binance",), {"binance": 1}, (), stale) == "partial"
+
+
+def test_collect_public_marks_a_collector_that_stops_without_events_error(
     monkeypatch,
     tmp_path,
 ) -> None:
@@ -78,9 +96,35 @@ def test_collect_public_does_not_count_preexisting_files_as_current_events(
     monkeypatch.setattr(live, "run_external_source", no_events)
     result = asyncio.run(live.collect_public(("binance",), tmp_path, 1))
 
-    assert result["status"] == "no_events"
+    assert result["status"] == "error"
     assert result["event_counts"] == {}
     assert result["event_files"] == []
+    assert result["errors"] == ["binance: collector stopped without stop signal"]
+
+
+def test_collect_public_marks_an_idle_source_partial(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    from btc5m.collectors import live
+
+    async def one_old_event(**kwargs) -> None:
+        kwargs["event_counts"]["binance"] = 1
+        kwargs["last_received_monotonic"]["binance"] = time.monotonic() - 1.0
+        await kwargs["stop"].wait()
+
+    monkeypatch.setattr(live, "run_external_source", one_old_event)
+    result = asyncio.run(
+        live.collect_public(
+            ("binance",),
+            tmp_path,
+            1,
+            max_stale_seconds=0.1,
+        )
+    )
+
+    assert result["status"] == "partial"
+    assert result["stale_sources"] == ["binance"]
 
 
 def test_polymarket_source_refreshes_subscription_for_next_market(
@@ -93,7 +137,9 @@ def test_polymarket_source_refreshes_subscription_for_next_market(
     now_us = int(now.timestamp() * 1_000_000)
     markets = [
         MarketIdentity("current", "c1", "u1", "d1", now_us, now_us + 300_000_000),
-        MarketIdentity("next", "c2", "u2", "d2", now_us + 300_000_000, now_us + 600_000_000),
+        MarketIdentity(
+            "next", "c2", "u2", "d2", now_us + 300_000_000, now_us + 600_000_000
+        ),
     ]
     stop = asyncio.Event()
     subscriptions: list[tuple[str, ...]] = []
@@ -131,7 +177,9 @@ def test_polymarket_source_refreshes_subscription_for_next_market(
         discovery_calls += 1
         return markets[:1] if discovery_calls == 1 else markets
 
-    monkeypatch.setitem(sys.modules, "polymarket", SimpleNamespace(AsyncPublicClient=Client))
+    monkeypatch.setitem(
+        sys.modules, "polymarket", SimpleNamespace(AsyncPublicClient=Client)
+    )
     monkeypatch.setattr(live, "discover_btc_5m_markets", discover)
     monkeypatch.setattr(
         live,

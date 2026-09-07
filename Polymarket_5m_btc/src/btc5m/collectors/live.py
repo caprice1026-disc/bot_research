@@ -84,6 +84,7 @@ async def _write_events_with_metrics(
     events: Iterable[RawEvent],
     event_counts: MutableMapping[str, int] | None = None,
     event_paths: set[Path] | None = None,
+    last_received_monotonic: MutableMapping[str, float] | None = None,
 ) -> None:
     for event in events:
         if event.local_receive_ts is None:
@@ -94,6 +95,8 @@ async def _write_events_with_metrics(
             event_counts[event.source] = event_counts.get(event.source, 0) + 1
         if event_paths is not None:
             event_paths.add(path)
+        if last_received_monotonic is not None:
+            last_received_monotonic[event.source] = time.monotonic()
 
 
 async def run_external_source(
@@ -106,6 +109,7 @@ async def run_external_source(
     subscribe_messages: Iterable[Mapping[str, object]] = (),
     event_counts: MutableMapping[str, int] | None = None,
     event_paths: set[Path] | None = None,
+    last_received_monotonic: MutableMapping[str, float] | None = None,
     error_sink: Callable[[str], None] | None = None,
 ) -> None:
     async def connect() -> AsyncIterator[Mapping[str, Any]]:
@@ -114,7 +118,11 @@ async def run_external_source(
 
     async def handle(message: Mapping[str, Any], received: ReceiveStamp) -> None:
         await _write_events_with_metrics(
-            output_root, parser(message, received), event_counts, event_paths
+            output_root,
+            parser(message, received),
+            event_counts,
+            event_paths,
+            last_received_monotonic,
         )
 
     await reconnect_forever(
@@ -152,6 +160,7 @@ async def run_polymarket_source(
     include_chainlink: bool = True,
     event_counts: MutableMapping[str, int] | None = None,
     event_paths: set[Path] | None = None,
+    last_received_monotonic: MutableMapping[str, float] | None = None,
     error_sink: Callable[[str], None] | None = None,
     market_refresh_seconds: float = 30.0,
     market_grace_seconds: int = 60,
@@ -197,7 +206,9 @@ async def run_polymarket_source(
                         if timeout <= 0:
                             break
                         try:
-                            event = await asyncio.wait_for(iterator.__anext__(), timeout)
+                            event = await asyncio.wait_for(
+                                iterator.__anext__(), timeout
+                            )
                         except TimeoutError:
                             break
                         except StopAsyncIteration:
@@ -222,7 +233,11 @@ async def run_polymarket_source(
                         else:
                             events = parse_polymarket_message(mapping, received)
                         await _write_events_with_metrics(
-                            output_root, events, event_counts, event_paths
+                            output_root,
+                            events,
+                            event_counts,
+                            event_paths,
+                            last_received_monotonic,
                         )
             except asyncio.CancelledError:
                 raise
@@ -239,27 +254,52 @@ def collection_status(
     sources: tuple[str, ...],
     event_counts: Mapping[str, int],
     errors: Iterable[str],
+    stale: Iterable[str] = (),
 ) -> str:
     error_list = tuple(errors)
+    stale_list = tuple(stale)
     if not any(event_counts.get(source, 0) > 0 for source in sources):
         return "error" if error_list else "no_events"
-    if error_list or any(event_counts.get(source, 0) <= 0 for source in sources):
+    if (
+        error_list
+        or stale_list
+        or any(event_counts.get(source, 0) <= 0 for source in sources)
+    ):
         return "partial"
     return "ok"
+
+
+def stale_sources(
+    sources: tuple[str, ...],
+    last_received_monotonic: Mapping[str, float],
+    *,
+    now_monotonic: float,
+    max_stale_seconds: float,
+) -> list[str]:
+    return [
+        source
+        for source in sources
+        if (last_received := last_received_monotonic.get(source)) is not None
+        and now_monotonic - last_received > max_stale_seconds
+    ]
 
 
 async def collect_public(
     sources: tuple[str, ...],
     output_root: Path,
     duration_seconds: int,
+    max_stale_seconds: float = 90.0,
 ) -> dict[str, object]:
     if duration_seconds < 1:
         raise ValueError("duration_seconds must be at least 1")
+    if max_stale_seconds <= 0:
+        raise ValueError("max_stale_seconds must be positive")
     stop = asyncio.Event()
     tasks: list[asyncio.Task[None]] = []
     errors: list[str] = []
     event_counts: dict[str, int] = {}
     event_paths: set[Path] = set()
+    last_received_monotonic: dict[str, float] = {}
 
     def record_error(message: str) -> None:
         if len(errors) < 100:
@@ -272,6 +312,9 @@ async def collect_public(
             raise
         except Exception as exc:
             record_error(f"{name}: {type(exc).__name__}: {exc}")
+        else:
+            if not stop.is_set():
+                record_error(f"{name}: collector stopped without stop signal")
 
     if "binance" in sources:
         tasks.append(
@@ -286,6 +329,7 @@ async def collect_public(
                         stop=stop,
                         event_counts=event_counts,
                         event_paths=event_paths,
+                        last_received_monotonic=last_received_monotonic,
                         error_sink=record_error,
                     ),
                 )
@@ -305,6 +349,7 @@ async def collect_public(
                         subscribe_messages=coinbase_subscribe_payloads(["BTC-USD"]),
                         event_counts=event_counts,
                         event_paths=event_paths,
+                        last_received_monotonic=last_received_monotonic,
                         error_sink=record_error,
                     ),
                 )
@@ -324,6 +369,7 @@ async def collect_public(
                         subscribe_messages=hyperliquid_subscribe_payloads("BTC"),
                         event_counts=event_counts,
                         event_paths=event_paths,
+                        last_received_monotonic=last_received_monotonic,
                         error_sink=record_error,
                     ),
                 )
@@ -341,6 +387,7 @@ async def collect_public(
                         include_chainlink="chainlink" in sources,
                         event_counts=event_counts,
                         event_paths=event_paths,
+                        last_received_monotonic=last_received_monotonic,
                         error_sink=record_error,
                     ),
                 )
@@ -358,16 +405,27 @@ async def collect_public(
         await asyncio.gather(*tasks, return_exceptions=True)
 
     event_files = sorted(event_paths)
-    missing_sources = [
-        source for source in sources if event_counts.get(source, 0) <= 0
-    ]
+    missing_sources = [source for source in sources if event_counts.get(source, 0) <= 0]
+    finished_monotonic = time.monotonic()
+    stale = stale_sources(
+        sources,
+        last_received_monotonic,
+        now_monotonic=finished_monotonic,
+        max_stale_seconds=max_stale_seconds,
+    )
     manifest: dict[str, object] = {
-        "status": collection_status(sources, event_counts, errors),
+        "status": collection_status(sources, event_counts, errors, stale),
         "sources": list(sources),
         "duration_seconds": duration_seconds,
         "event_files": [str(path) for path in event_files],
         "event_counts": dict(sorted(event_counts.items())),
         "missing_sources": missing_sources,
+        "stale_sources": stale,
+        "max_stale_seconds": max_stale_seconds,
+        "last_receive_age_seconds": {
+            source: round(finished_monotonic - received, 3)
+            for source, received in sorted(last_received_monotonic.items())
+        },
         "errors": errors,
     }
     write_json(output_root / "collection_manifest.json", manifest)

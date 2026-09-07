@@ -475,3 +475,5 @@ No runtime dependency reads wallet keys or submits orders.
 2026-09-07: Implemented the collector-first milestone, added bounded PMXT coverage inspection, explicit historical receive-time nulls, fixture/CLI reports, market master output, collection manifests, and public smoke evidence. The remaining gate before completion is the fresh full verification plus main push.
 
 2026-09-07: Implemented and pushed Stage A measurement-integrity repairs in `ff103e6`, including market-aware series, quote-safe price-change handling, official Binance bookTicker routing, horizon coverage, replay identity separation, per-run collection status, rolling market subscriptions, and restart-safe market master upsert.
+
+2026-09-07: A follow-up review found that those series were still aggregated across UP/DOWN tokens and quote/trade bases, and a source that sent one event then went quiet could remain `ok`. The follow-up separates results by market/token/price basis, suppresses a mixed-series aggregate, records per-source receive freshness, and makes unexpected collector termination or a 90-second stale source non-`ok`.

@@ -66,10 +66,34 @@ def test_event_study_does_not_mix_up_and_down_token_series() -> None:
         _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
     ]
     polymarket = [
-        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.70", symbol="up", market_id="m1"),
-        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.30", symbol="down", market_id="m1"),
-        _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.70", symbol="up", market_id="m1"),
-        _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.30", symbol="down", market_id="m1"),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.000000Z",
+            "0.70",
+            symbol="up",
+            market_id="m1",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.000000Z",
+            "0.30",
+            symbol="down",
+            market_id="m1",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.80",
+            symbol="up",
+            market_id="m1",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.20",
+            symbol="down",
+            market_id="m1",
+        ),
     ]
 
     result = event_study(
@@ -79,18 +103,92 @@ def test_event_study_does_not_mix_up_and_down_token_series() -> None:
         horizons_ms=(200,),
     )
 
-    assert result.observations_by_horizon == {200: 2}
-    assert result.mean_signed_response_by_horizon[200] == pytest.approx(0.0)
+    assert result.observations_by_horizon == {200: 0}
+    assert result.mean_signed_response_by_horizon[200] is None
+    assert result.series_results["m1/up/price"].mean_signed_response_by_horizon[
+        200
+    ] == pytest.approx(0.10)
+    assert result.series_results["m1/down/price"].mean_signed_response_by_horizon[
+        200
+    ] == pytest.approx(-0.10)
 
 
-def test_event_study_ignores_changed_price_level_when_best_quotes_are_unchanged() -> None:
+def test_event_study_does_not_combine_midpoint_and_last_trade_price() -> None:
     external = [
         _row("binance", "2026-09-07T00:00:00.000000Z", "100"),
         _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
     ]
     polymarket = [
-        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.60", symbol="up", market_id="m1", event_type="best_bid_ask", bid="0.59", ask="0.61"),
-        _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.01", symbol="up", market_id="m1", event_type="price_change", bid="0.59", ask="0.61"),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.000000Z",
+            "0.50",
+            symbol="up",
+            market_id="m1",
+            event_type="best_bid_ask",
+            bid="0.49",
+            ask="0.51",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.50",
+            symbol="up",
+            market_id="m1",
+            event_type="best_bid_ask",
+            bid="0.49",
+            ask="0.51",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.40",
+            symbol="up",
+            market_id="m1",
+            event_type="last_trade_price",
+        ),
+    ]
+
+    result = event_study(external, polymarket, shock_return=0.005, horizons_ms=(200,))
+
+    assert result.observations_by_horizon == {200: 0}
+    assert result.series_results["m1/up/quote_mid"].mean_signed_response_by_horizon[
+        200
+    ] == pytest.approx(0.0)
+    assert (
+        result.series_results["m1/up/trade"].mean_signed_response_by_horizon[200]
+        is None
+    )
+
+
+def test_event_study_ignores_changed_price_level_when_best_quotes_are_unchanged() -> (
+    None
+):
+    external = [
+        _row("binance", "2026-09-07T00:00:00.000000Z", "100"),
+        _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
+    ]
+    polymarket = [
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.000000Z",
+            "0.60",
+            symbol="up",
+            market_id="m1",
+            event_type="best_bid_ask",
+            bid="0.59",
+            ask="0.61",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.01",
+            symbol="up",
+            market_id="m1",
+            event_type="price_change",
+            bid="0.59",
+            ask="0.61",
+        ),
     ]
 
     result = event_study(external, polymarket, shock_return=0.005, horizons_ms=(200,))
@@ -104,8 +202,20 @@ def test_event_study_does_not_use_tail_for_uncovered_horizon() -> None:
         _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
     ]
     polymarket = [
-        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50", symbol="up", market_id="m1"),
-        _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.60", symbol="up", market_id="m1"),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.000000Z",
+            "0.50",
+            symbol="up",
+            market_id="m1",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.60",
+            symbol="up",
+            market_id="m1",
+        ),
     ]
 
     result = event_study(external, polymarket, shock_return=0.005, horizons_ms=(5_000,))
