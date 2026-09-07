@@ -87,6 +87,7 @@
 
 fixture で staging JSONL → quality validation → ZSTD Parquet → exploratory lead-lag report を再現した。公開smokeでは、Binance 33、Coinbase 129、Hyperliquid 57、Polymarket 3,605、Chainlink 14行を保存できた。ただし段階Aレビューで、Binance bookTickerのparserが公式Spot payloadを取りこぼすこと、Polymarketの系列混在とprice_change意味論、受信ごとのsequence_id生成、長時間の市場切替未対応、既存ファイルを含むmanifest判定を確認した。したがって、以前の「品質検査は全てvalid」という記録は構造テストの証拠に限られ、実運用データ品質の証明とは扱わない。PMXTの3時間coverageは1時間present / 2時間missingで、ファイル本体は取得していない。実受信データの短時間lead-lagはexternal shock 0件のため `insufficient_data` であり、これはαやPnLの結果ではない。fair probability、execution simulator、paper/live traderはこの初期collector milestoneの範囲外である。
 fixture で staging JSONL → quality validation → ZSTD Parquet → exploratory lead-lag report を再現した。公開smokeでは、Binance 33、Coinbase 129、Hyperliquid 57、Polymarket 3,605、Chainlink 14行を保存できた。ただし段階Aレビューで、Binance bookTickerのparserが公式Spot payloadを取りこぼすこと、Polymarketの系列混在とprice_change意味論、受信ごとのsequence_id生成、長時間の市場切替未対応、既存ファイルを含むmanifest判定を確認した。したがって、以前の「品質検査は全てvalid」という記録は構造テストの証拠に限られ、実運用データ品質の証明とは扱わない。段階Aでは、現行run単位のmanifest、market-aware lead-lag、horizon coverage、stable sequence / receive id、rolling subscription、restart-safe market masterを追加した。Binance 5秒smokeは829行（agg_trade 68 / book_ticker 761）、Polymarket 5秒smokeは565行でChainlink欠測のためpartial、Chainlink 10秒smokeは30s/60s各6行だった。PMXTの3時間coverageは1時間present / 2時間missingで、ファイル本体は取得していない。実受信データの短時間lead-lagはexternal shock 0件のため `insufficient_data` であり、これはαやPnLの結果ではない。fair probability、execution simulator、paper/live traderはこの初期collector milestoneの範囲外である。
+段階Aの修正はcommit `ff103e6`として`origin/main`へpushした。push後のremote SHA照合と、46件のpytest、ruff、pyright、fixture、diff checkを完了した。
 
 ## Context and Orientation
 
@@ -345,10 +346,10 @@ Files:
 
 - [x] (2026-09-07) Step 1: Run the initial collector milestone verification and push it to `main`.
 - [x] (2026-09-07) Step 2: Confirm the initial push target and remote SHA before starting Stage A.
-- [ ] Step 3: Commit the Stage A changes with a Conventional Commit subject.
-- [ ] Step 4: Push Stage A explicitly with `git push origin main`.
-- [ ] Step 5: Run `git ls-remote origin refs/heads/main` and confirm it matches the Stage A commit.
-- [ ] Step 6: Re-run `git status --short --branch` and report the final worktree state.
+- [x] (2026-09-07) Step 3: Commit the Stage A changes with `fix: repair Polymarket BTC 5m measurement integrity` as commit `ff103e6`.
+- [x] (2026-09-07) Step 4: Push Stage A explicitly with `git push origin main`.
+- [x] (2026-09-07) Step 5: Confirm the remote `main` SHA matches `ff103e6`.
+- [x] (2026-09-07) Step 6: Re-run `git status --short --branch` and confirm the final worktree state.
 
 ### Task 8: 段階Aの計測・分析正確性修復
 
@@ -380,7 +381,7 @@ The live collector refreshes market discovery on a bounded interval, preserves p
 - [x] (2026-09-07) Step 4: Make lead-lag series market-aware and horizon-coverage-aware; return null means when no sample exists.
 - [x] (2026-09-07) Step 5: Add per-run collector counters/errors, rolling Polymarket discovery, and restart-safe market-master merge.
 - [x] (2026-09-07) Step 6: Run focused tests, then the full suite, ruff, pyright, fixture, public smoke, and diff checks.
-- [ ] Step 7: Commit the Stage A changes, push `main`, and verify the remote SHA.
+- [x] (2026-09-07) Step 7: Commit the Stage A changes, push `main`, and verify the remote SHA.
 
 ## Validation and Acceptance
 
@@ -418,7 +419,7 @@ At the end of the first milestone, the important artifacts are:
     Polymarket_5m_btc/data/raw/<source>/date=YYYY-MM-DD/hour=HH/events.parquet
     Polymarket_5m_btc/data/manifests/coverage.json
     Polymarket_5m_btc/reports/01_data_quality.md
-    Polymarket_5m_btc/reports/03_lead_lag.md
+Polymarket_5m_btc/reports/03_lead_lag.md
 
 A typical local fixture evidence is:
 
@@ -472,3 +473,5 @@ No runtime dependency reads wallet keys or submits orders.
 2026-09-07: Updated dependency management from uv to pip at the user's request. Replaced uv.lock / uv run instructions with .venv\Scripts\python.exe -m pip and .venv\Scripts\python.exe -m pytest, and added the decision to the log.
 
 2026-09-07: Implemented the collector-first milestone, added bounded PMXT coverage inspection, explicit historical receive-time nulls, fixture/CLI reports, market master output, collection manifests, and public smoke evidence. The remaining gate before completion is the fresh full verification plus main push.
+
+2026-09-07: Implemented and pushed Stage A measurement-integrity repairs in `ff103e6`, including market-aware series, quote-safe price-change handling, official Binance bookTicker routing, horizon coverage, replay identity separation, per-run collection status, rolling market subscriptions, and restart-safe market master upsert.
