@@ -170,3 +170,200 @@ def test_lead_lag_cli_requires_gap_input_for_disconnect_safe_measurement(
     report = json.loads(output_path.read_text(encoding="utf-8"))
     assert report["event_count"] == 0
     assert report["reason"] == "no_external_shocks"
+
+
+def test_lead_lag_cli_applies_selected_decision_intervals(tmp_path: Path) -> None:
+    external_path = tmp_path / "external.jsonl"
+    external_path.write_text(
+        "\n".join(
+            [
+                json.dumps(
+                    {
+                        "source": "binance",
+                        "symbol": "BTCUSDT",
+                        "event_type": "agg_trade",
+                        "local_receive_ts": "2026-09-07T00:00:00.000000Z",
+                        "price": "100",
+                    }
+                ),
+                json.dumps(
+                    {
+                        "source": "binance",
+                        "symbol": "BTCUSDT",
+                        "event_type": "agg_trade",
+                        "local_receive_ts": "2026-09-07T00:00:00.500000Z",
+                        "price": "101",
+                    }
+                ),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    polymarket_path = tmp_path / "polymarket.jsonl"
+    polymarket_path.write_text(
+        json.dumps(
+            {
+                "source": "polymarket",
+                "symbol": "up",
+                "market_id": "m1",
+                "event_type": "best_bid_ask",
+                "local_receive_ts": "2026-09-07T00:00:00.700000Z",
+                "bid": "0.59",
+                "ask": "0.61",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    manifest_path = tmp_path / "selection_manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "gaps": [],
+                "markets": [
+                    {
+                        "condition_id": "m1",
+                        "decision_intervals": [
+                            {
+                                "start_ts": 1_788_739_201_000_000,
+                                "end_ts": 1_788_739_202_000_000,
+                            }
+                        ],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    output_path = tmp_path / "lead_lag.json"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "btc5m",
+            "lead-lag",
+            "--external",
+            str(external_path),
+            "--polymarket",
+            str(polymarket_path),
+            "--gaps",
+            str(manifest_path),
+            "--output",
+            str(output_path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(output_path.read_text(encoding="utf-8"))["event_count"] == 0
+
+
+def test_lead_lag_cli_keeps_support_rows_around_a_decision_interval(
+    tmp_path: Path,
+) -> None:
+    external_path = tmp_path / "external.jsonl"
+    external_path.write_text(
+        "\n".join(
+            [
+                json.dumps(
+                    {
+                        "source": "binance",
+                        "symbol": "BTCUSDT",
+                        "event_type": "agg_trade",
+                        "local_receive_ts": "2026-09-07T00:00:00.000000Z",
+                        "price": "100",
+                    }
+                ),
+                json.dumps(
+                    {
+                        "source": "binance",
+                        "symbol": "BTCUSDT",
+                        "event_type": "agg_trade",
+                        "local_receive_ts": "2026-09-07T00:00:00.500000Z",
+                        "price": "101",
+                    }
+                ),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    polymarket_path = tmp_path / "polymarket.jsonl"
+    polymarket_path.write_text(
+        "\n".join(
+            [
+                json.dumps(
+                    {
+                        "source": "polymarket",
+                        "symbol": "up",
+                        "market_id": "m1",
+                        "event_type": "fixture_price",
+                        "local_receive_ts": "2026-09-07T00:00:00.000000Z",
+                        "price": "0.50",
+                    }
+                ),
+                json.dumps(
+                    {
+                        "source": "polymarket",
+                        "symbol": "up",
+                        "market_id": "m1",
+                        "event_type": "fixture_price",
+                        "local_receive_ts": "2026-09-07T00:00:00.750000Z",
+                        "price": "0.60",
+                    }
+                ),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    manifest_path = tmp_path / "selection_manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "gaps": [],
+                "markets": [
+                    {
+                        "condition_id": "m1",
+                        "decision_intervals": [
+                            {
+                                "start_ts": 1_788_739_200_500_000,
+                                "end_ts": 1_788_739_200_600_000,
+                            }
+                        ],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    output_path = tmp_path / "lead_lag.json"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "btc5m",
+            "lead-lag",
+            "--external",
+            str(external_path),
+            "--polymarket",
+            str(polymarket_path),
+            "--gaps",
+            str(manifest_path),
+            "--output",
+            str(output_path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    report = json.loads(output_path.read_text(encoding="utf-8"))
+    assert report["event_count"] == 1
+    assert report["observations_by_horizon"]["250"] == 1

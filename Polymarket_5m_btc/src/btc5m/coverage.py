@@ -92,12 +92,18 @@ class CoverageTracker:
         if receive_ts is None:
             return
         key = self._key(row)
+        current_connection = connection_id or str(row.get("connection_id") or "") or None
         previous = self._last.get(key)
         if previous is not None:
             delta = receive_ts - previous.timestamp
             if delta < 0:
                 self.inversion_count += 1
-            elif delta > self.max_gap_us:
+            connection_changed = (
+                previous.connection_id is not None
+                and current_connection is not None
+                and previous.connection_id != current_connection
+            )
+            if delta > 0 and (delta > self.max_gap_us or connection_changed):
                 self.gaps.append(
                     GapInterval(
                         source=key[0],
@@ -106,14 +112,17 @@ class CoverageTracker:
                         market_id=key[3],
                         start_ts=previous.timestamp,
                         end_ts=receive_ts,
+                        reason=(
+                            "connection_change"
+                            if connection_changed
+                            else "receive_gap"
+                        ),
                         previous_connection_id=previous.connection_id,
-                        current_connection_id=connection_id
-                        or str(row.get("connection_id") or "")
-                        or None,
+                        current_connection_id=current_connection,
                     )
                 )
         if previous is None or receive_ts >= previous.timestamp:
-            self._last[key] = _Observation(receive_ts, connection_id)
+            self._last[key] = _Observation(receive_ts, current_connection)
 
     def finish(self, end_ts: int, *, reason: str = "collection_end") -> None:
         for key, previous in self._last.items():

@@ -224,7 +224,7 @@ def _series_label(key: tuple[str, str, str, str]) -> str:
 
 def _gap_channels(source: str, basis: str) -> set[str]:
     if basis == "trade":
-        return {"trade", "agg_trade", "market_trade"}
+        return {"trade", "agg_trade", "market_trade", "last_trade_price"}
     if basis == "quote_mid":
         return {
             "quote",
@@ -273,6 +273,7 @@ def _measure_series(
     market_id: str,
     symbol: str,
     basis: str,
+    decision_intervals: Sequence[tuple[int, int]] | None = None,
 ) -> SeriesLeadLagResult:
     sums = {horizon: 0.0 for horizon in horizons}
     counts = {horizon: 0 for horizon in horizons}
@@ -281,6 +282,10 @@ def _measure_series(
     market_prices = [price for _, price in series]
     for shock in event_times:
         event_time = shock.timestamp_us
+        if decision_intervals is not None and not any(
+            start <= event_time <= end for start, end in decision_intervals
+        ):
+            continue
         direction = shock.direction
         pre_index = bisect_right(market_times, event_time) - 1
         if pre_index < 0:
@@ -292,7 +297,7 @@ def _measure_series(
                 continue
             if _series_gap_overlaps(
                 gaps,
-                start_ts=event_time,
+                start_ts=market_times[pre_index],
                 end_ts=deadline,
                 source=source,
                 market_id=market_id,
@@ -325,8 +330,6 @@ def _deduplicate_shocks(
     cooldown_us = max(0, cooldown_ms) * 1_000
     for candidate in sorted(candidates, key=lambda item: (item.timestamp_us, -abs(item.move))):
         if accepted and candidate.timestamp_us - accepted[-1].timestamp_us <= cooldown_us:
-            if abs(candidate.move) > abs(accepted[-1].move):
-                accepted[-1] = candidate
             continue
         accepted.append(candidate)
     return accepted
@@ -342,6 +345,7 @@ def event_study(
     max_shock_age_ms: int = 1_000,
     shock_cooldown_ms: int = 250,
     gap_intervals: Sequence[Mapping[str, object]] = (),
+    decision_intervals: Mapping[str, Sequence[tuple[int, int]]] | None = None,
 ) -> LeadLagResult:
     """Estimate the response after large external moves using receive timestamps.
 
@@ -375,6 +379,7 @@ def event_study(
     lookback_us = lookback_ms * 1_000
     for (source, market_id, symbol, basis), series in external.items():
         external_times = [timestamp for timestamp, _ in series]
+        armed = True
         for index, (timestamp, price) in enumerate(series):
             previous_index = (
                 bisect_right(external_times, timestamp - lookback_us, 0, index) - 1
@@ -383,36 +388,55 @@ def event_study(
                 continue
             baseline_age_us = timestamp - external_times[previous_index]
             if baseline_age_us > (lookback_ms + max_shock_age_ms) * 1_000:
+                armed = True
                 continue
             previous_price = series[previous_index][1]
             if previous_price <= 0:
+                armed = True
                 continue
             move = price / previous_price - 1.0
-            if abs(move) >= shock_return:
-                if _series_gap_overlaps(
-                    gap_intervals,
-                    start_ts=external_times[previous_index],
-                    end_ts=timestamp,
+            above_threshold = abs(move) >= shock_return
+            if not above_threshold:
+                armed = True
+                continue
+            if not armed:
+                continue
+            if _series_gap_overlaps(
+                gap_intervals,
+                start_ts=external_times[previous_index],
+                end_ts=timestamp,
+                source=source,
+                market_id=market_id,
+                symbol=symbol,
+                basis=basis,
+            ):
+                armed = True
+                continue
+            shock_candidates.append(
+                ShockEvent(
+                    timestamp_us=timestamp,
+                    direction=1.0 if move > 0 else -1.0,
                     source=source,
-                    market_id=market_id,
-                    symbol=symbol,
-                    basis=basis,
-                ):
-                    continue
-                shock_candidates.append(
-                    ShockEvent(
-                        timestamp_us=timestamp,
-                        direction=1.0 if move > 0 else -1.0,
-                        source=source,
-                        price_basis=basis,
-                        move=move,
-                        baseline_age_us=baseline_age_us,
-                    )
+                    price_basis=basis,
+                    move=move,
+                    baseline_age_us=baseline_age_us,
                 )
+            )
+            armed = False
     event_times = _deduplicate_shocks(
         shock_candidates,
         cooldown_ms=shock_cooldown_ms,
     )
+    if decision_intervals is not None:
+        event_times = [
+            shock
+            for shock in event_times
+            if any(
+                start <= shock.timestamp_us <= end
+                for intervals in decision_intervals.values()
+                for start, end in intervals
+            )
+        ]
 
     series_results = {
         _series_label(key): _measure_series(
@@ -424,6 +448,11 @@ def event_study(
             market_id=key[1],
             symbol=key[2],
             basis=key[3],
+            decision_intervals=(
+                decision_intervals.get(key[1], ())
+                if decision_intervals is not None
+                else None
+            ),
         )
         for key, series in market.items()
     }

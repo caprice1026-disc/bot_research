@@ -18,6 +18,7 @@ from btc5m.market_master import write_market_master
 from btc5m.storage import (
     append_jsonl_rows,
     iter_jsonl,
+    iter_sqlite_rows,
     partition_path,
 )
 
@@ -87,19 +88,23 @@ def _channel_coverage(
     end_ts: int,
 ) -> dict[str, object]:
     count, first, last = stats.get((source, channel, symbol, market_id), (0, 0, 0))
-    matching_gaps = [
-        gap
-        for gap in gaps
-        if gap_overlaps(
-            gap,
-            start_ts=start_ts,
-            end_ts=end_ts,
-            source=source,
-            channel=channel,
-            symbol=symbol,
-            market_id=market_id,
-        )
-    ]
+    matching_gaps = _matching_gaps(
+        gaps,
+        start_ts=start_ts,
+        end_ts=end_ts,
+        source=source,
+        channel=channel,
+        symbol=symbol,
+        market_id=market_id,
+    )
+    continuous_intervals = _continuous_intervals(
+        count=count,
+        first=first,
+        last=last,
+        gaps=matching_gaps,
+        start_ts=start_ts,
+        end_ts=end_ts,
+    )
     reasons: list[str] = []
     if count == 0:
         reasons.append("missing_required_channel")
@@ -116,9 +121,131 @@ def _channel_coverage(
         "last_ts": last if count else None,
         "row_count": count,
         "gap_count": len(matching_gaps),
+        "continuous_intervals": _interval_dicts(continuous_intervals),
         "continuous": count > 0 and not reasons,
         "reasons": sorted(set(reasons)),
     }
+
+
+def _matching_gaps(
+    gaps: Sequence[Mapping[str, object]],
+    *,
+    start_ts: int,
+    end_ts: int,
+    source: str,
+    channel: str,
+    symbol: str,
+    market_id: str,
+) -> list[Mapping[str, object]]:
+    return [
+        gap
+        for gap in gaps
+        if gap_overlaps(
+            gap,
+            start_ts=start_ts,
+            end_ts=end_ts,
+            source=source,
+            channel=channel,
+            symbol=symbol,
+            market_id=market_id,
+        )
+    ]
+
+
+def _continuous_intervals(
+    *,
+    count: int,
+    first: int,
+    last: int,
+    gaps: Sequence[Mapping[str, object]],
+    start_ts: int,
+    end_ts: int,
+) -> list[tuple[int, int]]:
+    if count == 0:
+        return []
+    cursor = max(start_ts, first)
+    limit = min(end_ts, last)
+    if cursor >= limit:
+        return []
+    intervals: list[tuple[int, int]] = []
+    for gap in sorted(gaps, key=lambda item: int(str(item.get("start_ts") or 0))):
+        try:
+            gap_start = max(cursor, int(str(gap.get("start_ts") or 0)))
+            gap_end = min(limit, int(str(gap.get("end_ts") or 0)))
+        except (TypeError, ValueError):
+            continue
+        if gap_end <= cursor:
+            continue
+        if gap_start > cursor:
+            intervals.append((cursor, gap_start))
+        cursor = max(cursor, gap_end)
+        if cursor >= limit:
+            break
+    if cursor < limit:
+        intervals.append((cursor, limit))
+    return intervals
+
+
+def _interval_dicts(intervals: Sequence[tuple[int, int]]) -> list[dict[str, int]]:
+    return [
+        {"start_ts": start_ts, "end_ts": end_ts}
+        for start_ts, end_ts in intervals
+        if start_ts < end_ts
+    ]
+
+
+def _interval_tuples(value: object) -> list[tuple[int, int]]:
+    if not isinstance(value, list):
+        return []
+    intervals: list[tuple[int, int]] = []
+    for item in value:
+        if not isinstance(item, Mapping):
+            continue
+        try:
+            start_ts = int(str(item["start_ts"]))
+            end_ts = int(str(item["end_ts"]))
+        except (KeyError, TypeError, ValueError):
+            continue
+        if start_ts < end_ts:
+            intervals.append((start_ts, end_ts))
+    return intervals
+
+
+def _intersect_intervals(
+    interval_sets: Sequence[Sequence[tuple[int, int]]],
+) -> list[tuple[int, int]]:
+    if not interval_sets:
+        return []
+    current = list(interval_sets[0])
+    for intervals in interval_sets[1:]:
+        intersections: list[tuple[int, int]] = []
+        for left_start, left_end in current:
+            for right_start, right_end in intervals:
+                start = max(left_start, right_start)
+                end = min(left_end, right_end)
+                if start < end:
+                    intersections.append((start, end))
+        current = intersections
+        if not current:
+            break
+    return current
+
+
+def _decision_intervals(
+    intervals: Sequence[tuple[int, int]],
+    *,
+    window_start: int,
+    window_end: int,
+    history_us: int,
+    horizon_us: int,
+) -> list[tuple[int, int]]:
+    """Keep decision times whose complete feature and response windows are covered."""
+    return [
+        (start, end)
+        for interval_start, interval_end in intervals
+        if (start := max(interval_start + history_us, window_start))
+        < (end := min(interval_end - horizon_us, window_end))
+    ]
 
 
 def _build_report_from_stats(
@@ -165,11 +292,29 @@ def _build_report_from_stats(
                     end_ts=analysis_end,
                 )
             )
+        common_intervals = _intersect_intervals(
+            [
+                _interval_tuples(channel.get("continuous_intervals"))
+                for channel in channels
+            ]
+        )
+        decision_intervals = _decision_intervals(
+            common_intervals,
+            window_start=identity.window_start_ts,
+            window_end=identity.window_end_ts,
+            history_us=history_us,
+            horizon_us=max_horizon_ms * 1_000,
+        )
         reasons: set[str] = set()
         for channel in channels:
             channel_reasons = channel.get("reasons")
             if isinstance(channel_reasons, list):
                 reasons.update(str(reason) for reason in channel_reasons)
+        if not common_intervals:
+            reasons.add("no_common_continuous_window")
+        if not decision_intervals:
+            reasons.add("no_continuous_decision_window")
+        full_analysis_window = common_intervals == [(analysis_start, analysis_end)]
         sorted_reasons = sorted(reasons)
         market_reports.append(
             {
@@ -181,7 +326,10 @@ def _build_report_from_stats(
                 "window_end_ts": identity.window_end_ts,
                 "analysis_start_ts": analysis_start,
                 "analysis_end_ts": analysis_end,
-                "eligible": not sorted_reasons,
+                "eligible": bool(decision_intervals),
+                "full_analysis_window": full_analysis_window,
+                "continuous_intervals": _interval_dicts(common_intervals),
+                "decision_intervals": _interval_dicts(decision_intervals),
                 "reasons": sorted_reasons,
                 "channels": channels,
             }
@@ -248,6 +396,13 @@ def _datetime_from_us(value: int) -> datetime:
     return datetime.fromtimestamp(value / 1_000_000, tz=timezone.utc)
 
 
+def _event_sources(input_root: Path) -> Iterable[tuple[Path, Iterable[dict[str, object]]]]:
+    for path in sorted(input_root.rglob("events.jsonl")):
+        yield path, iter_jsonl(path)
+    for path in sorted(input_root.rglob("events.sqlite3")):
+        yield path, iter_sqlite_rows(path)
+
+
 def select_run(
     input_root: Path,
     output_root: Path,
@@ -305,8 +460,8 @@ def select_run(
     stats: ChannelStats = {}
     event_row_count = 0
     # Only the current raw files are walked; logs and manifests are not events.
-    for path in sorted(input_root.rglob("events.jsonl")):
-        for row in iter_jsonl(path):
+    for path, rows in _event_sources(input_root):
+        for row in rows:
             source = str(row.get("source") or "")
             timestamp = parse_source_timestamp(row.get("local_receive_ts"))
             in_support = timestamp is not None and min_start <= timestamp <= max_end

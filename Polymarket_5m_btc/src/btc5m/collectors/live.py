@@ -35,7 +35,12 @@ from btc5m.coverage import CoverageTracker
 from btc5m.events import RawEvent
 from btc5m.io import write_json
 from btc5m.market_master import write_market_master
-from btc5m.storage import append_jsonl, append_jsonl_rows, partition_path
+from btc5m.storage import (
+    SQLiteEventStore,
+    append_jsonl,
+    append_jsonl_rows,
+    partition_path,
+)
 
 BINANCE_URI = "wss://stream.binance.com:9443/stream"
 COINBASE_URI = "wss://advanced-trade-ws.coinbase.com"
@@ -117,6 +122,7 @@ class _SourceEventWriter:
         coverage_tracker: CoverageTracker,
         error_sink: Callable[[str], None] | None,
         queue_maxsize: int,
+        store: SQLiteEventStore | None,
     ) -> None:
         self.source = source
         self.output_root = output_root
@@ -127,6 +133,7 @@ class _SourceEventWriter:
         self.last_received_by_channel = last_received_by_channel
         self.coverage_tracker = coverage_tracker
         self.error_sink = error_sink
+        self.store = store
         self.queue: asyncio.Queue[tuple[RawEvent, str | None] | None] = asyncio.Queue(
             maxsize=max(1, queue_maxsize)
         )
@@ -140,6 +147,8 @@ class _SourceEventWriter:
         if self.failure is not None:
             raise RuntimeError(f"event writer failed for {self.source}") from self.failure
         await self.queue.put((event, connection_id))
+        if self.failure is not None:
+            raise RuntimeError(f"event writer failed for {self.source}") from self.failure
 
     async def _run(self) -> None:
         while True:
@@ -161,7 +170,7 @@ class _SourceEventWriter:
                 batch.append(next_item)
             try:
                 rows_by_path: dict[Path, list[dict[str, object]]] = defaultdict(list)
-                prepared: list[tuple[RawEvent, str | None, Path]] = []
+                prepared: list[tuple[RawEvent, str | None, Path | None]] = []
                 for event, connection_id in batch:
                     if event.local_receive_ts is None:
                         raise ValueError("live collector event is missing local_receive_ts")
@@ -169,16 +178,23 @@ class _SourceEventWriter:
                     resolved_connection = connection_id or event.connection_id
                     if resolved_connection and event.connection_id != resolved_connection:
                         event = replace(event, connection_id=resolved_connection)
-                    path = partition_path(
-                        self.output_root,
-                        event.source,
-                        received_ts,
+                    path = (
+                        self.store.path
+                        if self.store is not None
+                        else partition_path(self.output_root, event.source, received_ts)
                     )
                     prepared.append((event, resolved_connection, path))
                     rows_by_path[path].append(event.to_row())
-                for path, rows in rows_by_path.items():
-                    await asyncio.to_thread(append_jsonl_rows, path, rows)
-                    self.event_paths.add(path)
+                if self.store is not None:
+                    await asyncio.to_thread(
+                        self.store.append_rows,
+                        [row for rows in rows_by_path.values() for row in rows],
+                    )
+                    self.event_paths.add(self.store.path)
+                else:
+                    for path, rows in rows_by_path.items():
+                        await asyncio.to_thread(append_jsonl_rows, path, rows)
+                        self.event_paths.add(path)
                 for event, connection_id, _ in prepared:
                     self.event_counts[event.source] = self.event_counts.get(event.source, 0) + 1
                     channel_key = f"{event.source}/{event.event_type}"
@@ -214,8 +230,14 @@ class _SourceEventWriter:
     async def close(self) -> None:
         if self.task is None:
             return
-        await self.queue.join()
-        await self.queue.put(None)
+        drained = asyncio.create_task(self.queue.join())
+        try:
+            await asyncio.wait({drained, self.task}, return_when=asyncio.FIRST_COMPLETED)
+            if not self.task.done():
+                await self.queue.put(None)
+        finally:
+            drained.cancel()
+            await asyncio.gather(drained, return_exceptions=True)
         await self.task
         if self.failure is not None:
             raise RuntimeError(f"event writer failed for {self.source}") from self.failure
@@ -237,6 +259,7 @@ class EventWriterPool:
         coverage_tracker: CoverageTracker,
         error_sink: Callable[[str], None] | None,
         queue_maxsize: int = 4_096,
+        store: SQLiteEventStore | None = None,
     ) -> None:
         self.writers = {
             source: _SourceEventWriter(
@@ -250,6 +273,7 @@ class EventWriterPool:
                 coverage_tracker=coverage_tracker,
                 error_sink=error_sink,
                 queue_maxsize=queue_maxsize,
+                store=store,
             )
             for source in sources
         }
@@ -276,11 +300,19 @@ class EventWriterPool:
 
     async def close(self) -> None:
         failures: list[Exception] = []
-        for writer in self.writers.values():
-            try:
-                await writer.close()
-            except Exception as exc:
-                failures.append(exc)
+        store = next(iter(self.writers.values())).store if self.writers else None
+        try:
+            for writer in self.writers.values():
+                try:
+                    await writer.close()
+                except Exception as exc:
+                    failures.append(exc)
+        finally:
+            if store is not None:
+                try:
+                    store.close()
+                except Exception as exc:
+                    failures.append(exc)
         if failures:
             raise failures[0]
 
@@ -461,7 +493,9 @@ async def run_polymarket_source(
             dropped = int(getattr(stream, "dropped", 0) or 0)
             if dropped > previous:
                 if sdk_drop_counts is not None:
-                    sdk_drop_counts[source] = dropped
+                    sdk_drop_counts[source] = sdk_drop_counts.get(source, 0) + (
+                        dropped - previous
+                    )
                 log(source, connection_id, "sdk_drop", dropped=dropped)
                 return dropped
             return previous
@@ -546,99 +580,152 @@ async def run_polymarket_source(
 
         async def consume_markets() -> None:
             known_markets: dict[str, MarketIdentity] = {}
-            while not stop.is_set():
-                token_ids: list[str] = []
-                try:
-                    discovered = await discover_btc_5m_markets(client)
-                    known_markets.update(
-                        {market.condition_id: market for market in discovered}
-                    )
-                    write_market_master(
-                        output_root / "market_master" / "markets.parquet",
-                        known_markets.values(),
-                    )
-                    token_ids = active_token_ids(
-                        tuple(known_markets.values()),
-                        now=datetime.now(timezone.utc),
-                        grace_seconds=market_grace_seconds,
-                    )
-                except asyncio.CancelledError:
-                    raise
-                except Exception as exc:
-                    report_error("polymarket_market_discovery", exc)
-                    discovery_id = f"polymarket-discovery-{uuid4().hex}"
-                    log(
-                        "polymarket_market_discovery",
-                        discovery_id,
-                        "error",
-                        f"{type(exc).__name__}: {exc}",
-                    )
+            updates: asyncio.Queue[tuple[str, ...]] = asyncio.Queue(maxsize=4)
+
+            async def discover_loop() -> None:
+                announced: tuple[str, ...] = ()
+                while not stop.is_set():
+                    try:
+                        discovered = await discover_btc_5m_markets(client)
+                        known_markets.update(
+                            {market.condition_id: market for market in discovered}
+                        )
+                        write_market_master(
+                            output_root / "market_master" / "markets.parquet",
+                            known_markets.values(),
+                        )
+                        token_ids = tuple(
+                            active_token_ids(
+                                tuple(known_markets.values()),
+                                now=datetime.now(timezone.utc),
+                                grace_seconds=market_grace_seconds,
+                            )
+                        )
+                        if token_ids != announced:
+                            while not updates.empty():
+                                updates.get_nowait()
+                            await updates.put(token_ids)
+                            announced = token_ids
+                    except asyncio.CancelledError:
+                        raise
+                    except Exception as exc:
+                        report_error("polymarket_market_discovery", exc)
+                        discovery_id = f"polymarket-discovery-{uuid4().hex}"
+                        log(
+                            "polymarket_market_discovery",
+                            discovery_id,
+                            "error",
+                            f"{type(exc).__name__}: {exc}",
+                        )
                     await wait_refresh()
-                    continue
-                if not token_ids:
-                    await wait_refresh()
-                    continue
-                connection_id = f"polymarket-{uuid4().hex}"
-                log("polymarket", connection_id, "connected")
-                last_dropped = 0
-                stream: Any = None
-                try:
-                    async with await client_api.subscribe(build_market_specs(token_ids)) as stream:
-                        iterator = stream.__aiter__()
-                        refresh_deadline = time.monotonic() + refresh_seconds
-                        while not stop.is_set():
-                            timeout = refresh_deadline - time.monotonic()
-                            if timeout <= 0:
-                                break
+
+            async def stream_loop() -> None:
+                token_ids: tuple[str, ...] = ()
+                while not stop.is_set():
+                    if not token_ids:
+                        try:
+                            token_ids = await asyncio.wait_for(updates.get(), 1.0)
+                        except TimeoutError:
+                            continue
+                    connection_id = f"polymarket-{uuid4().hex}"
+                    log("polymarket", connection_id, "connected")
+                    last_dropped = 0
+                    stream: Any = None
+                    try:
+                        async with await client_api.subscribe(
+                            build_market_specs(token_ids)
+                        ) as stream:
+                            iterator = stream.__aiter__()
+                            event_task = asyncio.create_task(iterator.__anext__())
+                            update_task = asyncio.create_task(updates.get())
+                            stop_task = asyncio.create_task(stop.wait())
+                            refresh_reason = "stop"
                             try:
-                                event = await asyncio.wait_for(
-                                    iterator.__anext__(), timeout
+                                while True:
+                                    done, _ = await asyncio.wait(
+                                        {event_task, update_task, stop_task},
+                                        return_when=asyncio.FIRST_COMPLETED,
+                                    )
+                                    if stop_task in done:
+                                        break
+                                    if event_task in done:
+                                        try:
+                                            event = event_task.result()
+                                        except StopAsyncIteration as exc:
+                                            raise ConnectionError(
+                                                "Polymarket market stream ended before stop"
+                                            ) from exc
+                                        received = ReceiveStamp(
+                                            datetime.now(timezone.utc),
+                                            time.monotonic_ns(),
+                                        )
+                                        mapping = _model_mapping(event)
+                                        await _write_events_with_metrics(
+                                            output_root,
+                                            parse_polymarket_message(mapping, received),
+                                            event_counts,
+                                            event_paths,
+                                            last_received_monotonic,
+                                            writers=writers,
+                                            connection_id=connection_id,
+                                        )
+                                        last_dropped = record_sdk_drop(
+                                            "polymarket", connection_id, stream, last_dropped
+                                        )
+                                        event_task = asyncio.create_task(iterator.__anext__())
+                                    if update_task in done:
+                                        next_token_ids = update_task.result()
+                                        update_task = asyncio.create_task(updates.get())
+                                        if next_token_ids != token_ids:
+                                            token_ids = next_token_ids
+                                            refresh_reason = "market_change"
+                                            break
+                            finally:
+                                for task in (event_task, update_task, stop_task):
+                                    if not task.done():
+                                        task.cancel()
+                                await asyncio.gather(
+                                    event_task,
+                                    update_task,
+                                    stop_task,
+                                    return_exceptions=True,
                                 )
-                            except TimeoutError:
-                                break
-                            except StopAsyncIteration as exc:
-                                raise ConnectionError(
-                                    "Polymarket market stream ended before refresh"
-                                ) from exc
-                            received = ReceiveStamp(
-                                datetime.now(timezone.utc),
-                                time.monotonic_ns(),
-                            )
-                            mapping = _model_mapping(event)
-                            await _write_events_with_metrics(
-                                output_root,
-                                parse_polymarket_message(mapping, received),
-                                event_counts,
-                                event_paths,
-                                last_received_monotonic,
-                                writers=writers,
-                                connection_id=connection_id,
-                            )
-                            last_dropped = record_sdk_drop(
-                                "polymarket", connection_id, stream, last_dropped
-                            )
-                    last_dropped = record_sdk_drop(
-                        "polymarket", connection_id, stream, last_dropped
-                    )
-                    log("polymarket", connection_id, "disconnected", "refresh")
-                except asyncio.CancelledError:
-                    if stream is not None:
-                        record_sdk_drop("polymarket", connection_id, stream, last_dropped)
-                    log("polymarket", connection_id, "disconnected", "cancelled")
-                    raise
-                except Exception as exc:
-                    if stream is not None:
                         last_dropped = record_sdk_drop(
                             "polymarket", connection_id, stream, last_dropped
                         )
-                    report_error("polymarket", exc)
-                    log(
-                        "polymarket",
-                        connection_id,
-                        "disconnected",
-                        f"{type(exc).__name__}: {exc}",
-                    )
-                    await wait_refresh()
+                        log("polymarket", connection_id, "disconnected", refresh_reason)
+                        if stop.is_set():
+                            return
+                    except asyncio.CancelledError:
+                        if stream is not None:
+                            record_sdk_drop("polymarket", connection_id, stream, last_dropped)
+                        log("polymarket", connection_id, "disconnected", "cancelled")
+                        raise
+                    except Exception as exc:
+                        if stream is not None:
+                            last_dropped = record_sdk_drop(
+                                "polymarket", connection_id, stream, last_dropped
+                            )
+                        report_error("polymarket", exc)
+                        log(
+                            "polymarket",
+                            connection_id,
+                            "disconnected",
+                            f"{type(exc).__name__}: {exc}",
+                        )
+                        await wait_refresh()
+                    while not updates.empty():
+                        token_ids = updates.get_nowait()
+
+            discovery_task = asyncio.create_task(discover_loop())
+            stream_task = asyncio.create_task(stream_loop())
+            try:
+                await asyncio.gather(discovery_task, stream_task)
+            finally:
+                for task in (discovery_task, stream_task):
+                    if not task.done():
+                        task.cancel()
+                await asyncio.gather(discovery_task, stream_task, return_exceptions=True)
 
         workers: list[asyncio.Task[None]] = []
         if include_chainlink:
@@ -742,6 +829,7 @@ async def collect_public(
     last_received_monotonic: dict[str, float] = {}
     last_received_by_channel: dict[str, float] = {}
     sdk_drop_counts: dict[str, int] = {}
+    event_store = SQLiteEventStore(output_root / "events.sqlite3")
     coverage_tracker = CoverageTracker(max_gap_seconds=gap_threshold_seconds)
     connection_log_path = output_root / "logs" / "connections.jsonl"
     writers = EventWriterPool(
@@ -754,6 +842,7 @@ async def collect_public(
         last_received_by_channel=last_received_by_channel,
         coverage_tracker=coverage_tracker,
         error_sink=lambda message: errors.append(message) if len(errors) < 100 else None,
+        store=event_store,
     )
     await writers.start()
 
@@ -903,6 +992,8 @@ async def collect_public(
         "sources": list(sources),
         "duration_seconds": duration_seconds,
         "event_files": [str(path) for path in event_files],
+        "storage_backend": "sqlite",
+        "database_path": str(event_store.path),
         "event_counts": dict(sorted(event_counts.items())),
         "missing_sources": missing_sources,
         "stale_sources": stale,

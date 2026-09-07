@@ -59,6 +59,29 @@ def test_coverage_tracker_emits_channel_gap_interval() -> None:
     assert gap["duration_seconds"] == 3.0
 
 
+def test_coverage_tracker_marks_connection_change_even_below_threshold() -> None:
+    tracker = CoverageTracker(max_gap_seconds=5.0)
+    tracker.observe(
+        _row(
+            "binance",
+            "book_ticker",
+            "2026-09-07T00:00:00.000000Z",
+        ),
+        connection_id="connection-a",
+    )
+    tracker.observe(
+        _row(
+            "binance",
+            "book_ticker",
+            "2026-09-07T00:00:01.000000Z",
+        ),
+        connection_id="connection-b",
+    )
+
+    assert len(tracker.gaps) == 1
+    assert tracker.gaps[0].reason == "connection_change"
+
+
 def test_unquoted_price_change_cannot_satisfy_quote_continuity() -> None:
     assert (
         coverage_channel(
@@ -186,3 +209,128 @@ def test_selection_requires_polymarket_quote_history_before_window_start() -> No
         if channel["symbol"] == "up-token"
     )
     assert "insufficient_channel_window" in up_channel["reasons"]
+
+
+def test_selection_reports_common_continuous_intervals() -> None:
+    start_ts = 1_700_000_000_000_000
+    end_ts = start_ts + 5_000_000
+    market = {
+        "slug": "btc-updown-5m-1700000000",
+        "condition_id": "condition-5m",
+        "up_token_id": "up-token",
+        "down_token_id": "down-token",
+        "window_start_ts": start_ts,
+        "window_end_ts": end_ts,
+    }
+    timestamps = [
+        "2023-11-14T22:13:20.000000Z",
+        "2023-11-14T22:13:21.000000Z",
+        "2023-11-14T22:13:24.000000Z",
+        "2023-11-14T22:13:25.000000Z",
+    ]
+    rows: list[dict[str, object]] = []
+    for received in timestamps:
+        rows.extend(
+            [
+                _row("binance", "book_ticker", received, symbol="BTCUSDT"),
+                _row("coinbase", "ticker", received, symbol="BTC-USD"),
+                _row("hyperliquid", "bbo", received, symbol="BTC"),
+                _row("chainlink", "chainlink_twap_60", received, symbol="btc/usd"),
+                {
+                    **_row(
+                        "polymarket",
+                        "best_bid_ask",
+                        received,
+                        symbol="up-token",
+                        market_id="condition-5m",
+                    ),
+                    "bid": "0.49",
+                    "ask": "0.51",
+                },
+                {
+                    **_row(
+                        "polymarket",
+                        "best_bid_ask",
+                        received,
+                        symbol="down-token",
+                        market_id="condition-5m",
+                    ),
+                    "bid": "0.49",
+                    "ask": "0.51",
+                },
+            ]
+        )
+
+    report = build_selection_report(
+        [market],
+        rows,
+        lookback_ms=0,
+        horizons_ms=(0,),
+        chainlink_history_seconds=0,
+        max_gap_seconds=2.0,
+    )
+
+    assert report["markets"][0]["eligible"] is True
+    assert report["markets"][0]["full_analysis_window"] is False
+    assert report["markets"][0]["continuous_intervals"] == [
+        {"start_ts": start_ts, "end_ts": start_ts + 1_000_000},
+        {"start_ts": start_ts + 4_000_000, "end_ts": end_ts},
+    ]
+
+
+def test_selection_requires_a_continuous_decision_window() -> None:
+    start_ts = 1_700_000_000_000_000
+    end_ts = start_ts + 5_000_000
+    market = {
+        "slug": "btc-updown-5m-1700000000",
+        "condition_id": "condition-5m",
+        "up_token_id": "up-token",
+        "down_token_id": "down-token",
+        "window_start_ts": start_ts,
+        "window_end_ts": end_ts,
+    }
+    timestamps = [
+        "2023-11-14T22:13:20.000000Z",
+        "2023-11-14T22:13:21.000000Z",
+        "2023-11-14T22:13:24.000000Z",
+        "2023-11-14T22:13:25.000000Z",
+    ]
+    rows: list[dict[str, object]] = []
+    for received in timestamps:
+        rows.extend(
+            [
+                _row("binance", "book_ticker", received, symbol="BTCUSDT"),
+                _row("coinbase", "ticker", received, symbol="BTC-USD"),
+                _row("hyperliquid", "bbo", received, symbol="BTC"),
+                _row("chainlink", "chainlink_twap_60", received, symbol="btc/usd"),
+                _row(
+                    "polymarket",
+                    "best_bid_ask",
+                    received,
+                    symbol="up-token",
+                    market_id="condition-5m",
+                ),
+                _row(
+                    "polymarket",
+                    "best_bid_ask",
+                    received,
+                    symbol="down-token",
+                    market_id="condition-5m",
+                ),
+            ]
+        )
+
+    report = build_selection_report(
+        [market],
+        rows,
+        lookback_ms=1_000,
+        horizons_ms=(1_000,),
+        chainlink_history_seconds=2,
+        max_gap_seconds=2.0,
+    )
+
+    selected = report["markets"][0]
+    assert selected["continuous_intervals"]
+    assert selected["decision_intervals"] == []
+    assert selected["eligible"] is False
+    assert "no_continuous_decision_window" in selected["reasons"]

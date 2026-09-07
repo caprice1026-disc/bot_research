@@ -127,6 +127,33 @@ def test_event_study_does_not_mix_up_and_down_token_series() -> None:
     ] == pytest.approx(-0.10)
 
 
+def test_event_study_applies_decision_intervals_per_market() -> None:
+    external = [
+        _row("binance", "2026-09-07T00:00:00.000000Z", "100"),
+        _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
+    ]
+    polymarket = [
+        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50", symbol="up", market_id="m1"),
+        _row("polymarket", "2026-09-07T00:00:01.000000Z", "0.60", symbol="up", market_id="m1"),
+        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50", symbol="up", market_id="m2"),
+        _row("polymarket", "2026-09-07T00:00:01.000000Z", "0.60", symbol="up", market_id="m2"),
+    ]
+
+    result = event_study(
+        external,
+        polymarket,
+        shock_return=0.005,
+        horizons_ms=(200,),
+        decision_intervals={
+            "m1": [(1_788_739_201_000_000, 1_788_739_202_000_000)],
+            "m2": [(1_788_739_200_000_000, 1_788_739_201_000_000)],
+        },
+    )
+
+    assert result.series_results["m1/up/price"].observations_by_horizon == {200: 0}
+    assert result.series_results["m2/up/price"].observations_by_horizon == {200: 1}
+
+
 def test_event_study_does_not_combine_midpoint_and_last_trade_price() -> None:
     external = [
         _row("binance", "2026-09-07T00:00:00.000000Z", "100"),
@@ -285,6 +312,31 @@ def test_event_study_rejects_stale_lookback_and_deduplicates_same_shock() -> Non
     assert result.shock_provenance == {"binance/trade": 1}
 
 
+def test_event_study_deduplicates_a_persistent_threshold_crossing() -> None:
+    external = [
+        _row("binance", "2026-09-07T00:00:00.000000Z", "100", event_type="agg_trade"),
+        _row("binance", "2026-09-07T00:00:00.500000Z", "101", event_type="agg_trade"),
+        _row("binance", "2026-09-07T00:00:00.600000Z", "101", event_type="agg_trade"),
+        _row("binance", "2026-09-07T00:00:00.700000Z", "101", event_type="agg_trade"),
+        _row("binance", "2026-09-07T00:00:00.800000Z", "101", event_type="agg_trade"),
+    ]
+    polymarket = [
+        _row("polymarket", "2026-09-07T00:00:00.000000Z", "0.50"),
+        _row("polymarket", "2026-09-07T00:00:01.000000Z", "0.60"),
+    ]
+
+    result = event_study(
+        external,
+        polymarket,
+        shock_return=0.005,
+        lookback_ms=500,
+        shock_cooldown_ms=100,
+        horizons_ms=(100,),
+    )
+
+    assert result.event_count == 1
+
+
 def test_event_study_does_not_cross_a_reported_gap() -> None:
     external = [
         _row(
@@ -328,3 +380,64 @@ def test_event_study_does_not_cross_a_reported_gap() -> None:
 
     assert result.event_count == 0
     assert result.reason == "no_external_shocks"
+
+
+def test_event_study_does_not_cross_polymarket_trade_gap() -> None:
+    external = [
+        _row("binance", "2026-09-07T00:00:00.000000Z", "100"),
+        _row("binance", "2026-09-07T00:00:00.500000Z", "101"),
+    ]
+    polymarket = [
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.000000Z",
+            "0.50",
+            market_id="m1",
+            symbol="up",
+            event_type="last_trade_price",
+        ),
+        _row(
+            "polymarket",
+            "2026-09-07T00:00:00.700000Z",
+            "0.60",
+            market_id="m1",
+            symbol="up",
+            event_type="last_trade_price",
+        ),
+    ]
+    gaps = [
+        {
+            "source": "polymarket",
+            "channel": "last_trade_price",
+            "symbol": "up",
+            "market_id": "m1",
+            "start_ts": parse_source_timestamp("2026-09-07T00:00:00.200000Z"),
+            "end_ts": parse_source_timestamp("2026-09-07T00:00:00.600000Z"),
+        }
+    ]
+
+    result = event_study(
+        external,
+        polymarket,
+        shock_return=0.005,
+        horizons_ms=(200,),
+        gap_intervals=gaps,
+    )
+
+    assert result.series_results["m1/up/trade"].gap_excluded_by_horizon == {200: 1}
+
+
+def test_response_rejects_pre_shock_gap_before_stale_baseline() -> None:
+    result = event_study(
+        [_row("binance", "2026-09-07T00:00:00Z", "100"),
+         _row("binance", "2026-09-07T00:00:00.500000Z", "101")],
+        [_row("polymarket", "2026-09-07T00:00:00Z", "0.5"),
+         _row("polymarket", "2026-09-07T00:00:00.700000Z", "0.6")],
+        horizons_ms=(200,),
+        gap_intervals=[{
+            "source": "polymarket", "channel": "price",
+            "start_ts": 1_788_739_200_100_000,
+            "end_ts": 1_788_739_200_400_000,
+        }],
+    )
+    assert result.observations_by_horizon == {200: 0}

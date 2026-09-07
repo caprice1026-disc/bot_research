@@ -19,7 +19,7 @@ from btc5m.io import load_rows, write_json
 from btc5m.quality import validate_events
 from btc5m.research.lead_lag import event_study
 from btc5m.research.selection import select_run
-from btc5m.storage import compact_jsonl_to_parquet
+from btc5m.storage import compact_jsonl_to_parquet, compact_sqlite_to_parquet
 
 app = typer.Typer(
     name="btc5m",
@@ -58,11 +58,15 @@ def collect(
 
 @app.command()
 def compact(
-    input_path: Path = typer.Option(..., "--input", help="JSONL staging file."),
+    input_path: Path = typer.Option(..., "--input", help="JSONL or SQLite event store."),
+    source: str | None = typer.Option(None, "--source", help="Filter SQLite rows by source."),
     output_path: Path = typer.Option(..., "--output", help="Parquet output file."),
 ) -> None:
-    """Compact staging events into Parquet."""
-    rows = compact_jsonl_to_parquet(input_path, output_path)
+    """Compact JSONL or SQLite events into Parquet."""
+    if input_path.suffix.lower() in {".sqlite", ".sqlite3", ".db"}:
+        rows = compact_sqlite_to_parquet(input_path, output_path, source=source)
+    else:
+        rows = compact_jsonl_to_parquet(input_path, output_path)
     typer.echo(json.dumps({"status": "ok", "rows": rows, "output": str(output_path)}))
 
 
@@ -90,6 +94,8 @@ def fixture(
 def lead_lag(
     external_path: Path = typer.Option(..., "--external"),
     polymarket_path: Path = typer.Option(..., "--polymarket"),
+    external_source: str = typer.Option("binance", "--external-source"),
+    polymarket_source: str = typer.Option("polymarket", "--polymarket-source"),
     gaps_path: Path = typer.Option(
         ...,
         "--gaps",
@@ -98,10 +104,12 @@ def lead_lag(
     output_path: Path = typer.Option(..., "--output"),
 ) -> None:
     """Measure external-price and Polymarket response timing."""
+    decision_intervals = _load_decision_intervals(gaps_path)
     result = event_study(
-        load_rows(external_path),
-        load_rows(polymarket_path),
+        load_rows(external_path, source=external_source),
+        load_rows(polymarket_path, source=polymarket_source),
         gap_intervals=_load_gap_intervals(gaps_path),
+        decision_intervals=decision_intervals,
     )
     write_json(output_path, result.to_dict())
     output_path.with_suffix(".md").write_text(result.to_markdown(), encoding="utf-8")
@@ -202,3 +210,32 @@ def _load_gap_intervals(path: Path) -> list[dict[str, object]]:
         if isinstance(gaps, list):
             return [dict(row) for row in gaps if isinstance(row, dict)]
     raise ValueError("gap JSON must contain a gaps or coverage_gaps array")
+
+
+def _load_decision_intervals(path: Path) -> dict[str, list[tuple[int, int]]] | None:
+    if path.suffix.lower() != ".json":
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or "markets" not in payload:
+        return None
+    markets = payload.get("markets")
+    if not isinstance(markets, list):
+        return {}
+    intervals: dict[str, list[tuple[int, int]]] = {}
+    for market in markets:
+        if not isinstance(market, dict):
+            continue
+        market_id = str(market.get("condition_id") or "")
+        if not market_id:
+            continue
+        for interval in market.get("decision_intervals") or []:
+            if not isinstance(interval, dict):
+                continue
+            try:
+                start = int(str(interval["start_ts"]))
+                end = int(str(interval["end_ts"]))
+            except (KeyError, TypeError, ValueError):
+                continue
+            if start < end:
+                intervals.setdefault(market_id, []).append((start, end))
+    return intervals

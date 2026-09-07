@@ -4,7 +4,7 @@
 
 **Goal:** Polymarket_5m_btc 内に、公開データを時刻安全に収集・検証し、Polymarket BTC 5m と外部 BTC 価格の lead-lag を分析できる、発注機能を持たない研究基盤を構築する。
 
-**Architecture:** 各データ源の async adapter が共通の RawEvent に正規化し、受信直後の wall-clock / monotonic timestamp と raw payload を JSONL staging に追記する。検証済み staging を Parquet に compact し、coverage manifest と backward-only の研究処理から lead-lag レポートを生成する。Polymarket と Chainlink は公式 polymarket-client の AsyncPublicClient を使い、Binance・Coinbase・Hyperliquid は公開 WebSocket を使う。
+**Architecture:** 各データ源の async adapter が共通の RawEvent に正規化し、受信直後の wall-clock / monotonic timestamp と raw payload をSQLiteへバッチ保存する。接続・gapの小さな運用ログはJSONLに残し、検証済みイベントをParquetへcompactしてcoverage manifestとbackward-onlyの研究処理からlead-lagレポートを生成する。PolymarketとChainlinkは公式polymarket-clientのAsyncPublicClientを使い、Binance・Coinbase・Hyperliquidは公開WebSocketを使う。
 
 **Tech Stack:** Python 3.13 実行環境（Python 3.12 互換範囲を宣言）、既存 .venv、pip、polymarket-client[quant]、websockets、httpx、orjson、pydantic、PyYAML、Typer、Rich、Polars、PyArrow、pytest、pytest-asyncio、ruff、pyright。
 
@@ -23,6 +23,8 @@
 
 ## Progress
 
+- [x] (2026-09-08) 再レビューで保存失敗後のqueue終了競合、基準quote以前の切断検査、JSONL/Parquet source filterを修正。回帰4ケースを含む86テストと静的検査が合格。main push後に新規2時間収集を起動する。
+
 - [x] (2026-09-07) RESEARCH_PLAN.md を Polymarket_5m_btc/ に保存した。
 - [x] (2026-09-07) collector-first / historical lead-lag の設計書を作成し、ユーザー承認を得た。
 - [x] (2026-09-07) uv から pip への依存管理変更を計画へ反映した。
@@ -34,6 +36,8 @@
 - [x] default tests、fixture E2E、public smoke を検証した。Git pushのみ残る。
 - [x] (2026-09-07) 段階Aとして、系列識別、Polymarket quote意味論、Binance bookTicker、horizon coverage、重複識別、収集manifest、rolling subscription、market master永続化を修復した。
 - [x] (2026-09-07) 5分市場の厳密な選別、受信空白・接続状態・SDK drop監視、保存処理分離、障害注入テスト、切断安全なlead-lag評価を追加する。
+- [x] (2026-09-07) レビュー対応として、接続切替の短い空白、共通連続区間、検索失敗時の既存購読維持、ショック再突入、trade gap、SDK drop累積を修正し、ライブイベント保存をSQLiteへ切り替えた。
+- [x] (2026-09-07) 追加レビュー対応として、SQLite batchのall-or-nothing保存、history/horizonを両端に含む市場別decision interval、選別manifestのlead-lag適用（基準・response用のsupport rowは保持）、同一token時の市場購読維持、SQLite→Parquetのbounded compactionを修正した。
 
 ## Surprises & Discoveries
 
@@ -62,8 +66,11 @@
 
 ## Decision Log
 
-- Decision: 初期保存は JSONL staging から Parquet compaction へ分ける。
-  Rationale: WebSocket process crash で大きな Parquet writer を壊すリスクを避け、raw forensic source を残すため。
+- Decision: ライブイベントはSQLiteへバッチ保存し、JSONLは小さな運用ログと旧fixture入力に限定する。
+  Rationale: 単一writerのWALデータベースで時刻・市場・系列を索引化し、collectorの途中保存と再読込を効率化するため。Parquet compactionは大規模な研究スキャン用に残す。
+  Date/Author: 2026-09-07 / Codex
+- Decision: selection manifestのcontinuous intervalとanalysis可能なdecision intervalを分離する。
+  Rationale: 物理的な受信連続性だけでは、特徴量の履歴窓と将来response horizonを同時に満たすdecision timestampを保証できないため。lead-lagではmarketごとのdecision intervalだけを使う。
   Date/Author: 2026-09-07 / Codex
 - Decision: Polymarket と Chainlink は公式 polymarket-client の async public client を使う。
   Rationale: 公式 SDK に market subscription と 30/60秒 Chainlink TWAP spec が存在し、ユーザー計画の unified SDK 方針と一致するため。

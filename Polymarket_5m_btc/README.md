@@ -13,6 +13,11 @@ From this directory:
 
 The project intentionally uses `pip` and requirements files; no `uv.lock` is required.
 
+Live event rows are written in batches to `events.sqlite3` using WAL mode and
+one SQLite writer lock. Operational connection and gap logs remain small JSONL
+files. The database can be read directly by the research commands and can be
+compacted to Parquet for larger scans.
+
 Every live row retains `sequence_id` as the source-side duplicate candidate and
 `receive_id` as a local ingestion identifier. They are intentionally different:
 a replay should have a new `receive_id` while keeping the same source sequence.
@@ -29,7 +34,7 @@ the websocket/SDK connection that delivered the row and is not a duplicate key.
 
 ## Offline fixture
 
-The fixture checks staging JSONL, ZSTD Parquet compaction, quality validation, and receive-time lead-lag report generation. Its report state is `exploratory`; it is not market evidence.
+The fixture checks legacy staging JSONL, ZSTD Parquet compaction, quality validation, and receive-time lead-lag report generation. Its report state is `exploratory`; it is not market evidence.
 
     .venv\Scripts\python.exe -m btc5m fixture --output-root .\data\fixture-run
 
@@ -40,7 +45,8 @@ Collectors are bounded by duration and use public feeds only. `chainlink` is col
     .venv\Scripts\python.exe -m btc5m collect --sources all --duration-seconds 60 --output-root .\data\raw_staging
 
 The Polymarket/Chainlink collector refreshes market discovery periodically and
-re-subscribes with current and newly discovered five-minute token IDs. Its
+re-subscribes only when the five-minute token set changes or a market stream
+fails. Its
 `collection_manifest.json` is scoped to the current run: `ok` requires events
 from every requested source and no recorded errors; `partial`, `no_events`, or
 `error` must not be used as research success. The `collect` command also exits
@@ -60,19 +66,22 @@ If only external venues are needed:
 
 The raw run is never overwritten. The selector accepts only the exact
 `btc-updown-5m-<epoch>` slug, so `15m` markets are excluded even if a catalog
-question contains the text `5m`. It streams event JSONL instead of loading a
-multi-gigabyte run into memory, writes a separate selected raw tree, and marks
-each market eligible only when the lookback/history window through the largest
-evaluation horizon is continuous. Chainlink 60-second features require the
-configured history window as well.
+question contains the text `5m`. It streams SQLite or legacy JSONL events
+instead of loading a multi-gigabyte run into memory, writes a separate selected
+raw tree, and marks each market eligible only when a decision interval has
+continuous coverage from the lookback/Chainlink history window through the
+largest evaluation horizon.
 
     .venv\Scripts\python.exe -m btc5m select-5m --input-root .\data\runs\stage-a-2h-20260907T053816Z --output-root .\data\selected\stage-a-2h-20260907T053816Z --copy-events
 
 `selection_manifest.json` contains selected/excluded market IDs, per-channel
-first/last receive time, gap intervals, and `insufficient_data` when no market
-passes continuity. Without `--copy-events`, the same manifest is produced as
-an index while leaving the raw input in place; `--copy-events` creates the
-explicit filtered copy under `output-root/raw`.
+first/last receive time, gap intervals, physical common intervals, and usable
+`decision_intervals` for each market. A market may have physical sub-intervals
+while no timestamp has enough preceding history and following response horizon;
+that market is `ineligible`. `insufficient_data` is emitted when no decision
+interval remains. Without `--copy-events`, the same manifest is
+produced as an index while leaving the raw input in place; `--copy-events`
+creates the explicit filtered copy under `output-root/raw`.
 
 ## Historical coverage
 
@@ -85,15 +94,18 @@ Historical archive rows have source timestamps but no local receive timestamp. T
 
 ## Research commands
 
-    .venv\Scripts\python.exe -m btc5m compact --input .\data\raw_staging\binance\date=YYYY-MM-DD\hour=HH\events.jsonl --output .\data\normalized\binance.parquet
+    .venv\Scripts\python.exe -m btc5m compact --input .\data\events.sqlite3 --source binance --output .\data\normalized\binance.parquet
     .venv\Scripts\python.exe -m btc5m validate --input .\data\normalized\binance.parquet --output .\reports\quality.json
-    .venv\Scripts\python.exe -m btc5m lead-lag --external .\data\normalized\binance.parquet --polymarket .\data\normalized\polymarket.parquet --gaps .\data\runs\<run>\logs\gaps.jsonl --output .\reports\lead_lag.json
+    .venv\Scripts\python.exe -m btc5m lead-lag --external .\data\events.sqlite3 --external-source binance --polymarket .\data\events.sqlite3 --polymarket-source polymarket --gaps .\data\runs\<run>\logs\gaps.jsonl --output .\reports\lead_lag.json
 
 The `--gaps` input is required so the analysis cannot silently treat a
 disconnect as a continuous return path. It accepts the collector JSONL gap log
-or a selection manifest JSON. The lead-lag analysis uses backward/as-of
-receive-time joins and reports `insufficient_data` when local receive
-timestamps, continuous coverage, or overlapping responses are unavailable. It
-does not include fees, slippage, execution, or live trading.
+or a selection manifest JSON. A selection manifest additionally constrains
+each Polymarket market to its own `decision_intervals`; a shock valid for one
+market cannot be evaluated against another. SQLite compaction reads bounded
+batches rather than loading the whole database. The lead-lag analysis uses
+backward/as-of receive-time joins and reports `insufficient_data` when local
+receive timestamps, continuous coverage, or overlapping responses are
+unavailable. It does not include fees, slippage, execution, or live trading.
 
 The full Japanese research scope is in [RESEARCH_PLAN.md](RESEARCH_PLAN.md). The implementation plan is in the repository root `.agent/` directory.
