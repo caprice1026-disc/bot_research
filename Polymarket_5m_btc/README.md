@@ -87,8 +87,13 @@ Historical archive rows have source timestamps but no local receive timestamp. T
 
     .venv\Scripts\python.exe -m btc5m compact --input .\data\raw_staging\binance\date=YYYY-MM-DD\hour=HH\events.jsonl --output .\data\normalized\binance.parquet
     .venv\Scripts\python.exe -m btc5m validate --input .\data\normalized\binance.parquet --output .\reports\quality.json
-    .venv\Scripts\python.exe -m btc5m lead-lag --external .\data\normalized\binance.parquet --polymarket .\data\normalized\polymarket.parquet --output .\reports\lead_lag.json
+    .venv\Scripts\python.exe -m btc5m lead-lag --external .\data\normalized\binance.parquet --polymarket .\data\normalized\polymarket.parquet --gaps .\data\runs\<run>\logs\gaps.jsonl --output .\reports\lead_lag.json
 
-The lead-lag analysis uses backward/as-of receive-time joins and reports `insufficient_data` when local receive timestamps or overlapping responses are unavailable. It does not include fees, slippage, execution, or live trading.
+The `--gaps` input is required so the analysis cannot silently treat a
+disconnect as a continuous return path. It accepts the collector JSONL gap log
+or a selection manifest JSON. The lead-lag analysis uses backward/as-of
+receive-time joins and reports `insufficient_data` when local receive
+timestamps, continuous coverage, or overlapping responses are unavailable. It
+does not include fees, slippage, execution, or live trading.
 
 The full Japanese research scope is in [RESEARCH_PLAN.md](RESEARCH_PLAN.md). The implementation plan is in the repository root `.agent/` directory.

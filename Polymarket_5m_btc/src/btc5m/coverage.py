@@ -16,12 +16,12 @@ def coverage_channel(row: Mapping[str, object]) -> str:
 
     source = str(row.get("source") or "")
     event_type = str(row.get("event_type") or "")
-    if source == "polymarket" and event_type in {
-        "book",
-        "best_bid_ask",
-        "price_change",
-    }:
+    if source == "polymarket" and event_type in {"book", "best_bid_ask"}:
         return "quote"
+    if source == "polymarket" and event_type == "price_change":
+        if row.get("bid") not in (None, "") and row.get("ask") not in (None, ""):
+            return "quote"
+        return "price_change_unquoted"
     return event_type
 
 

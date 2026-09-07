@@ -426,6 +426,20 @@ def test_market_identity_extracts_five_minute_window_and_tokens() -> None:
     assert identity.window_end_ts - identity.window_start_ts == 300_000_000
 
 
+def test_market_identity_requires_an_exact_lowercase_five_minute_slug() -> None:
+    base = {
+        "condition_id": "condition",
+        "outcomes": {"yes": "up-token", "no": "down-token"},
+    }
+
+    assert market_identity_from_mapping(
+        {**base, "slug": "BTC-UPDOWN-5M-1700000000"}
+    ) is None
+    assert market_identity_from_mapping(
+        {**base, "slug": " btc-updown-5m-1700000000 "}
+    ) is None
+
+
 def test_market_discovery_accepts_official_sync_paginator() -> None:
     class Page:
         items = [

@@ -454,3 +454,67 @@ def test_chainlink_subscription_is_not_restarted_by_market_refresh(
 
     assert market_subscriptions == 2
     assert chainlink_subscriptions == 1
+
+
+def test_polymarket_cancellation_records_final_sdk_drop_count(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    from btc5m.collectors import live
+
+    stop = asyncio.Event()
+    sdk_drops: dict[str, int] = {}
+
+    class Stream:
+        dropped = 7
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            await asyncio.Future()
+            raise StopAsyncIteration
+
+    class Subscription:
+        async def __aenter__(self):
+            return Stream()
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return None
+
+    class Client:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return None
+
+        async def subscribe(self, specs):
+            return Subscription()
+
+    monkeypatch.setitem(
+        sys.modules, "polymarket", SimpleNamespace(AsyncPublicClient=Client)
+    )
+    monkeypatch.setattr(
+        live,
+        "build_chainlink_specs",
+        lambda: (SimpleNamespace(window_seconds=30), SimpleNamespace(window_seconds=60)),
+    )
+
+    async def run() -> None:
+        task = asyncio.create_task(
+            live.run_polymarket_source(
+                tmp_path,
+                stop,
+                include_market=False,
+                include_chainlink=True,
+                sdk_drop_counts=sdk_drops,
+            )
+        )
+        await asyncio.sleep(0.01)
+        task.cancel()
+        await asyncio.gather(task, return_exceptions=True)
+
+    asyncio.run(run())
+
+    assert sdk_drops == {"chainlink": 7}

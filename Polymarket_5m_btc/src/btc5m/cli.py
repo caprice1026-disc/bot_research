@@ -90,10 +90,19 @@ def fixture(
 def lead_lag(
     external_path: Path = typer.Option(..., "--external"),
     polymarket_path: Path = typer.Option(..., "--polymarket"),
+    gaps_path: Path = typer.Option(
+        ...,
+        "--gaps",
+        help="JSONL gap intervals or a selection_manifest.json.",
+    ),
     output_path: Path = typer.Option(..., "--output"),
 ) -> None:
     """Measure external-price and Polymarket response timing."""
-    result = event_study(load_rows(external_path), load_rows(polymarket_path))
+    result = event_study(
+        load_rows(external_path),
+        load_rows(polymarket_path),
+        gap_intervals=_load_gap_intervals(gaps_path),
+    )
     write_json(output_path, result.to_dict())
     output_path.with_suffix(".md").write_text(result.to_markdown(), encoding="utf-8")
     typer.echo(json.dumps(result.to_dict(), ensure_ascii=False))
@@ -182,3 +191,14 @@ def _parse_datetime(value: str) -> datetime:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
+
+
+def _load_gap_intervals(path: Path) -> list[dict[str, object]]:
+    if path.suffix.lower() != ".json":
+        return load_rows(path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(payload, dict):
+        gaps = payload.get("gaps") or payload.get("coverage_gaps") or []
+        if isinstance(gaps, list):
+            return [dict(row) for row in gaps if isinstance(row, dict)]
+    raise ValueError("gap JSON must contain a gaps or coverage_gaps array")

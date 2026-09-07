@@ -477,6 +477,7 @@ async def run_polymarket_source(
                 connection_id = f"chainlink-{uuid4().hex}"
                 log("chainlink", connection_id, "connected")
                 last_dropped = 0
+                stream: Any = None
                 try:
                     async with await client_api.subscribe(build_chainlink_specs()) as stream:
                         iterator = stream.__aiter__()
@@ -518,9 +519,15 @@ async def run_polymarket_source(
                     log("chainlink", connection_id, "disconnected", "stop")
                     return
                 except asyncio.CancelledError:
+                    if stream is not None:
+                        record_sdk_drop("chainlink", connection_id, stream, last_dropped)
                     log("chainlink", connection_id, "disconnected", "cancelled")
                     raise
                 except Exception as exc:
+                    if stream is not None:
+                        last_dropped = record_sdk_drop(
+                            "chainlink", connection_id, stream, last_dropped
+                        )
                     report_error("chainlink", exc)
                     log(
                         "chainlink",
@@ -574,6 +581,7 @@ async def run_polymarket_source(
                 connection_id = f"polymarket-{uuid4().hex}"
                 log("polymarket", connection_id, "connected")
                 last_dropped = 0
+                stream: Any = None
                 try:
                     async with await client_api.subscribe(build_market_specs(token_ids)) as stream:
                         iterator = stream.__aiter__()
@@ -614,9 +622,15 @@ async def run_polymarket_source(
                     )
                     log("polymarket", connection_id, "disconnected", "refresh")
                 except asyncio.CancelledError:
+                    if stream is not None:
+                        record_sdk_drop("polymarket", connection_id, stream, last_dropped)
                     log("polymarket", connection_id, "disconnected", "cancelled")
                     raise
                 except Exception as exc:
+                    if stream is not None:
+                        last_dropped = record_sdk_drop(
+                            "polymarket", connection_id, stream, last_dropped
+                        )
                     report_error("polymarket", exc)
                     log(
                         "polymarket",

@@ -11,7 +11,7 @@ from typing import Any, Mapping
 from btc5m.clock import ReceiveStamp
 from btc5m.events import RawEvent
 
-_WINDOW_RE = re.compile(r"^btc-updown-5m-(\d{10,13})$", re.IGNORECASE)
+_WINDOW_RE = re.compile(r"^btc-updown-5m-(\d{10,13})$")
 
 
 @dataclass(frozen=True, slots=True)
@@ -199,7 +199,7 @@ def parse_polymarket_message(
 
 
 def _window_from_slug(slug: str) -> tuple[int, int] | None:
-    match = _WINDOW_RE.fullmatch(slug.strip())
+    match = _WINDOW_RE.fullmatch(slug)
     if match is None:
         return None
     raw = int(match.group(1))

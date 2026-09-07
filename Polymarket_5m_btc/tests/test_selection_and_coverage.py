@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from btc5m.collectors.polymarket import market_identity_from_mapping
-from btc5m.coverage import CoverageTracker
+from btc5m.coverage import CoverageTracker, coverage_channel
 from btc5m.research.selection import build_selection_report
 
 
@@ -55,6 +57,20 @@ def test_coverage_tracker_emits_channel_gap_interval() -> None:
     assert gap["source"] == "binance"
     assert gap["channel"] == "book_ticker"
     assert gap["duration_seconds"] == 3.0
+
+
+def test_unquoted_price_change_cannot_satisfy_quote_continuity() -> None:
+    assert (
+        coverage_channel(
+            {
+                "source": "polymarket",
+                "event_type": "price_change",
+                "bid": None,
+                "ask": None,
+            }
+        )
+        == "price_change_unquoted"
+    )
 
 
 def test_selection_keeps_only_5m_and_requires_chainlink_history_and_horizon() -> None:
@@ -125,3 +141,48 @@ def test_selection_does_not_treat_empty_rows_as_success() -> None:
 
     assert report["status"] == "insufficient_data"
     assert report["selected_market_ids"] == []
+
+
+def test_selection_requires_polymarket_quote_history_before_window_start() -> None:
+    start_ts = 1_799_366_400_000_000
+    end_ts = start_ts + 300_000_000
+    start_iso = datetime.fromtimestamp(start_ts / 1_000_000, timezone.utc).isoformat()
+    end_iso = datetime.fromtimestamp(end_ts / 1_000_000, timezone.utc).isoformat()
+    market = {
+        "slug": "btc-updown-5m-1799366400",
+        "condition_id": "condition-5m",
+        "up_token_id": "up-token",
+        "down_token_id": "down-token",
+        "window_start_ts": start_ts,
+        "window_end_ts": end_ts,
+    }
+    report = build_selection_report(
+        [market],
+        [
+            _row(
+                "polymarket",
+                "best_bid_ask",
+                start_iso,
+                symbol="up-token",
+                market_id="condition-5m",
+            ),
+            _row(
+                "polymarket",
+                "best_bid_ask",
+                end_iso,
+                symbol="up-token",
+                market_id="condition-5m",
+            ),
+        ],
+        lookback_ms=500,
+        horizons_ms=(1000,),
+        chainlink_history_seconds=0,
+        max_gap_seconds=10_000,
+    )
+
+    up_channel = next(
+        channel
+        for channel in report["markets"][0]["channels"]
+        if channel["symbol"] == "up-token"
+    )
+    assert "insufficient_channel_window" in up_channel["reasons"]

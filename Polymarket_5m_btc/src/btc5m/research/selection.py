@@ -161,7 +161,7 @@ def _build_report_from_stats(
                     channel="quote",
                     symbol=token,
                     market_id=identity.condition_id,
-                    start_ts=identity.window_start_ts,
+                    start_ts=analysis_start,
                     end_ts=analysis_end,
                 )
             )
@@ -335,6 +335,8 @@ def select_run(
     for path, rows in copy_batches.items():
         if rows:
             append_jsonl_rows(path, rows)
+
+    tracker.finish(max_end, reason="selection_window_end")
 
     report = _build_report_from_stats(
         markets,
