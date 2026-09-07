@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -34,6 +36,17 @@ def _decimal(value: object) -> Decimal | None:
     return None if value in (None, "") else Decimal(str(value))
 
 
+def _stable_payload_id(payload: Mapping[str, Any]) -> str:
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def _level(levels: object, *, best: str) -> tuple[Decimal | None, Decimal | None]:
     if not isinstance(levels, list):
         return None, None
@@ -66,9 +79,9 @@ def parse_polymarket_message(
         bid, bid_size = _level(payload.get("bids"), best="bid")
         ask, ask_size = _level(payload.get("asks"), best="ask")
         sequence = (
-            f"{timestamp}:{asset_id}:{payload['hash']}:{received.local_monotonic_ns}"
+            f"{timestamp}:{asset_id}:{payload['hash']}"
             if payload.get("hash")
-            else f"{timestamp}:{asset_id}:{received.local_monotonic_ns}"
+            else f"{timestamp}:{asset_id}:{_stable_payload_id(payload)}"
         )
         return [
             RawEvent.from_message(
@@ -85,6 +98,8 @@ def parse_polymarket_message(
                 ask=ask,
                 bid_size=bid_size,
                 ask_size=ask_size,
+                market_id=market,
+                receive_id=f"{received.local_monotonic_ns}:book:{asset_id}",
             )
         ]
     if event_type == "price_change":
@@ -92,29 +107,29 @@ def parse_polymarket_message(
         for change_index, change in enumerate(payload.get("price_changes", [])):
             if not isinstance(change, Mapping):
                 continue
+            change_asset_id = str(change.get("asset_id") or asset_id)
+            change_sequence = (
+                f"{timestamp}:{change_asset_id}:{change.get('hash')}:{change_index}"
+                if change.get("hash")
+                else f"{timestamp}:{change_asset_id}:{_stable_payload_id(change)}:{change_index}"
+            )
             output.append(
                 RawEvent.from_message(
                     source="polymarket",
-                    symbol=str(change.get("asset_id") or asset_id),
+                    symbol=change_asset_id,
                     event_type="price_change",
                     payload={**raw_payload, "price_change": dict(change)},
                     received=received,
                     source_event_ts=timestamp,
                     source_publish_ts=None,
-                    sequence_id=(
-                        f"{timestamp}:{change.get('asset_id') or asset_id}:"
-                        f"{change.get('hash')}:{change_index}:{received.local_monotonic_ns}"
-                        if change.get("hash")
-                        else (
-                            f"{timestamp}:{change.get('asset_id') or asset_id}:"
-                            f"{change_index}:{received.local_monotonic_ns}"
-                        )
-                    ),
-                    price=_decimal(change.get("price")),
+                    sequence_id=change_sequence,
+                    price=None,
                     bid=_decimal(change.get("best_bid")),
                     ask=_decimal(change.get("best_ask")),
                     bid_size=None,
                     ask_size=None,
+                    market_id=str(change.get("market") or market),
+                    receive_id=f"{received.local_monotonic_ns}:price_change:{change_asset_id}:{change_index}",
                 )
             )
         return output
@@ -136,6 +151,8 @@ def parse_polymarket_message(
                 ask=None,
                 bid_size=None,
                 ask_size=None,
+                market_id=market,
+                receive_id=f"{received.local_monotonic_ns}:last_trade:{asset_id}",
             )
         ]
     if event_type == "best_bid_ask":
@@ -148,12 +165,14 @@ def parse_polymarket_message(
                 received=received,
                 source_event_ts=timestamp,
                 source_publish_ts=None,
-                sequence_id=None,
+                sequence_id=f"{timestamp}:{asset_id}:{_stable_payload_id(payload)}",
                 price=None,
                 bid=_decimal(payload.get("best_bid")),
                 ask=_decimal(payload.get("best_ask")),
                 bid_size=None,
                 ask_size=None,
+                market_id=market,
+                receive_id=f"{received.local_monotonic_ns}:best_bid_ask:{asset_id}",
             )
         ]
     if event_type in {"tick_size_change", "market_resolved", "new_market"}:
@@ -166,12 +185,14 @@ def parse_polymarket_message(
                 received=received,
                 source_event_ts=timestamp,
                 source_publish_ts=None,
-                sequence_id=None,
+                sequence_id=f"{timestamp}:{asset_id or market}:{event_type}:{_stable_payload_id(payload)}",
                 price=None,
                 bid=None,
                 ask=None,
                 bid_size=None,
                 ask_size=None,
+                market_id=market,
+                receive_id=f"{received.local_monotonic_ns}:{event_type}:{asset_id or market}",
             )
         ]
     return []
@@ -252,3 +273,24 @@ async def discover_btc_5m_markets(
             if identity is not None:
                 identities.append(identity)
     return identities
+
+
+def active_token_ids(
+    markets: list[MarketIdentity] | tuple[MarketIdentity, ...],
+    *,
+    now: datetime,
+    grace_seconds: int = 60,
+) -> list[str]:
+    reference = now if now.tzinfo is not None else now.replace(tzinfo=timezone.utc)
+    now_us = int(reference.astimezone(timezone.utc).timestamp() * 1_000_000)
+    cutoff_us = now_us - max(0, grace_seconds) * 1_000_000
+    tokens: list[str] = []
+    seen: set[str] = set()
+    for market in sorted(markets, key=lambda item: item.window_start_ts):
+        if market.window_end_ts < cutoff_us:
+            continue
+        for token_id in (market.up_token_id, market.down_token_id):
+            if token_id and token_id not in seen:
+                seen.add(token_id)
+                tokens.append(token_id)
+    return tokens

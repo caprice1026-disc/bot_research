@@ -10,6 +10,7 @@ from btc5m.clock import ReceiveStamp, capture_receive_stamp
 MessageStream = AsyncIterator[Mapping[str, Any]]
 Connect = Callable[[], MessageStream | Awaitable[MessageStream]]
 MessageHandler = Callable[[Mapping[str, Any], ReceiveStamp], Awaitable[None]]
+ErrorHandler = Callable[[str, Exception], None]
 
 
 async def reconnect_forever(
@@ -20,8 +21,8 @@ async def reconnect_forever(
     *,
     reconnect_base_seconds: float = 1.0,
     reconnect_max_seconds: float = 30.0,
+    on_error: ErrorHandler | None = None,
 ) -> None:
-    del source
     delay = max(0.0, reconnect_base_seconds)
     while not stop.is_set():
         try:
@@ -35,9 +36,11 @@ async def reconnect_forever(
             raise ConnectionError("stream ended without stop signal")
         except asyncio.CancelledError:
             raise
-        except Exception:
+        except Exception as exc:
             if stop.is_set():
                 return
+            if on_error is not None:
+                on_error(source, exc)
             if delay > 0:
                 try:
                     await asyncio.wait_for(stop.wait(), timeout=delay)

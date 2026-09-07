@@ -20,7 +20,7 @@ class QualityResult:
 
     @property
     def valid(self) -> bool:
-        return not any(
+        return self.total_rows > 0 and not any(
             (
                 self.missing_local_receive_count,
                 self.duplicate_sequence_count,
@@ -63,7 +63,7 @@ def validate_events(rows: Iterable[Mapping[str, object]]) -> QualityResult:
     crossed_book = 0
     parse_errors = 0
     errors: list[str] = []
-    seen_sequences: set[tuple[str, str]] = set()
+    seen_sequences: set[tuple[str, str, str, str, str]] = set()
     previous_timestamps: dict[str, int] = {}
 
     for index, row in enumerate(rows):
@@ -89,10 +89,19 @@ def validate_events(rows: Iterable[Mapping[str, object]]) -> QualityResult:
 
         sequence_id = row.get("sequence_id")
         if sequence_id not in (None, ""):
-            key = (source, str(sequence_id))
+            key = (
+                source,
+                str(row.get("symbol") or ""),
+                str(row.get("market_id") or ""),
+                str(row.get("event_type") or ""),
+                str(sequence_id),
+            )
             if key in seen_sequences:
                 duplicate_sequence += 1
-                errors.append(f"row {index}: duplicate sequence {source}/{sequence_id}")
+                errors.append(
+                    f"row {index}: duplicate sequence "
+                    f"{source}/{row.get('symbol') or ''}/{row.get('event_type') or ''}/{sequence_id}"
+                )
             seen_sequences.add(key)
 
         bid = _decimal(row.get("bid"))

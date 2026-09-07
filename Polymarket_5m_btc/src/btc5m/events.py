@@ -80,6 +80,8 @@ class RawEvent:
     bid_size: Decimal | None
     ask_size: Decimal | None
     raw_payload: Mapping[str, Any]
+    market_id: str | None = None
+    receive_id: str | None = None
 
     @classmethod
     def from_message(
@@ -98,11 +100,17 @@ class RawEvent:
         ask: Decimal | None,
         bid_size: Decimal | None,
         ask_size: Decimal | None,
+        market_id: str | None = None,
+        receive_id: str | None = None,
     ) -> RawEvent:
         if not source:
             raise ValueError("source must be non-empty")
         if not event_type:
             raise ValueError("event_type must be non-empty")
+        resolved_receive_id = receive_id or (
+            f"{source}:{event_type}:{symbol}:{sequence_id or ''}:"
+            f"{received.local_monotonic_ns}"
+        )
         return cls(
             source=source,
             symbol=symbol,
@@ -118,6 +126,8 @@ class RawEvent:
             bid_size=bid_size,
             ask_size=ask_size,
             raw_payload=dict(payload),
+            market_id=market_id,
+            receive_id=resolved_receive_id,
         )
 
     @classmethod
@@ -136,6 +146,8 @@ class RawEvent:
         ask: Decimal | None = None,
         bid_size: Decimal | None = None,
         ask_size: Decimal | None = None,
+        market_id: str | None = None,
+        receive_id: str | None = None,
     ) -> RawEvent:
         """Build an event without inventing a local receive timestamp.
 
@@ -162,12 +174,15 @@ class RawEvent:
             bid_size=bid_size,
             ask_size=ask_size,
             raw_payload=dict(payload),
+            market_id=market_id,
+            receive_id=receive_id,
         )
 
     def to_row(self) -> dict[str, object]:
         return {
             "source": self.source,
             "symbol": self.symbol,
+            "market_id": self.market_id,
             "event_type": self.event_type,
             "source_event_ts": self.source_event_ts,
             "source_publish_ts": self.source_publish_ts,
@@ -183,6 +198,7 @@ class RawEvent:
             "ask": _decimal_text(self.ask),
             "bid_size": _decimal_text(self.bid_size),
             "ask_size": _decimal_text(self.ask_size),
+            "receive_id": self.receive_id,
             "raw_payload": json.dumps(
                 self.raw_payload,
                 ensure_ascii=False,

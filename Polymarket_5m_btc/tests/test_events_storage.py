@@ -42,6 +42,47 @@ def test_raw_event_serializes_decimal_and_raw_payload() -> None:
     assert row["local_receive_ts"] == "2026-09-07T00:00:00.000000Z"
 
 
+def test_source_sequence_is_stable_while_receive_id_changes_on_replay() -> None:
+    first = RawEvent.from_message(
+        source="polymarket",
+        symbol="up-token",
+        event_type="book",
+        payload={"hash": "book-hash"},
+        received=ReceiveStamp(
+            datetime(2026, 9, 7, 0, 0, tzinfo=timezone.utc), 100
+        ),
+        source_event_ts=1_700_000_000_000,
+        source_publish_ts=None,
+        sequence_id="source-sequence",
+        price=None,
+        bid=Decimal("0.59"),
+        ask=Decimal("0.61"),
+        bid_size=None,
+        ask_size=None,
+    )
+    replay = RawEvent.from_message(
+        source="polymarket",
+        symbol="up-token",
+        event_type="book",
+        payload={"hash": "book-hash"},
+        received=ReceiveStamp(
+            datetime(2026, 9, 7, 0, 0, 0, 1, tzinfo=timezone.utc), 200
+        ),
+        source_event_ts=1_700_000_000_000,
+        source_publish_ts=None,
+        sequence_id="source-sequence",
+        price=None,
+        bid=Decimal("0.59"),
+        ask=Decimal("0.61"),
+        bid_size=None,
+        ask_size=None,
+    )
+
+    assert first.sequence_id == replay.sequence_id
+    assert first.receive_id != replay.receive_id
+    assert first.to_row()["receive_id"] != replay.to_row()["receive_id"]
+
+
 def test_partition_path_and_append_jsonl(tmp_path) -> None:
     received_at = datetime(2026, 9, 7, 3, 4, tzinfo=timezone.utc)
     path = partition_path(tmp_path, "coinbase", received_at)

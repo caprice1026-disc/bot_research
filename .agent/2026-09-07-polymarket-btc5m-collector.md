@@ -32,6 +32,7 @@
 - [x] PMXT coverage と Binance historical row normalization を実装する。大量のBinance archive downloadは明示的な次段階に残す。
 - [x] receive-time lead-lag 分析、fixture report、README、CLI を完成させる。
 - [x] default tests、fixture E2E、public smoke を検証した。Git pushのみ残る。
+- [x] (2026-09-07) 段階Aとして、系列識別、Polymarket quote意味論、Binance bookTicker、horizon coverage、重複識別、収集manifest、rolling subscription、market master永続化を修復した。
 
 ## Surprises & Discoveries
 
@@ -51,6 +52,12 @@
   対応: source timestamp・asset・change index・local monotonic receiveを複合し、raw payloadのhashは保持した。
 - 観測: 5秒smokeではChainlink更新がない場合がある。
   対応: collectorは `no_events` をmanifestに残し、別のbounded 10秒smokeで14行を確認した。欠測を0で埋めない。
+- 観測: Binance Spot combined bookTickerの公式payloadは `u/s/b/B/a/A` で、tradeのような `e` は含まれない。
+  対応: stream名とbookTickerの必須fieldで判定し、5秒smokeで `agg_trade=68`、`book_ticker=761` を確認した。
+- 観測: Polymarketの5秒smokeではmarketイベント565行を保存できたが、Chainlink更新は無かった。
+  対応: manifestを `partial` とし、Chainlink単独10秒smokeで30秒/60秒TWAPを各6行確認した。短時間の欠測を成功データとして扱わない。
+- 観測: 同じPolymarket payloadを異なるlocal receiveで再受信すると、source sequenceは同じであるべきだが、受信IDは異なるべきである。
+  対応: `sequence_id`からlocal monotonic値を外し、`receive_id`を別列として保存し、quality duplicate検査はchannel identityを含めた。
 
 ## Decision Log
 
@@ -69,10 +76,17 @@
 - Decision: 初期成果物は lead-lag とデータ品質までにする。
   Rationale: fair probability、execution cost、paper/live trading は別の検証段階であり、最初から混ぜると alpha と execution bug を分離できないため。
   Date/Author: 2026-09-07 / Codex
+- Decision: Polymarket market subscriptionは30秒ごとに再発見・再購読し、過去60秒以内に終了した市場を猶予付きで残す。
+  Rationale: 5分市場の切替を取りこぼさず、SDK subscriptionの動的追加APIに依存せずに実装できるため。再購読時のreplay候補はstable source sequenceで検査する。
+  Date/Author: 2026-09-07 / Codex
+- Decision: collectorのmanifestは今回runで書いたpathとsource別件数だけを成功判定に使う。
+  Rationale: 既存output-rootのファイルを見て空runを成功扱いすることを防ぎ、source欠落・再接続エラーを `partial` / `error` として残すため。
+  Date/Author: 2026-09-07 / Codex
 
 ## Outcomes & Retrospective
 
-fixture で staging JSONL → quality validation → ZSTD Parquet → exploratory lead-lag report を再現した。公開smokeでは、Binance 33、Coinbase 129、Hyperliquid 57、Polymarket 3,605、Chainlink 14行を保存でき、sequence修正後の品質検査は全てvalidだった。PMXTの3時間coverageは1時間present / 2時間missingで、ファイル本体は取得していない。実受信データの短時間lead-lagはexternal shock 0件のため `insufficient_data` であり、これはαやPnLの結果ではない。fair probability、execution simulator、paper/live traderはこの初期collector milestoneの範囲外である。
+fixture で staging JSONL → quality validation → ZSTD Parquet → exploratory lead-lag report を再現した。公開smokeでは、Binance 33、Coinbase 129、Hyperliquid 57、Polymarket 3,605、Chainlink 14行を保存できた。ただし段階Aレビューで、Binance bookTickerのparserが公式Spot payloadを取りこぼすこと、Polymarketの系列混在とprice_change意味論、受信ごとのsequence_id生成、長時間の市場切替未対応、既存ファイルを含むmanifest判定を確認した。したがって、以前の「品質検査は全てvalid」という記録は構造テストの証拠に限られ、実運用データ品質の証明とは扱わない。PMXTの3時間coverageは1時間present / 2時間missingで、ファイル本体は取得していない。実受信データの短時間lead-lagはexternal shock 0件のため `insufficient_data` であり、これはαやPnLの結果ではない。fair probability、execution simulator、paper/live traderはこの初期collector milestoneの範囲外である。
+fixture で staging JSONL → quality validation → ZSTD Parquet → exploratory lead-lag report を再現した。公開smokeでは、Binance 33、Coinbase 129、Hyperliquid 57、Polymarket 3,605、Chainlink 14行を保存できた。ただし段階Aレビューで、Binance bookTickerのparserが公式Spot payloadを取りこぼすこと、Polymarketの系列混在とprice_change意味論、受信ごとのsequence_id生成、長時間の市場切替未対応、既存ファイルを含むmanifest判定を確認した。したがって、以前の「品質検査は全てvalid」という記録は構造テストの証拠に限られ、実運用データ品質の証明とは扱わない。段階Aでは、現行run単位のmanifest、market-aware lead-lag、horizon coverage、stable sequence / receive id、rolling subscription、restart-safe market masterを追加した。Binance 5秒smokeは829行（agg_trade 68 / book_ticker 761）、Polymarket 5秒smokeは565行でChainlink欠測のためpartial、Chainlink 10秒smokeは30s/60s各6行だった。PMXTの3時間coverageは1時間present / 2時間missingで、ファイル本体は取得していない。実受信データの短時間lead-lagはexternal shock 0件のため `insufficient_data` であり、これはαやPnLの結果ではない。fair probability、execution simulator、paper/live traderはこの初期collector milestoneの範囲外である。
 
 ## Context and Orientation
 
@@ -329,12 +343,44 @@ Files:
 - Modify: .agent/2026-09-07-polymarket-btc5m-collector.md
 - Stage only files created or modified by this project; do not stage existing unrelated changes.
 
-- [ ] Step 1: Run the complete verification commands from the repository root and capture exit codes.
-- [ ] Step 2: Run git status --short and inspect every staged path.
-- [ ] Step 3: Commit with a Conventional Commit subject such as feat: add Polymarket BTC 5m research collectors.
-- [ ] Step 4: Push explicitly with git push origin main.
-- [ ] Step 5: Run git ls-remote origin refs/heads/main and confirm it matches the pushed commit.
-- [ ] Step 6: Re-run git status --short --branch and report unrelated pre-existing changes separately.
+- [x] (2026-09-07) Step 1: Run the initial collector milestone verification and push it to `main`.
+- [x] (2026-09-07) Step 2: Confirm the initial push target and remote SHA before starting Stage A.
+- [ ] Step 3: Commit the Stage A changes with a Conventional Commit subject.
+- [ ] Step 4: Push Stage A explicitly with `git push origin main`.
+- [ ] Step 5: Run `git ls-remote origin refs/heads/main` and confirm it matches the Stage A commit.
+- [ ] Step 6: Re-run `git status --short --branch` and report the final worktree state.
+
+### Task 8: 段階Aの計測・分析正確性修復
+
+Files:
+
+- Modify: Polymarket_5m_btc/src/btc5m/events.py
+- Modify: Polymarket_5m_btc/src/btc5m/storage.py
+- Modify: Polymarket_5m_btc/src/btc5m/quality.py
+- Modify: Polymarket_5m_btc/src/btc5m/collectors/binance.py
+- Modify: Polymarket_5m_btc/src/btc5m/collectors/polymarket.py
+- Modify: Polymarket_5m_btc/src/btc5m/collectors/common.py
+- Modify: Polymarket_5m_btc/src/btc5m/collectors/live.py
+- Modify: Polymarket_5m_btc/src/btc5m/market_master.py
+- Modify: Polymarket_5m_btc/src/btc5m/research/lead_lag.py
+- Modify: Polymarket_5m_btc/tests/test_events_storage.py
+- Modify: Polymarket_5m_btc/tests/test_quality.py
+- Modify: Polymarket_5m_btc/tests/test_collectors.py
+- Modify: Polymarket_5m_btc/tests/test_live.py
+- Modify: Polymarket_5m_btc/tests/test_lead_lag.py
+- Create: Polymarket_5m_btc/tests/test_market_master.py
+
+The canonical event adds a stable source sequence and a distinct local receive id; the latter changes on replay and must never be used as a source duplicate key. Polymarket events retain market identity and token identity, while lead-lag groups observations by market/token series. `price_change` keeps its changed level only in the raw payload and contributes to a probability series only when its best bid and ask are present. Binance recognizes both raw and combined official bookTicker payloads, whose schema has no `e` event field.
+
+The live collector refreshes market discovery on a bounded interval, preserves previously discovered market rows by upsert, and reports per-source counts and errors from the current run only. An empty or errored source is not reported as `ok`. Event-study horizons require observations through the requested deadline; an observation from the tail of a truncated file is not reused for a later horizon. The quality validator marks empty input invalid.
+
+- [x] (2026-09-07) Step 1: Add failing tests for official Binance bookTicker parsing, stable-vs-receive IDs, market/token-separated lead-lag, deep price-change exclusion, horizon truncation, empty quality, market-master upsert, and rolling token selection.
+- [x] (2026-09-07) Step 2: Run the focused tests and confirm each failure was caused by the current behavior.
+- [x] (2026-09-07) Step 3: Add market identity and receive-id fields, stable Polymarket source IDs, and Binance payload routing.
+- [x] (2026-09-07) Step 4: Make lead-lag series market-aware and horizon-coverage-aware; return null means when no sample exists.
+- [x] (2026-09-07) Step 5: Add per-run collector counters/errors, rolling Polymarket discovery, and restart-safe market-master merge.
+- [x] (2026-09-07) Step 6: Run focused tests, then the full suite, ruff, pyright, fixture, public smoke, and diff checks.
+- [ ] Step 7: Commit the Stage A changes, push `main`, and verify the remote SHA.
 
 ## Validation and Acceptance
 

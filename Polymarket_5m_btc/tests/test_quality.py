@@ -35,3 +35,33 @@ def test_quality_reports_missing_receive_timestamp() -> None:
 
     assert result.missing_local_receive_count == 1
     assert not result.valid
+
+
+def test_empty_quality_input_is_not_valid() -> None:
+    result = validate_events([])
+
+    assert result.total_rows == 0
+    assert not result.valid
+
+
+def test_quality_does_not_collide_sequences_across_channels() -> None:
+    result = validate_events(
+        [
+            {
+                "source": "binance",
+                "symbol": "BTCUSDT",
+                "event_type": "agg_trade",
+                "sequence_id": "42",
+                "local_receive_ts": "2026-09-07T00:00:00.000000Z",
+            },
+            {
+                "source": "binance",
+                "symbol": "BTCUSDT",
+                "event_type": "book_ticker",
+                "sequence_id": "42",
+                "local_receive_ts": "2026-09-07T00:00:00.100000Z",
+            },
+        ]
+    )
+
+    assert result.duplicate_sequence_count == 0

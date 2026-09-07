@@ -41,6 +41,8 @@ def collect(
     selected = parse_sources(sources)
     manifest = asyncio.run(collect_public(selected, output_root, duration_seconds))
     typer.echo(json.dumps({**manifest, "output": str(output_root)}))
+    if manifest["status"] != "ok":
+        raise typer.Exit(code=1)
 
 
 @app.command()

@@ -3,7 +3,14 @@ from __future__ import annotations
 import asyncio
 import json
 import time
-from collections.abc import AsyncIterator, Awaitable, Callable, Iterable, Mapping
+from collections.abc import (
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Iterable,
+    Mapping,
+    MutableMapping,
+)
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -15,6 +22,8 @@ from btc5m.collectors.coinbase import parse_coinbase_message
 from btc5m.collectors.common import reconnect_forever
 from btc5m.collectors.hyperliquid import parse_hyperliquid_message
 from btc5m.collectors.polymarket import (
+    MarketIdentity,
+    active_token_ids,
     build_market_specs,
     discover_btc_5m_markets,
     parse_polymarket_message,
@@ -67,13 +76,24 @@ async def websocket_messages(
 
 
 async def _write_events(output_root: Path, events: Iterable[RawEvent]) -> None:
+    await _write_events_with_metrics(output_root, events)
+
+
+async def _write_events_with_metrics(
+    output_root: Path,
+    events: Iterable[RawEvent],
+    event_counts: MutableMapping[str, int] | None = None,
+    event_paths: set[Path] | None = None,
+) -> None:
     for event in events:
         if event.local_receive_ts is None:
             raise ValueError("live collector event is missing local_receive_ts")
-        append_jsonl(
-            partition_path(output_root, event.source, event.local_receive_ts),
-            event.to_row(),
-        )
+        path = partition_path(output_root, event.source, event.local_receive_ts)
+        append_jsonl(path, event.to_row())
+        if event_counts is not None:
+            event_counts[event.source] = event_counts.get(event.source, 0) + 1
+        if event_paths is not None:
+            event_paths.add(path)
 
 
 async def run_external_source(
@@ -84,15 +104,32 @@ async def run_external_source(
     output_root: Path,
     stop: asyncio.Event,
     subscribe_messages: Iterable[Mapping[str, object]] = (),
+    event_counts: MutableMapping[str, int] | None = None,
+    event_paths: set[Path] | None = None,
+    error_sink: Callable[[str], None] | None = None,
 ) -> None:
     async def connect() -> AsyncIterator[Mapping[str, Any]]:
         async for message in websocket_messages(uri, subscribe_messages):
             yield message
 
     async def handle(message: Mapping[str, Any], received: ReceiveStamp) -> None:
-        await _write_events(output_root, parser(message, received))
+        await _write_events_with_metrics(
+            output_root, parser(message, received), event_counts, event_paths
+        )
 
-    await reconnect_forever(source, connect, handle, stop)
+    await reconnect_forever(
+        source,
+        connect,
+        handle,
+        stop,
+        on_error=(
+            None
+            if error_sink is None
+            else lambda error_source, error: error_sink(
+                f"{error_source}: {type(error).__name__}: {error}"
+            )
+        ),
+    )
 
 
 def _model_mapping(event: object) -> Mapping[str, Any]:
@@ -113,48 +150,102 @@ async def run_polymarket_source(
     *,
     include_market: bool = True,
     include_chainlink: bool = True,
+    event_counts: MutableMapping[str, int] | None = None,
+    event_paths: set[Path] | None = None,
+    error_sink: Callable[[str], None] | None = None,
+    market_refresh_seconds: float = 30.0,
+    market_grace_seconds: int = 60,
 ) -> None:
     from polymarket import AsyncPublicClient
 
     async with AsyncPublicClient() as client:
-        token_ids: list[str] = []
-        if include_market:
-            markets = await discover_btc_5m_markets(client)
-            write_market_master(
-                output_root / "market_master" / "markets.parquet", markets
-            )
-            token_ids = [
-                token_id
-                for market in markets
-                for token_id in (market.up_token_id, market.down_token_id)
-            ]
-        specs: list[Any] = []
-        if include_market and token_ids:
-            specs = list(build_market_specs(token_ids)) + specs
-        if include_chainlink:
-            specs.extend(build_chainlink_specs())
-        if not specs:
-            return
-        async with await client.subscribe(specs) as stream:
-            async for event in stream:
-                if stop.is_set():
-                    return
-                received = ReceiveStamp(
-                    datetime.now(timezone.utc),
-                    time.monotonic_ns(),
-                )
-                mapping = _model_mapping(event)
-                if mapping.get("topic") == "prices.crypto.chainlink.twap":
-                    body = mapping.get("payload")
-                    window = (
-                        int(body.get("window_seconds", 60))
-                        if isinstance(body, Mapping)
-                        else 60
+        known_markets: dict[str, MarketIdentity] = {}
+        refresh_seconds = max(0.1, market_refresh_seconds)
+        while not stop.is_set():
+            try:
+                token_ids: list[str] = []
+                if include_market:
+                    discovered = await discover_btc_5m_markets(client)
+                    known_markets.update(
+                        {market.condition_id: market for market in discovered}
                     )
-                    events = parse_chainlink_message(mapping, received, window)
-                else:
-                    events = parse_polymarket_message(mapping, received)
-                await _write_events(output_root, events)
+                    write_market_master(
+                        output_root / "market_master" / "markets.parquet",
+                        known_markets.values(),
+                    )
+                    token_ids = active_token_ids(
+                        tuple(known_markets.values()),
+                        now=datetime.now(timezone.utc),
+                        grace_seconds=market_grace_seconds,
+                    )
+                specs: list[Any] = []
+                if include_market and token_ids:
+                    specs.extend(build_market_specs(token_ids))
+                if include_chainlink:
+                    specs.extend(build_chainlink_specs())
+                if not specs:
+                    try:
+                        await asyncio.wait_for(stop.wait(), timeout=refresh_seconds)
+                    except TimeoutError:
+                        pass
+                    continue
+                async with await client.subscribe(specs) as stream:
+                    iterator = stream.__aiter__()
+                    refresh_deadline = time.monotonic() + refresh_seconds
+                    while not stop.is_set():
+                        timeout = refresh_deadline - time.monotonic()
+                        if timeout <= 0:
+                            break
+                        try:
+                            event = await asyncio.wait_for(iterator.__anext__(), timeout)
+                        except TimeoutError:
+                            break
+                        except StopAsyncIteration:
+                            if error_sink is not None and not stop.is_set():
+                                error_sink(
+                                    "polymarket/chainlink: stream ended before refresh"
+                                )
+                            break
+                        received = ReceiveStamp(
+                            datetime.now(timezone.utc),
+                            time.monotonic_ns(),
+                        )
+                        mapping = _model_mapping(event)
+                        if mapping.get("topic") == "prices.crypto.chainlink.twap":
+                            body = mapping.get("payload")
+                            window = (
+                                int(body.get("window_seconds", 60))
+                                if isinstance(body, Mapping)
+                                else 60
+                            )
+                            events = parse_chainlink_message(mapping, received, window)
+                        else:
+                            events = parse_polymarket_message(mapping, received)
+                        await _write_events_with_metrics(
+                            output_root, events, event_counts, event_paths
+                        )
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:
+                if error_sink is not None:
+                    error_sink(f"polymarket/chainlink: {type(exc).__name__}: {exc}")
+                try:
+                    await asyncio.wait_for(stop.wait(), timeout=refresh_seconds)
+                except TimeoutError:
+                    pass
+
+
+def collection_status(
+    sources: tuple[str, ...],
+    event_counts: Mapping[str, int],
+    errors: Iterable[str],
+) -> str:
+    error_list = tuple(errors)
+    if not any(event_counts.get(source, 0) > 0 for source in sources):
+        return "error" if error_list else "no_events"
+    if error_list or any(event_counts.get(source, 0) <= 0 for source in sources):
+        return "partial"
+    return "ok"
 
 
 async def collect_public(
@@ -167,6 +258,12 @@ async def collect_public(
     stop = asyncio.Event()
     tasks: list[asyncio.Task[None]] = []
     errors: list[str] = []
+    event_counts: dict[str, int] = {}
+    event_paths: set[Path] = set()
+
+    def record_error(message: str) -> None:
+        if len(errors) < 100:
+            errors.append(message)
 
     async def guarded(name: str, operation: Awaitable[None]) -> None:
         try:
@@ -174,7 +271,7 @@ async def collect_public(
         except asyncio.CancelledError:
             raise
         except Exception as exc:
-            errors.append(f"{name}: {type(exc).__name__}: {exc}")
+            record_error(f"{name}: {type(exc).__name__}: {exc}")
 
     if "binance" in sources:
         tasks.append(
@@ -187,6 +284,9 @@ async def collect_public(
                         parser=parse_binance_message,
                         output_root=output_root,
                         stop=stop,
+                        event_counts=event_counts,
+                        event_paths=event_paths,
+                        error_sink=record_error,
                     ),
                 )
             )
@@ -203,6 +303,9 @@ async def collect_public(
                         output_root=output_root,
                         stop=stop,
                         subscribe_messages=coinbase_subscribe_payloads(["BTC-USD"]),
+                        event_counts=event_counts,
+                        event_paths=event_paths,
+                        error_sink=record_error,
                     ),
                 )
             )
@@ -219,6 +322,9 @@ async def collect_public(
                         output_root=output_root,
                         stop=stop,
                         subscribe_messages=hyperliquid_subscribe_payloads("BTC"),
+                        event_counts=event_counts,
+                        event_paths=event_paths,
+                        error_sink=record_error,
                     ),
                 )
             )
@@ -233,6 +339,9 @@ async def collect_public(
                         stop,
                         include_market="polymarket" in sources,
                         include_chainlink="chainlink" in sources,
+                        event_counts=event_counts,
+                        event_paths=event_paths,
+                        error_sink=record_error,
                     ),
                 )
             )
@@ -248,14 +357,17 @@ async def collect_public(
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
 
-    event_files = (
-        list(output_root.rglob("events.jsonl")) if output_root.exists() else []
-    )
+    event_files = sorted(event_paths)
+    missing_sources = [
+        source for source in sources if event_counts.get(source, 0) <= 0
+    ]
     manifest: dict[str, object] = {
-        "status": "ok" if event_files else "no_events",
+        "status": collection_status(sources, event_counts, errors),
         "sources": list(sources),
         "duration_seconds": duration_seconds,
         "event_files": [str(path) for path in event_files],
+        "event_counts": dict(sorted(event_counts.items())),
+        "missing_sources": missing_sources,
         "errors": errors,
     }
     write_json(output_root / "collection_manifest.json", manifest)

@@ -20,16 +20,22 @@ def parse_binance_message(
     payload: Mapping[str, Any],
     received: ReceiveStamp,
 ) -> list[RawEvent]:
+    stream_name = str(payload.get("stream") or "").lower()
     message = _unwrap(payload)
     event_name = message.get("e")
-    symbol = str(message.get("s") or "BTCUSDT")
+    if event_name is None and (
+        stream_name.endswith("@bookticker")
+        or all(field in message for field in ("u", "s", "b", "B", "a", "A"))
+    ):
+        event_name = "bookTicker"
+    symbol = str(message.get("s") or stream_name.split("@", 1)[0].upper() or "BTCUSDT")
     if event_name == "aggTrade":
         return [
             RawEvent.from_message(
                 source="binance",
                 symbol=symbol,
                 event_type="agg_trade",
-                payload=message,
+                payload=payload,
                 received=received,
                 source_event_ts=message.get("T"),
                 source_publish_ts=message.get("E"),
@@ -47,7 +53,7 @@ def parse_binance_message(
                 source="binance",
                 symbol=symbol,
                 event_type="book_ticker",
-                payload=message,
+                payload=payload,
                 received=received,
                 source_event_ts=message.get("E"),
                 source_publish_ts=None,

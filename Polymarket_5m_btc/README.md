@@ -13,6 +13,12 @@ From this directory:
 
 The project intentionally uses `pip` and requirements files; no `uv.lock` is required.
 
+Every live row retains `sequence_id` as the source-side duplicate candidate and
+`receive_id` as a local ingestion identifier. They are intentionally different:
+a replay should have a new `receive_id` while keeping the same source sequence.
+Polymarket rows also retain `market_id` and token `symbol`, so UP and DOWN
+observations are never treated as one price series.
+
 ## Checks
 
     .venv\Scripts\python.exe -m pytest -q
@@ -31,6 +37,13 @@ The fixture checks staging JSONL, ZSTD Parquet compaction, quality validation, a
 Collectors are bounded by duration and use public feeds only. `chainlink` is collected through the Polymarket public SDK subscription; `polymarket` collects the discovered BTC 5m token books.
 
     .venv\Scripts\python.exe -m btc5m collect --sources all --duration-seconds 60 --output-root .\data\raw_staging
+
+The Polymarket/Chainlink collector refreshes market discovery periodically and
+re-subscribes with current and newly discovered five-minute token IDs. Its
+`collection_manifest.json` is scoped to the current run: `ok` requires events
+from every requested source and no recorded errors; `partial`, `no_events`, or
+`error` must not be used as research success. The `collect` command also exits
+with code 1 for those non-`ok` states.
 
 If only external venues are needed:
 

@@ -11,11 +11,14 @@ from btc5m.collectors.coinbase import parse_coinbase_message
 from btc5m.collectors.common import reconnect_forever
 from btc5m.collectors.hyperliquid import parse_hyperliquid_message
 from btc5m.collectors.polymarket import (
+    MarketIdentity,
+    active_token_ids,
     build_market_specs,
     discover_btc_5m_markets,
     market_identity_from_mapping,
     parse_polymarket_message,
 )
+from btc5m.quality import validate_events
 
 RECEIVED = ReceiveStamp(datetime(2026, 9, 7, tzinfo=timezone.utc), 10)
 
@@ -40,6 +43,48 @@ def test_binance_aggtrade_parser_preserves_trade_fields() -> None:
     assert events[0].price == Decimal("100.25")
     assert events[0].source_event_ts == 1_700_000_000_120_000
     assert events[0].sequence_id == "42"
+
+
+def test_binance_combined_spot_bookticker_payload_is_saved() -> None:
+    events = parse_binance_message(
+        {
+            "stream": "btcusdt@bookTicker",
+            "data": {
+                "u": 43,
+                "s": "BTCUSDT",
+                "b": "100.20",
+                "B": "1.5",
+                "a": "100.30",
+                "A": "2.5",
+            },
+        },
+        RECEIVED,
+    )
+
+    assert len(events) == 1
+    assert events[0].event_type == "book_ticker"
+    assert events[0].source_event_ts is None
+    assert events[0].bid == Decimal("100.20")
+    assert events[0].ask == Decimal("100.30")
+    assert events[0].sequence_id == "43"
+
+
+def test_binance_raw_spot_bookticker_payload_is_saved() -> None:
+    events = parse_binance_message(
+        {
+            "u": 44,
+            "s": "BTCUSDT",
+            "b": "100.20",
+            "B": "1.5",
+            "a": "100.30",
+            "A": "2.5",
+        },
+        RECEIVED,
+    )
+
+    assert len(events) == 1
+    assert events[0].event_type == "book_ticker"
+    assert events[0].sequence_id == "44"
 
 
 def test_coinbase_ticker_parser_reads_nested_update() -> None:
@@ -135,6 +180,52 @@ def test_polymarket_parser_unwraps_official_sdk_payload() -> None:
     assert events[0].bid == Decimal("0.60")
 
 
+def test_polymarket_replay_keeps_source_sequence_but_changes_receive_id() -> None:
+    payload = {
+        "event_type": "book",
+        "asset_id": "up-token",
+        "market": "condition",
+        "timestamp": "1700000000123",
+        "hash": "same-book",
+        "bids": [{"price": "0.59", "size": "30"}],
+        "asks": [{"price": "0.61", "size": "25"}],
+    }
+    first = parse_polymarket_message(payload, ReceiveStamp(RECEIVED.local_receive_ts, 10))[0]
+    replay = parse_polymarket_message(payload, ReceiveStamp(RECEIVED.local_receive_ts, 20))[0]
+
+    assert first.sequence_id == replay.sequence_id
+    assert first.receive_id != replay.receive_id
+    assert first.market_id == "condition"
+    quality = validate_events([first.to_row(), replay.to_row()])
+    assert quality.duplicate_sequence_count == 1
+
+
+def test_polymarket_price_change_does_not_treat_changed_level_as_mid() -> None:
+    events = parse_polymarket_message(
+        {
+            "event_type": "price_change",
+            "asset_id": "up-token",
+            "market": "condition",
+            "timestamp": 1_700_000_000_000,
+            "price_changes": [
+                {
+                    "asset_id": "up-token",
+                    "hash": "change",
+                    "price": "0.01",
+                    "best_bid": "0.59",
+                    "best_ask": "0.61",
+                }
+            ],
+        },
+        RECEIVED,
+    )
+
+    assert len(events) == 1
+    assert events[0].price is None
+    assert events[0].bid == Decimal("0.59")
+    assert events[0].ask == Decimal("0.61")
+
+
 def test_chainlink_parser_separates_observed_and_publish_times() -> None:
     events = parse_chainlink_message(
         {
@@ -193,6 +284,33 @@ def test_reconnect_runner_retries_until_stop() -> None:
 
     assert calls == 2
     assert [item[0] for item in received] == ["1", "2"]
+
+
+def test_reconnect_runner_reports_stream_errors() -> None:
+    stop = asyncio.Event()
+    errors: list[tuple[str, str]] = []
+
+    async def broken_stream():
+        raise ConnectionError("simulated failure")
+        yield {}
+
+    def on_error(source: str, error: Exception) -> None:
+        errors.append((source, str(error)))
+        stop.set()
+
+    asyncio.run(
+        reconnect_forever(
+            "binance",
+            lambda: broken_stream(),
+            lambda message, stamp: asyncio.sleep(0),
+            stop,
+            reconnect_base_seconds=0,
+            reconnect_max_seconds=0,
+            on_error=on_error,
+        )
+    )
+
+    assert errors == [("binance", "simulated failure")]
 
 
 def test_market_identity_extracts_five_minute_window_and_tokens() -> None:
@@ -270,3 +388,20 @@ def test_polymarket_price_changes_use_composite_sequence_ids() -> None:
     )
 
     assert len({event.sequence_id for event in events}) == 2
+
+
+def test_active_token_ids_include_next_market_and_keep_recent_market() -> None:
+    now = datetime(2026, 9, 7, tzinfo=timezone.utc)
+    now_us = int(now.timestamp() * 1_000_000)
+    markets = [
+        MarketIdentity("expired", "c0", "u0", "d0", now_us - 400_000_000, now_us - 100_000_000),
+        MarketIdentity("current", "c1", "u1", "d1", now_us - 100_000_000, now_us + 200_000_000),
+        MarketIdentity("next", "c2", "u2", "d2", now_us + 200_000_000, now_us + 500_000_000),
+    ]
+
+    assert active_token_ids(markets, now=now, grace_seconds=60) == [
+        "u1",
+        "d1",
+        "u2",
+        "d2",
+    ]

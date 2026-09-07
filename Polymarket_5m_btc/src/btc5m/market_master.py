@@ -19,8 +19,27 @@ def market_identity_row(identity: MarketIdentity) -> dict[str, object]:
     }
 
 
+def _merge_rows(
+    existing: Iterable[dict[str, object]],
+    incoming: Iterable[dict[str, object]],
+) -> list[dict[str, object]]:
+    merged: dict[str, dict[str, object]] = {}
+    for row in (*existing, *incoming):
+        key = str(row.get("condition_id") or row.get("slug") or "")
+        if key:
+            merged[key] = row
+    return sorted(
+        merged.values(),
+        key=lambda row: (
+            int(str(row.get("window_start_ts") or 0)),
+            str(row.get("condition_id") or ""),
+        ),
+    )
+
+
 def write_market_master(path: Path, identities: Iterable[MarketIdentity]) -> int:
-    rows = [market_identity_row(identity) for identity in identities]
+    existing = pl.read_parquet(path).to_dicts() if path.exists() else []
+    rows = _merge_rows(existing, [market_identity_row(identity) for identity in identities])
     frame = pl.DataFrame(
         rows,
         schema={

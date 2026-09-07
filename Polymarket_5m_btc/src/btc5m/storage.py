@@ -10,6 +10,7 @@ import polars as pl
 CANONICAL_COLUMNS = (
     "source",
     "symbol",
+    "market_id",
     "event_type",
     "source_event_ts",
     "source_publish_ts",
@@ -21,12 +22,14 @@ CANONICAL_COLUMNS = (
     "ask",
     "bid_size",
     "ask_size",
+    "receive_id",
     "raw_payload",
 )
 
 _EMPTY_SCHEMA = {
     "source": pl.String,
     "symbol": pl.String,
+    "market_id": pl.String,
     "event_type": pl.String,
     "source_event_ts": pl.Int64,
     "source_publish_ts": pl.Int64,
@@ -38,6 +41,7 @@ _EMPTY_SCHEMA = {
     "ask": pl.String,
     "bid_size": pl.String,
     "ask_size": pl.String,
+    "receive_id": pl.String,
     "raw_payload": pl.String,
 }
 
