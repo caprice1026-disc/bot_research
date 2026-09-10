@@ -108,6 +108,14 @@ state/strategy.json       初期戦略仮説
 
 Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once()` と `review_once()` をJob境界として分離しています。
 
+## オフライン研究v3（実装中）
+
+`src/hyperliquid_ai_trader/research/`には、ライブ注文経路と分離した研究用の基盤があります。現在は、判断時点で利用可能な確定1分足だけから`common_candles_v1`を計算し、1分足上でEntry遅延、SL/TP、300秒保有上限、fee、spread、slippageを再現できます。同一足でSLとTPへ到達した場合は、主結果のSL先と感度分析のTP先を明示的に選び、曖昧な結果として記録します。
+
+研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
+
+この段階のモジュールはネットワーク、秘密鍵、Gemini APIを必要としません。研究v3全体のBatch、Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
+
 ## 参照
 
 - [Hyperliquid API](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api)
