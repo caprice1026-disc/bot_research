@@ -22,8 +22,8 @@ import zipfile
 
 BASE_URL = "https://data.binance.vision/data/futures/um"
 SYMBOL = "BTCUSDT"
-INTERVALS = ("1d", "1h", "15m")
-INTERVAL_MS = {"1d": 86_400_000, "1h": 3_600_000, "15m": 900_000}
+INTERVALS = ("1d", "1h", "15m", "1m")
+INTERVAL_MS = {"1d": 86_400_000, "1h": 3_600_000, "15m": 900_000, "1m": 60_000}
 RAW_COLUMNS = (
     "open_time_ms",
     "open",

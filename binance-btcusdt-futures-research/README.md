@@ -4,7 +4,7 @@ Binance Public Dataを用いるBTCUSDT USD-M perpetual futuresの再現可能な
 
 ## 対象範囲
 
-- 15分足: 2025-08-17 から 2026-08-16（365日）
+- 1分足・15分足: 2025-08-17 から 2026-08-16（365日）
 - 1時間足・日足: 2020-01-01 から 2026-08-16
 - Funding Rate と Binance Metrics: 15分足と同じ期間（公開遅延・公式欠損は補間しない）
 - 時刻の意味: 各Klineの終値が利用可能になるUTC境界 (`close_time + 1ms`)

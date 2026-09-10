@@ -71,6 +71,15 @@ def test_archive_url_uses_usdm_kline_archive_path():
     )
 
 
+def test_archive_requests_supports_one_minute_klines_for_research_replay():
+    request = archive_requests(date(2026, 8, 15), date(2026, 8, 16), "1m")[0]
+
+    assert archive_url(request) == (
+        "https://data.binance.vision/data/futures/um/daily/klines/"
+        "BTCUSDT/1m/BTCUSDT-1m-2026-08-15.zip"
+    )
+
+
 def test_direct_opener_bypasses_inherited_proxy_configuration():
     opener = build_direct_opener()
 

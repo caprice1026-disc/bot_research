@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import json
 from math import isfinite
+from pathlib import Path
 from statistics import pstdev
+from typing import Any
 
 
 CANDLE_INTERVAL_MS = 60_000
@@ -159,3 +162,83 @@ def build_common_candle_features(
         atr_pct=_atr_pct(window),
         volume_zscore=volume_zscore,
     )
+
+
+def normalize_hyperliquid_candles(
+    *,
+    raw_candles: list[dict[str, Any]],
+    coin: str,
+    received_at_ms: int,
+    delivery_delay_ms: int = 0,
+) -> list[NormalizedCandle]:
+    """Convert a public Hyperliquid snapshot into confirmed one-minute bars.
+
+    ``T`` is the inclusive end timestamp in the Hyperliquid response.  The
+    in-progress final bar is deliberately omitted; historical replays use the
+    configured close-plus-delay time rather than the much later download time.
+    """
+
+    if received_at_ms < 0 or delivery_delay_ms < 0:
+        raise ResearchDataError("receive and delivery times must be non-negative")
+    normalized: list[NormalizedCandle] = []
+    for raw in raw_candles:
+        try:
+            open_time_ms = int(raw["t"])
+            close_exclusive_ms = int(raw["T"]) + 1
+        except (KeyError, TypeError, ValueError) as error:
+            raise ResearchDataError("Hyperliquid candle is missing t or T") from error
+        if close_exclusive_ms > received_at_ms:
+            continue
+        try:
+            normalized.append(
+                NormalizedCandle(
+                    venue="hyperliquid_mainnet_public",
+                    symbol=coin,
+                    open_time_ms=open_time_ms,
+                    close_exclusive_ms=close_exclusive_ms,
+                    open=float(raw["o"]),
+                    high=float(raw["h"]),
+                    low=float(raw["l"]),
+                    close=float(raw["c"]),
+                    volume=float(raw["v"]),
+                    received_at_ms=received_at_ms,
+                    available_at_ms=close_exclusive_ms + delivery_delay_ms,
+                    availability_kind="historical_close_plus_delay",
+                )
+            )
+        except (KeyError, TypeError, ValueError) as error:
+            raise ResearchDataError("Hyperliquid candle has invalid OHLCV fields") from error
+    normalized.sort(key=lambda candle: candle.open_time_ms)
+    if normalized:
+        validate_contiguous_candles(normalized)
+    return normalized
+
+
+def write_normalized_candles_jsonl(path: Path, candles: list[NormalizedCandle]) -> None:
+    """Atomically persist a validated candle run outside Git-managed artifacts."""
+
+    validate_contiguous_candles(candles)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.tmp")
+    with temporary.open("w", encoding="utf-8", newline="\n") as handle:
+        for candle in candles:
+            handle.write(json.dumps(asdict(candle), sort_keys=True, separators=(",", ":")))
+            handle.write("\n")
+    temporary.replace(path)
+
+
+def read_normalized_candles_jsonl(path: Path) -> list[NormalizedCandle]:
+    """Load the exact normalized rows and re-check their time ordering."""
+
+    candles: list[NormalizedCandle] = []
+    with path.open(encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            try:
+                payload = json.loads(line)
+                if not isinstance(payload, dict):
+                    raise TypeError("row is not an object")
+                candles.append(NormalizedCandle(**payload))
+            except (TypeError, ValueError, json.JSONDecodeError) as error:
+                raise ResearchDataError(f"invalid normalized candle at line {line_number}") from error
+    validate_contiguous_candles(candles)
+    return candles

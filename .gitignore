@@ -223,7 +223,7 @@ weather-polymarket-research/data/raw/
 hyperliquid-ai-trader/data/
 hyperliquid-ai-trader/logs/
 hyperliquid-ai-trader/reports/
-hyperliquid-ai-trader/.pytest-research*/
+hyperliquid-ai-trader/.pytest-*/
 
 # Binance BTCUSDT futures research: verified but reproducible local downloads.
 binance-btcusdt-futures-research/raw/
@@ -234,6 +234,7 @@ binance-btcusdt-futures-research/metadata/
 base-lp-research/runs/
 binance-btcusdt-futures-research/.task-tmp*/
 binance-btcusdt-futures-research/.matplotlib/
+binance-btcusdt-futures-research/.pytest-*/
 # Marimo
 marimo/_static/
 marimo/_lsp/
