@@ -10,7 +10,7 @@ import sqlite3
 from typing import Any, Iterator
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 TERMINAL_REVIEW_STATUSES = {"failed", "validated_no_change", "validated_patch"}
 
 
@@ -77,6 +77,17 @@ class ResearchStore:
                     review_id TEXT NOT NULL, evidence_id TEXT NOT NULL, evaluated INTEGER NOT NULL DEFAULT 0,
                     PRIMARY KEY(review_id, evidence_id),
                     FOREIGN KEY(review_id) REFERENCES reviews(review_id)
+                );
+                CREATE TABLE IF NOT EXISTS model_requests (
+                    request_id TEXT PRIMARY KEY, experiment_id TEXT NOT NULL,
+                    trial_id TEXT NOT NULL, request_hash TEXT NOT NULL,
+                    status TEXT NOT NULL CHECK(status IN (
+                        'prepared', 'submitted', 'submission_unknown', 'completed', 'failed'
+                    )),
+                    reserved_cost_usd TEXT NOT NULL, canonical_payload TEXT NOT NULL,
+                    created_at_ms INTEGER NOT NULL,
+                    FOREIGN KEY(experiment_id) REFERENCES experiments(experiment_id),
+                    UNIQUE(experiment_id, trial_id)
                 );
                 """
             )
@@ -153,3 +164,57 @@ class ResearchStore:
             (experiment_id,),
         )
         return [row[0] for row in rows]
+
+    def prepare_model_request(
+        self,
+        *,
+        experiment_id: str,
+        request_id: str,
+        trial_id: str,
+        request_hash: str,
+        canonical_payload: str,
+        reserved_cost_usd: Decimal,
+        created_at_ms: int,
+    ) -> None:
+        if not reserved_cost_usd.is_finite() or reserved_cost_usd < 0:
+            raise ResearchStoreError("reserved request cost must be finite and non-negative")
+        try:
+            with self.connection:
+                self.connection.execute(
+                    """INSERT INTO model_requests(
+                        request_id, experiment_id, trial_id, request_hash, status,
+                        reserved_cost_usd, canonical_payload, created_at_ms
+                    ) VALUES (?, ?, ?, ?, 'prepared', ?, ?, ?)""",
+                    (
+                        request_id,
+                        experiment_id,
+                        trial_id,
+                        request_hash,
+                        format(reserved_cost_usd, "f"),
+                        canonical_payload,
+                        created_at_ms,
+                    ),
+                )
+        except sqlite3.IntegrityError as error:
+            raise ResearchStoreError("model request ID or trial already exists") from error
+
+    def mark_submission_unknown(self, request_id: str) -> None:
+        with self.connection:
+            cursor = self.connection.execute(
+                """UPDATE model_requests SET status='submission_unknown'
+                   WHERE request_id=? AND status='prepared'""",
+                (request_id,),
+            )
+        if cursor.rowcount != 1:
+            raise ResearchStoreError("only prepared model requests can become submission_unknown")
+
+    def model_request(self, request_id: str) -> dict[str, Any]:
+        row = self.connection.execute(
+            """SELECT request_id, experiment_id, trial_id, request_hash, status,
+                      reserved_cost_usd, canonical_payload, created_at_ms
+               FROM model_requests WHERE request_id=?""",
+            (request_id,),
+        ).fetchone()
+        if row is None:
+            raise ResearchStoreError("unknown model request")
+        return dict(row)
