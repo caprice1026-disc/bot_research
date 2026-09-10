@@ -34,6 +34,8 @@ class ExecutionConfig:
             raise SimulationError("delays and hold duration must be non-negative")
         if self.max_hold_ms == 0:
             raise SimulationError("max_hold_ms must be positive")
+        if self.max_hold_ms % CANDLE_INTERVAL_MS:
+            raise SimulationError("one-minute simulator requires whole minutes for max_hold_ms")
         if min(self.fee_rate, self.spread_bps, self.slippage_bps) < 0:
             raise SimulationError("execution costs must be non-negative")
 
@@ -117,10 +119,15 @@ def _execution_price(price: Decimal, *, side: Side, entering: bool, config: Exec
     return price * factor
 
 
-def _find_entry(candles: list[NormalizedCandle], arrival_ms: int) -> NormalizedCandle:
+def _find_entry(
+    candles: list[NormalizedCandle],
+    *,
+    arrival_ms: int,
+    max_arrival_delay_ms: int,
+) -> NormalizedCandle:
     for candle in candles:
         if candle.open_time_ms >= arrival_ms:
-            if candle.open_time_ms - arrival_ms > CANDLE_INTERVAL_MS:
+            if candle.open_time_ms - arrival_ms > max_arrival_delay_ms:
                 break
             return candle
     raise SimulationError("no entry candle within the arrival allowance")
@@ -149,9 +156,11 @@ def simulate_episode(
         raise SimulationError("candles are required")
     validate_contiguous_candles(candles)
     arrival_ms = decision_time_ms + config.model_delay_ms
-    entry_candle = _find_entry(candles, arrival_ms)
-    if entry_candle.open_time_ms - arrival_ms > config.max_arrival_delay_ms:
-        raise SimulationError("entry arrived too late")
+    entry_candle = _find_entry(
+        candles,
+        arrival_ms=arrival_ms,
+        max_arrival_delay_ms=config.max_arrival_delay_ms,
+    )
 
     raw_entry = Decimal(str(entry_candle.open))
     entry = _execution_price(raw_entry, side=decision.side, entering=True, config=config)

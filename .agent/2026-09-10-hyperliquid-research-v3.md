@@ -17,6 +17,7 @@
 - [x] (2026-09-10) v3文書を通読し、現行の特徴量、Runner、証拠保存、Risk、Strategy、Gemini経路と照合した。
 - [x] (2026-09-10) 公式のモデル仕様、料金、Batch、足取得上限を確認し、実装前に補う仕様を整理した。
 - [x] (2026-09-10) 本実装方針を作成した。コード変更・API課金実験・新規取引は行っていない。
+- [x] (2026-09-10) リモートmainのM1/M2実装をfast-forwardで取り込み、到着猶予、1分足保有期限、数量flat判定、Reviewer証拠の実験・cutoff境界を回帰テストで補正した（101件通過）。
 - [ ] M1：時刻とデータ品質、共通特徴量、確定証拠の基盤（完了：時点整合の1分足モデル、連続性・OHLCV検証、`common_candles_v1`、研究専用SQLiteの確定episode・review証拠消費。残り：公開データ保存と取得CLI、部分fillからepisodeへの集約）。
 - [ ] M2：仮想執行、単純ルール、口座台帳（完了：Entry遅延、SL/TP、同足曖昧性、gap、300秒、費用、LONG/SHORT共通損益、3単純ルール、shadow非加算、UTC日次口座。残り：funding event、margin/liquidation、時系列runnerとの統合）。
 - [ ] M3：Trader入力分離、Batch、回答保存と予算管理。
@@ -45,6 +46,8 @@ Binanceの既存`download_binance_klines.py`は1d/1h/15mだけを受け付ける
 M1の最初の実装では`NormalizedCandle`を新設し、`available_at_ms`で確定・受信済みの足だけを特徴量へ渡すようにした。2026-09-10の`tests/test_research_data.py`は、未来の足を変えても判断時点の特徴量が変わらないこと、未到着足・欠損・OHLC不整合を拒否することを確認し、全体で92件通過した。
 
 続く実装で`research/simulator.py`と`research/store.py`を追加した。SimulatorはEntry起点の期限と費用を一箇所で計算し、同足両到達を`ambiguous_intrabar`として保持する。研究台帳はgross=0を含むflat episodeを残し、失敗reviewでは証拠を消費しない。2026-09-10の全体テストは97件通過した。
+
+リモート実装の統合直後、`_find_entry`が設定された`max_arrival_delay_ms`ではなく固定60秒で停止すること、台帳が数量文字列をそのまま比較して`"2.0"`と`"2.000"`のflat決済をopen扱いすることを再現した。さらに、1分OHLCVで部分分の保有期限を許すと未来のバー内値を使うこと、Reviewerがcutoff後または別experimentの証拠IDを保存できることを確認した。いずれも修正後の全体pytestは101件通過した。
 
 ## Review Findings：実装前に補う仕様
 
@@ -91,6 +94,10 @@ Forwardは初期案を30日・自動延長なしとし、最低取引件数、�
 2026-09-10 / Codex：M1の初回は外部保存形式や`pyarrow`を追加せず、標準ライブラリだけで正規化・検証・特徴量計算を実装する。データ取得形式が確定する前にParquet依存を増やさず、課金・秘密鍵・ネット接続のない純粋関数として時点整合性を先に固定するため。
 
 2026-09-10 / Codex：次の実装も標準ライブラリのDecimalとSQLiteに限定し、まずSimulatorの損益恒等式とR1の証拠消費規則を固定する。公開収集や課金APIより先に、オフラインで再現できる会計境界を検証するため。
+
+2026-09-10 / Codex：1分足Simulatorは保有期限を分単位に限定し、到着猶予は`ExecutionConfig.max_arrival_delay_ms`を唯一の境界とする。部分分の足内価格には未来情報が混じり、設定を無視する固定猶予は実験設定の再現性を損なうため。
+
+2026-09-10 / Codex：研究台帳のflat判定はDecimal数値比較とし、terminal reviewが消費できるのは同一experimentかつcutoff以下でclosedなepisodeだけに限定する。表記ゆれでゼロ損益証拠を失わず、未来・別実験の証拠をReviewerへ混入させないため。
 
 ## Context and Orientation
 
@@ -245,8 +252,10 @@ SQLite更新は一トランザクションで、decision消費とaccount更新�
 ## Outcomes & Retrospective
 
 
-v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。公開データ取得、funding event、Batch、Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
+v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正し、101件のpytestで検証した。公開データ取得、funding event、Batch、Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
 
 変更履歴：2026-09-10、housinv3.mdのレビューと現行コード照合に基づいて初版作成。元文書を保持し、計画の重複作成を避けるためレビュー指摘と具体的工程を本ファイルへまとめた。
 
 変更履歴：2026-09-10、M1の証拠台帳とM2のオフラインSimulatorの実装結果、検証件数、残作業を反映した。計画と実装状態を一致させるため。
+
+変更履歴：2026-09-10、リモートmainのM1/M2実装を取り込み、時点整合性と証拠隔離を保つ修正・101件の検証結果を反映した。

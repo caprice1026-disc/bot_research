@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+from decimal import Decimal, InvalidOperation
 import json
 from pathlib import Path
 import sqlite3
@@ -10,6 +11,22 @@ from typing import Any, Iterator
 
 
 SCHEMA_VERSION = 1
+TERMINAL_REVIEW_STATUSES = {"failed", "validated_no_change", "validated_patch"}
+
+
+class ResearchStoreError(ValueError):
+    """Raised when immutable research evidence is malformed."""
+
+
+def _flat_quantity(entry_quantity: str, exit_quantity: str) -> bool:
+    try:
+        entry = Decimal(entry_quantity)
+        exit = Decimal(exit_quantity)
+    except (InvalidOperation, ValueError) as error:
+        raise ResearchStoreError("episode quantities must be decimal values") from error
+    if not entry.is_finite() or not exit.is_finite() or entry < 0 or exit < 0:
+        raise ResearchStoreError("episode quantities must be finite and non-negative")
+    return entry == exit
 
 
 class ResearchStore:
@@ -80,7 +97,7 @@ class ResearchStore:
                        gross: str | None, fee: str | None, funding: str | None,
                        net: str | None, quality: str, closed_at_ms: int | None,
                        payload: dict[str, Any]) -> None:
-        status = "closed" if entry_quantity == exit_quantity and closed_at_ms is not None else "open"
+        status = "closed" if _flat_quantity(entry_quantity, exit_quantity) and closed_at_ms is not None else "open"
         with self.connection:
             self.connection.execute(
                 "INSERT INTO episodes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -100,6 +117,21 @@ class ResearchStore:
 
     def finish_review(self, *, review_id: str, experiment_id: str, cutoff_ms: int,
                       status: str, evidence_ids: list[str]) -> None:
+        if status not in TERMINAL_REVIEW_STATUSES:
+            raise ResearchStoreError("review must use a terminal status")
+        if len(set(evidence_ids)) != len(evidence_ids):
+            raise ResearchStoreError("review evidence IDs must be unique")
+        if evidence_ids:
+            placeholders = ", ".join("?" for _ in evidence_ids)
+            rows = self.connection.execute(
+                f"""SELECT episode_id FROM episodes
+                    WHERE experiment_id=? AND status='closed' AND closed_at_ms <= ?
+                    AND episode_id IN ({placeholders})""",
+                (experiment_id, cutoff_ms, *evidence_ids),
+            )
+            eligible_ids = {row[0] for row in rows}
+            if eligible_ids != set(evidence_ids):
+                raise ResearchStoreError("review evidence is not eligible at its cutoff")
         evaluated = status in {"validated_no_change", "validated_patch"}
         with self.connection:
             self.connection.execute(

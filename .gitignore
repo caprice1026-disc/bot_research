@@ -223,6 +223,7 @@ weather-polymarket-research/data/raw/
 hyperliquid-ai-trader/data/
 hyperliquid-ai-trader/logs/
 hyperliquid-ai-trader/reports/
+hyperliquid-ai-trader/.pytest-research*/
 
 # Binance BTCUSDT futures research: verified but reproducible local downloads.
 binance-btcusdt-futures-research/raw/

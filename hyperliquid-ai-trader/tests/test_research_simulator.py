@@ -53,6 +53,31 @@ def test_episode_uses_entry_based_hold_deadline_and_exact_pnl() -> None:
     assert result.gross_pnl == result.net_pnl == Decimal("1")
 
 
+def test_entry_honors_configured_arrival_allowance_beyond_one_minute() -> None:
+    candles = [_candle(index) for index in range(2, 8)]
+    result = simulate_episode(
+        decision=_decision(),
+        decision_time_ms=0,
+        quantity=Decimal("1"),
+        candles=candles,
+        config=ExecutionConfig(
+            model_delay_ms=0,
+            max_arrival_delay_ms=120_000,
+            fee_rate=Decimal("0"),
+            spread_bps=Decimal("0"),
+            slippage_bps=Decimal("0"),
+        ),
+    )
+
+    assert result.entry_time_ms == 120_000
+    assert result.exit_time_ms == 420_000
+
+
+def test_one_minute_simulator_rejects_partial_minute_holding_windows() -> None:
+    with pytest.raises(SimulationError, match="whole minutes"):
+        ExecutionConfig(max_hold_ms=90_000)
+
+
 def test_intrabar_collision_is_explicit_and_policy_selects_result() -> None:
     candles = [_candle(0), _candle(1, high=102, low=98)]
     stop = simulate_episode(
