@@ -325,6 +325,69 @@ def test_run_once_skips_order_when_agent_abstains_and_entry_is_optional() -> Non
     store.close()
 
 
+def test_review_receives_new_cumulative_and_abstention_reference_samples() -> None:
+    settings = Settings.from_mapping({
+        "HL_test_wallet": "0x" + "1" * 40,
+        "HL_test_wallet_private_key": "0x" + "2" * 64,
+        "GEMINI_API_KEY": "gemini-test-key",
+        "EXECUTION_MODE": "dry_run",
+        "MANDATORY_ENTRY": "false",
+    })
+
+    class NoEvidenceExchange(FakeExchange):
+        def get_user_fills(self, start_time_ms: int, end_time_ms: int) -> list[dict]:
+            return []
+
+        def get_user_funding(self, start_time_ms: int, end_time_ms: int) -> list[dict]:
+            return []
+
+    class CapturingReviewer:
+        model = "gemini-review"
+
+        def __init__(self) -> None:
+            self.calls: list[dict] = []
+
+        def review(
+            self, *, strategy, closed_trades, review_cycle,
+            cumulative_closed_trades, abstention_reference_outcomes,
+        ) -> ReviewEnvelope:
+            self.calls.append({
+                "new": closed_trades,
+                "cumulative": cumulative_closed_trades,
+                "references": abstention_reference_outcomes,
+            })
+            return ReviewEnvelope(
+                state=strategy,
+                patch={"base_version": strategy["version"], "summary": "no change", "operations": []},
+                prompt_hash="b" * 64,
+                model=self.model,
+            )
+
+    store = _store()
+    reviewer = CapturingReviewer()
+    service = TradingService(
+        settings=settings,
+        exchange=NoEvidenceExchange(),
+        trader=AbstainingAgent(),
+        reviewer=reviewer,
+        store=store,
+        run_id="run-review-contexts",
+        git_sha="abc",
+    )
+    service.initialize(now_ms=1_000)
+    assert service.run_once(slot=0, scheduled_at_ms=1_000).status == "abstained"
+    assert service.run_once(slot=1, scheduled_at_ms=301_000).status == "abstained"
+
+    service.review_once(review_index=1, review_cycle=1, now_ms=302_000)
+
+    assert len(reviewer.calls) == 1
+    assert reviewer.calls[0]["new"] == []
+    assert reviewer.calls[0]["cumulative"] == []
+    assert reviewer.calls[0]["references"][0]["slot"] == 0
+    assert reviewer.calls[0]["references"][0]["counterfactual"] is True
+    store.close()
+
+
 def test_trader_context_includes_fee_and_spread_cost_estimate() -> None:
     settings = Settings.from_mapping({
         "HL_test_wallet": "0x" + "1" * 40,

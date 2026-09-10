@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from decimal import Decimal
+import inspect
 import time
 from typing import Any, Callable
 
@@ -436,9 +437,22 @@ class TradingService:
         strategy = self.store.load_latest_strategy(self.run_id) or initial_strategy()
         closed = self.store.recent_closed_trades(self.run_id, limit=100, include_context=True)
         new_closed = self.store.new_closed_trades_since_review(self.run_id, closed)
-        review_input = {"strategy": strategy, "closed_trades": new_closed}
-        if not new_closed:
-            review_input["closed_trades"] = closed
+        abstention_references = self.store.abstention_reference_outcomes(
+            self.run_id,
+            limit=100,
+        )
+        new_abstention_references = self.store.new_abstention_reference_outcomes_since_review(
+            self.run_id,
+            abstention_references,
+        )
+        review_input = {
+            "strategy": strategy,
+            "cumulative_closed_trades": closed,
+            "new_closed_trades": new_closed,
+            "abstention_reference_outcomes": abstention_references,
+            "new_abstention_reference_outcomes": new_abstention_references,
+        }
+        if not new_closed and not new_abstention_references:
             self.store.record_review(
                 run_id=self.run_id,
                 review_index=review_index,
@@ -451,11 +465,21 @@ class TradingService:
             )
             return
         try:
-            result = self.reviewer.review(
-                strategy=strategy,
-                closed_trades=new_closed,
-                review_cycle=review_cycle,
+            review_call = {
+                "strategy": strategy,
+                "closed_trades": new_closed,
+                "review_cycle": review_cycle,
+            }
+            parameters = inspect.signature(self.reviewer.review).parameters
+            accepts_kwargs = any(
+                parameter.kind is inspect.Parameter.VAR_KEYWORD
+                for parameter in parameters.values()
             )
+            if accepts_kwargs or "cumulative_closed_trades" in parameters:
+                review_call["cumulative_closed_trades"] = closed
+            if accepts_kwargs or "abstention_reference_outcomes" in parameters:
+                review_call["abstention_reference_outcomes"] = abstention_references
+            result = self.reviewer.review(**review_call)
             changed = bool(result.patch.get("operations"))
             if changed:
                 self.store.save_strategy_version(

@@ -301,3 +301,54 @@ def test_closed_trade_context_includes_decision_and_new_trade_filter() -> None:
     )
     assert store.new_closed_trades_since_review("run-review-context", closed) == []
     store.close()
+
+
+def test_new_closed_trades_union_all_prior_review_inputs_and_abstention_reference() -> None:
+    store = SQLiteStore(_database_path())
+    store.create_run(
+        run_id="run-review-history",
+        mode="testnet_live",
+        started_at_ms=1_000,
+        initial_equity=Decimal("1000"),
+        initial_mark=Decimal("50000"),
+        git_sha="abc123",
+    )
+    for slot in (0, 1):
+        assert store.reserve_cycle("run-review-history", slot, scheduled_at_ms=1_000 + slot * 300_000, strategy_version=1)
+    store.complete_cycle(
+        run_id="run-review-history", slot=0, status="abstained",
+        features={"mark": 50000, "costs": {"estimated_round_trip_cost_bps": 10}},
+        decision={"side": "long", "would_abstain": True, "confidence": "0.4"},
+        prompt_hash="a" * 64, model="test", error_type=None, completed_at_ms=1_000,
+    )
+    store.complete_cycle(
+        run_id="run-review-history", slot=1, status="abstained",
+        features={"mark": 50100, "costs": {"estimated_round_trip_cost_bps": 10}},
+        decision={"side": "short", "would_abstain": True, "confidence": "0.4"},
+        prompt_hash="b" * 64, model="test", error_type=None, completed_at_ms=301_000,
+    )
+    closed = [{"id": 1}, {"id": 2}, {"id": 3}]
+    store.record_review(
+        run_id="run-review-history", review_index=1, created_at_ms=2_000,
+        model="review", status="accepted_no_change",
+        input_payload={"new_closed_trades": [closed[0]]}, output_payload=None, error_type=None,
+    )
+    store.record_review(
+        run_id="run-review-history", review_index=2, created_at_ms=3_000,
+        model="review", status="skipped_no_new_trades",
+        input_payload={"cumulative_closed_trades": [closed[0], closed[1]]}, output_payload=None, error_type=None,
+    )
+
+    assert store.new_closed_trades_since_review("run-review-history", closed) == [closed[2]]
+    references = store.abstention_reference_outcomes("run-review-history", limit=10)
+    assert [item["slot"] for item in references] == [0]
+    assert references[0]["net_return_bps"] == "10.000000"
+    assert references[0]["counterfactual"] is True
+    assert store.new_abstention_reference_outcomes_since_review("run-review-history", references) == references
+    store.record_review(
+        run_id="run-review-history", review_index=3, created_at_ms=4_000,
+        model="review", status="accepted_no_change",
+        input_payload={"abstention_reference_outcomes": references}, output_payload=None, error_type=None,
+    )
+    assert store.new_abstention_reference_outcomes_since_review("run-review-history", references) == []
+    store.close()

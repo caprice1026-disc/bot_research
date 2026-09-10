@@ -203,9 +203,25 @@ class ReviewerAgent:
         strategy: dict[str, Any],
         closed_trades: list[dict[str, Any]],
         review_cycle: int,
+        cumulative_closed_trades: list[dict[str, Any]] | None = None,
+        abstention_reference_outcomes: list[dict[str, Any]] | None = None,
     ) -> ReviewEnvelope:
+        """Review new fills with cumulative context and counterfactual references.
+
+        ``closed_trades`` remains the public name for the new-since-last-review
+        sample for backwards compatibility.  The optional fields make the
+        distinction explicit to the model without changing existing callers.
+        """
         prompt = self.constitution + "\n\nREVIEW_CONTEXT\n" + json.dumps(
-            {"strategy": strategy, "closed_trades": closed_trades, "review_cycle": review_cycle},
+            {
+                "strategy": strategy,
+                "cumulative_closed_trades": cumulative_closed_trades
+                if cumulative_closed_trades is not None
+                else closed_trades,
+                "new_closed_trades": closed_trades,
+                "abstention_reference_outcomes": abstention_reference_outcomes or [],
+                "review_cycle": review_cycle,
+            },
             ensure_ascii=False,
             sort_keys=True,
             default=str,

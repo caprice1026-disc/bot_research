@@ -9,6 +9,7 @@
 
 CURRENT_CONTEXTの`costs`には片道taker fee、板spread、推定往復コストが含まれる。
 推定往復コストを上回る値動きの根拠が弱い場合は`would_abstain=true`にする。
+`return_1m`、`return_5m`、`return_15m`、`return_60m`などの過去リターンは観測された過去の特徴量であり、次の5分の期待利益そのものではない。将来の利益を断定せず、現在の板、ボラティリティ、費用との整合性を別途評価する。
 `MANDATORY_ENTRY=false`の場合、Python側はその判断を尊重して発注を見送る。
 見送り時も評価用の仮想的な方向、SL、TP、理由を返す。
 

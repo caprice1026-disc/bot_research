@@ -66,6 +66,8 @@
   Evidence: 新規回帰テストでentry fee 0.1とclose fee 0.2をnet 0.2へ集約し、同一集合の2回目レビューを`skipped_no_new_trades`として保存することを確認した。
 - Observation: Gemini 3.6 Flashは公式モデル一覧でStableかつFunction Calling/Structured Outputs対応、料金表のStandard Free Tierでは入力・出力・キャッシュが無料。ただしRPM/TPM/RPDはプロジェクト・モデル依存で固定値ではない。
   Evidence: 2026-09-06に公式モデル仕様、料金表、レート制限、Billing FAQを確認。実際のquotaはAI Studio Dashboardで確認する必要がある。
+- Observation: Reviewerの入力を累積確定取引・今回新規の確定取引・見送りの反実仮想結果に分離すると、過去取引の重複評価を防ぎつつ機会損失を参考比較できる。
+  Evidence: SQLiteの全レビュー入力から既評価IDを合算する回帰テストと、連続した見送りcycleの次mark・推定往復費用からnet return bpsを算出する回帰テストを追加した。
 
 ## Decision Log
 
@@ -111,10 +113,13 @@
 - Decision: Traderは`gemini-3.5-flash-lite`、Reviewerは`gemini-3.6-flash`とし、3.1 Flash-Liteフォールバックを設定しない。Reviewer間隔は7200秒とする。
   Rationale: Traderの高スループットとReviewerの品質を分け、無料枠のRPD消費を抑えながら3.1の出力品質に依存しないため。
   Date/Author: 2026-09-06 / User and Codex
+- Decision: Reviewerは累積実取引と新規実取引を別フィールドで受け取り、見送り結果は次のcompleted cycleのmark-to-markから算出した費用込み反実仮想として参考情報だけ渡す。
+  Rationale: 過去リターンや見送り結果を将来利益・実約定と混同せず、自己改善の証拠を増やしながら実取引の重複評価を防ぐため。
+  Date/Author: 2026-09-08 / User and Codex
 
 ## Outcomes & Retrospective
 
-レビュー修正の単体検証は完了した（86 passed）。前回2時間Runの実績を基に、Traderの見送りを実発注へ反映し、費用情報を入力・cycle証跡へ保存し、Reviewerへ新規確定取引と判断理由・市場特徴量を渡すようにした。前回Runで確認した重複監査イベントも抑止する。次回Testnet運転ではフォールバックなしで429を記録し、見送り件数とfee差引後損益を確認する。
+レビュー修正の単体検証は完了した（89 passed）。過去レビュー全体を参照した実取引IDの重複除外、累積/新規の入力分離、次cycleのmarkと推定往復費用による見送り反実仮想、過去リターンを将来利益と同一視しないTrader指示を追加した。次回24時間Testnet運転では、レビュー入力に含まれる実取引と参考結果を分けて確認する。
 
 ## Context and Orientation
 
@@ -173,3 +178,4 @@ Git管理する成果物はソース、テスト、prompts、初期strategy、RE
 - 2026-09-06: 前回Runのclose fill誤帰属をentry時系列照合へ修正し、Gemini SDKの暗黙retryを無効化した。公式Free Tierの料金・quota条件をREADMEへ追記した。
 - 2026-09-06: 無料枠向けのTrader/Reviewer主モデルと429フォールバックを環境変数化し、fee込み取引集約とReviewerのquota節約スキップを実装した。
 - 2026-09-06: Traderを3.5 Flash-Liteへ固定して3.1フォールバックを外し、見送り実行、TAKER_FEE/spreadコスト入力、2時間Reviewer、判断付き新規取引レビュー、監査イベント重複抑止を追加した。
+- 2026-09-08: Reviewerの実取引重複評価を全レビュー横断で抑止し、累積/新規取引と見送りの費用込み反実仮想を分離して渡す処理、過去リターンの非予測性に関するプロンプト明記、回帰テストを追加した。

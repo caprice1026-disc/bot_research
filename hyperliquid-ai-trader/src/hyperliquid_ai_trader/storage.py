@@ -601,29 +601,141 @@ class SQLiteStore:
         run_id: str,
         closed_trades: list[dict[str, Any]],
     ) -> list[dict[str, Any]]:
-        """Filter closed trades already included in the latest Reviewer input."""
+        """Filter closed trades included in any prior Reviewer input.
+
+        A review with no new trades used to replace the latest input with the
+        cumulative sample.  Looking only at that latest row made older trades
+        appear new again on the following review.  The union across all prior
+        inputs makes the boundary restart-safe and also understands the
+        legacy ``closed_trades`` key.
+        """
         current_ids = {str(trade["id"]) for trade in closed_trades if trade.get("id") is not None}
         if not current_ids:
             return []
         row = self.connection.execute(
             """
             SELECT input_json FROM reviews
-            WHERE run_id=? ORDER BY review_index DESC LIMIT 1
+            WHERE run_id=? ORDER BY review_index ASC
             """,
             (run_id,),
-        ).fetchone()
-        if row is None:
+        ).fetchall()
+        if not row:
             return list(closed_trades)
-        try:
-            payload = json.loads(row["input_json"])
-            previous = payload.get("closed_trades", [])
-            previous_ids = {str(trade["id"]) for trade in previous if trade.get("id") is not None}
-        except (TypeError, ValueError, AttributeError, KeyError):
-            return list(closed_trades)
+        previous_ids: set[str] = set()
+        for review in row:
+            try:
+                payload = json.loads(review["input_json"])
+                samples = list(payload.get("new_closed_trades", []))
+                samples.extend(payload.get("closed_trades", []))
+                samples.extend(payload.get("cumulative_closed_trades", []))
+                previous_ids.update(
+                    str(trade["id"])
+                    for trade in samples
+                    if isinstance(trade, dict) and trade.get("id") is not None
+                )
+            except (TypeError, ValueError, AttributeError, KeyError):
+                continue
         return [trade for trade in closed_trades if str(trade.get("id")) not in previous_ids]
 
+    def abstention_reference_outcomes(
+        self,
+        run_id: str,
+        *,
+        limit: int,
+    ) -> list[dict[str, Any]]:
+        """Build mark-to-mark, fee-adjusted references for skipped cycles.
+
+        These are explicitly counterfactual: they use the next completed
+        five-minute observation and an estimated round-trip cost, not fills.
+        Keeping them derived from cycles avoids a second mutable source of
+        truth while still making the result restart-safe.
+        """
+        rows = self.connection.execute(
+            """
+            SELECT skipped.slot,
+                   skipped.features_json AS skipped_features_json,
+                   skipped.decision_json AS skipped_decision_json,
+                   next_cycle.features_json AS next_features_json
+            FROM cycles AS skipped
+            JOIN cycles AS next_cycle
+              ON next_cycle.run_id=skipped.run_id
+             AND next_cycle.slot=skipped.slot + 1
+            WHERE skipped.run_id=?
+              AND skipped.status='abstained'
+              AND skipped.features_json IS NOT NULL
+              AND skipped.decision_json IS NOT NULL
+              AND next_cycle.features_json IS NOT NULL
+            ORDER BY skipped.slot DESC
+            LIMIT ?
+            """,
+            (run_id, max(0, limit)),
+        ).fetchall()
+        outcomes: list[dict[str, Any]] = []
+        for row in rows:
+            try:
+                features = json.loads(row["skipped_features_json"])
+                decision = json.loads(row["skipped_decision_json"])
+                next_features = json.loads(row["next_features_json"])
+                entry = Decimal(str(features.get("mark", features.get("mid", "0"))))
+                exit_price = Decimal(str(next_features.get("mark", next_features.get("mid", "0"))))
+                if entry <= 0 or exit_price <= 0:
+                    continue
+                side = str(decision.get("side", ""))
+                if side not in {"long", "short"}:
+                    continue
+                direction = Decimal("1") if side == "long" else Decimal("-1")
+                gross_bps = (exit_price / entry - Decimal("1")) * direction * Decimal("10000")
+                costs = features.get("costs", {})
+                cost_bps = Decimal(str(costs.get("estimated_round_trip_cost_bps", "0")))
+                outcomes.append(
+                    {
+                        "slot": int(row["slot"]),
+                        "side": side,
+                        "entry_mark": str(entry),
+                        "next_mark": str(exit_price),
+                        "gross_return_bps": str(gross_bps.quantize(Decimal("0.000001"))),
+                        "estimated_round_trip_cost_bps": str(cost_bps),
+                        "net_return_bps": str((gross_bps - cost_bps).quantize(Decimal("0.000001"))),
+                        "decision": decision,
+                        "method": "next_cycle_mark_minus_estimated_cost",
+                        "counterfactual": True,
+                    }
+                )
+            except (TypeError, ValueError, ArithmeticError, KeyError):
+                continue
+        outcomes.sort(key=lambda item: int(item["slot"]))
+        return outcomes
+
+    def new_abstention_reference_outcomes_since_review(
+        self,
+        run_id: str,
+        outcomes: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        """Return counterfactual outcomes not passed to an earlier review."""
+        current_slots = {str(item["slot"]) for item in outcomes if item.get("slot") is not None}
+        if not current_slots:
+            return []
+        rows = self.connection.execute(
+            "SELECT input_json FROM reviews WHERE run_id=? ORDER BY review_index ASC",
+            (run_id,),
+        ).fetchall()
+        previous_slots: set[str] = set()
+        for row in rows:
+            try:
+                payload = json.loads(row["input_json"])
+                references = payload.get("abstention_reference_outcomes", [])
+                references = list(references) + list(payload.get("new_abstention_reference_outcomes", []))
+                previous_slots.update(
+                    str(item["slot"])
+                    for item in references
+                    if isinstance(item, dict) and item.get("slot") is not None
+                )
+            except (TypeError, ValueError, AttributeError, KeyError):
+                continue
+        return [item for item in outcomes if str(item.get("slot")) not in previous_slots]
+
     def has_new_closed_trades(self, run_id: str, closed_trades: list[dict[str, Any]]) -> bool:
-        """Return whether the latest review input did not already contain these trades."""
+        """Return whether any closed trade was absent from prior review inputs."""
         return bool(self.new_closed_trades_since_review(run_id, closed_trades))
 
     def record_review(

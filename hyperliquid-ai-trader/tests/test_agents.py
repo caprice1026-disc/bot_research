@@ -33,8 +33,10 @@ class SequenceGateway:
 class ReviewGateway:
     def __init__(self, patch: dict) -> None:
         self.patch = patch
+        self.prompts: list[str] = []
 
     def generate_review(self, *, prompt: str, model: str, temperature: float) -> dict:
+        self.prompts.append(prompt)
         return self.patch
 
 
@@ -211,6 +213,28 @@ def test_reviewer_applies_allowlisted_patch_to_new_version() -> None:
     assert result.state["version"] == 2
     assert result.patch == patch
     assert len(result.prompt_hash) == 64
+
+
+def test_reviewer_prompt_separates_cumulative_new_and_counterfactual_samples() -> None:
+    gateway = ReviewGateway({"base_version": 1, "summary": "no change", "operations": []})
+    reviewer = ReviewerAgent(
+        gateway=gateway,
+        model="gemini-review",
+        temperature=0.4,
+        constitution="review only strategy evidence",
+    )
+
+    reviewer.review(
+        strategy=initial_strategy(),
+        closed_trades=[{"id": 2}],
+        cumulative_closed_trades=[{"id": 1}, {"id": 2}],
+        abstention_reference_outcomes=[{"slot": 4, "net_return_bps": "-3", "counterfactual": True}],
+        review_cycle=6,
+    )
+
+    assert '"cumulative_closed_trades": [{"id": 1}, {"id": 2}]' in gateway.prompts[0]
+    assert '"new_closed_trades": [{"id": 2}]' in gateway.prompts[0]
+    assert '"abstention_reference_outcomes"' in gateway.prompts[0]
 
 
 def test_reviewer_uses_configured_fallback_after_rate_limit() -> None:
