@@ -20,5 +20,9 @@
     "fee_rate": "0.00045",
     "spread_bps": "2",
     "slippage_bps": "1"
+  },
+  "simulation": {
+    "initial_equity": "1000",
+    "reference_notional": "250"
   }
 }

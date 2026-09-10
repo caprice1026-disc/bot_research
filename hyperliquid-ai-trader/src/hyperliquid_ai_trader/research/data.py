@@ -240,5 +240,7 @@ def read_normalized_candles_jsonl(path: Path) -> list[NormalizedCandle]:
                 candles.append(NormalizedCandle(**payload))
             except (TypeError, ValueError, json.JSONDecodeError) as error:
                 raise ResearchDataError(f"invalid normalized candle at line {line_number}") from error
+    if not candles:
+        return []
     validate_contiguous_candles(candles)
     return candles

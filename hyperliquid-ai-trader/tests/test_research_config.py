@@ -37,6 +37,10 @@ def _payload(*, allow_paid_api: bool = False, budget_usd: str = "0") -> dict[str
             "spread_bps": "2",
             "slippage_bps": "1",
         },
+        "simulation": {
+            "initial_equity": "1000",
+            "reference_notional": "250",
+        },
     }
 
 
@@ -48,6 +52,8 @@ def test_config_defaults_to_no_paid_api_and_cli_prints_safe_summary(tmp_path, ca
 
     assert config.market_venue == "hyperliquid_mainnet_public"
     assert config.allow_paid_api is False
+    assert config.initial_equity == 1000
+    assert config.reference_notional == 250
     with pytest.raises(ResearchConfigError, match="allow_paid_api"):
         require_paid_api_permission(config)
     assert main(["validate-config", "--config", str(path)]) == 0
@@ -56,7 +62,9 @@ def test_config_defaults_to_no_paid_api_and_cli_prints_safe_summary(tmp_path, ca
         "allow_paid_api": False,
         "budget_usd": "0",
         "experiment_id": "development-v1",
+        "initial_equity": "1000",
         "market": "hyperliquid_mainnet_public:BTC",
+        "reference_notional": "250",
         "status": "ok",
     }
 

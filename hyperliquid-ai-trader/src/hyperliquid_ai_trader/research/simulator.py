@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 from enum import Enum
 
@@ -55,6 +55,7 @@ class SimulatedEpisode:
     funding: Decimal
     net_pnl: Decimal
     quality: str
+    kind: str = "trade"
 
 
 @dataclass
@@ -73,10 +74,11 @@ class VirtualAccount:
         if self.peak_equity is None:
             self.peak_equity = self.equity
 
-    def apply(self, episode: SimulatedEpisode, *, kind: str = "trade") -> None:
-        if kind == "shadow":
+    def apply(self, episode: SimulatedEpisode, *, kind: str | None = None) -> None:
+        effective_kind = kind or episode.kind
+        if effective_kind == "shadow":
             return
-        if kind != "trade":
+        if effective_kind != "trade":
             raise SimulationError("episode kind must be trade or shadow")
         day = episode.exit_time_ms // 86_400_000
         if self.utc_day != day:
@@ -133,6 +135,21 @@ def _find_entry(
     raise SimulationError("no entry candle within the arrival allowance")
 
 
+def find_entry_candle(
+    *,
+    candles: list[NormalizedCandle],
+    decision_time_ms: int,
+    config: ExecutionConfig,
+) -> NormalizedCandle:
+    """Find the first allowed one-minute entry boundary after model latency."""
+
+    return _find_entry(
+        candles,
+        arrival_ms=decision_time_ms + config.model_delay_ms,
+        max_arrival_delay_ms=config.max_arrival_delay_ms,
+    )
+
+
 def simulate_episode(
     *,
     decision: TradeDecision,
@@ -155,11 +172,10 @@ def simulate_episode(
     if not candles:
         raise SimulationError("candles are required")
     validate_contiguous_candles(candles)
-    arrival_ms = decision_time_ms + config.model_delay_ms
-    entry_candle = _find_entry(
-        candles,
-        arrival_ms=arrival_ms,
-        max_arrival_delay_ms=config.max_arrival_delay_ms,
+    entry_candle = find_entry_candle(
+        candles=candles,
+        decision_time_ms=decision_time_ms,
+        config=config,
     )
 
     raw_entry = Decimal(str(entry_candle.open))
@@ -224,3 +240,27 @@ def simulate_episode(
         net_pnl=net,
         quality=quality,
     )
+
+
+def simulate_shadow_episode(
+    *,
+    decision: TradeDecision,
+    decision_time_ms: int,
+    quantity: Decimal,
+    candles: list[NormalizedCandle],
+    config: ExecutionConfig = ExecutionConfig(),
+    funding: Decimal = Decimal("0"),
+) -> SimulatedEpisode:
+    """Evaluate an abstained direction without letting it change account equity."""
+
+    if not decision.would_abstain:
+        raise SimulationError("shadow episodes require an abstained decision")
+    simulated = simulate_episode(
+        decision=replace(decision, would_abstain=False, abstain_reason=None),
+        decision_time_ms=decision_time_ms,
+        quantity=quantity,
+        candles=candles,
+        config=config,
+        funding=funding,
+    )
+    return replace(simulated, kind="shadow")

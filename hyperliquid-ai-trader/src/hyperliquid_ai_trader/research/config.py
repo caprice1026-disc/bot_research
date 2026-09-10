@@ -30,6 +30,8 @@ class ResearchConfig:
     trader_model: str
     reviewer_model: str
     execution: ExecutionConfig
+    initial_equity: Decimal
+    reference_notional: Decimal
 
     def public_summary(self) -> dict[str, str | bool]:
         return {
@@ -38,6 +40,8 @@ class ResearchConfig:
             "market": f"{self.market_venue}:{self.symbol}",
             "allow_paid_api": self.allow_paid_api,
             "budget_usd": format(self.budget_usd, "f"),
+            "initial_equity": format(self.initial_equity, "f"),
+            "reference_notional": format(self.reference_notional, "f"),
         }
 
 
@@ -121,6 +125,14 @@ def load_research_config(path: Path) -> ResearchConfig:
 
     if root.get("feature_set") != "common_candles_v1":
         raise ResearchConfigError("feature_set must be common_candles_v1")
+    simulation = _mapping(root.get("simulation"), name="simulation")
+    initial_equity = _decimal(simulation.get("initial_equity"), name="simulation.initial_equity")
+    reference_notional = _decimal(
+        simulation.get("reference_notional"),
+        name="simulation.reference_notional",
+    )
+    if initial_equity <= 0 or reference_notional <= 0:
+        raise ResearchConfigError("simulation equity and reference notional must be positive")
     return ResearchConfig(
         experiment_id=_string(root.get("experiment_id"), name="experiment_id"),
         market_venue=venue,
@@ -131,6 +143,8 @@ def load_research_config(path: Path) -> ResearchConfig:
         trader_model=_string(api.get("trader_model"), name="api.trader_model"),
         reviewer_model=_string(api.get("reviewer_model"), name="api.reviewer_model"),
         execution=execution,
+        initial_equity=initial_equity,
+        reference_notional=reference_notional,
     )
 
 

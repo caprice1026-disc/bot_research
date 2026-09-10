@@ -12,6 +12,7 @@ from hyperliquid_ai_trader.research.simulator import (
     SimulationError,
     VirtualAccount,
     baseline_decision,
+    simulate_shadow_episode,
     simulate_episode,
 )
 
@@ -101,6 +102,20 @@ def test_abstention_never_becomes_account_profit() -> None:
     with pytest.raises(SimulationError, match="not an account episode"):
         simulate_episode(decision=abstention, decision_time_ms=0,
                          quantity=Decimal("1"), candles=[_candle(0), _candle(1)])
+
+    shadow = simulate_shadow_episode(
+        decision=abstention,
+        decision_time_ms=0,
+        quantity=Decimal("1"),
+        candles=[_candle(index) for index in range(7)],
+        config=ExecutionConfig(fee_rate=Decimal("0"), spread_bps=Decimal("0"),
+                               slippage_bps=Decimal("0")),
+    )
+    account = VirtualAccount(equity=Decimal("1000"), day_start_equity=Decimal("1000"))
+    account.apply(shadow)
+
+    assert shadow.kind == "shadow"
+    assert account.equity == Decimal("1000")
 
 
 def test_baselines_and_shadow_account_are_separated() -> None:

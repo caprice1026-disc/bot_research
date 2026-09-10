@@ -116,6 +116,21 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 この段階のモジュールはネットワーク、秘密鍵、Gemini APIを必要としません。研究v3全体のBatch、Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
 
+公開JSONの研究設定は、課金を明示許可しない限りモデルAPIを呼べません。まず設定だけを確認できます。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli validate-config --config configs\research\development.json
+```
+
+正規化済みの1分足JSONLがある場合は、外部APIなしで3つの固定ルールを時系列順に再生できます。`insufficient_data` は、必要な61本の事前足またはEntry/Exit用の後続足が不足し、損益ゼロとして評価していないことを表します。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli baseline `
+  --config configs\research\development.json `
+  --candles data\research\BTC-1m.jsonl `
+  --baseline momentum
+```
+
 ## 参照
 
 - [Hyperliquid API](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api)
