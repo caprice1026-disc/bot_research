@@ -9,31 +9,7 @@ import httpx
 from google import genai
 from google.genai import errors, types
 
-from .agents import FunctionCall, ModelGatewayError
-
-
-_OPEN_POSITION_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "side": {"type": "string", "enum": ["long", "short"]},
-        "stop_loss_pct": {"type": "number"},
-        "take_profit_pct": {"type": "number"},
-        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-        "thesis": {"type": "string"},
-        "would_abstain": {"type": "boolean"},
-        "abstain_reason": {"type": ["string", "null"]},
-    },
-    "required": [
-        "side",
-        "stop_loss_pct",
-        "take_profit_pct",
-        "confidence",
-        "thesis",
-        "would_abstain",
-        "abstain_reason",
-    ],
-    "additionalProperties": False,
-}
+from .agents import FunctionCall, ModelGatewayError, OPEN_POSITION_JSON_SCHEMA
 
 _STRATEGY_PATCH_SCHEMA = {
     "type": "object",
@@ -109,7 +85,7 @@ class GeminiGateway:
                 "Choose exactly one LONG or SHORT trade. Position size, coin, leverage, "
                 "account, and network are controlled by the external risk engine."
             ),
-            parameters_json_schema=_OPEN_POSITION_SCHEMA,
+            parameters_json_schema=OPEN_POSITION_JSON_SCHEMA,
         )
         config = types.GenerateContentConfig(
             temperature=temperature,

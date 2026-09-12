@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from decimal import Decimal, DecimalException
 import hashlib
 import json
 from pathlib import Path
@@ -23,10 +24,22 @@ from .points import (
     PointSelectionError,
     build_point_candidates,
     candidate_set_sha256,
+    read_point_selection_jsonl,
     select_research_points,
     write_point_selection_jsonl,
 )
+from .preparation import (
+    ResearchPreparationError,
+    prepare_point_requests,
+    read_strategy_asset,
+    read_text_asset,
+    write_prepared_requests_jsonl,
+)
+from .request_identity import ModelRequestError
 from .simulator import SimulationError
+
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -53,6 +66,17 @@ def _parser() -> argparse.ArgumentParser:
     points.add_argument("--count", type=int, required=True)
     points.add_argument("--seed", type=int, default=42)
     points.add_argument("--output", type=Path, required=True)
+    prepare = commands.add_parser("prepare-requests", help="prepare offline model requests without submission")
+    prepare.add_argument("--config", type=Path, required=True)
+    prepare.add_argument("--points", type=Path, required=True)
+    prepare.add_argument("--constitution", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "constitution.md")
+    prepare.add_argument("--instruction", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "trader_v001.md")
+    prepare.add_argument("--strategy", type=Path, default=_PROJECT_ROOT / "configs" / "research" / "initial_strategy.json")
+    prepare.add_argument("--trial-prefix", default="trader-v001")
+    prepare.add_argument("--temperature", default=Decimal("0"), type=Decimal)
+    prepare.add_argument("--thinking", default="none")
+    prepare.add_argument("--max-output-tokens", default=500, type=int)
+    prepare.add_argument("--output", type=Path, required=True)
     return parser
 
 
@@ -199,6 +223,55 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "prepare-requests":
+            points = read_point_selection_jsonl(args.points)
+            constitution = read_text_asset(args.constitution, name="constitution")
+            instruction = read_text_asset(args.instruction, name="instruction")
+            strategy = read_strategy_asset(args.strategy)
+            requests = prepare_point_requests(
+                config=config,
+                points=points,
+                constitution=constitution,
+                instruction=instruction,
+                strategy=strategy,
+                trial_prefix=args.trial_prefix,
+                temperature=args.temperature,
+                thinking=args.thinking,
+                max_output_tokens=args.max_output_tokens,
+            )
+            write_prepared_requests_jsonl(args.output, requests)
+            manifest_path = _write_artifact_manifest(
+                output=args.output,
+                payload={
+                    "mode": "prepare_only",
+                    "experiment_id": config.experiment_id,
+                    "request_count": len(requests),
+                    "requested_model": config.trader_model,
+                    "temperature": format(args.temperature, "f"),
+                    "thinking": args.thinking,
+                    "max_output_tokens": args.max_output_tokens,
+                    "source_points_sha256": hashlib.sha256(args.points.read_bytes()).hexdigest(),
+                    "constitution_sha256": hashlib.sha256(constitution.encode("utf-8")).hexdigest(),
+                    "instruction_sha256": hashlib.sha256(instruction.encode("utf-8")).hexdigest(),
+                    "strategy_sha256": hashlib.sha256(
+                        json.dumps(strategy, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
+                    ).hexdigest(),
+                },
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": "ok",
+                        "request_count": len(requests),
+                        "requests_path": str(args.output),
+                        "manifest_path": str(manifest_path),
+                        "submission_performed": False,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0
         result = run_baseline(
             candles=read_normalized_candles_jsonl(args.candles),
             baseline_name=args.baseline,
@@ -206,7 +279,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             initial_equity=config.initial_equity,
             reference_notional=config.reference_notional,
         )
-    except (OSError, PointSelectionError, ResearchConfigError, ResearchDataError, SimulationError) as error:
+    except (
+        DecimalException,
+        ModelRequestError,
+        OSError,
+        PointSelectionError,
+        ResearchConfigError,
+        ResearchDataError,
+        ResearchPreparationError,
+        SimulationError,
+    ) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     print(json.dumps(result.public_summary(), ensure_ascii=False, sort_keys=True))

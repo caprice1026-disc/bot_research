@@ -97,6 +97,49 @@ def write_point_selection_jsonl(path: Path, selection: PointSelection) -> None:
     temporary.replace(path)
 
 
+def read_point_selection_jsonl(path: Path) -> list[PointCandidate]:
+    """Load a selected point artifact and revalidate its time-safe schema."""
+
+    points: list[PointCandidate] = []
+    expected_feature_keys = set(CommonCandleFeatures.__dataclass_fields__)
+    feature_float_keys = expected_feature_keys - {"feature_set", "as_of_ms"}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as error:
+        raise PointSelectionError(f"cannot read point selection: {path}") from error
+    for line_number, line in enumerate(lines, start=1):
+        try:
+            payload = json.loads(line)
+            if not isinstance(payload, dict) or set(payload) != {"decision_time_ms", "features"}:
+                raise TypeError("point row keys are invalid")
+            decision_time_ms = payload["decision_time_ms"]
+            feature_values = payload["features"]
+            if isinstance(decision_time_ms, bool) or not isinstance(decision_time_ms, int):
+                raise TypeError("decision_time_ms must be an integer")
+            if not isinstance(feature_values, dict) or set(feature_values) != expected_feature_keys:
+                raise TypeError("feature keys are invalid")
+            if not isinstance(feature_values["feature_set"], str):
+                raise TypeError("feature_set must be a string")
+            if isinstance(feature_values["as_of_ms"], bool) or not isinstance(feature_values["as_of_ms"], int):
+                raise TypeError("as_of_ms must be an integer")
+            if any(
+                isinstance(feature_values[key], bool)
+                or not isinstance(feature_values[key], (int, float))
+                for key in feature_float_keys
+            ):
+                raise TypeError("feature values must be numbers")
+            features = CommonCandleFeatures(**feature_values)
+            points.append(PointCandidate(decision_time_ms=decision_time_ms, features=features))
+        except (TypeError, ValueError, json.JSONDecodeError, PointSelectionError) as error:
+            raise PointSelectionError(f"invalid point selection at line {line_number}") from error
+    decision_times = [point.decision_time_ms for point in points]
+    if not points:
+        raise PointSelectionError("point selection is empty")
+    if len(set(decision_times)) != len(decision_times):
+        raise PointSelectionError("point selection decision times must be unique")
+    return points
+
+
 def build_point_candidates(candles: list[NormalizedCandle]) -> list[PointCandidate]:
     """Build candidates only once each point has 61 confirmed one-minute bars."""
 

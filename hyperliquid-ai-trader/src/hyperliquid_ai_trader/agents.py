@@ -67,15 +67,29 @@ class ReviewEnvelope:
     model: str
 
 
-_EXPECTED_ARGS = {
-    "side",
-    "stop_loss_pct",
-    "take_profit_pct",
-    "confidence",
-    "thesis",
-    "would_abstain",
-    "abstain_reason",
+OPEN_POSITION_JSON_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "side": {"type": "string", "enum": ["long", "short"]},
+        "stop_loss_pct": {"type": "number"},
+        "take_profit_pct": {"type": "number"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "thesis": {"type": "string"},
+        "would_abstain": {"type": "boolean"},
+        "abstain_reason": {"type": ["string", "null"]},
+    },
+    "required": [
+        "side",
+        "stop_loss_pct",
+        "take_profit_pct",
+        "confidence",
+        "thesis",
+        "would_abstain",
+        "abstain_reason",
+    ],
+    "additionalProperties": False,
 }
+_EXPECTED_ARGS = set(OPEN_POSITION_JSON_SCHEMA["properties"])
 
 
 def parse_trade_calls(calls: list[FunctionCall]) -> TradeDecision:

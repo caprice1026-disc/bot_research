@@ -114,7 +114,7 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
 
-固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。研究v3全体のBatch、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
+固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。`prepare-requests`は選定地点から将来のモデル入力を不変化しますが、Geminiへ送信しません。研究v3全体のBatch送信・usage/job照会、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
 
 公開JSONの研究設定は、課金を明示許可しない限りモデルAPIを呼べません。まず設定だけを確認できます。
 
@@ -154,6 +154,19 @@ LLMへ渡す候補地点は、UTCの5分スロット上で同一の確定足JSON
   --count 50 `
   --seed 42 `
   --output data\research\points-50.jsonl
+```
+
+選定済み地点、固定constitution/instruction/strategy、生成設定、単一`open_position` schemaを結合し、canonical payload・request hash・独立trial IDを持つ送信前JSONLを作れます。これは将来のBatch adapterが消費する入力資産であり、APIキーを読まず、Gemini送信・Batch job作成・SQLite予約・注文を行いません。`--instruction`を別版のpromptへ差し替えると同じ地点でも別のrequest hashになり、独立候補として扱うため`--trial-prefix`も別名（例：`trader-v002`）にします。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli prepare-requests `
+  --config configs\research\development.json `
+  --points data\research\points-50.jsonl `
+  --trial-prefix trader-v001 `
+  --temperature 0 `
+  --thinking none `
+  --max-output-tokens 500 `
+  --output data\research\requests-50.jsonl
 ```
 
 ## 参照
