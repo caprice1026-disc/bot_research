@@ -23,7 +23,8 @@
 - [x] (2026-09-12) M1の最小公開データ経路として、Hyperliquid Mainnetの1分足を最大5,000本まで明示取得する`collect` CLIを追加した。確定足のみを原子的JSONLへ保存し、範囲・受信時刻・内容SHA-256をmanifestへ記録する。空結果は`insufficient_data`で終了し、Fake APIの6件の回帰テストでネットワークなしに検証した。
 - [x] (2026-09-10) M2の最小時系列Runnerとして、固定3ルールを確定足から順に再生する`baseline` CLIを追加した。position重複と末尾不足を明示的に数え、`insufficient_data`を損益ゼロ成功としない。`would_abstain`判断は専用shadow episodeとして同じSimulatorで評価でき、仮想口座へは加算しない（全111件通過）。
 - [ ] M2：仮想執行、単純ルール、口座台帳（完了：Entry遅延、SL/TP、同足曖昧性、gap、300秒、費用、LONG/SHORT共通損益、3単純ルール、shadow非加算、UTC日次口座、時系列baseline runner。残り：funding event、margin/liquidation、Risk制限との統合）。
-- [ ] M3：Trader入力分離、Batch、回答保存と予算管理（完了：公開JSON設定、`validate-config` CLI、`allow_paid_api=false`・`budget_usd=0`の既定拒否、初期資金1000と固定参照額250の設定固定、canonical request hash、送信前SQLite予約、`submission_unknown`の再送停止、研究専用promptと初期strategy、共有Function Call parserの有限値検証。残り：研究側のSL/TP制限適用、Batch/usage/job照会）。
+- [ ] M3：Trader入力分離、Batch、回答保存と予算管理（完了：公開JSON設定、`validate-config` CLI、`allow_paid_api=false`・`budget_usd=0`の既定拒否、初期資金1000と固定参照額250の設定固定、canonical request hash、送信前SQLite予約、`submission_unknown`の再送停止、研究専用promptと初期strategy、共有Function Call parserの有限値検証、通常/見送り参考提案への研究用SL/TP制限適用。残り：Batch/usage/job照会）。
+- [x] (2026-09-12) M3の研究用decision boundaryとして、公開設定の`decision`範囲を`ResearchDecisionLimits`に読み込み、共有schema parserの直後に適用する`parse_research_trade_calls`を追加した。`would_abstain=true`でも同じSL/TP上限を検証し、12件の対象テストで確認した。
 - [x] (2026-09-12) M3の固定入力資産として、`prompts/research/`と`configs/research/initial_strategy.json`を追加した。研究strategyは板/OIに依存しないOHLCV仮説に分離し、共有`parse_trade_calls`はNaN/Infinityを`invalid_function_call`として拒否する。11件の対象テストで確認した。
 - [x] (2026-09-10) M3の最小送信台帳として、モデル応答に影響する入力をcanonical JSON + SHA-256で固定し、独立trial IDと合わせたrequest IDを生成した。SQLiteへ送信前予約を保存し、応答喪失は`submission_unknown`として残す。未照合の同一要求を自動再送できないことを5件の境界テストで確認した（全113件通過）。
 - [ ] M4：点評価と3日Replay。
@@ -123,6 +124,8 @@ Forwardは初期案を30日・自動延長なしとし、最低取引件数、�
 2026-09-12 / Codex：公開足取得は、既存の署名なし`Info` collectorをCLIから一度だけ呼ぶ最小構成にする。Providerの5,000本上限を越える範囲は分割や補完を行わずネットワーク前に拒否し、確定足0件は空JSONLを成功出力せず`insufficient_data`にする。長期期間の分割取得・常駐collectorは必要な時点で追加する。
 
 2026-09-12 / Codex：研究用strategyは既存Testnet Botの初期strategyをそのまま流用しない。研究Traderへ板/OIを渡さないため、初期仮説も1分OHLCVのモメンタム・ボラティリティ・出来高だけに限定する。Function Callの構文検証はlive/researchで共有し、NaN/InfinityはRiskやSimulatorまで通さない。
+
+2026-09-12 / Codex：研究configのSL/TP範囲は必須の公開`decision`節に固定する。live環境変数を参照せず、通常提案だけでなく見送りのshadow提案にも同じ`parse_research_trade_calls`を適用できるため、後続のBatch/Replayで入力経路を分けない。
 
 2026-09-10 / Codex：初期資金と固定参照額はCLI既定値で隠さず、公開research configの`simulation`節へ固定する。値を変える場合は別config・別experimentとして扱えるようにし、同じReplayを意図せず異なるnotionalで比較しないため。
 
@@ -281,7 +284,7 @@ SQLite更新は一トランザクションで、decision消費とaccount更新�
 ## Outcomes & Retrospective
 
 
-v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールの時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証を追加した。公開データの実取得、funding event、Batch、LLM Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
+v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールの時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用を追加した。公開データの実取得、funding event、Batch、LLM Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
 
 変更履歴：2026-09-10、housinv3.mdのレビューと現行コード照合に基づいて初版作成。元文書を保持し、計画の重複作成を避けるためレビュー指摘と具体的工程を本ファイルへまとめた。
 
@@ -302,3 +305,5 @@ v3は研究設計として採用可能。無条件に「問題なし」ではな
 変更履歴：2026-09-12、M1の公開`collect` CLI、5,000本上限、source manifest、確定足0件の`insufficient_data`、Fake APIによる6件の検証結果を反映した。
 
 変更履歴：2026-09-12、M3の研究専用prompt、OHLCV限定の初期strategy、共有Function Call parserの有限値検証、対象11件の検証結果を反映した。
+
+変更履歴：2026-09-12、M3の研究用SL/TP制限設定、通常/見送り参考提案への共通検証、対象12件の検証結果を反映した。

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from decimal import Decimal
 import json
 from pathlib import Path
 
@@ -37,6 +38,12 @@ def _payload(*, allow_paid_api: bool = False, budget_usd: str = "0") -> dict[str
             "spread_bps": "2",
             "slippage_bps": "1",
         },
+        "decision": {
+            "min_stop_loss_pct": "0.10",
+            "max_stop_loss_pct": "1.00",
+            "min_take_profit_pct": "0.10",
+            "max_take_profit_pct": "2.00",
+        },
         "simulation": {
             "initial_equity": "1000",
             "reference_notional": "250",
@@ -66,6 +73,8 @@ def test_config_defaults_to_no_paid_api_and_cli_prints_safe_summary(tmp_path, ca
         "market": "hyperliquid_mainnet_public:BTC",
         "reference_notional": "250",
         "status": "ok",
+        "stop_loss_pct": "0.10-1.00",
+        "take_profit_pct": "0.10-2.00",
     }
 
 
@@ -75,6 +84,23 @@ def test_config_rejects_budget_when_paid_api_is_disabled(tmp_path) -> None:
 
     with pytest.raises(ResearchConfigError, match="budget_usd"):
         load_research_config(path)
+
+
+def test_config_exposes_explicit_research_decision_limits(tmp_path) -> None:
+    payload = _payload()
+    payload["decision"] = {
+        "min_stop_loss_pct": "0.10",
+        "max_stop_loss_pct": "1.00",
+        "min_take_profit_pct": "0.10",
+        "max_take_profit_pct": "2.00",
+    }
+    path = tmp_path / "research.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    config = load_research_config(path)
+
+    assert config.decision_limits.min_stop_loss_pct == Decimal("0.10")
+    assert config.decision_limits.max_take_profit_pct == Decimal("2.00")
 
 
 def test_checked_in_development_config_has_no_paid_api_or_secret_values() -> None:

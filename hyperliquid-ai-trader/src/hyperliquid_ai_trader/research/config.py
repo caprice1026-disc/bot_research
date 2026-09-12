@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .decisions import ResearchDecisionError, ResearchDecisionLimits
 from .simulator import ExecutionConfig
 
 
@@ -30,6 +31,7 @@ class ResearchConfig:
     trader_model: str
     reviewer_model: str
     execution: ExecutionConfig
+    decision_limits: ResearchDecisionLimits
     initial_equity: Decimal
     reference_notional: Decimal
 
@@ -40,6 +42,14 @@ class ResearchConfig:
             "market": f"{self.market_venue}:{self.symbol}",
             "allow_paid_api": self.allow_paid_api,
             "budget_usd": format(self.budget_usd, "f"),
+            "stop_loss_pct": (
+                f"{self.decision_limits.min_stop_loss_pct:f}-"
+                f"{self.decision_limits.max_stop_loss_pct:f}"
+            ),
+            "take_profit_pct": (
+                f"{self.decision_limits.min_take_profit_pct:f}-"
+                f"{self.decision_limits.max_take_profit_pct:f}"
+            ),
             "initial_equity": format(self.initial_equity, "f"),
             "reference_notional": format(self.reference_notional, "f"),
         }
@@ -123,6 +133,29 @@ def load_research_config(path: Path) -> ResearchConfig:
     except (KeyError, TypeError, ValueError) as error:
         raise ResearchConfigError("execution has invalid values") from error
 
+    decision_values = _mapping(root.get("decision"), name="decision")
+    try:
+        decision_limits = ResearchDecisionLimits(
+            min_stop_loss_pct=_decimal(
+                decision_values["min_stop_loss_pct"],
+                name="decision.min_stop_loss_pct",
+            ),
+            max_stop_loss_pct=_decimal(
+                decision_values["max_stop_loss_pct"],
+                name="decision.max_stop_loss_pct",
+            ),
+            min_take_profit_pct=_decimal(
+                decision_values["min_take_profit_pct"],
+                name="decision.min_take_profit_pct",
+            ),
+            max_take_profit_pct=_decimal(
+                decision_values["max_take_profit_pct"],
+                name="decision.max_take_profit_pct",
+            ),
+        )
+    except (KeyError, ResearchDecisionError) as error:
+        raise ResearchConfigError("decision limits are invalid") from error
+
     if root.get("feature_set") != "common_candles_v1":
         raise ResearchConfigError("feature_set must be common_candles_v1")
     simulation = _mapping(root.get("simulation"), name="simulation")
@@ -143,6 +176,7 @@ def load_research_config(path: Path) -> ResearchConfig:
         trader_model=_string(api.get("trader_model"), name="api.trader_model"),
         reviewer_model=_string(api.get("reviewer_model"), name="api.reviewer_model"),
         execution=execution,
+        decision_limits=decision_limits,
         initial_equity=initial_equity,
         reference_notional=reference_notional,
     )

@@ -21,6 +21,12 @@
     "spread_bps": "2",
     "slippage_bps": "1"
   },
+  "decision": {
+    "min_stop_loss_pct": "0.10",
+    "max_stop_loss_pct": "1.00",
+    "min_take_profit_pct": "0.10",
+    "max_take_profit_pct": "2.00"
+  },
   "simulation": {
     "initial_equity": "1000",
     "reference_notional": "250"

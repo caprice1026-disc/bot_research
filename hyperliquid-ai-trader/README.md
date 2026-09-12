@@ -124,6 +124,8 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 研究用の固定指示は`prompts\research\`、OHLCVだけを前提にした初期strategyは`configs\research\initial_strategy.json`に分離しています。既存Testnet Botのpromptや、板/OIを含むstrategyは上書きしません。研究側のFunction Callは注文を実行せず、有限値・単一`open_position`提案として検証してから将来のSimulator入力に使います。
 
+`configs\research\development.json`の`decision`にはSL/TPの百分率範囲を固定します。通常提案と`would_abstain=true`の参考提案は同じ範囲検証を通るため、不正な仮想結果が研究台帳へ入ることはありません。
+
 Hyperliquid公開1分足は、最大5,000本の単一スナップショットだけを明示的に取得できます。確定足だけをJSONLへ保存し、同じ場所に取得範囲・受信時刻・内容hashを含むmanifestを作ります。空結果は`insufficient_data`で終了し、空の損益結果にはしません。
 
 ```powershell
