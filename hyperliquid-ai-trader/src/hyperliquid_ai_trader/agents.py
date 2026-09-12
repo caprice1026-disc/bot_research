@@ -78,7 +78,9 @@ _EXPECTED_ARGS = {
 }
 
 
-def _parse_call(calls: list[FunctionCall]) -> TradeDecision:
+def parse_trade_calls(calls: list[FunctionCall]) -> TradeDecision:
+    """Validate the single non-executing trade proposal shared by research paths."""
+
     if len(calls) != 1 or calls[0].name != "open_position":
         raise AgentDecisionError("invalid_function_call")
     args = calls[0].args
@@ -91,6 +93,8 @@ def _parse_call(calls: list[FunctionCall]) -> TradeDecision:
         confidence = Decimal(str(args["confidence"]))
     except (ValueError, InvalidOperation, TypeError) as exc:
         raise AgentDecisionError("invalid_function_call") from exc
+    if not all(value.is_finite() for value in (stop_loss_pct, take_profit_pct, confidence)):
+        raise AgentDecisionError("invalid_function_call")
     thesis = args["thesis"]
     would_abstain = args["would_abstain"]
     abstain_reason = args["abstain_reason"]
@@ -158,7 +162,7 @@ class TraderAgent:
                         model=model,
                         temperature=self.temperature,
                     )
-                    decision = _parse_call(calls)
+                    decision = parse_trade_calls(calls)
                     return DecisionEnvelope(decision, prompt_hash, model)
                 except ModelGatewayError as exc:
                     last_error = exc.error_type

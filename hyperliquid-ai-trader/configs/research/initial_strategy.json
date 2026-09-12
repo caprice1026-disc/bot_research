@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "parent_version": null,
+  "market_hypothesis": "1分OHLCVのモメンタム、ボラティリティ、出来高の組合せは、費用考慮後の方向性に関する検証対象の仮説である。",
+  "active_rules": [],
+  "failure_modes": [],
+  "confidence_calibration": {
+    "long": 0.0,
+    "short": 0.0
+  },
+  "last_review_cycle": 0
+}

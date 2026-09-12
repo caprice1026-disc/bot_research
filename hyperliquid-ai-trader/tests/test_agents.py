@@ -4,6 +4,7 @@ from decimal import Decimal
 
 import pytest
 
+import hyperliquid_ai_trader.agents as agents
 from hyperliquid_ai_trader.agents import (
     AgentDecisionError,
     FunctionCall,
@@ -180,6 +181,18 @@ def test_trader_rejects_unknown_function_and_out_of_range_confidence() -> None:
 
     with pytest.raises(AgentDecisionError) as caught:
         agent.decide({"market": {"mid": 50000}})
+
+    assert caught.value.error_type == "invalid_function_call"
+
+
+def test_public_trade_call_parser_rejects_nonfinite_numbers() -> None:
+    call = _valid_call()
+    call.args["confidence"] = "NaN"
+    parser = getattr(agents, "parse_trade_calls", None)
+
+    assert callable(parser)
+    with pytest.raises(AgentDecisionError) as caught:
+        parser([call])
 
     assert caught.value.error_type == "invalid_function_call"
 

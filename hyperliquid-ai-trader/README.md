@@ -122,6 +122,8 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli validate-config --config configs\research\development.json
 ```
 
+研究用の固定指示は`prompts\research\`、OHLCVだけを前提にした初期strategyは`configs\research\initial_strategy.json`に分離しています。既存Testnet Botのpromptや、板/OIを含むstrategyは上書きしません。研究側のFunction Callは注文を実行せず、有限値・単一`open_position`提案として検証してから将来のSimulator入力に使います。
+
 Hyperliquid公開1分足は、最大5,000本の単一スナップショットだけを明示的に取得できます。確定足だけをJSONLへ保存し、同じ場所に取得範囲・受信時刻・内容hashを含むmanifestを作ります。空結果は`insufficient_data`で終了し、空の損益結果にはしません。
 
 ```powershell
