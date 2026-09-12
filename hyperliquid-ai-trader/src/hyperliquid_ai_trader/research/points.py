@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections import Counter, deque
 from dataclasses import dataclass
 import hashlib
+import json
+from pathlib import Path
 from random import Random
 from statistics import median
 
@@ -12,7 +14,9 @@ from .data import (
     CommonCandleFeatures,
     FEATURE_SET,
     NormalizedCandle,
+    RESEARCH_DECISION_INTERVAL_MS,
     build_common_candle_features,
+    is_research_decision_time,
     validate_contiguous_candles,
 )
 
@@ -32,6 +36,10 @@ class PointCandidate:
     def __post_init__(self) -> None:
         if self.decision_time_ms < self.features.as_of_ms:
             raise PointSelectionError("decision time precedes available features")
+        if not is_research_decision_time(self.decision_time_ms):
+            raise PointSelectionError(
+                f"decision time must align to {RESEARCH_DECISION_INTERVAL_MS}ms"
+            )
         if self.features.feature_set != FEATURE_SET:
             raise PointSelectionError("candidate uses an unsupported feature set")
 
@@ -40,6 +48,53 @@ class PointCandidate:
 class PointSelection:
     points: tuple[PointCandidate, ...]
     stratum_counts: dict[str, int]
+    candidate_stratum_counts: dict[str, int]
+    realized_vol_30m_median: float
+
+
+def candidate_set_sha256(candidates: list[PointCandidate]) -> str:
+    """Hash the complete ordered candidate population, not only a selection prefix."""
+
+    try:
+        payload = json.dumps(
+            [
+                {
+                    "decision_time_ms": candidate.decision_time_ms,
+                    "features": candidate.features.to_prompt_dict(),
+                }
+                for candidate in candidates
+            ],
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
+    except ValueError as error:
+        raise PointSelectionError("candidate features must be finite JSON values") from error
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def write_point_selection_jsonl(path: Path, selection: PointSelection) -> None:
+    """Atomically persist selected, time-safe feature inputs for later requests."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.tmp")
+    with temporary.open("w", encoding="utf-8", newline="\n") as handle:
+        for point in selection.points:
+            handle.write(
+                json.dumps(
+                    {
+                        "decision_time_ms": point.decision_time_ms,
+                        "features": point.features.to_prompt_dict(),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    allow_nan=False,
+                )
+            )
+            handle.write("\n")
+    temporary.replace(path)
 
 
 def build_point_candidates(candles: list[NormalizedCandle]) -> list[PointCandidate]:
@@ -50,12 +105,17 @@ def build_point_candidates(candles: list[NormalizedCandle]) -> list[PointCandida
     validate_contiguous_candles(candles)
     candidates: list[PointCandidate] = []
     for candle in candles[60:]:
+        decision_time_ms = candle.close_exclusive_ms
+        if not is_research_decision_time(decision_time_ms):
+            continue
+        if sum(candidate.available_at_ms <= decision_time_ms for candidate in candles) < 61:
+            continue
         candidates.append(
             PointCandidate(
-                decision_time_ms=candle.available_at_ms,
+                decision_time_ms=decision_time_ms,
                 features=build_common_candle_features(
                     candles=candles,
-                    decision_time_ms=candle.available_at_ms,
+                    decision_time_ms=decision_time_ms,
                 ),
             )
         )
@@ -98,6 +158,10 @@ def select_research_points(
     grouped: dict[str, list[PointCandidate]] = {}
     for candidate in candidates:
         grouped.setdefault(_stratum(candidate, median_volatility=median_volatility), []).append(candidate)
+    candidate_counts = Counter(
+        _stratum(candidate, median_volatility=median_volatility)
+        for candidate in candidates
+    )
 
     queues: dict[str, deque[PointCandidate]] = {}
     for stratum, group in grouped.items():
@@ -117,4 +181,9 @@ def select_research_points(
         _stratum(candidate, median_volatility=median_volatility)
         for candidate in selected
     )
-    return PointSelection(points=selected, stratum_counts=dict(sorted(counts.items())))
+    return PointSelection(
+        points=selected,
+        stratum_counts=dict(sorted(counts.items())),
+        candidate_stratum_counts=dict(sorted(candidate_counts.items())),
+        realized_vol_30m_median=median_volatility,
+    )

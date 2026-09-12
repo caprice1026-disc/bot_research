@@ -136,13 +136,24 @@ Hyperliquid公開1分足は、最大5,000本の単一スナップショットだ
   --output data\research\BTC-1m.jsonl
 ```
 
-正規化済みの1分足JSONLがある場合は、外部APIなしで3つの固定ルールを時系列順に再生できます。`insufficient_data` は、必要な61本の事前足またはEntry/Exit用の後続足が不足し、損益ゼロとして評価していないことを表します。
+正規化済みの1分足JSONLがある場合は、外部APIなしで3つの固定ルールをUTCの5分スロットごとに時系列順で再生できます。`insufficient_data` は、必要な61本の事前足またはEntry/Exit用の後続足が不足し、損益ゼロとして評価していないことを表します。
 
 ```powershell
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli baseline `
   --config configs\research\development.json `
   --candles data\research\BTC-1m.jsonl `
   --baseline momentum
+```
+
+LLMへ渡す候補地点は、UTCの5分スロット上で同一の確定足JSONLとseedから再現可能に選びます。返却するJSONLには各判断時点で利用可能だった特徴量だけを保存し、manifestには候補集合SHA-256、候補・選定後の層別件数、ボラティリティ閾値、seed、元ローソク足のSHA-256を記録します。`--count 50`は同じseed・同じ候補集合で作る大きな選定結果のprefixです。候補不足なら空ファイルを作らず、`insufficient_data`で終了します。このコマンドはネットワーク、Gemini API、注文APIを使いません。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli points `
+  --config configs\research\development.json `
+  --candles data\research\BTC-1m.jsonl `
+  --count 50 `
+  --seed 42 `
+  --output data\research\points-50.jsonl
 ```
 
 ## 参照

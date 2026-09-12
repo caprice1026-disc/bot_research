@@ -13,7 +13,19 @@ from typing import Sequence
 from .baseline import run_baseline
 from .collector import create_hyperliquid_mainnet_public_collector
 from .config import ResearchConfigError, load_research_config
-from .data import ResearchDataError, read_normalized_candles_jsonl, write_normalized_candles_jsonl
+from .data import (
+    RESEARCH_DECISION_INTERVAL_MS,
+    ResearchDataError,
+    read_normalized_candles_jsonl,
+    write_normalized_candles_jsonl,
+)
+from .points import (
+    PointSelectionError,
+    build_point_candidates,
+    candidate_set_sha256,
+    select_research_points,
+    write_point_selection_jsonl,
+)
 from .simulator import SimulationError
 
 
@@ -35,6 +47,12 @@ def _parser() -> argparse.ArgumentParser:
     collect.add_argument("--start-ms", type=int, required=True)
     collect.add_argument("--end-ms", type=int, required=True)
     collect.add_argument("--output", type=Path, required=True)
+    points = commands.add_parser("points", help="select deterministic offline research points")
+    points.add_argument("--config", type=Path, required=True)
+    points.add_argument("--candles", type=Path, required=True)
+    points.add_argument("--count", type=int, required=True)
+    points.add_argument("--seed", type=int, default=42)
+    points.add_argument("--output", type=Path, required=True)
     return parser
 
 
@@ -46,16 +64,18 @@ def _manifest_path(output: Path) -> Path:
     return output.with_suffix(output.suffix + ".manifest.json")
 
 
-def _write_collection_manifest(*, output: Path, source: dict[str, int | str], candle_count: int) -> Path:
+def _write_artifact_manifest(*, output: Path, payload: dict[str, object]) -> Path:
     manifest_path = _manifest_path(output)
-    payload = {
+    manifest = {
         "schema_version": 1,
-        "source": source,
-        "candle_count": candle_count,
+        **payload,
         "content_sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
     }
     temporary = manifest_path.with_name(f"{manifest_path.name}.tmp")
-    temporary.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.write_text(
+        json.dumps(manifest, ensure_ascii=False, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
     temporary.replace(manifest_path)
     return manifest_path
 
@@ -93,17 +113,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
                 return 3
             write_normalized_candles_jsonl(args.output, candles)
-            manifest_path = _write_collection_manifest(
+            manifest_path = _write_artifact_manifest(
                 output=args.output,
-                source={
-                    "venue": config.market_venue,
-                    "symbol": config.symbol,
-                    "interval": "1m",
-                    "requested_start_ms": args.start_ms,
-                    "requested_end_ms": args.end_ms,
-                    "received_at_ms": received_at_ms,
+                payload={
+                    "source": {
+                        "venue": config.market_venue,
+                        "symbol": config.symbol,
+                        "interval": "1m",
+                        "requested_start_ms": args.start_ms,
+                        "requested_end_ms": args.end_ms,
+                        "received_at_ms": received_at_ms,
+                    },
+                    "candle_count": len(candles),
                 },
-                candle_count=len(candles),
             )
             print(
                 json.dumps(
@@ -118,6 +140,65 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "points":
+            candles = read_normalized_candles_jsonl(args.candles)
+            candidates = build_point_candidates(candles)
+            try:
+                selection = select_research_points(
+                    candidates,
+                    count=args.count,
+                    seed=args.seed,
+                )
+            except PointSelectionError as error:
+                if str(error).startswith("only "):
+                    print(
+                        json.dumps(
+                            {
+                                "status": "insufficient_data",
+                                "candidate_count": len(candidates),
+                                "requested_count": args.count,
+                                "reason": "insufficient_point_candidates",
+                            },
+                            ensure_ascii=False,
+                            sort_keys=True,
+                        )
+                    )
+                    return 3
+                raise
+            write_point_selection_jsonl(args.output, selection)
+            manifest_path = _write_artifact_manifest(
+                output=args.output,
+                payload={
+                    "experiment_id": config.experiment_id,
+                    "feature_set": config.feature_set,
+                    "seed": args.seed,
+                    "decision_interval_ms": RESEARCH_DECISION_INTERVAL_MS,
+                    "point_count": len(selection.points),
+                    "candidate_count": len(candidates),
+                    "candidate_set_sha256": candidate_set_sha256(candidates),
+                    "candidate_stratum_counts": selection.candidate_stratum_counts,
+                    "selected_stratum_counts": selection.stratum_counts,
+                    "stratification": {
+                        "return_5m": "positive_vs_non_positive",
+                        "realized_vol_30m_median": selection.realized_vol_30m_median,
+                        "volume_zscore": "nonnegative_vs_negative",
+                    },
+                    "source_candles_sha256": hashlib.sha256(args.candles.read_bytes()).hexdigest(),
+                },
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": "ok",
+                        "point_count": len(selection.points),
+                        "points_path": str(args.output),
+                        "manifest_path": str(manifest_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0
         result = run_baseline(
             candles=read_normalized_candles_jsonl(args.candles),
             baseline_name=args.baseline,
@@ -125,7 +206,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             initial_equity=config.initial_equity,
             reference_notional=config.reference_notional,
         )
-    except (OSError, ResearchConfigError, ResearchDataError, SimulationError) as error:
+    except (OSError, PointSelectionError, ResearchConfigError, ResearchDataError, SimulationError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     print(json.dumps(result.public_summary(), ensure_ascii=False, sort_keys=True))

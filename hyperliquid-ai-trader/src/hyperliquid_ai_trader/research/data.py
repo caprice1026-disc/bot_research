@@ -11,11 +11,18 @@ from typing import Any
 
 
 CANDLE_INTERVAL_MS = 60_000
+RESEARCH_DECISION_INTERVAL_MS = 5 * CANDLE_INTERVAL_MS
 FEATURE_SET = "common_candles_v1"
 
 
 class ResearchDataError(ValueError):
     """Raised when historical data cannot support a time-safe calculation."""
+
+
+def is_research_decision_time(timestamp_ms: int) -> bool:
+    """Return whether a UTC timestamp is a fixed five-minute research slot."""
+
+    return timestamp_ms >= 0 and timestamp_ms % RESEARCH_DECISION_INTERVAL_MS == 0
 
 
 @dataclass(frozen=True)

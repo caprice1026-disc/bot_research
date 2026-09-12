@@ -37,7 +37,7 @@ def _candles(count: int) -> list[NormalizedCandle]:
 
 def _config() -> ExecutionConfig:
     return ExecutionConfig(
-        model_delay_ms=0,
+        model_delay_ms=1_000,
         max_arrival_delay_ms=60_000,
         max_hold_ms=300_000,
         fee_rate=Decimal("0"),
@@ -48,7 +48,7 @@ def _config() -> ExecutionConfig:
 
 def test_momentum_baseline_replays_in_time_order_without_overlapping_equity() -> None:
     result = run_baseline(
-        candles=_candles(67),
+        candles=_candles(72),
         baseline_name="momentum",
         execution_config=_config(),
         initial_equity=Decimal("1000"),
@@ -57,8 +57,9 @@ def test_momentum_baseline_replays_in_time_order_without_overlapping_equity() ->
 
     assert result.status == "ok"
     assert len(result.episodes) == 1
-    assert result.episodes[0].entry_time_ms == 61 * CANDLE_INTERVAL_MS
-    assert result.episodes[0].exit_time_ms == 66 * CANDLE_INTERVAL_MS
+    assert result.decisions == 2
+    assert result.episodes[0].entry_time_ms == 66 * CANDLE_INTERVAL_MS
+    assert result.episodes[0].exit_time_ms == 71 * CANDLE_INTERVAL_MS
     assert result.final_equity > Decimal("1000")
     assert result.position_blocked > 0
 
@@ -79,9 +80,9 @@ def test_baseline_reports_insufficient_data_instead_of_zero_trade_success() -> N
 
 def test_baseline_cli_runs_offline_from_normalized_jsonl(tmp_path, capsys) -> None:
     candles_path = tmp_path / "candles.jsonl"
-    # The checked-in 1s model delay skips the boundary immediately after a
-    # decision, so one full 300s episode needs candles through index 67.
-    write_normalized_candles_jsonl(candles_path, _candles(68))
+    # The checked-in 1s model delay makes the first 65-minute decision enter
+    # at minute 66 and expire at minute 71.
+    write_normalized_candles_jsonl(candles_path, _candles(72))
     config_path = Path(__file__).resolve().parents[1] / "configs" / "research" / "development.json"
 
     assert main([

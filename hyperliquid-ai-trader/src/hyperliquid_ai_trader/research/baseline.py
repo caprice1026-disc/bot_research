@@ -9,6 +9,7 @@ from .data import (
     NormalizedCandle,
     ResearchDataError,
     build_common_candle_features,
+    is_research_decision_time,
     validate_contiguous_candles,
 )
 from .simulator import (
@@ -92,6 +93,8 @@ def run_baseline(
 
     for candle in candles[60:]:
         decision_time_ms = candle.close_exclusive_ms
+        if not is_research_decision_time(decision_time_ms):
+            continue
         try:
             features = build_common_candle_features(
                 candles=candles,
