@@ -27,7 +27,8 @@
 - [x] (2026-09-12) M3の研究用decision boundaryとして、公開設定の`decision`範囲を`ResearchDecisionLimits`に読み込み、共有schema parserの直後に適用する`parse_research_trade_calls`を追加した。`would_abstain=true`でも同じSL/TP上限を検証し、12件の対象テストで確認した。
 - [x] (2026-09-12) M3の固定入力資産として、`prompts/research/`と`configs/research/initial_strategy.json`を追加した。研究strategyは板/OIに依存しないOHLCV仮説に分離し、共有`parse_trade_calls`はNaN/Infinityを`invalid_function_call`として拒否する。11件の対象テストで確認した。
 - [x] (2026-09-10) M3の最小送信台帳として、モデル応答に影響する入力をcanonical JSON + SHA-256で固定し、独立trial IDと合わせたrequest IDを生成した。SQLiteへ送信前予約を保存し、応答喪失は`submission_unknown`として残す。未照合の同一要求を自動再送できないことを5件の境界テストで確認した（全113件通過）。
-- [ ] M4：点評価と3日Replay。
+- [ ] M4：点評価と3日Replay（完了：確定61本以後の候補化、最大500件、seed固定、非復元、return_5m符号・30分ボラ・出来高z-scoreによる層化順位。残り：選定結果のCLI/manifest、LLM回答の点評価、3日Replay）。
+- [x] (2026-09-12) M4の評価地点選定として、同じcandidate集合とseedから単一の層化round-robin順位を作る`research.points`を追加した。小さいpilotは大きい選定のprefixとなり、重複・500件超・候補不足を拒否する。3件の対象テストで確認した。
 - [ ] M5：日次Reviewer、根拠検証、翌日strategy適用。
 - [ ] M6：構成固定と将来Static/Adaptive比較。
 - [ ] M7：Testnet注文監査と研究結果の引き渡し。
@@ -126,6 +127,8 @@ Forwardは初期案を30日・自動延長なしとし、最低取引件数、�
 2026-09-12 / Codex：研究用strategyは既存Testnet Botの初期strategyをそのまま流用しない。研究Traderへ板/OIを渡さないため、初期仮説も1分OHLCVのモメンタム・ボラティリティ・出来高だけに限定する。Function Callの構文検証はlive/researchで共有し、NaN/InfinityはRiskやSimulatorまで通さない。
 
 2026-09-12 / Codex：研究configのSL/TP範囲は必須の公開`decision`節に固定する。live環境変数を参照せず、通常提案だけでなく見送りのshadow提案にも同じ`parse_research_trade_calls`を適用できるため、後続のBatch/Replayで入力経路を分けない。
+
+2026-09-12 / Codex：pilot 50と最大500の比較可能性は、要求件数ごとに別抽出せず、一つの層化順位のprefixとして保証する。抽出はreturn_5mの符号、30分実現ボラの全候補中央値、volume z-scoreの符号を使い、同じseedと候補集合なら順序を再現できる。LLM呼び出し・将来損益評価はこの段階に混ぜない。
 
 2026-09-10 / Codex：初期資金と固定参照額はCLI既定値で隠さず、公開research configの`simulation`節へ固定する。値を変える場合は別config・別experimentとして扱えるようにし、同じReplayを意図せず異なるnotionalで比較しないため。
 
@@ -284,7 +287,7 @@ SQLite更新は一トランザクションで、decision消費とaccount更新�
 ## Outcomes & Retrospective
 
 
-v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールの時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用を追加した。公開データの実取得、funding event、Batch、LLM Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
+v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールの時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用を追加した。M4では確定61本以後の候補と最大500の再現可能な層化順位を追加した。公開データの実取得、funding event、Batch、LLM Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
 
 変更履歴：2026-09-10、housinv3.mdのレビューと現行コード照合に基づいて初版作成。元文書を保持し、計画の重複作成を避けるためレビュー指摘と具体的工程を本ファイルへまとめた。
 
@@ -307,3 +310,5 @@ v3は研究設計として採用可能。無条件に「問題なし」ではな
 変更履歴：2026-09-12、M3の研究専用prompt、OHLCV限定の初期strategy、共有Function Call parserの有限値検証、対象11件の検証結果を反映した。
 
 変更履歴：2026-09-12、M3の研究用SL/TP制限設定、通常/見送り参考提案への共通検証、対象12件の検証結果を反映した。
+
+変更履歴：2026-09-12、M4の確定1分足候補化、最大500件のseed固定層化順位、pilot prefix性、対象3件の検証結果を反映した。
