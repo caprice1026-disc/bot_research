@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from .data import NormalizedCandle, ResearchDataError, normalize_hyperliquid_candles
+from .data import CANDLE_INTERVAL_MS, NormalizedCandle, ResearchDataError, normalize_hyperliquid_candles
+
+
+MAX_CANDLE_SNAPSHOT_CANDLES = 5_000
 
 
 class CandleSnapshotClient(Protocol):
@@ -31,6 +34,8 @@ class HyperliquidPublicCandleCollector:
     ) -> list[NormalizedCandle]:
         if start_ms < 0 or end_ms <= start_ms:
             raise ResearchDataError("snapshot range must be positive and ordered")
+        if end_ms - start_ms > MAX_CANDLE_SNAPSHOT_CANDLES * CANDLE_INTERVAL_MS:
+            raise ResearchDataError("snapshot range exceeds the 5,000-candle provider limit")
         raw_candles = self.info_client.candles_snapshot(self.coin, "1m", start_ms, end_ms)
         if not isinstance(raw_candles, list) or not all(isinstance(item, dict) for item in raw_candles):
             raise ResearchDataError("Hyperliquid returned an invalid candle snapshot")

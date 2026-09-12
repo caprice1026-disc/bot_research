@@ -114,12 +114,22 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
 
-この段階のモジュールはネットワーク、秘密鍵、Gemini APIを必要としません。研究v3全体のBatch、Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
+固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。研究v3全体のBatch、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
 
 公開JSONの研究設定は、課金を明示許可しない限りモデルAPIを呼べません。まず設定だけを確認できます。
 
 ```powershell
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli validate-config --config configs\research\development.json
+```
+
+Hyperliquid公開1分足は、最大5,000本の単一スナップショットだけを明示的に取得できます。確定足だけをJSONLへ保存し、同じ場所に取得範囲・受信時刻・内容hashを含むmanifestを作ります。空結果は`insufficient_data`で終了し、空の損益結果にはしません。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli collect `
+  --config configs\research\development.json `
+  --start-ms 1757462400000 `
+  --end-ms 1757480400000 `
+  --output data\research\BTC-1m.jsonl
 ```
 
 正規化済みの1分足JSONLがある場合は、外部APIなしで3つの固定ルールを時系列順に再生できます。`insufficient_data` は、必要な61本の事前足またはEntry/Exit用の後続足が不足し、損益ゼロとして評価していないことを表します。
