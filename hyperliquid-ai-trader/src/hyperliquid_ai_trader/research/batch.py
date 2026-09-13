@@ -114,7 +114,7 @@ class BatchManager:
         for job_id, request_ids in grouped.items():
             try:
                 results = provider.sync(job_id)
-            except TimeoutError:
+            except OSError:
                 pending += len(request_ids)
                 continue
             except Exception as error:

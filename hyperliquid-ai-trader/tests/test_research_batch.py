@@ -121,13 +121,21 @@ def test_sync_is_partial_until_all_submitted_requests_have_results(tmp_path: Pat
         assert store.model_request(requests[1].request_id)["status"] == "submitted"
 
 
-def test_sync_communication_error_marks_submitted_requests_failed(tmp_path: Path) -> None:
+def test_sync_retries_submitted_request_after_transient_error_without_releasing_reservation(tmp_path: Path) -> None:
     config = _paid_config(tmp_path)
     request = _request("a")
-    provider = FakeProvider(sync_error=RuntimeError("network down"))
+    provider = FakeProvider(sync_error=ConnectionError("network down"))
     with ResearchStore(tmp_path / "research.db") as store:
         store.create_experiment(config.experiment_id, {}, 1)
         BatchManager().submit(config=config, requests=[request], store=store, provider=FakeProvider(), now_ms=2)
         result = BatchManager().sync(store=store, provider=provider, now_ms=3)
-        assert result.status == "failed"
-        assert store.model_request(request.request_id)["status"] == "failed"
+        assert result.status == "partial"
+        assert store.model_request(request.request_id)["status"] == "submitted"
+        assert store.reserved_cost_total(config.experiment_id) == Decimal("0.0005")
+
+        provider.sync_error = None
+        provider.sync_result = [{"request_id": request.request_id}]
+        result = BatchManager().sync(store=store, provider=provider, now_ms=4)
+        assert result.status == "completed"
+        assert store.model_request(request.request_id)["status"] == "completed"
+        assert store.reserved_cost_total(config.experiment_id) == Decimal("0.0005")
