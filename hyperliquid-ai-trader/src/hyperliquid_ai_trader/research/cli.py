@@ -12,12 +12,19 @@ import time
 from typing import Sequence
 
 from .baseline import run_baseline
+from .binance import (
+    BINANCE_USDM_VENUE,
+    FundingDataError,
+    read_binance_usdm_1m_csv,
+    read_binance_usdm_funding_csv,
+)
 from .collector import create_hyperliquid_mainnet_public_collector
 from .config import ResearchConfigError, load_research_config
 from .data import (
     RESEARCH_DECISION_INTERVAL_MS,
     ResearchDataError,
     read_normalized_candles_jsonl,
+    validate_candles_match_market,
     write_normalized_candles_jsonl,
 )
 from .evaluation import (
@@ -68,6 +75,14 @@ def _parser() -> argparse.ArgumentParser:
         choices=("always_abstain", "momentum", "mean_reversion"),
         required=True,
     )
+    baseline.add_argument("--funding-csv", type=Path)
+    import_binance = commands.add_parser(
+        "import-binance-csv", help="convert a verified Binance USD-M 1m CSV to normalized JSONL"
+    )
+    import_binance.add_argument("--config", type=Path, required=True)
+    import_binance.add_argument("--input", type=Path, required=True)
+    import_binance.add_argument("--delivery-delay-ms", type=int, default=0)
+    import_binance.add_argument("--output", type=Path, required=True)
     collect = commands.add_parser("collect", help="collect one public Hyperliquid 1m snapshot")
     collect.add_argument("--config", type=Path, required=True)
     collect.add_argument("--start-ms", type=int, required=True)
@@ -100,6 +115,7 @@ def _parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--candles", type=Path, required=True)
     evaluate.add_argument("--points", type=Path, required=True)
     evaluate.add_argument("--decisions", type=Path, required=True)
+    evaluate.add_argument("--funding-csv", type=Path)
     evaluate.add_argument("--output", type=Path, required=True)
     return parser
 
@@ -188,8 +204,48 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "import-binance-csv":
+            if config.market_venue != BINANCE_USDM_VENUE:
+                raise ResearchDataError("import-binance-csv requires market.venue=binance_usdm_public")
+            candles = read_binance_usdm_1m_csv(
+                args.input, delivery_delay_ms=args.delivery_delay_ms
+            )
+            validate_candles_match_market(
+                candles, venue=config.market_venue, symbol=config.symbol
+            )
+            write_normalized_candles_jsonl(args.output, candles)
+            manifest_path = _write_artifact_manifest(
+                output=args.output,
+                payload={
+                    "mode": "import_binance_usdm_1m",
+                    "experiment_id": config.experiment_id,
+                    "source_csv_sha256": hashlib.sha256(args.input.read_bytes()).hexdigest(),
+                    "venue": config.market_venue,
+                    "symbol": config.symbol,
+                    "delivery_delay_ms": args.delivery_delay_ms,
+                    "candle_count": len(candles),
+                    "first_open_time_ms": candles[0].open_time_ms,
+                    "end_exclusive_ms": candles[-1].close_exclusive_ms,
+                },
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": "ok",
+                        "candle_count": len(candles),
+                        "candles_path": str(args.output),
+                        "manifest_path": str(manifest_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0
         if args.command == "points":
             candles = read_normalized_candles_jsonl(args.candles)
+            validate_candles_match_market(
+                candles, venue=config.market_venue, symbol=config.symbol
+            )
             candidates = build_point_candidates(candles)
             try:
                 selection = select_research_points(
@@ -329,15 +385,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "evaluate-decisions":
+            if args.funding_csv is not None and config.market_venue != BINANCE_USDM_VENUE:
+                raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
             evaluation = evaluate_validated_decisions(
                 candles=read_normalized_candles_jsonl(args.candles),
                 points=read_point_selection_jsonl(args.points),
                 decisions=read_validated_decisions_jsonl(args.decisions, config=config),
                 config=config,
+                funding=(
+                    read_binance_usdm_funding_csv(args.funding_csv)
+                    if args.funding_csv is not None
+                    else None
+                ),
             )
-            if evaluation.status != "ok":
-                print(json.dumps(evaluation.public_summary(), ensure_ascii=False, sort_keys=True))
-                return 3
             write_point_evaluation_jsonl(args.output, evaluation)
             manifest_path = _write_artifact_manifest(
                 output=args.output,
@@ -361,13 +421,22 @@ def main(argv: Sequence[str] | None = None) -> int:
                     sort_keys=True,
                 )
             )
-            return 0
+            return 0 if evaluation.status == "ok" else 3
+        if args.command == "baseline" and args.funding_csv is not None and config.market_venue != BINANCE_USDM_VENUE:
+            raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
         result = run_baseline(
             candles=read_normalized_candles_jsonl(args.candles),
             baseline_name=args.baseline,
             execution_config=config.execution,
             initial_equity=config.initial_equity,
             reference_notional=config.reference_notional,
+            market_venue=config.market_venue,
+            symbol=config.symbol,
+            funding=(
+                read_binance_usdm_funding_csv(args.funding_csv)
+                if args.funding_csv is not None
+                else None
+            ),
         )
     except (
         DecimalException,
@@ -379,6 +448,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         ResearchEvaluationError,
         ResearchPreparationError,
         ResearchResponseError,
+        FundingDataError,
         SimulationError,
     ) as error:
         print(f"error: {error}", file=sys.stderr)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from bisect import bisect_left, bisect_right
 from dataclasses import asdict, dataclass
 import json
 from math import isfinite
@@ -108,6 +109,15 @@ def validate_contiguous_candles(candles: list[NormalizedCandle]) -> None:
         previous_open_time_ms = candle.open_time_ms
 
 
+def validate_candles_match_market(
+    candles: list[NormalizedCandle], *, venue: str, symbol: str
+) -> None:
+    """Reject a normalized artifact that is not for the configured market."""
+
+    if any(candle.venue != venue or candle.symbol != symbol for candle in candles):
+        raise ResearchDataError("candles do not match the configured market")
+
+
 def _returns(closes: list[float], minutes: int) -> float:
     previous = closes[-1 - minutes]
     if previous <= 0:
@@ -136,20 +146,8 @@ def _atr_pct(candles: list[NormalizedCandle]) -> float:
     return sum(true_ranges) / len(true_ranges) / candles[-1].close * 100.0
 
 
-def build_common_candle_features(
-    *,
-    candles: list[NormalizedCandle],
-    decision_time_ms: int,
-) -> CommonCandleFeatures:
-    """Build ``common_candles_v1`` without leaking unavailable future bars."""
-
-    if decision_time_ms < 0:
-        raise ResearchDataError("decision_time_ms must be non-negative")
-    available = [candle for candle in candles if candle.available_at_ms <= decision_time_ms]
-    if len(available) < 61:
-        raise ResearchDataError("at least 61 available candles are required")
-    window = available[-61:]
-    validate_contiguous_candles(window)
+def _build_common_features_window(window: list[NormalizedCandle]) -> CommonCandleFeatures:
+    """Build features from exactly the last 61 contiguous usable candles."""
 
     closes = [candle.close for candle in window]
     baseline_volumes = [candle.volume for candle in window[:-1]]
@@ -169,6 +167,65 @@ def build_common_candle_features(
         atr_pct=_atr_pct(window),
         volume_zscore=volume_zscore,
     )
+
+
+class CandleSeries:
+    """Validated candles with logarithmic lookup for large historical replays.
+
+    Historical imports use non-decreasing availability times.  Forward-collected
+    data can in principle arrive out of order, in which case the generic,
+    correctness-first feature builder remains the fallback.
+    """
+
+    def __init__(self, candles: list[NormalizedCandle]) -> None:
+        validate_contiguous_candles(candles)
+        self.candles = tuple(candles)
+        self._open_times = tuple(candle.open_time_ms for candle in candles)
+        self._available_at = tuple(candle.available_at_ms for candle in candles)
+        self._availability_is_monotonic = all(
+            earlier <= later
+            for earlier, later in zip(self._available_at, self._available_at[1:], strict=False)
+        )
+
+    def build_features(self, *, decision_time_ms: int) -> CommonCandleFeatures:
+        if decision_time_ms < 0:
+            raise ResearchDataError("decision_time_ms must be non-negative")
+        if not self._availability_is_monotonic:
+            return build_common_candle_features(
+                candles=list(self.candles), decision_time_ms=decision_time_ms
+            )
+        available_count = bisect_right(self._available_at, decision_time_ms)
+        if available_count < 61:
+            raise ResearchDataError("at least 61 available candles are required")
+        return _build_common_features_window(list(self.candles[available_count - 61 : available_count]))
+
+    def entry_index(self, *, decision_time_ms: int, config: Any) -> int:
+        """Return the first entry candle index under the configured latency."""
+
+        arrival_ms = decision_time_ms + config.model_delay_ms
+        index = bisect_left(self._open_times, arrival_ms)
+        if index >= len(self.candles):
+            raise ResearchDataError("no entry candle within the arrival allowance")
+        if self._open_times[index] - arrival_ms > config.max_arrival_delay_ms:
+            raise ResearchDataError("no entry candle within the arrival allowance")
+        return index
+
+
+def build_common_candle_features(
+    *,
+    candles: list[NormalizedCandle],
+    decision_time_ms: int,
+) -> CommonCandleFeatures:
+    """Build ``common_candles_v1`` without leaking unavailable future bars."""
+
+    if decision_time_ms < 0:
+        raise ResearchDataError("decision_time_ms must be non-negative")
+    available = [candle for candle in candles if candle.available_at_ms <= decision_time_ms]
+    if len(available) < 61:
+        raise ResearchDataError("at least 61 available candles are required")
+    window = available[-61:]
+    validate_contiguous_candles(window)
+    return _build_common_features_window(window)
 
 
 def normalize_hyperliquid_candles(

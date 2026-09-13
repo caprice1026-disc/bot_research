@@ -5,12 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
+from .binance import BINANCE_USDM_VENUE, FundingDataError, FundingSeries
 from .data import (
+    CandleSeries,
     NormalizedCandle,
     ResearchDataError,
-    build_common_candle_features,
     is_research_decision_time,
-    validate_contiguous_candles,
+    validate_candles_match_market,
 )
 from .simulator import (
     ExecutionConfig,
@@ -18,8 +19,8 @@ from .simulator import (
     SimulationError,
     VirtualAccount,
     baseline_decision,
-    find_entry_candle,
-    simulate_episode,
+    simulate_episode_from_entry,
+    with_funding,
 )
 
 
@@ -33,6 +34,9 @@ class BaselineReplay:
     abstentions: int
     position_blocked: int
     incomplete_decisions: int
+    incomplete_price_decisions: int
+    incomplete_funding_decisions: int
+    funding_status: str
     episodes: tuple[SimulatedEpisode, ...]
     initial_equity: Decimal
     final_equity: Decimal
@@ -49,6 +53,9 @@ class BaselineReplay:
             "abstentions": self.abstentions,
             "position_blocked": self.position_blocked,
             "incomplete_decisions": self.incomplete_decisions,
+            "incomplete_price_decisions": self.incomplete_price_decisions,
+            "incomplete_funding_decisions": self.incomplete_funding_decisions,
+            "funding_status": self.funding_status,
             "episodes": len(self.episodes),
             "initial_equity": format(self.initial_equity, "f"),
             "final_equity": format(self.final_equity, "f"),
@@ -63,6 +70,9 @@ def run_baseline(
     execution_config: ExecutionConfig,
     initial_equity: Decimal,
     reference_notional: Decimal,
+    market_venue: str,
+    symbol: str,
+    funding: FundingSeries | None = None,
 ) -> BaselineReplay:
     """Replay one fixed rule in chronological order with no overlapping account trade.
 
@@ -80,15 +90,26 @@ def run_baseline(
             abstentions=0,
             position_blocked=0,
             incomplete_decisions=0,
+            incomplete_price_decisions=0,
+            incomplete_funding_decisions=0,
+            funding_status=(
+                "not_required"
+                if market_venue != BINANCE_USDM_VENUE
+                else "not_provided"
+                if funding is None
+                else "provided"
+            ),
             episodes=(),
             initial_equity=initial_equity,
             final_equity=initial_equity,
         )
-    validate_contiguous_candles(candles)
+    validate_candles_match_market(candles, venue=market_venue, symbol=symbol)
+    series = CandleSeries(candles)
+    funding_required = market_venue == BINANCE_USDM_VENUE
 
     account = VirtualAccount(equity=initial_equity, day_start_equity=initial_equity)
     episodes: list[SimulatedEpisode] = []
-    decisions = abstentions = position_blocked = incomplete = 0
+    decisions = abstentions = position_blocked = incomplete_price = incomplete_funding = 0
     position_free_at_ms = 0
 
     for candle in candles[60:]:
@@ -96,12 +117,9 @@ def run_baseline(
         if not is_research_decision_time(decision_time_ms):
             continue
         try:
-            features = build_common_candle_features(
-                candles=candles,
-                decision_time_ms=decision_time_ms,
-            )
+            features = series.build_features(decision_time_ms=decision_time_ms)
         except ResearchDataError:
-            incomplete += 1
+            incomplete_price += 1
             continue
         decision = baseline_decision(baseline_name, return_5m=features.return_5m)
         decisions += 1
@@ -112,33 +130,68 @@ def run_baseline(
             position_blocked += 1
             continue
         try:
-            entry_candle = find_entry_candle(
-                candles=candles,
-                decision_time_ms=decision_time_ms,
-                config=execution_config,
+            entry_index = series.entry_index(
+                decision_time_ms=decision_time_ms, config=execution_config
             )
+            entry_candle = candles[entry_index]
             quantity = reference_notional / Decimal(str(entry_candle.open))
-            episode = simulate_episode(
+            episode = simulate_episode_from_entry(
                 decision=decision,
                 decision_time_ms=decision_time_ms,
                 quantity=quantity,
                 candles=candles,
+                entry_index=entry_index,
                 config=execution_config,
             )
-        except SimulationError:
-            incomplete += 1
+        except (ResearchDataError, SimulationError):
+            incomplete_price += 1
             continue
+        position_free_at_ms = episode.exit_time_ms
+        if funding is None and funding_required:
+            incomplete_funding += 1
+            continue
+        if funding is not None:
+            try:
+                episode = with_funding(
+                    episode,
+                    funding.payment(
+                        entry_time_ms=episode.entry_time_ms,
+                        exit_time_ms=episode.exit_time_ms,
+                        notional=episode.entry_price * episode.quantity,
+                        side=episode.side.value,
+                    ),
+                )
+            except FundingDataError:
+                incomplete_funding += 1
+                continue
         account.apply(episode)
         episodes.append(episode)
-        position_free_at_ms = episode.exit_time_ms
+
+    incomplete = incomplete_price + incomplete_funding
+    if incomplete:
+        status = "partial" if episodes else "insufficient_data"
+    else:
+        status = "ok"
+    funding_status = (
+        "not_required"
+        if not funding_required
+        else "not_provided"
+        if funding is None
+        else "missing_events"
+        if incomplete_funding
+        else "provided"
+    )
 
     return BaselineReplay(
-        status="ok" if episodes or not incomplete else "insufficient_data",
+        status=status,
         baseline_name=baseline_name,
         decisions=decisions,
         abstentions=abstentions,
         position_blocked=position_blocked,
         incomplete_decisions=incomplete,
+        incomplete_price_decisions=incomplete_price,
+        incomplete_funding_decisions=incomplete_funding,
+        funding_status=funding_status,
         episodes=tuple(episodes),
         initial_equity=initial_equity,
         final_equity=account.equity,

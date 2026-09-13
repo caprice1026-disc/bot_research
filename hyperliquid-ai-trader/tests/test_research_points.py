@@ -24,6 +24,8 @@ from hyperliquid_ai_trader.research.data import (
 def _candidate(index: int) -> PointCandidate:
     return PointCandidate(
         decision_time_ms=index * RESEARCH_DECISION_INTERVAL_MS,
+        venue="hyperliquid_mainnet_public",
+        symbol="BTC",
         features=CommonCandleFeatures(
             feature_set="common_candles_v1",
             as_of_ms=index * RESEARCH_DECISION_INTERVAL_MS,
@@ -80,6 +82,8 @@ def test_point_selection_rejects_invalid_requested_count_and_insufficient_candid
     with pytest.raises(PointSelectionError, match="align"):
         PointCandidate(
             decision_time_ms=CANDLE_INTERVAL_MS,
+            venue="hyperliquid_mainnet_public",
+            symbol="BTC",
             features=_candidate(0).features,
         )
     with pytest.raises(PointSelectionError, match="at most 500"):

@@ -11,16 +11,23 @@ from typing import Any
 
 from ..agents import FunctionCall
 from ..models import TradeDecision
+from .binance import BINANCE_USDM_VENUE, FundingDataError, FundingSeries
 from .config import ResearchConfig
-from .data import NormalizedCandle, is_research_decision_time, validate_contiguous_candles
+from .data import (
+    CandleSeries,
+    NormalizedCandle,
+    ResearchDataError,
+    is_research_decision_time,
+    validate_candles_match_market,
+)
 from .decisions import ResearchDecisionError, parse_research_trade_calls
 from .points import PointCandidate
 from .simulator import (
     SimulatedEpisode,
     SimulationError,
-    find_entry_candle,
-    simulate_episode,
-    simulate_shadow_episode,
+    simulate_episode_from_entry,
+    simulate_shadow_episode_from_entry,
+    with_funding,
 )
 
 
@@ -77,6 +84,7 @@ class PointEvaluationOutcome:
 class PointEvaluation:
     status: str
     outcomes: tuple[PointEvaluationOutcome, ...]
+    funding_status: str
 
     def public_summary(self) -> dict[str, int | str]:
         complete = [outcome for outcome in self.outcomes if outcome.episode is not None]
@@ -85,7 +93,14 @@ class PointEvaluation:
             "decision_count": len(self.outcomes),
             "trade_episodes": sum(outcome.kind == "trade" for outcome in complete),
             "shadow_episodes": sum(outcome.kind == "shadow" for outcome in complete),
-            "incomplete_decisions": sum(outcome.status == "incomplete" for outcome in self.outcomes),
+            "incomplete_decisions": sum(outcome.episode is None for outcome in self.outcomes),
+            "incomplete_price_decisions": sum(
+                outcome.status == "incomplete_price" for outcome in self.outcomes
+            ),
+            "incomplete_funding_decisions": sum(
+                outcome.status == "incomplete_funding" for outcome in self.outcomes
+            ),
+            "funding_status": self.funding_status,
         }
 
 
@@ -176,6 +191,7 @@ def evaluate_validated_decisions(
     points: list[PointCandidate],
     decisions: list[ValidatedPointDecision],
     config: ResearchConfig,
+    funding: FundingSeries | None = None,
 ) -> PointEvaluation:
     """Independently simulate selected decisions; no virtual account is mutated.
 
@@ -188,6 +204,11 @@ def evaluate_validated_decisions(
         raise ResearchEvaluationError("point selection is empty")
     if not decisions:
         raise ResearchEvaluationError("validated decisions are empty")
+    if any(
+        point.venue != config.market_venue or point.symbol != config.symbol
+        for point in points
+    ):
+        raise ResearchEvaluationError("selected point market does not match the research config")
     point_times = {point.decision_time_ms for point in points}
     decision_times = {record.decision_time_ms for record in decisions}
     if point_times != decision_times:
@@ -196,42 +217,83 @@ def evaluate_validated_decisions(
         return PointEvaluation(
             status="insufficient_data",
             outcomes=tuple(
-                PointEvaluationOutcome(record=record, status="incomplete", episode=None)
+                PointEvaluationOutcome(record=record, status="incomplete_price", episode=None)
                 for record in sorted(decisions, key=lambda record: record.decision_time_ms)
             ),
+            funding_status=(
+                "not_required"
+                if config.market_venue != BINANCE_USDM_VENUE
+                else "not_provided"
+                if funding is None
+                else "provided"
+            ),
         )
-    validate_contiguous_candles(candles)
+    validate_candles_match_market(
+        candles, venue=config.market_venue, symbol=config.symbol
+    )
+    series = CandleSeries(candles)
+    funding_required = config.market_venue == BINANCE_USDM_VENUE
     outcomes: list[PointEvaluationOutcome] = []
     for record in sorted(decisions, key=lambda record: record.decision_time_ms):
         try:
-            entry = find_entry_candle(
-                candles=candles,
-                decision_time_ms=record.decision_time_ms,
-                config=config.execution,
+            entry_index = series.entry_index(
+                decision_time_ms=record.decision_time_ms, config=config.execution
             )
+            entry = candles[entry_index]
             quantity = config.reference_notional / Decimal(str(entry.open))
             if record.decision.would_abstain:
-                episode = simulate_shadow_episode(
+                episode = simulate_shadow_episode_from_entry(
                     decision=record.decision,
                     decision_time_ms=record.decision_time_ms,
                     quantity=quantity,
                     candles=candles,
+                    entry_index=entry_index,
                     config=config.execution,
                 )
             else:
-                episode = simulate_episode(
+                episode = simulate_episode_from_entry(
                     decision=record.decision,
                     decision_time_ms=record.decision_time_ms,
                     quantity=quantity,
                     candles=candles,
+                    entry_index=entry_index,
                     config=config.execution,
                 )
-        except SimulationError:
-            outcomes.append(PointEvaluationOutcome(record=record, status="incomplete", episode=None))
+        except (ResearchDataError, SimulationError):
+            outcomes.append(PointEvaluationOutcome(record=record, status="incomplete_price", episode=None))
             continue
+        if funding is None and funding_required:
+            outcomes.append(PointEvaluationOutcome(record=record, status="incomplete_funding", episode=None))
+            continue
+        if funding is not None:
+            try:
+                episode = with_funding(
+                    episode,
+                    funding.payment(
+                        entry_time_ms=episode.entry_time_ms,
+                        exit_time_ms=episode.exit_time_ms,
+                        notional=episode.entry_price * episode.quantity,
+                        side=episode.side.value,
+                    ),
+                )
+            except FundingDataError:
+                outcomes.append(PointEvaluationOutcome(record=record, status="incomplete_funding", episode=None))
+                continue
         outcomes.append(PointEvaluationOutcome(record=record, status="complete", episode=episode))
     complete = any(outcome.episode is not None for outcome in outcomes)
-    return PointEvaluation(status="ok" if complete else "insufficient_data", outcomes=tuple(outcomes))
+    incomplete_funding = any(outcome.status == "incomplete_funding" for outcome in outcomes)
+    incomplete = any(outcome.episode is None for outcome in outcomes)
+    return PointEvaluation(
+        status="partial" if complete and incomplete else "ok" if complete else "insufficient_data",
+        outcomes=tuple(outcomes),
+        funding_status="not_required"
+        if not funding_required
+        else "not_provided"
+        if funding is None
+        else "missing_events"
+        if incomplete_funding
+        else "provided",
+    )
 
 
 def _episode_row(episode: SimulatedEpisode) -> dict[str, str]:

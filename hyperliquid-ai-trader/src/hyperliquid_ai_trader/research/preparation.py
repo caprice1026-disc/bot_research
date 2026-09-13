@@ -67,7 +67,11 @@ def read_strategy_asset(path: Path) -> dict[str, Any]:
 
 def _input_data(config: ResearchConfig, point: PointCandidate) -> dict[str, Any]:
     return {
-        "market": point.features.to_prompt_dict(),
+        "market": {
+            "venue": point.venue,
+            "symbol": point.symbol,
+            **point.features.to_prompt_dict(),
+        },
         "execution": {
             "model_delay_ms": config.execution.model_delay_ms,
             "max_arrival_delay_ms": config.execution.max_arrival_delay_ms,
@@ -107,6 +111,8 @@ def prepare_point_requests(
         raise ResearchPreparationError("at least one selected point is required")
     requests: list[PreparedPointRequest] = []
     for point in points:
+        if point.venue != config.market_venue or point.symbol != config.symbol:
+            raise ResearchPreparationError("point market does not match the research config")
         trial_id = f"{trial_prefix}-{point.decision_time_ms}"
         request = build_model_request(
             trial_id=trial_id,

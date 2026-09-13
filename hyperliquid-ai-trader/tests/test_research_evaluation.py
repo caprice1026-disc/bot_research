@@ -31,6 +31,8 @@ def _candles(count: int) -> list[NormalizedCandle]:
 def _point(decision_time_ms: int) -> PointCandidate:
     return PointCandidate(
         decision_time_ms=decision_time_ms,
+        venue="hyperliquid_mainnet_public",
+        symbol="BTC",
         features=CommonCandleFeatures(
             feature_set="common_candles_v1",
             as_of_ms=decision_time_ms,

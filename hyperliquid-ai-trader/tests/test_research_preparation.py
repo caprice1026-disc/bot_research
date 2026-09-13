@@ -19,6 +19,8 @@ def _candidate(index: int) -> PointCandidate:
     decision_time_ms = index * RESEARCH_DECISION_INTERVAL_MS
     return PointCandidate(
         decision_time_ms=decision_time_ms,
+        venue="hyperliquid_mainnet_public",
+        symbol="BTC",
         features=CommonCandleFeatures(
             feature_set="common_candles_v1",
             as_of_ms=decision_time_ms,

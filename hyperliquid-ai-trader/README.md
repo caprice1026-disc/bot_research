@@ -145,6 +145,30 @@ Hyperliquid公開1分足は、最大5,000本の単一スナップショットだ
   --baseline momentum
 ```
 
+### Binance USD-Mの1年入力
+
+Binance版は、既存の`binance-btcusdt-futures-research/download_binance_klines.py`がchecksumを照合して作る`BTCUSDT-1m-365d.csv`だけを入力にします。CSVを直接Simulatorへ渡さず、まずこのリポジトリの正規化JSONLへ変換します。`--end-date`はUTCの期間終端（除外）なので、Funding CSVも同じUTC期間を覆うよう、既存研究側の`configs/research.json`の`detail_start`/`end_date_exclusive`を合わせてから`collect_research_inputs.py`を実行してください。
+
+```powershell
+cd ..\binance-btcusdt-futures-research
+python download_binance_klines.py --end-date YYYY-MM-DD
+python collect_research_inputs.py --config configs\research.json
+
+cd ..\hyperliquid-ai-trader
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli import-binance-csv `
+  --config configs\research\binance_development.json `
+  --input ..\binance-btcusdt-futures-research\data\BTCUSDT-1m-365d.csv `
+  --output data\research\binance-BTCUSDT-1m.jsonl
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli baseline `
+  --config configs\research\binance_development.json `
+  --candles data\research\binance-BTCUSDT-1m.jsonl `
+  --funding-csv ..\binance-btcusdt-futures-research\data\research\BTCUSDT-funding-YYYY-MM-DD_YYYY-MM-DD.csv `
+  --baseline momentum
+```
+
+`binance_usdm_public`ではFunding CSVを省略したり、必要な8時間Funding eventが欠けたりした取引を、Fundingゼロの取引としては採用しません。完結済みepisodeがあれば`partial`、なければ`insufficient_data`となります。価格CSV、Funding CSV、正規化JSONL、raw応答、評価出力は`data/`配下のローカル成果物でありGitへ追加しません。`import-binance-csv`のmanifestには入力CSVのSHA-256、market、期間、delivery delayを残します。
+
 LLMへ渡す候補地点は、UTCの5分スロット上で同一の確定足JSONLとseedから再現可能に選びます。返却するJSONLには各判断時点で利用可能だった特徴量だけを保存し、manifestには候補集合SHA-256、候補・選定後の層別件数、ボラティリティ閾値、seed、元ローソク足のSHA-256を記録します。`--count 50`は同じseed・同じ候補集合で作る大きな選定結果のprefixです。候補不足なら空ファイルを作らず、`insufficient_data`で終了します。このコマンドはネットワーク、Gemini API、注文APIを使いません。
 
 ```powershell
@@ -179,7 +203,7 @@ Geminiの生レスポンスは、そのまま研究入力に使いません。�
   --output data\research\decisions-50.jsonl
 ```
 
-検証済み判断は、選定時点と完全に一致することを確認してから同一の1分足Simulatorで独立に評価します。通常判断は`trade`、`would_abstain=true`は同じEntry遅延・TP/SL・費用を用いる参考用`shadow`として別々に出力します。いずれも仮想口座を更新せず、選定地点は無作為な点集合なので時系列の資産曲線や連続売買成績として解釈しません。末尾の価格不足は`incomplete`として保存します。
+検証済み判断は、選定時点と完全に一致することを確認してから同一の1分足Simulatorで独立に評価します。通常判断は`trade`、`would_abstain=true`は同じEntry遅延・TP/SL・費用を用いる参考用`shadow`として別々に出力します。いずれも仮想口座を更新せず、選定地点は無作為な点集合なので時系列の資産曲線や連続売買成績として解釈しません。末尾の価格不足は`incomplete_price`、BinanceのFunding不足は`incomplete_funding`として出力します。`partial`/`insufficient_data`でも評価JSONLとmanifestは保存され、損益成功として扱いません。
 
 ```powershell
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli evaluate-decisions `

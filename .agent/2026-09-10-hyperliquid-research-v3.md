@@ -22,18 +22,20 @@
 - [ ] M1：時刻とデータ品質、共通特徴量、確定証拠の基盤（完了：時点整合の1分足モデル、連続性・OHLCV検証、`common_candles_v1`、WALモードの研究専用SQLiteによる確定episode・review証拠消費、公開足の正規化・JSONL保存、署名なし公開`collect` CLIとsource manifest。残り：部分fillからepisodeへの集約）。
 - [x] (2026-09-12) M1の最小公開データ経路として、Hyperliquid Mainnetの1分足を最大5,000本まで明示取得する`collect` CLIを追加した。確定足のみを原子的JSONLへ保存し、範囲・受信時刻・内容SHA-256をmanifestへ記録する。空結果は`insufficient_data`で終了し、Fake APIの6件の回帰テストでネットワークなしに検証した。
 - [x] (2026-09-10) M2の最小時系列Runnerとして、固定3ルールを確定足から順に再生する`baseline` CLIを追加した。position重複と末尾不足を明示的に数え、`insufficient_data`を損益ゼロ成功としない。`would_abstain`判断は専用shadow episodeとして同じSimulatorで評価でき、仮想口座へは加算しない（全111件通過）。
-- [ ] M2：仮想執行、単純ルール、口座台帳（完了：Entry遅延、SL/TP、同足曖昧性、gap、300秒、費用、LONG/SHORT共通損益、3単純ルール、shadow非加算、UTC日次口座、5分固定slotの時系列baseline runner。残り：funding event、margin/liquidation、Risk制限との統合）。
+- [ ] M2：仮想執行、単純ルール、口座台帳（完了：Entry遅延、SL/TP、同足曖昧性、gap、300秒、費用、LONG/SHORT共通損益、3単純ルール、shadow非加算、UTC日次口座、5分固定slotの時系列baseline runner、Binance USD-Mの8時間Funding event不足明示。残り：margin/liquidation、Risk制限との統合）。
 - [ ] M3：Trader入力分離、Batch、回答保存と予算管理（完了：公開JSON設定、`validate-config` CLI、`allow_paid_api=false`・`budget_usd=0`の既定拒否、初期資金1000と固定参照額250の設定固定、canonical request hash、送信前SQLite予約、`submission_unknown`の再送停止、研究専用promptと初期strategy、共有Function Call parser/schemaの有限値検証、通常/見送り参考提案への研究用SL/TP制限適用、送信しないrequest JSONL準備、保存済み正規化応答のrequest hash/model/schema/制限検証。残り：Batch/usage/job照会）。
 - [x] (2026-09-12) M3の研究用decision boundaryとして、公開設定の`decision`範囲を`ResearchDecisionLimits`に読み込み、共有schema parserの直後に適用する`parse_research_trade_calls`を追加した。`would_abstain=true`でも同じSL/TP上限を検証し、12件の対象テストで確認した。
 - [x] (2026-09-12) M3の固定入力資産として、`prompts/research/`と`configs/research/initial_strategy.json`を追加した。研究strategyは板/OIに依存しないOHLCV仮説に分離し、共有`parse_trade_calls`はNaN/Infinityを`invalid_function_call`として拒否する。11件の対象テストで確認した。
 - [x] (2026-09-12) M3の送信前入力として、選定済みの時点安全なfeatures、固定prompt/strategy、生成設定、共有`open_position` schemaをcanonical requestへ束ねる`prepare-requests` CLIを追加した。request hashと独立trial IDをJSONL/manifestへ保存するが、Gemini API・Batch job・SQLite予約・注文は呼ばない（16件の対象テストで確認）。
 - [x] (2026-09-13) M3の保存済み応答境界として、プロバイダ非依存の正規化JSONLを準備済みrequestと厳密に照合する`validate-responses` CLIを追加した。request ID/hash、要求/返却モデル、受信時刻、共有`open_position` schema、研究用SL/TP制限を検証して判断JSONLへ限定する。Gemini API、Batch job、SQLite、注文は呼ばない（3件の対象テストで確認）。
 - [x] (2026-09-10) M3の最小送信台帳として、モデル応答に影響する入力をcanonical JSON + SHA-256で固定し、独立trial IDと合わせたrequest IDを生成した。SQLiteへ送信前予約を保存し、応答喪失は`submission_unknown`として残す。未照合の同一要求を自動再送できないことを5件の境界テストで確認した（全113件通過）。
-- [ ] M4：点評価と3日Replay（完了：確定61本以後の候補化、最大500件、seed固定、非復元、return_5m符号・30分ボラ・出来高z-scoreによる層化順位、選定JSONL/manifest、検証済みLLM判断の独立trade/shadow地点評価。残り：3日Replay）。
+- [ ] M4：点評価と3日Replay（完了：確定61本以後の候補化、最大500件、seed固定、非復元、return_5m符号・30分ボラ・出来高z-scoreによる層化順位、market identity付き選定JSONL/manifest、検証済みLLM判断の独立trade/shadow地点評価、価格/Funding不足のpartial artifact保存。残り：3日Replay）。
 - [x] (2026-09-12) M4の評価地点選定として、同じcandidate集合とseedから単一の層化round-robin順位を作る`research.points`を追加した。小さいpilotは大きい選定のprefixとなり、重複・500件超・候補不足を拒否する。3件の対象テストで確認した。
 - [x] (2026-09-12) M4の選定出力として、`points` CLIを追加した。UTCの5分slotだけの時点安全な特徴量を原子的JSONLへ保存し、candidate hash・seed・候補/選定後の層別件数・ボラティリティ閾値・元ローソク足SHA-256をmanifestへ残す。候補不足時は空成果物を作らず`insufficient_data`で終了する（5件の対象テストで確認）。
 - [x] (2026-09-13) M4の地点評価として、検証済み判断・選定地点・正規化済み1分足の時刻集合を一致させる`evaluate-decisions` CLIを追加した。通常判断は独立`trade`、見送り判断は同じ価格・費用規則の参考用`shadow`として評価し、口座や時系列損益を更新しない。末尾不足は`incomplete`として残す（1件のCLI境界テストで確認）。
 - [x] (2026-09-13) 研究用`ResearchStore`をライブ用SQLiteと同じWAL、`synchronous=NORMAL`、5秒`busy_timeout`、foreign key有効化へ統一した。PostgreSQL依存は追加せず、研究用SQLiteの設定を1件の回帰テストで固定した。
+- [x] (2026-09-13) Binanceの検証済み1分CSVを正規化JSONLへ変換する`import-binance-csv`、入力CSV hash付きmanifest、venue/symbolの設定一致検証、1年分Replay向けの`CandleSeries`時刻インデックスを追加した。候補化・baseline・地点評価は、各slotごとの全足走査を行わない。
+- [x] (2026-09-13) Binance USD-Mでは公式Funding CSVを評価入力として読み、Funding CSV未指定・必要event不足を損益ゼロにせず`incomplete_funding`として保存するようにした。完結episodeと不足episodeが混在すれば`partial`、完結episodeがなければ`insufficient_data`とする。地点評価も非成功時のJSONL/manifestを残す。
 - [ ] M5：日次Reviewer、根拠検証、翌日strategy適用。
 - [ ] M6：構成固定と将来Static/Adaptive比較。
 - [ ] M7：Testnet注文監査と研究結果の引き渡し。
@@ -62,6 +64,10 @@ M1の最初の実装では`NormalizedCandle`を新設し、`available_at_ms`で�
 リモート実装の統合直後、`_find_entry`が設定された`max_arrival_delay_ms`ではなく固定60秒で停止すること、台帳が数量文字列をそのまま比較して`"2.0"`と`"2.000"`のflat決済をopen扱いすることを再現した。さらに、1分OHLCVで部分分の保有期限を許すと未来のバー内値を使うこと、Reviewerがcutoff後または別experimentの証拠IDを保存できることを確認した。いずれも修正後の全体pytestは101件通過した。
 
 Hyperliquidのpublic candle responseは`T`をinclusive endとして返すため、`T + 1`を`close_exclusive_ms`にしなければ一分足の連続性が崩れる。collectorは受信時点で未終了の最後の足を保存せず、全体のHyperliquid pytestは104件、Binance downloader pytestは6件通過した。実ネットワーク収集はまだ行っていない。
+
+Binanceの1年分は約52万本の1分足、約10万の5分判断となる。従来の各判断ごとの全足filter・連続性検証は二乗時間になり得るため、連続性を一度だけ検証し、availabilityとentry時刻を二分探索する`CandleSeries`を追加した。availability順が非単調なforward収集は安全を優先して従来のfeature builderへfallbackする。
+
+BinanceのFundingは8時間gridで、collector側の`calc_time`が数msずれることがある。評価はslotへ正規化し、entryからexitまでにまたぐscheduled slotのrateが無ければ`incomplete_funding`にする。正のrateはLong支払・Short受取として、実行entry price × quantityをnotional近似に用いる。FundingがBinanceの対象期間で存在しない状態を0と仮定しない。
 
 研究設定の最小CLIは環境変数を読まず、公開JSONに`api_key`、`private_key`、wallet、secretが含まれていれば拒否する。既定`development.json`は`allow_paid_api=false`かつ`budget_usd=0`で、課金APIを送信する処理はまだ存在しない。設定テスト3件を追加して通過した。
 
@@ -144,6 +150,10 @@ Forwardは初期案を30日・自動延長なしとし、最低取引件数、�
 2026-09-13 / Codex：外部Batch adapterより先に、保存済み応答をプロバイダ非依存の小さい正規化形式に限定して検証する。準備済みrequestのID/hash/要求モデルと返却モデルを一対一で照合し、liveと共通のFunction Call parserおよび研究制限を通す。raw provider payload、API呼び出し、SQLite予約、注文をこの段階に混ぜず、異なる入力・モデル・schemaの回答が後続Simulatorへ流れない境界を先に固定するため。
 
 2026-09-13 / Codex：研究SQLiteはPostgreSQLへ移行せず、既存ライブSQLiteと同じWAL設定へ統一する。現在のローカル単一writer実験と少数の並行readerにはSQLiteで十分であり、別サーバー、認証情報、運用コスト、SQL方言差を導入しないため。複数writerや複数ホストが必要になった時点だけ再評価する。
+
+2026-09-13 / Codex：Binanceの一括取得CSVは既存downloaderのchecksum検証済み出力を、ローカルの`import-binance-csv`で正規化JSONLへ一度だけ変換する。Simulator・feature builderへCSV形式やネットワーク取得を混在させず、入力内容hashとvenue/symbolをmanifest・point artifactで追跡するため。
+
+2026-09-13 / Codex：Binance USD-MのepisodeはFunding eventが確認できる場合だけ完結評価とする。Fundingが未指定・対象8時間slot欠損なら0と置かず`incomplete_funding`にし、完結分があれば`partial` artifactを保存する。これは不足データを損益成功に見せないためであり、Hyperliquidの既存研究にはFunding未モデルを無断適用しない。
 
 2026-09-13 / Codex：点評価は選定地点ごとに独立してSimulatorへ渡し、無作為に並ぶ地点のepisodeを仮想口座や連続時系列の損益へ混ぜない。見送りの方向は`shadow`として同じ約定費用で残すため、保守的に見送っただけかを後から分析できる。一方、末尾の価格不足は推測補完せず`incomplete`へ残す。
 
@@ -339,3 +349,5 @@ v3は研究設計として採用可能。無条件に「問題なし」ではな
 変更履歴：2026-09-13、M3の`validate-responses` CLI、保存済み正規化応答のID/hash/model/schema/研究制限照合、対象3件の検証結果を反映した。
 
 変更履歴：2026-09-13、研究SQLiteのWAL統一とM4の`evaluate-decisions` CLI（trade/shadow分離、選定地点照合、末尾不足の明示）、対象2件の検証結果を反映した。
+
+変更履歴：2026-09-13、Binance CSV import境界、venue/symbolのartifact照合、二分探索ベースの時刻インデックス、公式Funding CSVを用いる不足明示・partial保存を追加した。1年Replayの実データ取得・評価はまだ行っていない。

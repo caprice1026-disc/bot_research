@@ -165,18 +165,52 @@ def simulate_episode(
     ``intrabar_policy``で結果を明示し、qualityをambiguous_intrabarにする。
     """
 
-    if decision.would_abstain:
-        raise SimulationError("abstention is not an account episode")
-    if quantity <= 0:
-        raise SimulationError("quantity must be positive")
-    if not candles:
-        raise SimulationError("candles are required")
     validate_contiguous_candles(candles)
     entry_candle = find_entry_candle(
         candles=candles,
         decision_time_ms=decision_time_ms,
         config=config,
     )
+
+    return simulate_episode_from_entry(
+        decision=decision,
+        decision_time_ms=decision_time_ms,
+        quantity=quantity,
+        candles=candles,
+        entry_index=candles.index(entry_candle),
+        config=config,
+        funding=funding,
+    )
+
+
+def simulate_episode_from_entry(
+    *,
+    decision: TradeDecision,
+    decision_time_ms: int,
+    quantity: Decimal,
+    candles: list[NormalizedCandle],
+    entry_index: int,
+    config: ExecutionConfig = ExecutionConfig(),
+    funding: Decimal = Decimal("0"),
+) -> SimulatedEpisode:
+    """Simulate with a prevalidated entry index for large sequential replays."""
+
+    if decision.would_abstain:
+        raise SimulationError("abstention is not an account episode")
+    if quantity <= 0:
+        raise SimulationError("quantity must be positive")
+    if not candles:
+        raise SimulationError("candles are required")
+    if not 0 <= entry_index < len(candles):
+        raise SimulationError("entry index is outside candles")
+    entry_candle = candles[entry_index]
+    arrival_ms = decision_time_ms + config.model_delay_ms
+    if entry_candle.open_time_ms < arrival_ms or (
+        entry_candle.open_time_ms - arrival_ms > config.max_arrival_delay_ms
+    ):
+        raise SimulationError("entry candle is outside the arrival allowance")
+    if not funding.is_finite():
+        raise SimulationError("funding must be finite")
 
     raw_entry = Decimal(str(entry_candle.open))
     entry = _execution_price(raw_entry, side=decision.side, entering=True, config=config)
@@ -194,7 +228,7 @@ def simulate_episode(
     raw_exit: Decimal | None = None
     exit_time = 0
     reason = ""
-    for candle in candles[candles.index(entry_candle) :]:
+    for candle in candles[entry_index:]:
         if candle.open_time_ms >= deadline:
             raw_exit = Decimal(str(candle.open))
             exit_time = candle.open_time_ms
@@ -242,6 +276,14 @@ def simulate_episode(
     )
 
 
+def with_funding(episode: SimulatedEpisode, funding: Decimal) -> SimulatedEpisode:
+    """Attach an independently verified funding payment to a simulated episode."""
+
+    if not funding.is_finite():
+        raise SimulationError("funding must be finite")
+    return replace(episode, funding=funding, net_pnl=episode.net_pnl + funding)
+
+
 def simulate_shadow_episode(
     *,
     decision: TradeDecision,
@@ -260,6 +302,32 @@ def simulate_shadow_episode(
         decision_time_ms=decision_time_ms,
         quantity=quantity,
         candles=candles,
+        config=config,
+        funding=funding,
+    )
+    return replace(simulated, kind="shadow")
+
+
+def simulate_shadow_episode_from_entry(
+    *,
+    decision: TradeDecision,
+    decision_time_ms: int,
+    quantity: Decimal,
+    candles: list[NormalizedCandle],
+    entry_index: int,
+    config: ExecutionConfig = ExecutionConfig(),
+    funding: Decimal = Decimal("0"),
+) -> SimulatedEpisode:
+    """Fast shadow counterpart of :func:`simulate_episode_from_entry`."""
+
+    if not decision.would_abstain:
+        raise SimulationError("shadow episodes require an abstained decision")
+    simulated = simulate_episode_from_entry(
+        decision=replace(decision, would_abstain=False, abstain_reason=None),
+        decision_time_ms=decision_time_ms,
+        quantity=quantity,
+        candles=candles,
+        entry_index=entry_index,
         config=config,
         funding=funding,
     )

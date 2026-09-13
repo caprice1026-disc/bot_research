@@ -11,13 +11,13 @@ from random import Random
 from statistics import median
 
 from .data import (
+    CandleSeries,
     CommonCandleFeatures,
     FEATURE_SET,
     NormalizedCandle,
     RESEARCH_DECISION_INTERVAL_MS,
-    build_common_candle_features,
+    ResearchDataError,
     is_research_decision_time,
-    validate_contiguous_candles,
 )
 
 
@@ -31,9 +31,13 @@ class PointSelectionError(ValueError):
 @dataclass(frozen=True)
 class PointCandidate:
     decision_time_ms: int
+    venue: str
+    symbol: str
     features: CommonCandleFeatures
 
     def __post_init__(self) -> None:
+        if not self.venue or not self.symbol:
+            raise PointSelectionError("candidate venue and symbol are required")
         if self.decision_time_ms < self.features.as_of_ms:
             raise PointSelectionError("decision time precedes available features")
         if not is_research_decision_time(self.decision_time_ms):
@@ -60,6 +64,8 @@ def candidate_set_sha256(candidates: list[PointCandidate]) -> str:
             [
                 {
                     "decision_time_ms": candidate.decision_time_ms,
+                    "venue": candidate.venue,
+                    "symbol": candidate.symbol,
                     "features": candidate.features.to_prompt_dict(),
                 }
                 for candidate in candidates
@@ -85,6 +91,8 @@ def write_point_selection_jsonl(path: Path, selection: PointSelection) -> None:
                 json.dumps(
                     {
                         "decision_time_ms": point.decision_time_ms,
+                        "venue": point.venue,
+                        "symbol": point.symbol,
                         "features": point.features.to_prompt_dict(),
                     },
                     ensure_ascii=False,
@@ -110,12 +118,18 @@ def read_point_selection_jsonl(path: Path) -> list[PointCandidate]:
     for line_number, line in enumerate(lines, start=1):
         try:
             payload = json.loads(line)
-            if not isinstance(payload, dict) or set(payload) != {"decision_time_ms", "features"}:
+            if not isinstance(payload, dict) or set(payload) != {
+                "decision_time_ms", "venue", "symbol", "features"
+            }:
                 raise TypeError("point row keys are invalid")
             decision_time_ms = payload["decision_time_ms"]
+            venue = payload["venue"]
+            symbol = payload["symbol"]
             feature_values = payload["features"]
             if isinstance(decision_time_ms, bool) or not isinstance(decision_time_ms, int):
                 raise TypeError("decision_time_ms must be an integer")
+            if not isinstance(venue, str) or not venue or not isinstance(symbol, str) or not symbol:
+                raise TypeError("venue and symbol must be non-empty strings")
             if not isinstance(feature_values, dict) or set(feature_values) != expected_feature_keys:
                 raise TypeError("feature keys are invalid")
             if not isinstance(feature_values["feature_set"], str):
@@ -129,7 +143,14 @@ def read_point_selection_jsonl(path: Path) -> list[PointCandidate]:
             ):
                 raise TypeError("feature values must be numbers")
             features = CommonCandleFeatures(**feature_values)
-            points.append(PointCandidate(decision_time_ms=decision_time_ms, features=features))
+            points.append(
+                PointCandidate(
+                    decision_time_ms=decision_time_ms,
+                    venue=venue,
+                    symbol=symbol,
+                    features=features,
+                )
+            )
         except (TypeError, ValueError, json.JSONDecodeError, PointSelectionError) as error:
             raise PointSelectionError(f"invalid point selection at line {line_number}") from error
     decision_times = [point.decision_time_ms for point in points]
@@ -145,21 +166,22 @@ def build_point_candidates(candles: list[NormalizedCandle]) -> list[PointCandida
 
     if not candles:
         return []
-    validate_contiguous_candles(candles)
+    series = CandleSeries(candles)
     candidates: list[PointCandidate] = []
     for candle in candles[60:]:
         decision_time_ms = candle.close_exclusive_ms
         if not is_research_decision_time(decision_time_ms):
             continue
-        if sum(candidate.available_at_ms <= decision_time_ms for candidate in candles) < 61:
+        try:
+            features = series.build_features(decision_time_ms=decision_time_ms)
+        except ResearchDataError:
             continue
         candidates.append(
             PointCandidate(
                 decision_time_ms=decision_time_ms,
-                features=build_common_candle_features(
-                    candles=candles,
-                    decision_time_ms=decision_time_ms,
-                ),
+                venue=candle.venue,
+                symbol=candle.symbol,
+                features=features,
             )
         )
     return candidates

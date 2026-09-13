@@ -53,6 +53,8 @@ def test_momentum_baseline_replays_in_time_order_without_overlapping_equity() ->
         execution_config=_config(),
         initial_equity=Decimal("1000"),
         reference_notional=Decimal("250"),
+        market_venue="hyperliquid_mainnet_public",
+        symbol="BTC",
     )
 
     assert result.status == "ok"
@@ -71,6 +73,8 @@ def test_baseline_reports_insufficient_data_instead_of_zero_trade_success() -> N
         execution_config=_config(),
         initial_equity=Decimal("1000"),
         reference_notional=Decimal("250"),
+        market_venue="hyperliquid_mainnet_public",
+        symbol="BTC",
     )
 
     assert result.status == "insufficient_data"
