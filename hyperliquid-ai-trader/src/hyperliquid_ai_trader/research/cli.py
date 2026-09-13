@@ -14,6 +14,7 @@ from typing import Sequence
 
 from .baseline import run_baseline
 from .artifacts import ArtifactError, load_artifact_manifest, sha256_path, verify_artifact
+from .batch import BatchError, BatchManager
 from .binance import (
     BINANCE_USDM_VENUE,
     FundingDataError,
@@ -51,6 +52,7 @@ from .preparation import (
     write_prepared_requests_jsonl,
 )
 from .request_identity import ModelRequestError
+from .request_identity import PreparedModelRequest
 from .responses import (
     ResearchResponseError,
     read_model_responses_jsonl,
@@ -59,6 +61,7 @@ from .responses import (
     write_validated_decisions_jsonl,
 )
 from .simulator import SimulationError
+from .store import ResearchStore
 from .freeze import build_freeze_manifest, freeze_fingerprint, write_freeze_manifest
 from .forward import ForwardError
 from .replay import run_replay
@@ -145,6 +148,12 @@ def _parser() -> argparse.ArgumentParser:
     audit.add_argument("--filled-at-ms", type=int, required=True)
     audit.add_argument("--max-hold-ms", type=int, required=True)
     audit.add_argument("--freeze", type=Path)
+    batch = commands.add_parser("batch", help="submit or sync provider-neutral Batch ledger state")
+    batch.add_argument("--config", type=Path, required=True)
+    batch.add_argument("--action", choices=("submit", "sync"), required=True)
+    batch.add_argument("--requests", type=Path, required=True)
+    batch.add_argument("--store", type=Path, required=True)
+    batch.add_argument("--results", type=Path, help="saved provider result JSON for sync")
     return parser
 
 
@@ -183,6 +192,17 @@ def _verify_optional_artifact(path: Path) -> dict[str, object] | None:
 def _read_manifest_if_present(path: Path) -> dict[str, object] | None:
     manifest_path = _manifest_path(path)
     return load_artifact_manifest(manifest_path) if manifest_path.exists() else None
+
+
+class _SavedBatchProvider:
+    def __init__(self, results: dict[str, list[dict[str, object]]] | None = None) -> None:
+        self.results = results or {}
+
+    def submit(self, payloads: list[str]) -> str:
+        raise BatchError("batch submit requires an explicitly configured provider adapter")
+
+    def sync(self, provider_job_id: str) -> list[dict[str, object]]:
+        return self.results.get(provider_job_id, [])
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -434,6 +454,37 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "batch":
+            assert config is not None
+            _verify_optional_artifact(args.requests)
+            request_records = read_prepared_requests_jsonl(args.requests)
+            requests = [
+                PreparedModelRequest(
+                    request_id=row.request_id,
+                    trial_id=row.trial_id,
+                    request_hash=row.request_hash,
+                    requested_model=row.requested_model,
+                    canonical_payload=row.canonical_payload,
+                )
+                for row in request_records
+            ]
+            with ResearchStore(args.store) as store:
+                existing = store.connection.execute("SELECT 1 FROM experiments WHERE experiment_id=?", (config.experiment_id,)).fetchone()
+                if existing is None:
+                    store.create_experiment(config.experiment_id, {"experiment_id": config.experiment_id}, _now_ms())
+                manager = BatchManager()
+                if args.action == "submit":
+                    result = manager.submit(config=config, requests=requests, store=store, provider=_SavedBatchProvider(), now_ms=_now_ms())
+                else:
+                    if args.results is None:
+                        raise BatchError("batch sync requires --results")
+                    saved = json.loads(args.results.read_text(encoding="utf-8"))
+                    if not isinstance(saved, dict):
+                        raise BatchError("batch results must map provider job IDs to result arrays")
+                    provider = _SavedBatchProvider(saved)
+                    result = manager.sync(store=store, provider=provider, now_ms=_now_ms())
+            print(json.dumps({"status": result.status, "submitted": result.submitted, "reused": result.reused, "unknown": result.unknown}, ensure_ascii=False, sort_keys=True))
+            return 0 if result.status in {"submitted", "completed", "reused"} else 3
         if args.command == "evaluate-decisions":
             assert config is not None
             _verify_optional_artifact(args.candles)
@@ -578,6 +629,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         AuditError,
         ForwardError,
         ArtifactError,
+        BatchError,
     ) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
