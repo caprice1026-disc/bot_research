@@ -11,10 +11,11 @@ from hyperliquid_ai_trader.research.store import ResearchStore
 
 
 class FakeProvider:
-    def __init__(self, *, fail=False, sync_result=None):
+    def __init__(self, *, fail=False, sync_result=None, sync_error=None):
         self.fail = fail
         self.calls = 0
         self.sync_result = sync_result or []
+        self.sync_error = sync_error
 
     def submit(self, payloads):
         self.calls += 1
@@ -23,6 +24,8 @@ class FakeProvider:
         return "job-1"
 
     def sync(self, provider_job_id):
+        if self.sync_error is not None:
+            raise self.sync_error
         return self.sync_result
 
 
@@ -103,3 +106,28 @@ def test_sync_marks_provider_result_completed(tmp_path: Path) -> None:
         result = BatchManager().sync(store=store, provider=provider, now_ms=3)
         assert result.status == "completed"
         assert store.model_request(request.request_id)["status"] == "completed"
+
+
+def test_sync_is_partial_until_all_submitted_requests_have_results(tmp_path: Path) -> None:
+    config = _paid_config(tmp_path)
+    requests = [_request("a"), _request("b")]
+    provider = FakeProvider(sync_result=[{"request_id": requests[0].request_id}])
+    with ResearchStore(tmp_path / "research.db") as store:
+        store.create_experiment(config.experiment_id, {}, 1)
+        BatchManager().submit(config=config, requests=requests, store=store, provider=provider, now_ms=2)
+        result = BatchManager().sync(store=store, provider=provider, now_ms=3)
+        assert result.status == "partial"
+        assert store.model_request(requests[0].request_id)["status"] == "completed"
+        assert store.model_request(requests[1].request_id)["status"] == "submitted"
+
+
+def test_sync_communication_error_marks_submitted_requests_failed(tmp_path: Path) -> None:
+    config = _paid_config(tmp_path)
+    request = _request("a")
+    provider = FakeProvider(sync_error=RuntimeError("network down"))
+    with ResearchStore(tmp_path / "research.db") as store:
+        store.create_experiment(config.experiment_id, {}, 1)
+        BatchManager().submit(config=config, requests=[request], store=store, provider=FakeProvider(), now_ms=2)
+        result = BatchManager().sync(store=store, provider=provider, now_ms=3)
+        assert result.status == "failed"
+        assert store.model_request(request.request_id)["status"] == "failed"

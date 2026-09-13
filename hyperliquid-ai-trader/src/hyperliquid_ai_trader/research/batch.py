@@ -110,10 +110,12 @@ class BatchManager:
             grouped.setdefault(str(row[0]), []).append(str(row[1]))
         completed = 0
         failed = 0
+        pending = 0
         for job_id, request_ids in grouped.items():
             try:
                 results = provider.sync(job_id)
             except TimeoutError:
+                pending += len(request_ids)
                 continue
             except Exception as error:
                 for request_id in request_ids:
@@ -124,6 +126,7 @@ class BatchManager:
             for request_id in request_ids:
                 item = by_id.get(request_id)
                 if item is None:
+                    pending += 1
                     continue
                 actual = item.get("actual_cost_usd")
                 store.mark_completed(
@@ -135,5 +138,5 @@ class BatchManager:
                     raw_response_ref=item.get("raw_response_ref"),
                 )
                 completed += 1
-        status = "completed" if completed and not failed else "failed" if failed and not completed else "partial"
+        status = "completed" if completed and not failed and not pending else "failed" if failed and not completed and not pending else "partial"
         return BatchResult(status, completed, 0, 0)

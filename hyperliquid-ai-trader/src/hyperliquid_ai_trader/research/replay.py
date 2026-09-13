@@ -36,9 +36,8 @@ def run_replay(*, candles: list[NormalizedCandle], decisions: list[ValidatedPoin
     ordered_decisions = sorted(decisions, key=lambda item: item.decision_time_ms)
     replay_start_ms = ordered_decisions[0].decision_time_ms
     replay_end_ms = replay_start_ms + days * 86_400_000
-    for record in ordered_decisions:
-        if record.decision_time_ms >= replay_end_ms:
-            break
+    replay_decisions = [record for record in ordered_decisions if record.decision_time_ms < replay_end_ms]
+    for record in replay_decisions:
         account.advance_time(record.decision_time_ms)
         if record.decision.would_abstain:
             events.append({"decision_time_ms": record.decision_time_ms, "status": "abstained"})
@@ -62,5 +61,6 @@ def run_replay(*, candles: list[NormalizedCandle], decisions: list[ValidatedPoin
         account.apply(episode)
         episodes.append(episode)
         events.append({"decision_time_ms": record.decision_time_ms, "status": "trade", "episode_id": len(episodes) - 1})
-    status = "ok" if episodes and len(events) == len(decisions) else "partial" if episodes else "insufficient_data"
+    has_incomplete = any(event.get("status") == "incomplete" for event in events)
+    status = "ok" if episodes and not has_incomplete and len(events) == len(replay_decisions) else "partial" if episodes else "insufficient_data"
     return ReplayResult(status, tuple(episodes), tuple(events), config.initial_equity, account.equity)

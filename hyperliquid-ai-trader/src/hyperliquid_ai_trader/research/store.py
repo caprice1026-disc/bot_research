@@ -242,11 +242,11 @@ class ResearchStore:
     def mark_failed(self, request_id: str, *, error_type: str) -> None:
         with self.connection:
             cursor = self.connection.execute(
-                "UPDATE model_requests SET status='failed', error_type=? WHERE request_id=? AND status='prepared'",
+                "UPDATE model_requests SET status='failed', error_type=? WHERE request_id=? AND status IN ('prepared', 'submitted')",
                 (error_type, request_id),
             )
         if cursor.rowcount != 1:
-            raise ResearchStoreError("only prepared model requests can become failed")
+            raise ResearchStoreError("only prepared or submitted model requests can become failed")
 
     def mark_completed(
         self,
