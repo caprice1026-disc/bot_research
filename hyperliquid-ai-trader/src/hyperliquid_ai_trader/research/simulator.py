@@ -8,6 +8,7 @@ from enum import Enum
 
 from ..models import Side, TradeDecision
 from .data import CANDLE_INTERVAL_MS, NormalizedCandle, validate_contiguous_candles
+from .costs import execution_price
 
 
 class SimulationError(ValueError):
@@ -28,6 +29,7 @@ class ExecutionConfig:
     spread_bps: Decimal = Decimal("2")
     slippage_bps: Decimal = Decimal("1")
     intrabar_policy: IntrabarPolicy = IntrabarPolicy.STOP_FIRST
+    sl_tp_basis: str = "execution_price"
 
     def __post_init__(self) -> None:
         if min(self.model_delay_ms, self.max_arrival_delay_ms, self.max_hold_ms) < 0:
@@ -38,6 +40,8 @@ class ExecutionConfig:
             raise SimulationError("one-minute simulator requires whole minutes for max_hold_ms")
         if min(self.fee_rate, self.spread_bps, self.slippage_bps) < 0:
             raise SimulationError("execution costs must be non-negative")
+        if self.sl_tp_basis not in {"execution_price", "raw_market_price"}:
+            raise SimulationError("sl_tp_basis must be execution_price or raw_market_price")
 
 
 @dataclass(frozen=True)
@@ -80,14 +84,21 @@ class VirtualAccount:
             return
         if effective_kind != "trade":
             raise SimulationError("episode kind must be trade or shadow")
-        day = episode.exit_time_ms // 86_400_000
-        if self.utc_day != day:
-            self.utc_day = day
-            self.day_start_equity = self.equity
-            self.daily_realized_pnl = Decimal("0")
+        self.advance_time(episode.exit_time_ms)
         self.equity += episode.net_pnl
         self.daily_realized_pnl += episode.net_pnl
         self.peak_equity = max(self.peak_equity or self.equity, self.equity)
+
+    def advance_time(self, timestamp_ms: int) -> None:
+        if timestamp_ms < 0:
+            raise SimulationError("account time must be non-negative")
+        day = timestamp_ms // 86_400_000
+        if self.utc_day is None:
+            self.utc_day = day
+        elif self.utc_day != day:
+            self.utc_day = day
+            self.day_start_equity = self.equity
+            self.daily_realized_pnl = Decimal("0")
 
     @property
     def drawdown_pct(self) -> Decimal:
@@ -111,14 +122,6 @@ def baseline_decision(name: str, *, return_5m: float) -> TradeDecision:
         would_abstain=abstain,
         abstain_reason="baseline abstention" if abstain else None,
     )
-
-
-def _execution_price(price: Decimal, *, side: Side, entering: bool, config: ExecutionConfig) -> Decimal:
-    half_spread = config.spread_bps / Decimal("2")
-    adverse_bps = half_spread + config.slippage_bps
-    is_buy = (side is Side.LONG) == entering
-    factor = Decimal("1") + (adverse_bps if is_buy else -adverse_bps) / Decimal("10000")
-    return price * factor
 
 
 def _find_entry(
@@ -213,15 +216,16 @@ def simulate_episode_from_entry(
         raise SimulationError("funding must be finite")
 
     raw_entry = Decimal(str(entry_candle.open))
-    entry = _execution_price(raw_entry, side=decision.side, entering=True, config=config)
+    entry = execution_price(raw_entry, side=decision.side, entering=True, config=config)
+    trigger_basis = entry if config.sl_tp_basis == "execution_price" else raw_entry
     stop_fraction = decision.stop_loss_pct / Decimal("100")
     take_fraction = decision.take_profit_pct / Decimal("100")
     if decision.side is Side.LONG:
-        stop = raw_entry * (Decimal("1") - stop_fraction)
-        take = raw_entry * (Decimal("1") + take_fraction)
+        stop = trigger_basis * (Decimal("1") - stop_fraction)
+        take = trigger_basis * (Decimal("1") + take_fraction)
     else:
-        stop = raw_entry * (Decimal("1") + stop_fraction)
-        take = raw_entry * (Decimal("1") - take_fraction)
+        stop = trigger_basis * (Decimal("1") + stop_fraction)
+        take = trigger_basis * (Decimal("1") - take_fraction)
 
     deadline = entry_candle.open_time_ms + config.max_hold_ms
     quality = "complete"
@@ -254,7 +258,7 @@ def simulate_episode_from_entry(
     if raw_exit is None:
         raise SimulationError("candles do not cover the complete holding period")
 
-    exit_price = _execution_price(raw_exit, side=decision.side, entering=False, config=config)
+    exit_price = execution_price(raw_exit, side=decision.side, entering=False, config=config)
     direction = Decimal("1") if decision.side is Side.LONG else Decimal("-1")
     gross = (exit_price - entry) * quantity * direction
     fee = (entry * quantity + exit_price * quantity) * config.fee_rate

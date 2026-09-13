@@ -34,6 +34,12 @@ class ResearchConfig:
     decision_limits: ResearchDecisionLimits
     initial_equity: Decimal
     reference_notional: Decimal
+    risk_per_trade_pct: Decimal = Decimal("1")
+    max_daily_loss_pct: Decimal = Decimal("20")
+    max_drawdown_pct: Decimal = Decimal("25")
+    max_position_notional_usd: Decimal = Decimal("250")
+    leverage: Decimal = Decimal("5")
+    min_notional_usd: Decimal = Decimal("10")
 
     def public_summary(self) -> dict[str, str | bool]:
         return {
@@ -129,6 +135,7 @@ def load_research_config(path: Path) -> ResearchConfig:
                 execution_values["slippage_bps"],
                 name="execution.slippage_bps",
             ),
+            sl_tp_basis=str(execution_values.get("sl_tp_basis", "execution_price")),
         )
     except (KeyError, TypeError, ValueError) as error:
         raise ResearchConfigError("execution has invalid values") from error
@@ -166,6 +173,7 @@ def load_research_config(path: Path) -> ResearchConfig:
     )
     if initial_equity <= 0 or reference_notional <= 0:
         raise ResearchConfigError("simulation equity and reference notional must be positive")
+    risk = _mapping(root.get("risk", {}), name="risk")
     return ResearchConfig(
         experiment_id=_string(root.get("experiment_id"), name="experiment_id"),
         market_venue=venue,
@@ -179,6 +187,12 @@ def load_research_config(path: Path) -> ResearchConfig:
         decision_limits=decision_limits,
         initial_equity=initial_equity,
         reference_notional=reference_notional,
+        risk_per_trade_pct=_decimal(risk.get("risk_per_trade_pct", "1"), name="risk.risk_per_trade_pct"),
+        max_daily_loss_pct=_decimal(risk.get("max_daily_loss_pct", "20"), name="risk.max_daily_loss_pct"),
+        max_drawdown_pct=_decimal(risk.get("max_drawdown_pct", "25"), name="risk.max_drawdown_pct"),
+        max_position_notional_usd=_decimal(risk.get("max_position_notional_usd", "250"), name="risk.max_position_notional_usd"),
+        leverage=_decimal(risk.get("leverage", "5"), name="risk.leverage"),
+        min_notional_usd=_decimal(risk.get("min_notional_usd", "10"), name="risk.min_notional_usd"),
     )
 
 

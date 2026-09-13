@@ -10,7 +10,7 @@ import sqlite3
 from typing import Any, Iterator
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 TERMINAL_REVIEW_STATUSES = {"failed", "validated_no_change", "validated_patch"}
 
 
@@ -98,6 +98,19 @@ class ResearchStore:
                 "INSERT OR REPLACE INTO metadata(key, value) VALUES('schema_version', ?)",
                 (str(SCHEMA_VERSION),),
             )
+            existing = {row[1] for row in self.connection.execute("PRAGMA table_info(model_requests)")}
+            for column, definition in {
+                "provider_job_id": "TEXT",
+                "submitted_at_ms": "INTEGER",
+                "completed_at_ms": "INTEGER",
+                "input_tokens": "INTEGER",
+                "output_tokens": "INTEGER",
+                "actual_cost_usd": "TEXT",
+                "raw_response_ref": "TEXT",
+                "error_type": "TEXT",
+            }.items():
+                if column not in existing:
+                    self.connection.execute(f"ALTER TABLE model_requests ADD COLUMN {column} {definition}")
 
     def create_experiment(self, experiment_id: str, manifest: dict[str, Any], created_at_ms: int) -> None:
         with self.connection:
@@ -211,10 +224,45 @@ class ResearchStore:
         if cursor.rowcount != 1:
             raise ResearchStoreError("only prepared model requests can become submission_unknown")
 
+    def mark_submitted(self, request_id: str, *, provider_job_id: str, submitted_at_ms: int) -> None:
+        with self.connection:
+            cursor = self.connection.execute(
+                "UPDATE model_requests SET status='submitted', provider_job_id=?, submitted_at_ms=? WHERE request_id=? AND status='prepared'",
+                (provider_job_id, submitted_at_ms, request_id),
+            )
+        if cursor.rowcount != 1:
+            raise ResearchStoreError("only prepared model requests can become submitted")
+
+    def mark_failed(self, request_id: str, *, error_type: str) -> None:
+        with self.connection:
+            cursor = self.connection.execute(
+                "UPDATE model_requests SET status='failed', error_type=? WHERE request_id=? AND status='prepared'",
+                (error_type, request_id),
+            )
+        if cursor.rowcount != 1:
+            raise ResearchStoreError("only prepared model requests can become failed")
+
+    def reserved_cost_total(self, experiment_id: str) -> Decimal:
+        row = self.connection.execute(
+            "SELECT COALESCE(SUM(CAST(reserved_cost_usd AS REAL)), 0) FROM model_requests WHERE experiment_id=? AND status != 'failed'",
+            (experiment_id,),
+        ).fetchone()
+        return Decimal(str(row[0]))
+
+    def completed_request_by_hash(self, experiment_id: str, request_hash: str) -> dict[str, Any] | None:
+        row = self.connection.execute(
+            "SELECT request_id, request_hash, status FROM model_requests WHERE experiment_id=? AND request_hash=? AND status='completed' LIMIT 1",
+            (experiment_id, request_hash),
+        ).fetchone()
+        return None if row is None else dict(row)
+
     def model_request(self, request_id: str) -> dict[str, Any]:
         row = self.connection.execute(
             """SELECT request_id, experiment_id, trial_id, request_hash, status,
-                      reserved_cost_usd, canonical_payload, created_at_ms
+                      reserved_cost_usd, canonical_payload, created_at_ms,
+                      provider_job_id, submitted_at_ms, completed_at_ms,
+                      input_tokens, output_tokens, actual_cost_usd,
+                      raw_response_ref, error_type
                FROM model_requests WHERE request_id=?""",
             (request_id,),
         ).fetchone()

@@ -100,7 +100,7 @@ def read_prepared_requests_jsonl(path: Path) -> list[PreparedRequestRecord]:
             if not isinstance(input_data, dict):
                 raise TypeError("canonical request input_data must be an object")
             market = input_data.get("market")
-            if not isinstance(market, dict) or market.get("as_of_ms", record.decision_time_ms) > record.decision_time_ms:
+            if not isinstance(market, dict) or market.get("as_of_ms") != record.decision_time_ms:
                 raise ResearchResponseError("prepared request uses future market features")
             records.append(record)
         except (TypeError, ValueError, json.JSONDecodeError, ResearchResponseError) as error:
@@ -176,6 +176,25 @@ def validate_model_responses(
             raise ResearchResponseError("returned model does not match requested model")
         if response.received_at_ms < request.decision_time_ms:
             raise ResearchResponseError("model response precedes its decision time")
+        payload = json.loads(request.canonical_payload)
+        input_data = payload["input_data"]
+        market = input_data["market"]
+        if market.get("venue", config.market_venue) != config.market_venue or market.get("symbol", config.symbol) != config.symbol:
+            raise ResearchResponseError("market identity drift")
+        if market.get("feature_set", config.feature_set) != config.feature_set:
+            raise ResearchResponseError("feature set drift")
+        execution = input_data.get("execution", {})
+        expected_execution = {
+            "model_delay_ms": config.execution.model_delay_ms,
+            "max_arrival_delay_ms": config.execution.max_arrival_delay_ms,
+            "max_hold_ms": config.execution.max_hold_ms,
+            "fee_rate": format(config.execution.fee_rate, "f"),
+            "spread_bps": format(config.execution.spread_bps, "f"),
+            "slippage_bps": format(config.execution.slippage_bps, "f"),
+            "sl_tp_basis": config.execution.sl_tp_basis,
+        }
+        if any(key in execution and execution[key] != value for key, value in expected_execution.items()):
+            raise ResearchResponseError("execution config drift")
         try:
             decision = parse_research_trade_calls(
                 list(response.function_calls),

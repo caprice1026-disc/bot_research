@@ -192,6 +192,7 @@ def evaluate_validated_decisions(
     decisions: list[ValidatedPointDecision],
     config: ResearchConfig,
     funding: FundingSeries | None = None,
+    verify_point_features: bool = False,
 ) -> PointEvaluation:
     """Independently simulate selected decisions; no virtual account is mutated.
 
@@ -235,6 +236,14 @@ def evaluate_validated_decisions(
     funding_required = config.market_venue == BINANCE_USDM_VENUE
     outcomes: list[PointEvaluationOutcome] = []
     for record in sorted(decisions, key=lambda record: record.decision_time_ms):
+        if verify_point_features:
+            matching_point = next(point for point in points if point.decision_time_ms == record.decision_time_ms)
+            try:
+                expected_features = series.build_features(decision_time_ms=record.decision_time_ms)
+            except ResearchDataError:
+                expected_features = None
+            if expected_features is not None and expected_features.to_prompt_dict() != matching_point.features.to_prompt_dict():
+                raise ResearchEvaluationError("point features do not match the supplied candle artifact")
         try:
             entry_index = series.entry_index(
                 decision_time_ms=record.decision_time_ms, config=config.execution

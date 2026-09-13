@@ -12,6 +12,7 @@ from download_binance_klines import (
     archive_url,
     build_direct_opener,
     normalize_and_validate,
+    verify_existing,
 )
 
 
@@ -107,3 +108,25 @@ def test_normalize_and_validate_rejects_missing_interval():
             start,
             start + 2_700_000,
         )
+
+
+def test_normalize_and_validate_rejects_non_positive_ohlc_and_invalid_volumes():
+    start = utc_ms("2026-08-15T00:00:00")
+    cases = (
+        (1, "0"),
+        (2, "0"),
+        (3, "102"),
+        (7, "26"),
+        (9, "11"),
+        (10, "1001"),
+    )
+    for index, value in cases:
+        row = raw_kline(start)
+        row[index] = value
+        with pytest.raises(ValueError):
+            normalize_and_validate([row], "15m", start, start + 900_000)
+
+
+def test_verify_existing_requires_manifest_and_rejects_tampered_csv(tmp_path):
+    with pytest.raises(ValueError, match="manifest"):
+        verify_existing(date(2026, 8, 17), tmp_path)

@@ -26,8 +26,16 @@ class InputArchive:
 
 
 def month_starts(start: date, end: date) -> Iterable[date]:
+    yield from months_covering_range(start, end)
+
+
+def months_covering_range(start: date, end_exclusive: date) -> Iterable[date]:
+    """Yield every calendar month that overlaps ``[start, end_exclusive)``."""
+
+    if start >= end_exclusive:
+        return
     cursor = start.replace(day=1)
-    while cursor < end:
+    while cursor < end_exclusive:
         yield cursor
         cursor = (cursor.replace(day=28) + timedelta(days=4)).replace(day=1)
 
@@ -143,8 +151,7 @@ def collect_research_inputs(config: dict[str, object], root: Path) -> dict[str, 
 
     funding_frames: list[pd.DataFrame] = []
     funding_missing_periods: list[str] = []
-    funding_end_month = end_date.replace(day=1)
-    for month in month_starts(detail_start, funding_end_month):
+    for month in months_covering_range(detail_start, end_date):
         period = month.strftime("%Y-%m")
         filename = f"BTCUSDT-fundingRate-{period}.zip"
         url = f"https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/{filename}"
@@ -169,7 +176,12 @@ def collect_research_inputs(config: dict[str, object], root: Path) -> dict[str, 
     write_csv_atomic(funding, funding_output)
     funding_stats = _validate_time_index(funding, "calc_time_utc", None)
     funding_expected_end = pd.Timestamp(end_date, tz="UTC") - pd.Timedelta(hours=8)
-    funding_status = "complete" if pd.Timestamp(funding_stats["last_time"]) >= funding_expected_end else "insufficient_data"
+    funding_status = (
+        "complete"
+        if not funding_missing_periods
+        and pd.Timestamp(funding_stats["last_time"]) >= funding_expected_end
+        else "insufficient_data"
+    )
     datasets["funding_rate"] = funding_stats | {
         "status": funding_status,
         "path": str(funding_output.relative_to(root)),

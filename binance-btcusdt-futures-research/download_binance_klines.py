@@ -6,6 +6,7 @@ import argparse
 import csv
 from dataclasses import asdict, dataclass
 from datetime import date, datetime, timedelta, timezone
+from decimal import Decimal, InvalidOperation
 import hashlib
 import io
 import json
@@ -183,10 +184,20 @@ def normalize_and_validate(
             numeric = {name: float(item[name]) for name in ("open", "high", "low", "close", "volume", "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume")}
             if not all(math.isfinite(value) for value in numeric.values()):
                 raise ValueError(f"non-finite {interval} kline value for {open_ms}")
-            if numeric["high"] < max(numeric["open"], numeric["close"]) or numeric["low"] > min(numeric["open"], numeric["close"]):
+            if min(numeric[name] for name in ("open", "high", "low", "close")) <= 0:
+                raise ValueError(f"non-positive {interval} OHLC value for {open_ms}")
+            if numeric["high"] < numeric["low"] or numeric["high"] < max(numeric["open"], numeric["close"]) or numeric["low"] > min(numeric["open"], numeric["close"]):
                 raise ValueError(f"invalid {interval} OHLC bounds for {open_ms}")
             if any(numeric[name] < 0 for name in ("volume", "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume", "taker_buy_quote_asset_volume")):
                 raise ValueError(f"negative {interval} volume/trade value for {open_ms}")
+            try:
+                trade_count = Decimal(item["number_of_trades"])
+            except InvalidOperation as error:
+                raise ValueError(f"invalid {interval} number_of_trades for {open_ms}") from error
+            if not trade_count.is_finite() or trade_count != trade_count.to_integral_value():
+                raise ValueError(f"number_of_trades must be a non-negative integer for {open_ms}")
+            if numeric["taker_buy_base_asset_volume"] > numeric["volume"] or numeric["taker_buy_quote_asset_volume"] > numeric["quote_asset_volume"]:
+                raise ValueError(f"taker-buy volume exceeds total volume for {open_ms}")
             item["open_time_utc"] = open_time_utc(open_ms)
             normalized.append(item)
 
@@ -228,11 +239,23 @@ def collect(end_date: date, root: Path) -> dict[str, object]:
         for request in archive_requests(start_date, end_date, interval):
             path, url, checksum = fetch_archive(request, raw_root)
             input_rows.extend(read_kline_rows(path))
-            archives.append({"url": url, "sha256": checksum, "path": str(path.relative_to(root))})
+            archives.append({"interval": interval, "url": url, "sha256": checksum, "path": str(path.relative_to(root))})
         collected[interval] = normalize_and_validate(input_rows, interval, start_ms, end_ms)
 
+    outputs: dict[str, dict[str, object]] = {}
     for interval, rows in collected.items():
-        write_csv(root / "data" / f"{SYMBOL}-{interval}-365d.csv", rows)
+        output = root / "data" / f"{SYMBOL}-{interval}-365d.csv"
+        write_csv(output, rows)
+        outputs[interval] = {
+            "path": str(output.relative_to(root)),
+            "sha256": sha256_file(output),
+            "row_count": len(rows),
+            "first_open_time_ms": int(rows[0]["open_time_ms"]),
+            "last_open_time_ms": int(rows[-1]["open_time_ms"]),
+            "source_archive_sha256": [
+                record["sha256"] for record in archives if record["interval"] == interval
+            ],
+        }
 
     metadata = {
         "symbol": SYMBOL,
@@ -241,6 +264,7 @@ def collect(end_date: date, root: Path) -> dict[str, object]:
         "end_date_exclusive_utc": end_date.isoformat(),
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "row_counts": {interval: len(rows) for interval, rows in collected.items()},
+        "outputs": outputs,
         "archives": archives,
     }
     metadata_path = root / "metadata" / f"fetch-{end_date.isoformat()}.json"
@@ -252,6 +276,12 @@ def collect(end_date: date, root: Path) -> dict[str, object]:
 
 
 def verify_existing(end_date: date, root: Path) -> dict[str, int]:
+    metadata_path = root / "metadata" / f"fetch-{end_date.isoformat()}.json"
+    if not metadata_path.exists():
+        raise ValueError(f"fetch manifest is required: {metadata_path}")
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if metadata.get("end_date_exclusive_utc") != end_date.isoformat():
+        raise ValueError("fetch manifest end date does not match requested end date")
     start_ms = date_to_ms(end_date - timedelta(days=365))
     end_ms = date_to_ms(end_date)
     counts: dict[str, int] = {}
@@ -264,6 +294,26 @@ def verify_existing(end_date: date, root: Path) -> dict[str, int]:
         validated = normalize_and_validate(
             [[row[column] for column in RAW_COLUMNS] for row in rows], interval, start_ms, end_ms
         )
+        output = metadata.get("outputs", {}).get(interval)
+        if not isinstance(output, dict):
+            raise ValueError(f"fetch manifest is missing output metadata for {interval}")
+        if output.get("sha256") != sha256_file(path):
+            raise ValueError(f"output SHA-256 mismatch for {path}")
+        if output.get("row_count") != len(validated) or output.get("first_open_time_ms") != int(validated[0]["open_time_ms"]) or output.get("last_open_time_ms") != int(validated[-1]["open_time_ms"]):
+            raise ValueError(f"output metadata mismatch for {path}")
+        expected_archives = output.get("source_archive_sha256")
+        if not isinstance(expected_archives, list):
+            raise ValueError(f"fetch manifest is missing source archive metadata for {interval}")
+        actual_archives = []
+        for archive in metadata.get("archives", []):
+            if archive.get("interval") != interval:
+                continue
+            archive_path = root / archive["path"]
+            if not archive_path.exists() or sha256_file(archive_path) != archive.get("sha256"):
+                raise ValueError(f"source archive SHA-256 mismatch for {archive_path}")
+            actual_archives.append(archive.get("sha256"))
+        if actual_archives != expected_archives:
+            raise ValueError(f"source archive metadata mismatch for {interval}")
         counts[interval] = len(validated)
     return counts
 

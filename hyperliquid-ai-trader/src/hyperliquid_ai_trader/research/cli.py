@@ -98,7 +98,7 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("--config", type=Path, required=True)
     prepare.add_argument("--points", type=Path, required=True)
     prepare.add_argument("--constitution", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "constitution.md")
-    prepare.add_argument("--instruction", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "trader_v001.md")
+    prepare.add_argument("--instruction", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "trader_v002.md")
     prepare.add_argument("--strategy", type=Path, default=_PROJECT_ROOT / "configs" / "research" / "initial_strategy.json")
     prepare.add_argument("--trial-prefix", default="trader-v001")
     prepare.add_argument("--temperature", default=Decimal("0"), type=Decimal)
@@ -392,6 +392,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 points=read_point_selection_jsonl(args.points),
                 decisions=read_validated_decisions_jsonl(args.decisions, config=config),
                 config=config,
+                verify_point_features=True,
                 funding=(
                     read_binance_usdm_funding_csv(args.funding_csv)
                     if args.funding_csv is not None

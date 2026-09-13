@@ -56,8 +56,8 @@ class FundingSeries:
             raise FundingDataError("funding notional must be finite and non-negative")
         if side not in {"long", "short"}:
             raise FundingDataError("funding side must be long or short")
-        first_slot = ((entry_time_ms + FUNDING_INTERVAL_MS - 1) // FUNDING_INTERVAL_MS) * FUNDING_INTERVAL_MS
-        expected_slots = range(first_slot, exit_time_ms, FUNDING_INTERVAL_MS)
+        first_slot = (entry_time_ms // FUNDING_INTERVAL_MS + 1) * FUNDING_INTERVAL_MS
+        expected_slots = range(first_slot, exit_time_ms + 1, FUNDING_INTERVAL_MS)
         rates = {
             event.timestamp_ms // FUNDING_INTERVAL_MS * FUNDING_INTERVAL_MS: event.rate
             for event in self.events

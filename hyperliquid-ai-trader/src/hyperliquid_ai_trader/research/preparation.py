@@ -13,6 +13,7 @@ from ..agents import OPEN_POSITION_JSON_SCHEMA
 from .config import ResearchConfig
 from .points import PointCandidate
 from .request_identity import PreparedModelRequest, build_model_request
+from .costs import COST_MODEL_VERSION, estimated_round_trip_cost_bps
 
 
 class ResearchPreparationError(ValueError):
@@ -79,6 +80,9 @@ def _input_data(config: ResearchConfig, point: PointCandidate) -> dict[str, Any]
             "fee_rate": _format_decimal(config.execution.fee_rate),
             "spread_bps": _format_decimal(config.execution.spread_bps),
             "slippage_bps": _format_decimal(config.execution.slippage_bps),
+            "sl_tp_basis": config.execution.sl_tp_basis,
+            "estimated_round_trip_cost_bps": _format_decimal(estimated_round_trip_cost_bps(config.execution)),
+            "cost_model_version": COST_MODEL_VERSION,
         },
         "decision_limits": {
             "min_stop_loss_pct": _format_decimal(config.decision_limits.min_stop_loss_pct),
@@ -87,6 +91,12 @@ def _input_data(config: ResearchConfig, point: PointCandidate) -> dict[str, Any]
             "max_take_profit_pct": _format_decimal(config.decision_limits.max_take_profit_pct),
         },
     }
+
+
+def _trader_strategy(strategy: Mapping[str, Any]) -> dict[str, Any]:
+    """Expose the strategy rules but never the Reviewer-only calibration state."""
+
+    return {key: value for key, value in strategy.items() if key != "confidence_calibration"}
 
 
 def prepare_point_requests(
@@ -119,7 +129,7 @@ def prepare_point_requests(
             input_data=_input_data(config, point),
             constitution=constitution,
             instruction=instruction,
-            strategy=strategy,
+            strategy=_trader_strategy(strategy),
             requested_model=config.trader_model,
             temperature=temperature,
             thinking=thinking,
