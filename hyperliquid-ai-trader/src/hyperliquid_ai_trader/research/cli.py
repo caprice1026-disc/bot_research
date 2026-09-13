@@ -7,11 +7,13 @@ from decimal import Decimal, DecimalException
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
 import time
 from typing import Sequence
 
 from .baseline import run_baseline
+from .artifacts import ArtifactError, load_artifact_manifest, sha256_path, verify_artifact
 from .binance import (
     BINANCE_USDM_VENUE,
     FundingDataError,
@@ -57,6 +59,11 @@ from .responses import (
     write_validated_decisions_jsonl,
 )
 from .simulator import SimulationError
+from .freeze import build_freeze_manifest, freeze_fingerprint, write_freeze_manifest
+from .forward import ForwardError
+from .replay import run_replay
+from .risk import ResearchRiskEngine
+from .testnet_audit import AuditError, actual_stop_risk, max_hold_deadline
 
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -117,6 +124,27 @@ def _parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--decisions", type=Path, required=True)
     evaluate.add_argument("--funding-csv", type=Path)
     evaluate.add_argument("--output", type=Path, required=True)
+    replay = commands.add_parser("replay", help="run sequential account-aware research replay")
+    replay.add_argument("--config", type=Path, required=True)
+    replay.add_argument("--candles", type=Path, required=True)
+    replay.add_argument("--decisions", type=Path, required=True)
+    replay.add_argument("--funding-csv", type=Path)
+    replay.add_argument("--days", type=int, default=3)
+    replay.add_argument("--output", type=Path, required=True)
+    freeze = commands.add_parser("freeze", help="write an immutable experiment freeze manifest")
+    freeze.add_argument("--config", type=Path, required=True)
+    freeze.add_argument("--output", type=Path, required=True)
+    freeze.add_argument("--code-commit-sha")
+    freeze.add_argument("--candles", type=Path)
+    freeze.add_argument("--constitution", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "constitution.md")
+    freeze.add_argument("--instruction", type=Path, default=_PROJECT_ROOT / "prompts" / "research" / "trader_v002.md")
+    audit = commands.add_parser("audit", help="run offline Testnet execution audit calculations")
+    audit.add_argument("--mode", choices=("fixture", "frozen-model"), default="fixture")
+    audit.add_argument("--entry-price", type=Decimal, required=True)
+    audit.add_argument("--stop-price", type=Decimal, required=True)
+    audit.add_argument("--filled-at-ms", type=int, required=True)
+    audit.add_argument("--max-hold-ms", type=int, required=True)
+    audit.add_argument("--freeze", type=Path)
     return parser
 
 
@@ -132,6 +160,7 @@ def _write_artifact_manifest(*, output: Path, payload: dict[str, object]) -> Pat
     manifest_path = _manifest_path(output)
     manifest = {
         "schema_version": 1,
+        "artifact_type": payload.get("artifact_type", payload.get("mode", "artifact")),
         **payload,
         "content_sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
     }
@@ -144,14 +173,28 @@ def _write_artifact_manifest(*, output: Path, payload: dict[str, object]) -> Pat
     return manifest_path
 
 
+def _verify_optional_artifact(path: Path) -> dict[str, object] | None:
+    manifest_path = _manifest_path(path)
+    if not manifest_path.exists():
+        return None
+    return verify_artifact(path)
+
+
+def _read_manifest_if_present(path: Path) -> dict[str, object] | None:
+    manifest_path = _manifest_path(path)
+    return load_artifact_manifest(manifest_path) if manifest_path.exists() else None
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
-        config = load_research_config(args.config)
+        config = load_research_config(args.config) if hasattr(args, "config") else None
         if args.command == "validate-config":
+            assert config is not None
             print(json.dumps(config.public_summary(), ensure_ascii=False, sort_keys=True))
             return 0
         if args.command == "collect":
+            assert config is not None
             if config.market_venue != "hyperliquid_mainnet_public":
                 raise ResearchDataError("collect currently supports hyperliquid_mainnet_public only")
             received_at_ms = _now_ms()
@@ -205,6 +248,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "import-binance-csv":
+            assert config is not None
             if config.market_venue != BINANCE_USDM_VENUE:
                 raise ResearchDataError("import-binance-csv requires market.venue=binance_usdm_public")
             candles = read_binance_usdm_1m_csv(
@@ -242,6 +286,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "points":
+            assert config is not None
+            _verify_optional_artifact(args.candles)
             candles = read_normalized_candles_jsonl(args.candles)
             validate_candles_match_market(
                 candles, venue=config.market_venue, symbol=config.symbol
@@ -304,6 +350,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "prepare-requests":
+            assert config is not None
+            _verify_optional_artifact(args.points)
             points = read_point_selection_jsonl(args.points)
             constitution = read_text_asset(args.constitution, name="constitution")
             instruction = read_text_asset(args.instruction, name="instruction")
@@ -353,6 +401,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "validate-responses":
+            assert config is not None
+            _verify_optional_artifact(args.requests)
             requests = read_prepared_requests_jsonl(args.requests)
             responses = read_model_responses_jsonl(args.responses)
             decisions = validate_model_responses(
@@ -385,6 +435,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "evaluate-decisions":
+            assert config is not None
+            _verify_optional_artifact(args.candles)
+            _verify_optional_artifact(args.points)
+            _verify_optional_artifact(args.decisions)
+            points_manifest = _read_manifest_if_present(args.points)
+            if points_manifest is not None and points_manifest.get("source_candles_sha256") != sha256_path(args.candles):
+                raise ResearchEvaluationError("point artifact does not belong to the candle artifact")
             if args.funding_csv is not None and config.market_venue != BINANCE_USDM_VENUE:
                 raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
             evaluation = evaluate_validated_decisions(
@@ -423,6 +480,73 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0 if evaluation.status == "ok" else 3
+        if args.command == "replay":
+            assert config is not None
+            if args.funding_csv is not None and config.market_venue != BINANCE_USDM_VENUE:
+                raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
+            result = run_replay(
+                candles=read_normalized_candles_jsonl(args.candles),
+                decisions=read_validated_decisions_jsonl(args.decisions, config=config),
+                config=config,
+                risk=ResearchRiskEngine(
+                    risk_per_trade_pct=config.risk_per_trade_pct,
+                    max_daily_loss_pct=config.max_daily_loss_pct,
+                    max_drawdown_pct=config.max_drawdown_pct,
+                    max_position_notional_usd=config.max_position_notional_usd,
+                    leverage=config.leverage,
+                    min_notional_usd=config.min_notional_usd,
+                ),
+                funding=read_binance_usdm_funding_csv(args.funding_csv) if args.funding_csv else None,
+                days=args.days,
+            )
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(
+                "".join(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n" for event in result.events),
+                encoding="utf-8",
+            )
+            manifest_path = _write_artifact_manifest(
+                output=args.output,
+                payload={"mode": "sequential_replay", "experiment_id": config.experiment_id, **{
+                    "episode_count": len(result.episodes), "event_count": len(result.events),
+                    "source_candles_sha256": sha256_path(args.candles),
+                    "source_decisions_sha256": sha256_path(args.decisions),
+                    "replay_status": result.status,
+                }},
+            )
+            print(json.dumps({"status": result.status, "episode_count": len(result.episodes), "output": str(args.output), "manifest_path": str(manifest_path)}, ensure_ascii=False, sort_keys=True))
+            return 0 if result.status == "ok" else 3
+        if args.command == "freeze":
+            assert config is not None
+            raw_config = json.loads(args.config.read_text(encoding="utf-8"))
+            try:
+                code_sha = args.code_commit_sha or subprocess.run(
+                    ["git", "rev-parse", "HEAD"], cwd=_PROJECT_ROOT, check=True, capture_output=True, text=True
+                ).stdout.strip()
+            except (OSError, subprocess.CalledProcessError) as error:
+                raise ResearchConfigError("cannot determine code commit SHA") from error
+            artifacts = {"candles": args.candles} if args.candles else {}
+            manifest = build_freeze_manifest(
+                config=raw_config,
+                code_commit_sha=code_sha,
+                artifact_paths=artifacts,
+                prompts={"constitution": args.constitution, "instruction": args.instruction},
+                budget_usd=format(config.budget_usd, "f"),
+                rules={"feature_set": config.feature_set, "market": f"{config.market_venue}:{config.symbol}"},
+            )
+            write_freeze_manifest(args.output, manifest)
+            print(json.dumps({"status": "ok", "freeze_path": str(args.output), "freeze_fingerprint": freeze_fingerprint(manifest)}, ensure_ascii=False, sort_keys=True))
+            return 0
+        if args.command == "audit":
+            if args.mode == "frozen-model" and args.freeze is None:
+                raise AuditError("frozen-model audit requires --freeze")
+            if args.mode == "frozen-model":
+                try:
+                    if not isinstance(json.loads(args.freeze.read_text(encoding="utf-8")), dict):
+                        raise ValueError("freeze manifest must be an object")
+                except (OSError, json.JSONDecodeError, ValueError) as error:
+                    raise AuditError("invalid freeze manifest") from error
+            print(json.dumps({"status": "ok", "mode": args.mode, "actual_stop_risk_pct": format(actual_stop_risk(side="long", entry_price=args.entry_price, stop_price=args.stop_price), "f"), "max_hold_deadline_ms": max_hold_deadline(filled_at_ms=args.filled_at_ms, max_hold_ms=args.max_hold_ms), "pnl_claim": "not_evaluated"}, ensure_ascii=False, sort_keys=True))
+            return 0
         if args.command == "baseline" and args.funding_csv is not None and config.market_venue != BINANCE_USDM_VENUE:
             raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
         result = run_baseline(
@@ -451,6 +575,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         ResearchResponseError,
         FundingDataError,
         SimulationError,
+        AuditError,
+        ForwardError,
+        ArtifactError,
     ) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2

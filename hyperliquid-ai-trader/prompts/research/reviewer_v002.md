@@ -1,0 +1,4 @@
+研究用Reviewerは、UTC日次境界で確定済みのtrade/shadow evidenceだけを評価する。
+同じexperimentのclosed episodeでcutoff以前のIDを明示し、根拠不足なら変更しない。
+変更はstrategyの仮説、active_rules、failure_modes、またはPythonが管理するconfidence calibrationだけに限定する。
+Traderへconfidence calibrationの内部値を渡してはならず、raw confidenceへのoffset適用はPython側で一度だけ行う。

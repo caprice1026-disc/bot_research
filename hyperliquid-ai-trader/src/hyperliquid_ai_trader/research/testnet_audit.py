@@ -71,3 +71,28 @@ def recover_protection_failure(exchange: RecoveryExchange) -> str:
     if exchange.position_size() != 0:
         raise AuditError("emergency close did not leave a flat position")
     return "flat"
+
+
+def audit_fixture(payload: dict[str, Any]) -> dict[str, Any]:
+    """Validate a deterministic execution fixture without claiming profitability."""
+
+    fill = AuditFill(
+        side=str(payload["side"]),
+        requested_size=Decimal(str(payload["requested_size"])),
+        filled_size=Decimal(str(payload["filled_size"])),
+        average_price=Decimal(str(payload["average_price"])),
+        filled_at_ms=int(payload["filled_at_ms"]),
+    )
+    if payload.get("protection_confirmed_at_ms") is None:
+        raise AuditError("protection was not confirmed")
+    deadline = max_hold_deadline(filled_at_ms=fill.filled_at_ms, max_hold_ms=int(payload["max_hold_ms"]))
+    closed_at = payload.get("closed_at_ms")
+    if closed_at is not None and int(closed_at) > deadline:
+        raise AuditError("fixture exceeded max hold")
+    return {
+        "status": "ok",
+        "average_price": format(fill.average_price, "f"),
+        "filled_size": format(fill.filled_size, "f"),
+        "max_hold_deadline_ms": deadline,
+        "pnl_claim": "not_evaluated",
+    }

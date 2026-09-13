@@ -10,7 +10,7 @@ from .config import ResearchConfig
 from .data import CandleSeries, NormalizedCandle, ResearchDataError, validate_candles_match_market
 from .evaluation import ValidatedPointDecision
 from .risk import ResearchRiskEngine
-from .simulator import SimulatedEpisode, SimulationError, VirtualAccount, simulate_episode_from_entry, simulate_shadow_episode_from_entry, with_funding
+from .simulator import SimulatedEpisode, SimulationError, VirtualAccount, simulate_episode_from_entry, with_funding
 
 
 @dataclass(frozen=True)
@@ -33,7 +33,12 @@ def run_replay(*, candles: list[NormalizedCandle], decisions: list[ValidatedPoin
     episodes: list[SimulatedEpisode] = []
     events: list[dict[str, object]] = []
     position_free_at = 0
-    for record in sorted(decisions, key=lambda item: item.decision_time_ms):
+    ordered_decisions = sorted(decisions, key=lambda item: item.decision_time_ms)
+    replay_start_ms = ordered_decisions[0].decision_time_ms
+    replay_end_ms = replay_start_ms + days * 86_400_000
+    for record in ordered_decisions:
+        if record.decision_time_ms >= replay_end_ms:
+            break
         account.advance_time(record.decision_time_ms)
         if record.decision.would_abstain:
             events.append({"decision_time_ms": record.decision_time_ms, "status": "abstained"})

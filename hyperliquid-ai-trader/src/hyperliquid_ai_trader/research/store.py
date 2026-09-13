@@ -10,7 +10,7 @@ import sqlite3
 from typing import Any, Iterator
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 TERMINAL_REVIEW_STATUSES = {"failed", "validated_no_change", "validated_patch"}
 
 
@@ -91,6 +91,12 @@ class ResearchStore:
                     created_at_ms INTEGER NOT NULL,
                     FOREIGN KEY(experiment_id) REFERENCES experiments(experiment_id),
                     UNIQUE(experiment_id, trial_id)
+                );
+                CREATE TABLE IF NOT EXISTS replay_events (
+                    experiment_id TEXT NOT NULL, decision_id TEXT NOT NULL,
+                    status TEXT NOT NULL, payload_json TEXT NOT NULL, updated_at_ms INTEGER NOT NULL,
+                    PRIMARY KEY(experiment_id, decision_id),
+                    FOREIGN KEY(experiment_id) REFERENCES experiments(experiment_id)
                 );
                 """
             )
@@ -242,12 +248,45 @@ class ResearchStore:
         if cursor.rowcount != 1:
             raise ResearchStoreError("only prepared model requests can become failed")
 
+    def mark_completed(
+        self,
+        request_id: str,
+        *,
+        completed_at_ms: int,
+        input_tokens: int | None = None,
+        output_tokens: int | None = None,
+        actual_cost_usd: Decimal | None = None,
+        raw_response_ref: str | None = None,
+    ) -> None:
+        with self.connection:
+            cursor = self.connection.execute(
+                """UPDATE model_requests SET status='completed', completed_at_ms=?,
+                   input_tokens=?, output_tokens=?, actual_cost_usd=?, raw_response_ref=?
+                   WHERE request_id=? AND status='submitted'""",
+                (
+                    completed_at_ms,
+                    input_tokens,
+                    output_tokens,
+                    None if actual_cost_usd is None else format(actual_cost_usd, "f"),
+                    raw_response_ref,
+                    request_id,
+                ),
+            )
+        if cursor.rowcount != 1:
+            raise ResearchStoreError("only submitted model requests can become completed")
+
     def reserved_cost_total(self, experiment_id: str) -> Decimal:
-        row = self.connection.execute(
-            "SELECT COALESCE(SUM(CAST(reserved_cost_usd AS REAL)), 0) FROM model_requests WHERE experiment_id=? AND status != 'failed'",
+        rows = self.connection.execute(
+            "SELECT reserved_cost_usd FROM model_requests WHERE experiment_id=? AND status != 'failed'",
             (experiment_id,),
-        ).fetchone()
-        return Decimal(str(row[0]))
+        )
+        total = Decimal("0")
+        for row in rows:
+            try:
+                total += Decimal(row[0])
+            except InvalidOperation as error:
+                raise ResearchStoreError("stored request cost is invalid") from error
+        return total
 
     def completed_request_by_hash(self, experiment_id: str, request_hash: str) -> dict[str, Any] | None:
         row = self.connection.execute(
@@ -269,3 +308,27 @@ class ResearchStore:
         if row is None:
             raise ResearchStoreError("unknown model request")
         return dict(row)
+
+    def record_replay_event(
+        self, *, experiment_id: str, decision_id: str, status: str,
+        payload: dict[str, Any], updated_at_ms: int,
+    ) -> bool:
+        """Persist one decision outcome idempotently for replay restarts."""
+
+        with self.connection:
+            cursor = self.connection.execute(
+                """INSERT OR IGNORE INTO replay_events
+                   (experiment_id, decision_id, status, payload_json, updated_at_ms)
+                   VALUES (?, ?, ?, ?, ?)""",
+                (experiment_id, decision_id, status, json.dumps(payload, sort_keys=True), updated_at_ms),
+            )
+        return cursor.rowcount == 1
+
+    def replay_event(self, *, experiment_id: str, decision_id: str) -> dict[str, Any] | None:
+        row = self.connection.execute(
+            "SELECT status, payload_json, updated_at_ms FROM replay_events WHERE experiment_id=? AND decision_id=?",
+            (experiment_id, decision_id),
+        ).fetchone()
+        if row is None:
+            return None
+        return {"status": row[0], "payload": json.loads(row[1]), "updated_at_ms": row[2]}

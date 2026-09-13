@@ -11,15 +11,19 @@ from hyperliquid_ai_trader.research.store import ResearchStore
 
 
 class FakeProvider:
-    def __init__(self, *, fail=False):
+    def __init__(self, *, fail=False, sync_result=None):
         self.fail = fail
         self.calls = 0
+        self.sync_result = sync_result or []
 
     def submit(self, payloads):
         self.calls += 1
         if self.fail:
             raise TimeoutError("submission outcome unknown")
         return "job-1"
+
+    def sync(self, provider_job_id):
+        return self.sync_result
 
 
 def _request(trial_id: str):
@@ -71,3 +75,31 @@ def test_submit_reserves_before_provider_call(tmp_path: Path) -> None:
         BatchManager().submit(config=config, requests=[request], store=store, provider=provider, now_ms=2)
         assert provider.calls == 1
         assert store.model_request(request.request_id)["status"] == "submitted"
+
+
+def test_completed_hash_reuse_is_not_counted_against_new_budget(tmp_path: Path) -> None:
+    config = _paid_config(tmp_path)
+    request = _request("a")
+    with ResearchStore(tmp_path / "research.db") as store:
+        store.create_experiment(config.experiment_id, {}, 1)
+        store.prepare_model_request(
+            experiment_id=config.experiment_id, request_id=request.request_id, trial_id=request.trial_id,
+            request_hash=request.request_hash, canonical_payload=request.canonical_payload,
+            reserved_cost_usd=Decimal("0.0005"), created_at_ms=1,
+        )
+        store.mark_submitted(request.request_id, provider_job_id="job", submitted_at_ms=2)
+        store.mark_completed(request.request_id, completed_at_ms=3)
+        result = BatchManager().submit(config=config, requests=[request], store=store, provider=FakeProvider(), now_ms=4)
+        assert result.reused == 1 and result.submitted == 0
+
+
+def test_sync_marks_provider_result_completed(tmp_path: Path) -> None:
+    config = _paid_config(tmp_path)
+    request = _request("a")
+    provider = FakeProvider(sync_result=[{"request_id": request.request_id, "input_tokens": 2, "output_tokens": 3, "actual_cost_usd": "0.01"}])
+    with ResearchStore(tmp_path / "research.db") as store:
+        store.create_experiment(config.experiment_id, {}, 1)
+        BatchManager().submit(config=config, requests=[request], store=store, provider=provider, now_ms=2)
+        result = BatchManager().sync(store=store, provider=provider, now_ms=3)
+        assert result.status == "completed"
+        assert store.model_request(request.request_id)["status"] == "completed"

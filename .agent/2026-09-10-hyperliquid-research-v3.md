@@ -36,9 +36,10 @@
 - [x] (2026-09-13) 研究用`ResearchStore`をライブ用SQLiteと同じWAL、`synchronous=NORMAL`、5秒`busy_timeout`、foreign key有効化へ統一した。PostgreSQL依存は追加せず、研究用SQLiteの設定を1件の回帰テストで固定した。
 - [x] (2026-09-13) Binanceの検証済み1分CSVを正規化JSONLへ変換する`import-binance-csv`、入力CSV hash付きmanifest、venue/symbolの設定一致検証、1年分Replay向けの`CandleSeries`時刻インデックスを追加した。候補化・baseline・地点評価は、各slotごとの全足走査を行わない。
 - [x] (2026-09-13) Binance USD-Mでは公式Funding CSVを評価入力として読み、Funding CSV未指定・必要event不足を損益ゼロにせず`incomplete_funding`として保存するようにした。完結episodeと不足episodeが混在すれば`partial`、完結episodeがなければ`insufficient_data`とする。地点評価も非成功時のJSONL/manifestを残す。
-- [ ] M5：日次Reviewer、根拠検証、翌日strategy適用。
-- [ ] M6：構成固定と将来Static/Adaptive比較。
-- [ ] M7：Testnet注文監査と研究結果の引き渡し。
+- [x] (2026-09-13) リモートIssue #8〜#16の研究経路を実装した。Binance最終部分月・CSV/アーカイブprovenance、artifact hash lineage、共通cost/funding、Trader v2 identity、Batch予約/unknown/sync、UTC日次Replay/Risk、Reviewerの証拠・遅延patch制限、freeze/paired Forward、fixture Testnet auditを追加し、専用テストを含めて検証した。
+- [x] M5：日次Reviewer、根拠検証、翌日strategy適用（UTC cutoff、closed evidence、patch制限、late hold、calibration helper）。
+- [x] M6：構成固定と将来Static/Adaptive比較（freeze manifest、drift検知、同一snapshot paired runner）。
+- [x] M7：Testnet注文監査と研究結果の引き渡し（外部注文を行わないfixture/frozen audit、実fill基準のrisk/hold/recovery）。
 
 ## Surprises & Discoveries
 

@@ -275,7 +275,7 @@ def collect(end_date: date, root: Path) -> dict[str, object]:
     return metadata
 
 
-def verify_existing(end_date: date, root: Path) -> dict[str, int]:
+def verify_existing(end_date: date, root: Path, *, verify_source: bool = False) -> dict[str, int]:
     metadata_path = root / "metadata" / f"fetch-{end_date.isoformat()}.json"
     if not metadata_path.exists():
         raise ValueError(f"fetch manifest is required: {metadata_path}")
@@ -311,6 +311,10 @@ def verify_existing(end_date: date, root: Path) -> dict[str, int]:
             archive_path = root / archive["path"]
             if not archive_path.exists() or sha256_file(archive_path) != archive.get("sha256"):
                 raise ValueError(f"source archive SHA-256 mismatch for {archive_path}")
+            if verify_source:
+                current_source_sha = parse_checksum(download_bytes(f"{archive['url']}.CHECKSUM"))
+                if current_source_sha != archive.get("sha256"):
+                    raise ValueError(f"current source CHECKSUM changed for {archive['url']}")
             actual_archives.append(archive.get("sha256"))
         if actual_archives != expected_archives:
             raise ValueError(f"source archive metadata mismatch for {interval}")
@@ -327,6 +331,7 @@ def parse_arguments(argv: Sequence[str] | None) -> argparse.Namespace:
         help="UTC date excluded from the 365-day range (default: today)",
     )
     parser.add_argument("--verify-only", action="store_true", help="validate existing CSVs without downloading")
+    parser.add_argument("--verify-source", action="store_true", help="also compare each archive with its current remote CHECKSUM")
     return parser.parse_args(argv)
 
 
@@ -335,7 +340,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     root = Path(__file__).resolve().parent
     try:
         if args.verify_only:
-            print(json.dumps({"row_counts": verify_existing(args.end_date, root)}, ensure_ascii=False))
+            print(json.dumps({"row_counts": verify_existing(args.end_date, root, verify_source=args.verify_source)}, ensure_ascii=False))
         else:
             print(json.dumps(collect(args.end_date, root), ensure_ascii=False))
     except (OSError, RuntimeError, ValueError, zipfile.BadZipFile) as error:

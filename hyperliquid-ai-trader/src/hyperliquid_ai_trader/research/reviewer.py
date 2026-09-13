@@ -90,6 +90,13 @@ def validate_patch_limits(
         validate_evidence_ids(records, ids, experiment_id=experiment_id, cutoff_ms=cutoff_ms)
         path = operation.get("path")
         value = operation.get("value")
+        if path in {"/active_rules", "/failure_modes"} and len(ids) < MIN_RULE_OBSERVATIONS:
+            raise ReviewerError("rule changes require at least 20 observations")
+        if path in {"/confidence_calibration/long", "/confidence_calibration/short"}:
+            side = path.rsplit("/", 1)[1]
+            same_direction = [row for row in records if str(row.get("side", row.get("direction", ""))).lower() == side]
+            if len(same_direction) < MIN_CONFIDENCE_PREDICTIONS:
+                raise ReviewerError("confidence calibration requires 50 same-direction predictions")
         if path in {"/active_rules", "/failure_modes"} and isinstance(value, str) and len(value.strip()) > MAX_RULE_LENGTH:
             raise ReviewerError("strategy rule is too long")
         if path == "/market_hypothesis" and isinstance(value, str) and len(value.strip()) > MAX_HYPOTHESIS_LENGTH:
@@ -106,6 +113,13 @@ def validate_patch_limits(
             target.append(value.strip())
         if target is not None and op == "remove" and isinstance(value, str) and value.strip() in target:
             target.remove(value.strip())
+        if path in {"/market_hypothesis", "/confidence_calibration/long", "/confidence_calibration/short"} and op == "replace":
+            if path == "/market_hypothesis":
+                candidate["market_hypothesis"] = value
+            else:
+                calibration = dict(candidate.get("confidence_calibration", {}))
+                calibration[path.rsplit("/", 1)[1]] = value
+                candidate["confidence_calibration"] = calibration
     if len(candidate_rules) > MAX_RULES or len(candidate_failures) > MAX_RULES:
         raise ReviewerError("strategy has too many rules")
     import json
