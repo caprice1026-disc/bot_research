@@ -5,6 +5,14 @@ import pytest
 from hyperliquid_ai_trader.research.store import ResearchStore, ResearchStoreError
 
 
+def test_research_store_uses_wal_with_a_bounded_writer_wait(tmp_path) -> None:
+    with ResearchStore(tmp_path / "research.db") as store:
+        assert store.connection.execute("PRAGMA journal_mode").fetchone()[0].lower() == "wal"
+        assert store.connection.execute("PRAGMA synchronous").fetchone()[0] == 1
+        assert store.connection.execute("PRAGMA busy_timeout").fetchone()[0] == 5_000
+        assert store.connection.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+
+
 def test_zero_pnl_and_split_close_become_evidence_once(tmp_path) -> None:
     with ResearchStore(tmp_path / "research.db") as store:
         store.create_experiment("exp", {"network": "mainnet"}, 1)

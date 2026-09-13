@@ -34,6 +34,9 @@ class ResearchStore:
         path.parent.mkdir(parents=True, exist_ok=True)
         self.connection = sqlite3.connect(path)
         self.connection.row_factory = sqlite3.Row
+        self.connection.execute("PRAGMA journal_mode=WAL")
+        self.connection.execute("PRAGMA synchronous=NORMAL")
+        self.connection.execute("PRAGMA busy_timeout=5000")
         self.connection.execute("PRAGMA foreign_keys = ON")
         self._migrate()
 

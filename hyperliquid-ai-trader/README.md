@@ -112,7 +112,7 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 `src/hyperliquid_ai_trader/research/`には、ライブ注文経路と分離した研究用の基盤があります。現在は、判断時点で利用可能な確定1分足だけから`common_candles_v1`を計算し、1分足上でEntry遅延、SL/TP、300秒保有上限、fee、spread、slippageを再現できます。同一足でSLとTPへ到達した場合は、主結果のSL先と感度分析のTP先を明示的に選び、曖昧な結果として記録します。
 
-研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
+研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。ライブ・研究ともSQLiteのWALモード、`synchronous=NORMAL`、5秒のwriter待機を使い、ローカルの単一writer／複数readerを前提にします。PostgreSQLは依存にも実装にも含めません。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
 
 固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。`prepare-requests`は選定地点から将来のモデル入力を不変化し、`validate-responses`は正規化済みの保存応答を照合しますが、どちらもGeminiへ送信しません。研究v3全体のBatch送信・usage/job照会、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
 
@@ -177,6 +177,17 @@ Geminiの生レスポンスは、そのまま研究入力に使いません。�
   --requests data\research\requests-50.jsonl `
   --responses data\research\responses-50.normalized.jsonl `
   --output data\research\decisions-50.jsonl
+```
+
+検証済み判断は、選定時点と完全に一致することを確認してから同一の1分足Simulatorで独立に評価します。通常判断は`trade`、`would_abstain=true`は同じEntry遅延・TP/SL・費用を用いる参考用`shadow`として別々に出力します。いずれも仮想口座を更新せず、選定地点は無作為な点集合なので時系列の資産曲線や連続売買成績として解釈しません。末尾の価格不足は`incomplete`として保存します。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli evaluate-decisions `
+  --config configs\research\development.json `
+  --candles data\research\BTC-1m.jsonl `
+  --points data\research\points-50.jsonl `
+  --decisions data\research\decisions-50.jsonl `
+  --output data\research\point-evaluation-50.jsonl
 ```
 
 ## 参照

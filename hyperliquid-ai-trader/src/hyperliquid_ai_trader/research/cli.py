@@ -20,6 +20,12 @@ from .data import (
     read_normalized_candles_jsonl,
     write_normalized_candles_jsonl,
 )
+from .evaluation import (
+    ResearchEvaluationError,
+    evaluate_validated_decisions,
+    read_validated_decisions_jsonl,
+    write_point_evaluation_jsonl,
+)
 from .points import (
     PointSelectionError,
     build_point_candidates,
@@ -89,6 +95,12 @@ def _parser() -> argparse.ArgumentParser:
     responses.add_argument("--requests", type=Path, required=True)
     responses.add_argument("--responses", type=Path, required=True)
     responses.add_argument("--output", type=Path, required=True)
+    evaluate = commands.add_parser("evaluate-decisions", help="simulate validated decisions at selected points")
+    evaluate.add_argument("--config", type=Path, required=True)
+    evaluate.add_argument("--candles", type=Path, required=True)
+    evaluate.add_argument("--points", type=Path, required=True)
+    evaluate.add_argument("--decisions", type=Path, required=True)
+    evaluate.add_argument("--output", type=Path, required=True)
     return parser
 
 
@@ -316,6 +328,40 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "evaluate-decisions":
+            evaluation = evaluate_validated_decisions(
+                candles=read_normalized_candles_jsonl(args.candles),
+                points=read_point_selection_jsonl(args.points),
+                decisions=read_validated_decisions_jsonl(args.decisions, config=config),
+                config=config,
+            )
+            if evaluation.status != "ok":
+                print(json.dumps(evaluation.public_summary(), ensure_ascii=False, sort_keys=True))
+                return 3
+            write_point_evaluation_jsonl(args.output, evaluation)
+            manifest_path = _write_artifact_manifest(
+                output=args.output,
+                payload={
+                    "mode": "evaluate_validated_decisions",
+                    "experiment_id": config.experiment_id,
+                    "source_candles_sha256": hashlib.sha256(args.candles.read_bytes()).hexdigest(),
+                    "source_points_sha256": hashlib.sha256(args.points.read_bytes()).hexdigest(),
+                    "source_decisions_sha256": hashlib.sha256(args.decisions.read_bytes()).hexdigest(),
+                    **evaluation.public_summary(),
+                },
+            )
+            print(
+                json.dumps(
+                    {
+                        **evaluation.public_summary(),
+                        "evaluation_path": str(args.output),
+                        "manifest_path": str(manifest_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0
         result = run_baseline(
             candles=read_normalized_candles_jsonl(args.candles),
             baseline_name=args.baseline,
@@ -330,6 +376,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         PointSelectionError,
         ResearchConfigError,
         ResearchDataError,
+        ResearchEvaluationError,
         ResearchPreparationError,
         ResearchResponseError,
         SimulationError,

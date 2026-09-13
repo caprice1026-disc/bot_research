@@ -19,7 +19,7 @@
 - [x] (2026-09-10) 本実装方針を作成した。コード変更・API課金実験・新規取引は行っていない。
 - [x] (2026-09-10) リモートmainのM1/M2実装をfast-forwardで取り込み、到着猶予、1分足保有期限、数量flat判定、Reviewer証拠の実験・cutoff境界を回帰テストで補正した（101件通過）。
 - [x] (2026-09-10) M1の公開足基盤として、署名なしHyperliquid Mainnet `Info` reader、確定1分足の正規化、原子的JSONL保存/再読込、既存Binance downloaderの1分足対応を追加した（Hyperliquid 104件、Binance 6件通過）。
-- [ ] M1：時刻とデータ品質、共通特徴量、確定証拠の基盤（完了：時点整合の1分足モデル、連続性・OHLCV検証、`common_candles_v1`、研究専用SQLiteの確定episode・review証拠消費、公開足の正規化・JSONL保存、署名なし公開`collect` CLIとsource manifest。残り：部分fillからepisodeへの集約）。
+- [ ] M1：時刻とデータ品質、共通特徴量、確定証拠の基盤（完了：時点整合の1分足モデル、連続性・OHLCV検証、`common_candles_v1`、WALモードの研究専用SQLiteによる確定episode・review証拠消費、公開足の正規化・JSONL保存、署名なし公開`collect` CLIとsource manifest。残り：部分fillからepisodeへの集約）。
 - [x] (2026-09-12) M1の最小公開データ経路として、Hyperliquid Mainnetの1分足を最大5,000本まで明示取得する`collect` CLIを追加した。確定足のみを原子的JSONLへ保存し、範囲・受信時刻・内容SHA-256をmanifestへ記録する。空結果は`insufficient_data`で終了し、Fake APIの6件の回帰テストでネットワークなしに検証した。
 - [x] (2026-09-10) M2の最小時系列Runnerとして、固定3ルールを確定足から順に再生する`baseline` CLIを追加した。position重複と末尾不足を明示的に数え、`insufficient_data`を損益ゼロ成功としない。`would_abstain`判断は専用shadow episodeとして同じSimulatorで評価でき、仮想口座へは加算しない（全111件通過）。
 - [ ] M2：仮想執行、単純ルール、口座台帳（完了：Entry遅延、SL/TP、同足曖昧性、gap、300秒、費用、LONG/SHORT共通損益、3単純ルール、shadow非加算、UTC日次口座、5分固定slotの時系列baseline runner。残り：funding event、margin/liquidation、Risk制限との統合）。
@@ -29,9 +29,11 @@
 - [x] (2026-09-12) M3の送信前入力として、選定済みの時点安全なfeatures、固定prompt/strategy、生成設定、共有`open_position` schemaをcanonical requestへ束ねる`prepare-requests` CLIを追加した。request hashと独立trial IDをJSONL/manifestへ保存するが、Gemini API・Batch job・SQLite予約・注文は呼ばない（16件の対象テストで確認）。
 - [x] (2026-09-13) M3の保存済み応答境界として、プロバイダ非依存の正規化JSONLを準備済みrequestと厳密に照合する`validate-responses` CLIを追加した。request ID/hash、要求/返却モデル、受信時刻、共有`open_position` schema、研究用SL/TP制限を検証して判断JSONLへ限定する。Gemini API、Batch job、SQLite、注文は呼ばない（3件の対象テストで確認）。
 - [x] (2026-09-10) M3の最小送信台帳として、モデル応答に影響する入力をcanonical JSON + SHA-256で固定し、独立trial IDと合わせたrequest IDを生成した。SQLiteへ送信前予約を保存し、応答喪失は`submission_unknown`として残す。未照合の同一要求を自動再送できないことを5件の境界テストで確認した（全113件通過）。
-- [ ] M4：点評価と3日Replay（完了：確定61本以後の候補化、最大500件、seed固定、非復元、return_5m符号・30分ボラ・出来高z-scoreによる層化順位、選定JSONL/manifest。残り：LLM回答の点評価、3日Replay）。
+- [ ] M4：点評価と3日Replay（完了：確定61本以後の候補化、最大500件、seed固定、非復元、return_5m符号・30分ボラ・出来高z-scoreによる層化順位、選定JSONL/manifest、検証済みLLM判断の独立trade/shadow地点評価。残り：3日Replay）。
 - [x] (2026-09-12) M4の評価地点選定として、同じcandidate集合とseedから単一の層化round-robin順位を作る`research.points`を追加した。小さいpilotは大きい選定のprefixとなり、重複・500件超・候補不足を拒否する。3件の対象テストで確認した。
 - [x] (2026-09-12) M4の選定出力として、`points` CLIを追加した。UTCの5分slotだけの時点安全な特徴量を原子的JSONLへ保存し、candidate hash・seed・候補/選定後の層別件数・ボラティリティ閾値・元ローソク足SHA-256をmanifestへ残す。候補不足時は空成果物を作らず`insufficient_data`で終了する（5件の対象テストで確認）。
+- [x] (2026-09-13) M4の地点評価として、検証済み判断・選定地点・正規化済み1分足の時刻集合を一致させる`evaluate-decisions` CLIを追加した。通常判断は独立`trade`、見送り判断は同じ価格・費用規則の参考用`shadow`として評価し、口座や時系列損益を更新しない。末尾不足は`incomplete`として残す（1件のCLI境界テストで確認）。
+- [x] (2026-09-13) 研究用`ResearchStore`をライブ用SQLiteと同じWAL、`synchronous=NORMAL`、5秒`busy_timeout`、foreign key有効化へ統一した。PostgreSQL依存は追加せず、研究用SQLiteの設定を1件の回帰テストで固定した。
 - [ ] M5：日次Reviewer、根拠検証、翌日strategy適用。
 - [ ] M6：構成固定と将来Static/Adaptive比較。
 - [ ] M7：Testnet注文監査と研究結果の引き渡し。
@@ -140,6 +142,10 @@ Forwardは初期案を30日・自動延長なしとし、最低取引件数、�
 2026-09-12 / Codex：Batch API clientより前に、選定済み地点から不変の送信前request artifactを作る。live Gemini gatewayと同じ単一`open_position` schemaを共有し、prompt・strategy・生成設定・featuresをcanonical hashへ含める。準備だけではAPIキーを読まず、課金許可、job作成、SQLite予約、注文を行わないため、入力監査を先に完結できる。
 
 2026-09-13 / Codex：外部Batch adapterより先に、保存済み応答をプロバイダ非依存の小さい正規化形式に限定して検証する。準備済みrequestのID/hash/要求モデルと返却モデルを一対一で照合し、liveと共通のFunction Call parserおよび研究制限を通す。raw provider payload、API呼び出し、SQLite予約、注文をこの段階に混ぜず、異なる入力・モデル・schemaの回答が後続Simulatorへ流れない境界を先に固定するため。
+
+2026-09-13 / Codex：研究SQLiteはPostgreSQLへ移行せず、既存ライブSQLiteと同じWAL設定へ統一する。現在のローカル単一writer実験と少数の並行readerにはSQLiteで十分であり、別サーバー、認証情報、運用コスト、SQL方言差を導入しないため。複数writerや複数ホストが必要になった時点だけ再評価する。
+
+2026-09-13 / Codex：点評価は選定地点ごとに独立してSimulatorへ渡し、無作為に並ぶ地点のepisodeを仮想口座や連続時系列の損益へ混ぜない。見送りの方向は`shadow`として同じ約定費用で残すため、保守的に見送っただけかを後から分析できる。一方、末尾の価格不足は推測補完せず`incomplete`へ残す。
 
 2026-09-10 / Codex：初期資金と固定参照額はCLI既定値で隠さず、公開research configの`simulation`節へ固定する。値を変える場合は別config・別experimentとして扱えるようにし、同じReplayを意図せず異なるnotionalで比較しないため。
 
@@ -298,7 +304,7 @@ SQLite更新は一トランザクションで、decision消費とaccount更新�
 ## Outcomes & Retrospective
 
 
-v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、研究専用証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールのUTC 5分slot時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用、送信しないrequest artifactの準備、保存済み正規化応答のID/hash/model/schema検証を追加した。M4では確定61本以後のUTC 5分slot候補と最大500の再現可能な層化順位、および候補集合hash・分類条件・元データhash付き選定JSONL manifestを追加した。公開データの実取得、funding event、Batch、LLM Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
+v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、WALモードの研究専用SQLite証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールのUTC 5分slot時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用、送信しないrequest artifactの準備、保存済み正規化応答のID/hash/model/schema検証を追加した。M4では確定61本以後のUTC 5分slot候補と最大500の再現可能な層化順位、候補集合hash・分類条件・元データhash付き選定JSONL manifest、検証済み回答のtrade/shadow独立地点評価を追加した。公開データの実取得、funding event、Batch、3日Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
 
 変更履歴：2026-09-10、housinv3.mdのレビューと現行コード照合に基づいて初版作成。元文書を保持し、計画の重複作成を避けるためレビュー指摘と具体的工程を本ファイルへまとめた。
 
@@ -331,3 +337,5 @@ v3は研究設計として採用可能。無条件に「問題なし」ではな
 変更履歴：2026-09-12、M3の送信しない`prepare-requests` CLI、時点安全な選定入力と固定assets/生成設定/schemaを含むcanonical request JSONL、request hash/trial ID/manifest、対象16件の検証結果を反映した。
 
 変更履歴：2026-09-13、M3の`validate-responses` CLI、保存済み正規化応答のID/hash/model/schema/研究制限照合、対象3件の検証結果を反映した。
+
+変更履歴：2026-09-13、研究SQLiteのWAL統一とM4の`evaluate-decisions` CLI（trade/shadow分離、選定地点照合、末尾不足の明示）、対象2件の検証結果を反映した。
