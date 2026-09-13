@@ -114,7 +114,7 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
 
-固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。`prepare-requests`は選定地点から将来のモデル入力を不変化しますが、Geminiへ送信しません。研究v3全体のBatch送信・usage/job照会、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
+固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。`prepare-requests`は選定地点から将来のモデル入力を不変化し、`validate-responses`は正規化済みの保存応答を照合しますが、どちらもGeminiへ送信しません。研究v3全体のBatch送信・usage/job照会、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
 
 公開JSONの研究設定は、課金を明示許可しない限りモデルAPIを呼べません。まず設定だけを確認できます。
 
@@ -167,6 +167,16 @@ LLMへ渡す候補地点は、UTCの5分スロット上で同一の確定足JSON
   --thinking none `
   --max-output-tokens 500 `
   --output data\research\requests-50.jsonl
+```
+
+Geminiの生レスポンスは、そのまま研究入力に使いません。プロバイダ非依存の正規化済みJSONL（`request_id`、`returned_model`、受信時刻、`open_position`関数呼び出しだけ）を別工程で保存してから、準備済みrequestと厳密に照合します。`validate-responses`はrequest ID、canonical request hash、要求/返却モデル、5分slot、共有schema、SL/TP等の研究制限を検証し、後続Simulator用の判断JSONLを作ります。Gemini API、Batch job、SQLite予約、注文は行いません。生レスポンスは秘密や大量データを含み得るためGit管理せず、この正規化成果物も`data/`配下に置きます。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli validate-responses `
+  --config configs\research\development.json `
+  --requests data\research\requests-50.jsonl `
+  --responses data\research\responses-50.normalized.jsonl `
+  --output data\research\decisions-50.jsonl
 ```
 
 ## 参照

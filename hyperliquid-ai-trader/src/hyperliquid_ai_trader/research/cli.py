@@ -36,6 +36,13 @@ from .preparation import (
     write_prepared_requests_jsonl,
 )
 from .request_identity import ModelRequestError
+from .responses import (
+    ResearchResponseError,
+    read_model_responses_jsonl,
+    read_prepared_requests_jsonl,
+    validate_model_responses,
+    write_validated_decisions_jsonl,
+)
 from .simulator import SimulationError
 
 
@@ -77,6 +84,11 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("--thinking", default="none")
     prepare.add_argument("--max-output-tokens", default=500, type=int)
     prepare.add_argument("--output", type=Path, required=True)
+    responses = commands.add_parser("validate-responses", help="validate saved normalized model responses")
+    responses.add_argument("--config", type=Path, required=True)
+    responses.add_argument("--requests", type=Path, required=True)
+    responses.add_argument("--responses", type=Path, required=True)
+    responses.add_argument("--output", type=Path, required=True)
     return parser
 
 
@@ -272,6 +284,38 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "validate-responses":
+            requests = read_prepared_requests_jsonl(args.requests)
+            responses = read_model_responses_jsonl(args.responses)
+            decisions = validate_model_responses(
+                config=config,
+                requests=requests,
+                responses=responses,
+            )
+            write_validated_decisions_jsonl(args.output, decisions)
+            manifest_path = _write_artifact_manifest(
+                output=args.output,
+                payload={
+                    "mode": "validate_responses",
+                    "experiment_id": config.experiment_id,
+                    "decision_count": len(decisions),
+                    "source_requests_sha256": hashlib.sha256(args.requests.read_bytes()).hexdigest(),
+                    "source_responses_sha256": hashlib.sha256(args.responses.read_bytes()).hexdigest(),
+                },
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": "ok",
+                        "decision_count": len(decisions),
+                        "decisions_path": str(args.output),
+                        "manifest_path": str(manifest_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0
         result = run_baseline(
             candles=read_normalized_candles_jsonl(args.candles),
             baseline_name=args.baseline,
@@ -287,6 +331,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         ResearchConfigError,
         ResearchDataError,
         ResearchPreparationError,
+        ResearchResponseError,
         SimulationError,
     ) as error:
         print(f"error: {error}", file=sys.stderr)
