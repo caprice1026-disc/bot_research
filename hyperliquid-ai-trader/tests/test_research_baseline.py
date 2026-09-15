@@ -8,6 +8,7 @@ from hyperliquid_ai_trader.research.baseline import run_baseline
 from hyperliquid_ai_trader.research.cli import main
 from hyperliquid_ai_trader.research.data import CANDLE_INTERVAL_MS, NormalizedCandle
 from hyperliquid_ai_trader.research.data import write_normalized_candles_jsonl
+from hyperliquid_ai_trader.research.risk import ResearchRiskEngine
 from hyperliquid_ai_trader.research.simulator import ExecutionConfig
 
 
@@ -46,13 +47,26 @@ def _config() -> ExecutionConfig:
     )
 
 
+def _risk(**overrides: Decimal) -> ResearchRiskEngine:
+    values = {
+        "risk_per_trade_pct": Decimal("1"),
+        "max_daily_loss_pct": Decimal("20"),
+        "max_drawdown_pct": Decimal("25"),
+        "max_position_notional_usd": Decimal("250"),
+        "leverage": Decimal("5"),
+        "min_notional_usd": Decimal("10"),
+    }
+    values.update(overrides)
+    return ResearchRiskEngine(**values)
+
+
 def test_momentum_baseline_replays_in_time_order_without_overlapping_equity() -> None:
     result = run_baseline(
         candles=_candles(72),
         baseline_name="momentum",
         execution_config=_config(),
         initial_equity=Decimal("1000"),
-        reference_notional=Decimal("250"),
+        risk=_risk(),
         market_venue="hyperliquid_mainnet_public",
         symbol="BTC",
     )
@@ -72,7 +86,7 @@ def test_baseline_reports_insufficient_data_instead_of_zero_trade_success() -> N
         baseline_name="momentum",
         execution_config=_config(),
         initial_equity=Decimal("1000"),
-        reference_notional=Decimal("250"),
+        risk=_risk(),
         market_venue="hyperliquid_mainnet_public",
         symbol="BTC",
     )
@@ -80,6 +94,22 @@ def test_baseline_reports_insufficient_data_instead_of_zero_trade_success() -> N
     assert result.status == "insufficient_data"
     assert result.episodes == ()
     assert result.incomplete_decisions > 0
+
+
+def test_baseline_applies_risk_engine_before_entering() -> None:
+    result = run_baseline(
+        candles=_candles(72),
+        baseline_name="momentum",
+        execution_config=_config(),
+        initial_equity=Decimal("1000"),
+        risk=_risk(max_position_notional_usd=Decimal("0")),
+        market_venue="hyperliquid_mainnet_public",
+        symbol="BTC",
+    )
+
+    assert result.status == "ok"
+    assert result.episodes == ()
+    assert result.risk_rejected == 2
 
 
 def test_baseline_cli_runs_offline_from_normalized_jsonl(tmp_path, capsys) -> None:

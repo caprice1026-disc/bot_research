@@ -605,7 +605,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             baseline_name=args.baseline,
             execution_config=config.execution,
             initial_equity=config.initial_equity,
-            reference_notional=config.reference_notional,
+            risk=ResearchRiskEngine(
+                risk_per_trade_pct=config.risk_per_trade_pct,
+                max_daily_loss_pct=config.max_daily_loss_pct,
+                max_drawdown_pct=config.max_drawdown_pct,
+                max_position_notional_usd=config.max_position_notional_usd,
+                leverage=config.leverage,
+                min_notional_usd=config.min_notional_usd,
+            ),
             market_venue=config.market_venue,
             symbol=config.symbol,
             funding=(

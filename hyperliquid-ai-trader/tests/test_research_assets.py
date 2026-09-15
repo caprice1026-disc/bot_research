@@ -15,11 +15,15 @@ def test_checked_in_research_assets_preserve_the_offline_decision_boundary() -> 
     )
 
     assert strategy == {
+        "schema_version": 2,
+        "feature_set": "common_candles_v1",
         "version": 1,
         "parent_version": None,
-        "market_hypothesis": "1分OHLCVのモメンタム、ボラティリティ、出来高の組合せは、費用考慮後の方向性に関する検証対象の仮説である。",
+        "market_hypothesis": "短期BTCでは直近5分の騰落だけでは費用を上回る方向性を得られない。値幅と出来高を合わせ、費用を上回る局面だけを選べるか検証する。これはBinance USD-Mの過去365日から作った検証前の仮説である。",
         "active_rules": [],
-        "failure_modes": [],
+        "failure_modes": [
+            "無条件の5分momentumとmean reversionは費用控除後に最大DD制限へ到達したため使わない。"
+        ],
         "confidence_calibration": {"long": 0.0, "short": 0.0},
         "last_review_cycle": 0,
     }

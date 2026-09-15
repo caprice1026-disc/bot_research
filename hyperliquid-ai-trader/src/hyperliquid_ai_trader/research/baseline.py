@@ -13,6 +13,7 @@ from .data import (
     is_research_decision_time,
     validate_candles_match_market,
 )
+from .risk import ResearchRiskEngine
 from .simulator import (
     ExecutionConfig,
     SimulatedEpisode,
@@ -33,6 +34,7 @@ class BaselineReplay:
     decisions: int
     abstentions: int
     position_blocked: int
+    risk_rejected: int
     incomplete_decisions: int
     incomplete_price_decisions: int
     incomplete_funding_decisions: int
@@ -52,6 +54,7 @@ class BaselineReplay:
             "decisions": self.decisions,
             "abstentions": self.abstentions,
             "position_blocked": self.position_blocked,
+            "risk_rejected": self.risk_rejected,
             "incomplete_decisions": self.incomplete_decisions,
             "incomplete_price_decisions": self.incomplete_price_decisions,
             "incomplete_funding_decisions": self.incomplete_funding_decisions,
@@ -69,7 +72,7 @@ def run_baseline(
     baseline_name: str,
     execution_config: ExecutionConfig,
     initial_equity: Decimal,
-    reference_notional: Decimal,
+    risk: ResearchRiskEngine,
     market_venue: str,
     symbol: str,
     funding: FundingSeries | None = None,
@@ -80,8 +83,8 @@ def run_baseline(
     rather than being interpreted as a losing or zero-return trade.
     """
 
-    if initial_equity <= 0 or reference_notional <= 0:
-        raise SimulationError("initial equity and reference notional must be positive")
+    if initial_equity <= 0:
+        raise SimulationError("initial equity must be positive")
     if not candles or len(candles) < 61:
         return BaselineReplay(
             status="insufficient_data",
@@ -89,6 +92,7 @@ def run_baseline(
             decisions=0,
             abstentions=0,
             position_blocked=0,
+            risk_rejected=0,
             incomplete_decisions=0,
             incomplete_price_decisions=0,
             incomplete_funding_decisions=0,
@@ -109,7 +113,7 @@ def run_baseline(
 
     account = VirtualAccount(equity=initial_equity, day_start_equity=initial_equity)
     episodes: list[SimulatedEpisode] = []
-    decisions = abstentions = position_blocked = incomplete_price = incomplete_funding = 0
+    decisions = abstentions = position_blocked = risk_rejected = incomplete_price = incomplete_funding = 0
     position_free_at_ms = 0
 
     for candle in candles[60:]:
@@ -123,22 +127,31 @@ def run_baseline(
             continue
         decision = baseline_decision(baseline_name, return_5m=features.return_5m)
         decisions += 1
+        account.advance_time(decision_time_ms)
         if decision.would_abstain:
             abstentions += 1
-            continue
-        if decision_time_ms < position_free_at_ms:
-            position_blocked += 1
             continue
         try:
             entry_index = series.entry_index(
                 decision_time_ms=decision_time_ms, config=execution_config
             )
             entry_candle = candles[entry_index]
-            quantity = reference_notional / Decimal(str(entry_candle.open))
+            check = risk.check_entry(
+                account=account,
+                entry_price=Decimal(str(entry_candle.open)),
+                stop_loss_pct=decision.stop_loss_pct,
+                position_open=decision_time_ms < position_free_at_ms,
+            )
+            if not check.allowed:
+                if check.reason == "position_open":
+                    position_blocked += 1
+                else:
+                    risk_rejected += 1
+                continue
             episode = simulate_episode_from_entry(
                 decision=decision,
                 decision_time_ms=decision_time_ms,
-                quantity=quantity,
+                quantity=check.quantity,
                 candles=candles,
                 entry_index=entry_index,
                 config=execution_config,
@@ -188,6 +201,7 @@ def run_baseline(
         decisions=decisions,
         abstentions=abstentions,
         position_blocked=position_blocked,
+        risk_rejected=risk_rejected,
         incomplete_decisions=incomplete,
         incomplete_price_decisions=incomplete_price,
         incomplete_funding_decisions=incomplete_funding,

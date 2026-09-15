@@ -21,6 +21,7 @@ from hyperliquid_ai_trader.research.evaluation import (
     evaluate_validated_decisions,
 )
 from hyperliquid_ai_trader.research.points import PointCandidate
+from hyperliquid_ai_trader.research.risk import ResearchRiskEngine
 from hyperliquid_ai_trader.models import Side, TradeDecision
 
 
@@ -149,7 +150,14 @@ def test_binance_baseline_refuses_to_treat_missing_funding_as_zero(tmp_path) -> 
             fee_rate=Decimal("0"), spread_bps=Decimal("0"), slippage_bps=Decimal("0")
         ),
         initial_equity=Decimal("1000"),
-        reference_notional=Decimal("250"),
+        risk=ResearchRiskEngine(
+            risk_per_trade_pct=Decimal("1"),
+            max_daily_loss_pct=Decimal("20"),
+            max_drawdown_pct=Decimal("25"),
+            max_position_notional_usd=Decimal("250"),
+            leverage=Decimal("5"),
+            min_notional_usd=Decimal("10"),
+        ),
         market_venue="binance_usdm_public",
         symbol="BTCUSDT",
     )
