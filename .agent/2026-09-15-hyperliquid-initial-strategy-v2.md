@@ -191,7 +191,7 @@ v001、既存strategy、既存分析artifactは上書きしない。新出力は
 ## Artifacts and Notes
 
 
-実装は`conditional_edge.py`、`conditional_report.py`、`conditional_replay.py`と3つのCLIへ追加した。実行artifactはGit管理外の`data/research/conditional-edge-v2/`にあり、features 105,107行、labels 1,681,920行（complete 1,681,664、incomplete_price 256）をmanifestで固定した。価格SHA-256は`1832caee2dc69ff72f8545e0588f3e9de26da811478bd8ecc535f81b8e301dc6`、Funding SHA-256は`d87d8171e101d0d9259126bae0752ec750fcac6eb8870903eff660a3009cd67a`である。
+実装は`conditional_edge.py`、`conditional_report.py`、`conditional_replay.py`と3つのCLIへ追加した。実行artifactはGit管理外の`data/research/conditional-edge-v2/`にあり、features 105,107行、labels 1,681,920行（complete 1,681,664、incomplete_price 256）をmanifestで固定した。価格SHA-256は`1832caee2dc69ff72f8545e0588f3e9de26da811478bd8ecc535f81b8e301dc6`、Funding SHA-256は`d87d8171e101d0d9259126bae0752ec750fcac6eb8870903eff660a3009cd67a`である。`freeze.json`はcode commit `42b493d4483d84175f7f3348201055bcef0b1335`と10個の入力/出力artifactを固定し、fingerprintは`6bdb161685a4cb54ff69ecc1b795b59821a69eb39e4dd0303a5b93eba9cecc7b`である。
 
 ## Outcomes & Retrospective
 
