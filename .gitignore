@@ -224,7 +224,7 @@ hyperliquid-ai-trader/data/
 hyperliquid-ai-trader/logs/
 hyperliquid-ai-trader/reports/
 hyperliquid-ai-trader/.pytest-*/
-*/.review-tmp-*/
+.review-*/
 
 # Binance BTCUSDT futures research: verified but reproducible local downloads.
 binance-btcusdt-futures-research/raw/
