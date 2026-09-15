@@ -22,6 +22,17 @@ from .binance import (
     read_binance_usdm_funding_csv,
 )
 from .collector import create_hyperliquid_mainnet_public_collector
+from .conditional_edge import (
+    ConditionalStudyError,
+    load_conditional_study_config,
+    validate_study_inputs,
+    write_conditional_labels,
+)
+from .conditional_report import (
+    ConditionalReportError,
+    analyze_conditional_study,
+    write_conditional_replays,
+)
 from .config import ResearchConfigError, load_research_config
 from .data import (
     RESEARCH_DECISION_INTERVAL_MS,
@@ -75,6 +86,27 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
+    conditional_labels = commands.add_parser(
+        "conditional-labels", help="write independent conditional-study feature and label artifacts"
+    )
+    conditional_labels.add_argument("--study-config", type=Path, required=True)
+    conditional_labels.add_argument("--candles", type=Path, required=True)
+    conditional_labels.add_argument("--funding-csv", type=Path)
+    conditional_labels.add_argument("--output-dir", type=Path, required=True)
+    conditional_analyze = commands.add_parser(
+        "conditional-analyze", help="fit prior-only regimes and compare conditional candidates"
+    )
+    conditional_analyze.add_argument("--study-config", type=Path, required=True)
+    conditional_analyze.add_argument("--input-dir", type=Path, required=True)
+    conditional_analyze.add_argument("--output-dir", type=Path, required=True)
+    conditional_replay = commands.add_parser(
+        "conditional-replay", help="run pending-exit account replays for selected candidates"
+    )
+    conditional_replay.add_argument("--study-config", type=Path, required=True)
+    conditional_replay.add_argument("--candles", type=Path, required=True)
+    conditional_replay.add_argument("--funding-csv", type=Path)
+    conditional_replay.add_argument("--analysis-dir", type=Path, required=True)
+    conditional_replay.add_argument("--output-dir", type=Path, required=True)
     validate = commands.add_parser("validate-config", help="validate a public research JSON config")
     validate.add_argument("--config", type=Path, required=True)
     baseline = commands.add_parser("baseline", help="replay one fixed rule from normalized candles")
@@ -213,6 +245,104 @@ def main(argv: Sequence[str] | None = None) -> int:
             assert config is not None
             print(json.dumps(config.public_summary(), ensure_ascii=False, sort_keys=True))
             return 0
+        if args.command == "conditional-labels":
+            study_config = load_conditional_study_config(args.study_config)
+            candle_manifest = verify_artifact(args.candles)
+            if candle_manifest.get("artifact_type") not in {None, "artifact"} and candle_manifest.get(
+                "mode"
+            ) != "import_binance_usdm_1m":
+                raise ArtifactError("conditional labels require a normalized candle artifact")
+            if args.funding_csv is not None and study_config.base_config.market_venue != BINANCE_USDM_VENUE:
+                raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
+            funding = read_binance_usdm_funding_csv(args.funding_csv) if args.funding_csv else None
+            candles = read_normalized_candles_jsonl(args.candles)
+            inputs = validate_study_inputs(
+                candles=candles,
+                funding=funding,
+                study_config=study_config,
+            )
+            try:
+                code_commit_sha = subprocess.run(
+                    ["git", "rev-parse", "HEAD"],
+                    cwd=_PROJECT_ROOT,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip()
+            except (OSError, subprocess.CalledProcessError) as error:
+                raise ResearchConfigError("cannot determine code commit SHA") from error
+            result = write_conditional_labels(
+                output_dir=args.output_dir,
+                candles=candles,
+                funding=funding,
+                study_config=study_config,
+                candle_sha256=sha256_path(args.candles),
+                funding_sha256=sha256_path(args.funding_csv) if args.funding_csv else None,
+                code_commit_sha=code_commit_sha,
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": result.quality,
+                        "inputs": inputs,
+                        "feature_count": result.feature_count,
+                        "label_count": result.label_count,
+                        "status_counts": result.status_counts,
+                        "features_path": str(result.features_path),
+                        "labels_path": str(result.labels_path),
+                        "features_manifest_path": str(result.features_manifest_path),
+                        "labels_manifest_path": str(result.labels_manifest_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0 if result.quality == "ok" else 3
+        if args.command == "conditional-analyze":
+            study_config = load_conditional_study_config(args.study_config)
+            result = analyze_conditional_study(
+                study_config=study_config,
+                input_dir=args.input_dir,
+                output_dir=args.output_dir,
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": result.quality,
+                        "regime_summary_path": str(result.regime_summary_path),
+                        "candidates_path": str(result.candidates_path),
+                        "selected_candidate_ids": list(result.selected_candidate_ids),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0 if result.quality == "ok" else 3
+        if args.command == "conditional-replay":
+            study_config = load_conditional_study_config(args.study_config)
+            if args.funding_csv is not None and study_config.base_config.market_venue != BINANCE_USDM_VENUE:
+                raise ResearchDataError("Binance funding CSV requires market.venue=binance_usdm_public")
+            result = write_conditional_replays(
+                study_config=study_config,
+                candles=read_normalized_candles_jsonl(args.candles),
+                funding=(read_binance_usdm_funding_csv(args.funding_csv) if args.funding_csv else None),
+                analysis_dir=args.analysis_dir,
+                output_dir=args.output_dir,
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": result.status,
+                        "conclusion": result.conclusion,
+                        "episodes_path": str(result.episodes_path),
+                        "decisions_path": str(result.decisions_path),
+                        "report_path": str(result.report_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0 if result.status == "ok" else 3
         if args.command == "collect":
             assert config is not None
             if config.market_venue != "hyperliquid_mainnet_public":
@@ -627,6 +757,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         OSError,
         PointSelectionError,
         ResearchConfigError,
+        ConditionalStudyError,
+        ConditionalReportError,
         ResearchDataError,
         ResearchEvaluationError,
         ResearchPreparationError,

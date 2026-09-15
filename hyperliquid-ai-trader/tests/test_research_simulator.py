@@ -95,6 +95,29 @@ def test_intrabar_collision_is_explicit_and_policy_selects_result() -> None:
     assert stop.net_pnl < take.net_pnl
 
 
+def test_hold_only_profile_ignores_stop_and_take_until_entry_based_deadline() -> None:
+    candles = [_candle(index) for index in range(7)]
+    candles[1] = _candle(1, open_=100, high=102, low=98, close=100)
+    candles[6] = _candle(6, open_=101, high=101, low=101, close=101)
+
+    result = simulate_episode(
+        decision=_decision(),
+        decision_time_ms=0,
+        quantity=Decimal("1"),
+        candles=candles,
+        config=ExecutionConfig(
+            exit_policy="hold_only",
+            fee_rate=Decimal("0"),
+            spread_bps=Decimal("0"),
+            slippage_bps=Decimal("0"),
+        ),
+    )
+
+    assert result.exit_reason == "max_hold"
+    assert result.exit_time_ms == 360_000
+    assert result.net_pnl == Decimal("1")
+
+
 def test_abstention_never_becomes_account_profit() -> None:
     decision = _decision()
     abstention = TradeDecision(**{**decision.__dict__, "would_abstain": True,

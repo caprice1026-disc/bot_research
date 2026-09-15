@@ -161,6 +161,8 @@ LLMと比較するときは、データ、判断時刻、注文上限、risk、�
 
 **次へ進む条件：** 比較用の結果が再現可能であること。単純ルールが赤字でもLLM研究は可能だが、測定不具合やデータ不足を先に解決する。
 
+2026-09-15の再実行では、Binance USD-M BTCUSDTの2025-09-01〜2026-09-01 UTCについて、正規化1分足と8時間Fundingを検証し、5分slotごとの独立ラベルと非重複口座Replayを作成した。最初と最後の必要足がない256ラベルは損益ゼロにせず`partial`として保存した。探索で選んだD候補4件（Q75 gate、5/10/15/30分、固定SL/TP）はすべて約25%のDD制限に到達し、初期strategyの根拠には採用しなかった。LLM/Batch/注文は行っていない。
+
 ## 6. 段階2：初期strategyを作り、比較中は固定する
 
 **目的：** Traderへ与える市場仮説を明示し、prompt比較の出発点を揃える。
@@ -190,6 +192,8 @@ LLMと比較するときは、データ、判断時刻、注文上限、risk、�
 固定した原本を`initial_strategy.json`として保存し、各runへコピーして使う。これは追加予定の研究用ファイル名であり、現在その名前のファイルが存在するという意味ではない。
 
 **次へ進む条件：** 全prompt候補が同じ初期strategyのhashを使い、途中で編集できないこと。
+
+2026-09-15時点では`initial_strategy_v001.json`を現行version 1とbyte同一で保存した。上記Binance研究は`partial / inconclusive`であり、`initial_strategy_v002.json`は作成しない。空のactive rulesは自動的な見送りを保証するものではないため、Stage 3へ進むには別途、採用reportとfreezeを確認する。
 
 ## 7. 段階3：Trader promptをBatch評価で洗練する
 

@@ -169,6 +169,32 @@ cd ..\hyperliquid-ai-trader
 
 `binance_usdm_public`ではFunding CSVを省略したり、必要な8時間Funding eventが欠けたりした取引を、Fundingゼロの取引としては採用しません。完結済みepisodeがあれば`partial`、なければ`insufficient_data`となります。価格CSV、Funding CSV、正規化JSONL、raw応答、評価出力は`data/`配下のローカル成果物でありGitへ追加しません。`import-binance-csv`のmanifestには入力CSVのSHA-256、market、期間、delivery delayを残します。
 
+### 条件付き初期strategy研究（LLMなし）
+
+`conditional_edge_v2.json`は、5分判断ごとに共通OHLCV特徴量を一度だけ作り、LONG/SHORT、5/10/15/30分保有、`hold_only`/`fixed_sl_tp`を独立ラベルとして比較します。特徴量と将来の損益ラベルは別artifactであり、末尾・先頭の不足は損益ゼロへ置き換えず`partial`で保存します。候補A〜Eの分位境界は探索期間だけから作り、検証月はその月より前の特徴量、確認期は開始時点までの特徴量だけを使用します。ネットワーク、LLM、注文は実行しません。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli conditional-labels `
+  --study-config configs\research\conditional_edge_v2.json `
+  --candles data\research\binance-BTCUSDT-1m.jsonl `
+  --funding-csv ..\binance-btcusdt-futures-research\data\research\BTCUSDT-funding-2025-09-01_2026-08-31.csv `
+  --output-dir data\research\conditional-edge-v2
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli conditional-analyze `
+  --study-config configs\research\conditional_edge_v2.json `
+  --input-dir data\research\conditional-edge-v2 `
+  --output-dir data\research\conditional-edge-v2\analysis
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli conditional-replay `
+  --study-config configs\research\conditional_edge_v2.json `
+  --candles data\research\binance-BTCUSDT-1m.jsonl `
+  --funding-csv ..\binance-btcusdt-futures-research\data\research\BTCUSDT-funding-2025-09-01_2026-08-31.csv `
+  --analysis-dir data\research\conditional-edge-v2\analysis `
+  --output-dir data\research\conditional-edge-v2\replay
+```
+
+2026-09-15の実行では、2025-09-01〜2026-09-01 UTCの正規化1分足と同期間のFundingを検証した。境界256ラベルを除き1,681,664件が完結したが、探索で選んだ4つのD候補（Q75 gate、5/10/15/30分、固定SL/TP）はいずれも連続口座で約25%のDD制限へ到達した。このため結果は`partial`かつ`inconclusive`であり、`initial_strategy_v002.json`は作らず、byte同一の`initial_strategy_v001.json`と空のactive rulesを維持する。Binanceの結果はHyperliquidでの収益性を意味しない。
+
 LLMへ渡す候補地点は、UTCの5分スロット上で同一の確定足JSONLとseedから再現可能に選びます。返却するJSONLには各判断時点で利用可能だった特徴量だけを保存し、manifestには候補集合SHA-256、候補・選定後の層別件数、ボラティリティ閾値、seed、元ローソク足のSHA-256を記録します。`--count 50`は同じseed・同じ候補集合で作る大きな選定結果のprefixです。候補不足なら空ファイルを作らず、`insufficient_data`で終了します。このコマンドはネットワーク、Gemini API、注文APIを使いません。
 
 ```powershell

@@ -1,5 +1,7 @@
 # Hyperliquid研究v3：レビュー結果と具体的な実装方針
 
+2026-09-15追記：Stage 1/2の初期strategy再設計は[Initial Strategy v2実装計画](2026-09-15-hyperliquid-initial-strategy-v2.md)を適用する。5分判断周期を維持し、15〜60分の市場状態と5/10/15/30分保有を分離して分析する。以下の過去の実装・検証記録は履歴として保持する。追加計画の作成時点では再分析・v002採用は未実施である。
+
 このExecPlanはリポジトリルートの`PLANS.md`に従う。実装時にProgress、Surprises & Discoveries、Decision Log、Outcomes & Retrospectiveを更新する。2026-09-10時点では文書レビューと実装方針の作成だけを行った。その後に実装した項目はProgressとOutcomesへ反映し、以下の未完マイルストーンだけを将来作業として扱う。
 
 ## Purpose / Big Picture
@@ -37,6 +39,7 @@
 - [x] (2026-09-13) Binanceの検証済み1分CSVを正規化JSONLへ変換する`import-binance-csv`、入力CSV hash付きmanifest、venue/symbolの設定一致検証、1年分Replay向けの`CandleSeries`時刻インデックスを追加した。候補化・baseline・地点評価は、各slotごとの全足走査を行わない。
 - [x] (2026-09-13) Binance USD-Mでは公式Funding CSVを評価入力として読み、Funding CSV未指定・必要event不足を損益ゼロにせず`incomplete_funding`として保存するようにした。完結episodeと不足episodeが混在すれば`partial`、完結episodeがなければ`insufficient_data`とする。地点評価も非成功時のJSONL/manifestを残す。
 - [x] (2026-09-13) リモートIssue #8〜#16の研究経路を実装した。Binance最終部分月・CSV/アーカイブprovenance、artifact hash lineage、共通cost/funding、Trader v2 identity、Batch予約/unknown/sync、UTC日次Replay/Risk、Reviewerの証拠・遅延patch制限、freeze/paired Forward、fixture Testnet auditを追加し、専用テストを含めて検証した。
+- [x] (2026-09-15) Initial Strategy v2のStage 0〜2を再実行した。365日のBinance入力とFundingを検証し、条件付きラベル・prior-only regime比較・pending-exit Replayを実装して実行した。選出4候補はすべて約25% DDへ到達したため、v002は作らずv001を維持した。LLM/Batch/注文は行っていない。
 - [x] M5：日次Reviewer、根拠検証、翌日strategy適用（UTC cutoff、closed evidence、patch制限、late hold、calibration helper）。
 - [x] M6：構成固定と将来Static/Adaptive比較（freeze manifest、drift検知、同一snapshot paired runner）。
 - [x] M7：Testnet注文監査と研究結果の引き渡し（外部注文を行わないfixture/frozen audit、実fill基準のrisk/hold/recovery）。

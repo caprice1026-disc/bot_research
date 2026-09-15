@@ -30,6 +30,7 @@ class ExecutionConfig:
     slippage_bps: Decimal = Decimal("1")
     intrabar_policy: IntrabarPolicy = IntrabarPolicy.STOP_FIRST
     sl_tp_basis: str = "execution_price"
+    exit_policy: str = "fixed_sl_tp"
 
     def __post_init__(self) -> None:
         if min(self.model_delay_ms, self.max_arrival_delay_ms, self.max_hold_ms) < 0:
@@ -42,6 +43,8 @@ class ExecutionConfig:
             raise SimulationError("execution costs must be non-negative")
         if self.sl_tp_basis not in {"execution_price", "raw_market_price"}:
             raise SimulationError("sl_tp_basis must be execution_price or raw_market_price")
+        if self.exit_policy not in {"fixed_sl_tp", "hold_only"}:
+            raise SimulationError("exit_policy must be fixed_sl_tp or hold_only")
 
 
 @dataclass(frozen=True)
@@ -232,12 +235,15 @@ def simulate_episode_from_entry(
     raw_exit: Decimal | None = None
     exit_time = 0
     reason = ""
-    for candle in candles[entry_index:]:
+    for index in range(entry_index, len(candles)):
+        candle = candles[index]
         if candle.open_time_ms >= deadline:
             raw_exit = Decimal(str(candle.open))
             exit_time = candle.open_time_ms
             reason = "max_hold"
             break
+        if config.exit_policy == "hold_only":
+            continue
         high, low = Decimal(str(candle.high)), Decimal(str(candle.low))
         hit_stop = low <= stop if decision.side is Side.LONG else high >= stop
         hit_take = high >= take if decision.side is Side.LONG else low <= take
