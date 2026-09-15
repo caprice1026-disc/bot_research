@@ -1,8 +1,8 @@
 {
   "symbol": "BTCUSDT",
-  "history_start": "2020-01-01",
-  "detail_start": "2025-08-17",
-  "end_date_exclusive": "2026-08-17",
+  "history_start": "2025-09-01",
+  "detail_start": "2025-09-01",
+  "end_date_exclusive": "2026-09-01",
   "random_seed": 42,
   "candidate_states": [3, 4],
   "stability_seeds": [42, 43, 44, 45, 46],
