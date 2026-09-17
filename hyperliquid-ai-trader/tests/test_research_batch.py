@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from hyperliquid_ai_trader.research import cli
 from hyperliquid_ai_trader.research.batch import BatchError, BatchManager
 from hyperliquid_ai_trader.research.config import load_research_config
 from hyperliquid_ai_trader.research.request_identity import build_model_request
@@ -121,6 +122,18 @@ def test_sync_is_partial_until_all_submitted_requests_have_results(tmp_path: Pat
         assert store.model_request(requests[1].request_id)["status"] == "submitted"
 
 
+def test_sync_marks_a_terminal_provider_item_error_failed(tmp_path: Path) -> None:
+    config = _paid_config(tmp_path)
+    request = _request("a")
+    provider = FakeProvider(sync_result=[{"request_id": request.request_id, "error_type": "provider_item_error"}])
+    with ResearchStore(tmp_path / "research.db") as store:
+        store.create_experiment(config.experiment_id, {}, 1)
+        BatchManager().submit(config=config, requests=[request], store=store, provider=provider, now_ms=2)
+        result = BatchManager().sync(store=store, provider=provider, now_ms=3)
+        assert result.status == "failed"
+        assert store.model_request(request.request_id)["status"] == "failed"
+
+
 def test_sync_retries_submitted_request_after_transient_error_without_releasing_reservation(tmp_path: Path) -> None:
     config = _paid_config(tmp_path)
     request = _request("a")
@@ -132,10 +145,97 @@ def test_sync_retries_submitted_request_after_transient_error_without_releasing_
         assert result.status == "partial"
         assert store.model_request(request.request_id)["status"] == "submitted"
         assert store.reserved_cost_total(config.experiment_id) == Decimal("0.0005")
-
         provider.sync_error = None
         provider.sync_result = [{"request_id": request.request_id}]
         result = BatchManager().sync(store=store, provider=provider, now_ms=4)
         assert result.status == "completed"
         assert store.model_request(request.request_id)["status"] == "completed"
         assert store.reserved_cost_total(config.experiment_id) == Decimal("0.0005")
+
+
+def test_batch_cli_submits_gemini_provider_only_when_config_permits_paid_api(tmp_path: Path, monkeypatch, capsys) -> None:
+    root = Path(__file__).resolve().parents[1]
+    payload = json.loads((root / "configs/research/development.json").read_text(encoding="utf-8"))
+    payload["experiment_id"] = "pilot-v001-gemini-35-flash"
+    payload["api"].update(
+        {
+            "allow_paid_api": True,
+            "budget_usd": "0.25",
+            "trader_model": "gemini-3.5-flash",
+        }
+    )
+    config_path = tmp_path / "pilot.json"
+    config_path.write_text(json.dumps(payload), encoding="utf-8")
+    request = build_model_request(
+        trial_id="pilot",
+        input_data={"market": {"as_of_ms": 300000}},
+        constitution="c",
+        instruction="i",
+        strategy={},
+        requested_model="gemini-3.5-flash",
+        temperature=0,
+        thinking="none",
+        max_output_tokens=200,
+        tool_schema={"name": "open_position"},
+        feature_set="common_candles_v1",
+    )
+    request_path = tmp_path / "requests.jsonl"
+    request_path.write_text(
+        json.dumps(
+            {
+                "decision_time_ms": 300000,
+                "request_id": request.request_id,
+                "trial_id": request.trial_id,
+                "request_hash": request.request_hash,
+                "requested_model": request.requested_model,
+                "canonical_payload": request.canonical_payload,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    submitted = []
+
+    class FakeGeminiProvider:
+        def __init__(self, *, api_key, model):
+            assert api_key == "test-key"
+            assert model == "gemini-3.5-flash"
+
+        def submit(self, requests):
+            submitted.extend(requests)
+            return "batches/pilot"
+
+        def sync(self, provider_job_id):
+            return []
+
+    monkeypatch.setattr(cli, "GeminiBatchProvider", FakeGeminiProvider, raising=False)
+    env_path = tmp_path / ".env"
+    env_path.write_text("PILOT_GEMINI_KEY=test-key\n", encoding="utf-8")
+
+    assert (
+        cli.main(
+            [
+                "batch",
+                "--config",
+                str(config_path),
+                "--action",
+                "submit",
+                "--requests",
+                str(request_path),
+                "--store",
+                str(tmp_path / "ledger.sqlite"),
+                "--provider",
+                "gemini",
+                "--env-file",
+                str(env_path),
+                "--api-key-env",
+                "PILOT_GEMINI_KEY",
+                "--max-output-tokens",
+                "200",
+            ]
+        )
+        == 0
+    )
+    assert submitted == [request]
+    assert json.loads(capsys.readouterr().out)["status"] == "submitted"

@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from hyperliquid_ai_trader.agents import FunctionCall
 from hyperliquid_ai_trader.research import cli
 from hyperliquid_ai_trader.research.config import load_research_config
 from hyperliquid_ai_trader.research.data import (
@@ -23,6 +24,7 @@ from hyperliquid_ai_trader.research.responses import (
     ResearchResponseError,
     read_prepared_requests_jsonl,
     validate_model_responses,
+    write_model_responses_jsonl,
 )
 
 
@@ -187,3 +189,27 @@ def test_response_validation_rejects_a_different_returned_model() -> None:
             requests=[request],
             responses=[response],
         )
+
+
+def test_normalized_model_response_writer_preserves_only_response_schema(tmp_path) -> None:
+    output = tmp_path / "responses.jsonl"
+    write_model_responses_jsonl(
+        output,
+        [
+            ModelResponseRecord(
+                request_id="request-1",
+                returned_model="gemini-3.5-flash",
+                received_at_ms=1,
+                function_calls=(
+                    FunctionCall(name="open_position", args={"side": "long"}),
+                ),
+            )
+        ],
+    )
+
+    assert json.loads(output.read_text(encoding="utf-8")) == {
+        "request_id": "request-1",
+        "returned_model": "gemini-3.5-flash",
+        "received_at_ms": 1,
+        "function_calls": [{"name": "open_position", "args": {"side": "long"}}],
+    }

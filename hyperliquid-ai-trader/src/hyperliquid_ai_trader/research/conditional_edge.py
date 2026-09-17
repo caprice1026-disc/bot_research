@@ -36,6 +36,8 @@ class PromotionPolicy:
     minimum_side_trades: int
     positive_validation_month_fraction: Decimal
     max_drawdown_pct: Decimal
+    both_directions_positive: bool
+    no_drawdown_stop: bool
 
 
 @dataclass(frozen=True)
@@ -369,6 +371,12 @@ def _positive_int(value: Any, *, name: str) -> int:
     return value
 
 
+def _bool(value: Any, *, name: str) -> bool:
+    if not isinstance(value, bool):
+        raise ConditionalStudyError(f"{name} must be a boolean")
+    return value
+
+
 def load_conditional_study_config(path: Path) -> ConditionalStudyConfig:
     """Load a public, time-bounded study without modifying the base config."""
 
@@ -453,6 +461,14 @@ def load_conditional_study_config(path: Path) -> ConditionalStudyConfig:
         ),
         max_drawdown_pct=_decimal(
             policy.get("max_drawdown_pct"), name="promotion_policy.max_drawdown_pct"
+        ),
+        both_directions_positive=_bool(
+            policy.get("both_directions_positive", True),
+            name="promotion_policy.both_directions_positive",
+        ),
+        no_drawdown_stop=_bool(
+            policy.get("no_drawdown_stop", True),
+            name="promotion_policy.no_drawdown_stop",
         ),
     )
     if not 0 < promotion_policy.positive_validation_month_fraction <= 1:

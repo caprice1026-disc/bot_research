@@ -20,6 +20,7 @@
 - [x] (2026-09-15) M4：非重複口座Replay、頑健性評価、採否レポート。
 - [x] (2026-09-15) M5：v001維持、freeze、研究文書の更新。
 - [x] (2026-09-15) 条件付き追加：common_candles_v1で候補不成立のためfeature v2は開始しない。
+- [x] (2026-09-17) 追加診断：採用判定を検証期間の方向別件数・月別正率と口座Replayの安全条件へ分離した。保存済み入力から監査用の独立成果物を再作成し、88構成の全fold損失、採用候補ゼロ、費用分解を確認した。
 
 ## Context and Orientation
 
@@ -41,6 +42,12 @@
 
 `costs.py:estimated_round_trip_cost_bps`は既に存在する。現在の設定では2×0.00045×10000 + 2 + 2×1 = 13 bps。Fundingは含まない。これは設定上の近似往復費用であり、現行取引所料金を新たに調査した値ではない。
 
+2026-09-17の監査では、既存の`_promoted_candidates`が全期間の口座Replay件数と方向別損益を使い、設定済みの検証期間の方向別最低件数と月別正率を確認していなかった。候補が不採用だったため過去の結論は変わらないが、将来の誤採用を防ぐため修正が必要である。
+
+既存のDD停止判定は、`decision_status_counts`のstatus名に`max_drawdown`を探していた。しかしReplayでは上限到達後を`risk_rejected`、理由を`max_drawdown`として保存するため、停止は検出されなかった。理由別件数を別に集計する必要があった。
+
+保存済みepisodeは約定後のentry/exit priceを保持していないが、quantity、gross PnL、fee rate、feeから2価格の和を復元できる。gross PnLから差を復元して、共有`costs.execution_price`と同じ線形cost modelを逆算すると、約定調整前価格・spread・slippageを再結合できる。有限Decimalの逆算累積には最大1e-18 USDの丸め残差があるため、それより大きい不一致だけをエラーにする。
+
 Simulatorの`gross_pnl`にはspread/slippageの不利約定が既に反映され、netからさらに引いてはいけない。また`simulate_episode_from_entry`は`candles[entry_index:]`を作るため、約10万判断×8結果では大きなリストコピーが繰り返される。M2で期限までのインデックス走査へ局所変更する。
 
 `run_baseline`はepisodeの将来決済を計算して直ちに口座へ反映している。長期hold用の新Replayは決済時刻まで結果をpendingに置き、途中slotの口座状態に未来の損益を反映させない。旧baselineの結果を無断で書き換えず、共有化する場合は同じ回帰検証を行う。
@@ -61,6 +68,10 @@ Binance Funding CSVには一部、予定8時間時刻から1msずれた`calc_tim
 2026-09-15：全1年で最適閾値を決めて同じ1年を検証扱いしない。旧5分研究で既に使った年なので、後半を分割しても完全な未見データという主張はしない。将来のHyperliquid比較は別途必要である。
 
 2026-09-15：実データで探索選出されたD/Q75/固定SL-TPの4保有時間候補は、すべてRiskの25%最大DDへ到達した。境界不足による品質`partial`とは別に、Binance根拠としてv002を作らず、v001と空のactive rulesを維持する。
+
+2026-09-17：採用可否では、固定notionalの独立ラベルから得る検証期間の件数・各方向の正損益・月別正率を先に判定し、非重複の年間口座Replayは最大DD停止を確認する別の安全条件として扱う。価格変動と執行費用の比較は保存済みepisodeから復元し、候補ごとの別口座Replayを合算しない。
+
+2026-09-17：既存のfreeze済み成果物は書き換えない。追加した`conditional-diagnose`は、同じ固定入力を再集計した`data/research/conditional-edge-v2/diagnostic-run/`だけを読み書きする。local runtime dataはGit除外なので、コード・テスト・文書と研究結果の実データを混在させない。
 
 ## Plan of Work
 
@@ -197,5 +208,11 @@ v001、既存strategy、既存分析artifactは上書きしない。新出力は
 
 
 2026-09-15：M1〜M5を実装・実行した。1日、1か月、365日の順で同じCLIを確認し、LLM/Batch/注文を呼ばなかった。365日ではD/Q75/固定SL-TPの5/10/15/30分候補が各716〜822取引で約25% DDへ到達し、net PnLは約-249〜-250 USDだった。品質は境界不足を含む`partial`、結論は`inconclusive`で、v002を作らないことが採否契約に沿う結果となった。
+
+2026-09-17：監査用の再集計では、88候補すべてがexploration・validation・confirmationの各foldでnet PnL負だった。選出4候補は検証期間で1,570取引、LONG 741・SHORT 829と件数条件は満たしたが、2026-03〜06の4か月すべてが負、両方向net PnLも負で、採用候補はゼロだった。年間の各別口座Replayは2025-12-01〜04に25% DDへ到達して停止し、最終的に716〜822取引、net PnLは-249.01〜-250.13 USDだった。
+
+5分・10分候補の約定調整前価格PnLは+17.12 USD、+4.28 USDだったが、spread/slippage各約-41.10/-39.15 USDと手数料-184.94/-176.16 USDを回収できなかった。15分・30分候補は価格PnL自体も-16.36/-15.10 USDだった。Fundingは各候補で-0.02〜+0.05 USD程度で主因ではない。従って、現候補群は費用を除いても一貫した方向優位を示さず、v002を作らずこの候補群を不採用で閉じる判断を維持する。
+
+実装の対象回帰として`tests/test_research_conditional_edge.py`、`test_research_conditional_replay.py`、`test_research_conditional_report.py`を実行し11件通過した。全178件のpytestは、実行後にpytestがtemporary directoryを走査する段階でWindows `WinError 5`となる既存のACL制約で完走できなかった。コンパイルと`git diff --check`は別途通過した。このACLは研究ロジック・成果物生成の失敗とは扱わず、別環境で全件を再確認する。
 
 変更履歴：2026-09-15 初版。ユーザーのInitial Strategy再設計方針v2に基づき、既存v3のStage 1/2だけを詳細化した。

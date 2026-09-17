@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from hyperliquid_ai_trader.research import cli
 from hyperliquid_ai_trader.research.artifacts import (
     ArtifactError,
     canonical_config_sha256,
@@ -38,3 +39,14 @@ def test_config_hash_changes_with_content(tmp_path: Path) -> None:
 def test_load_artifact_manifest_requires_existing_manifest(tmp_path: Path) -> None:
     with pytest.raises(ArtifactError, match="manifest"):
         load_artifact_manifest(tmp_path / "missing.jsonl")
+
+
+def test_cli_reads_an_optional_artifact_manifest_once(tmp_path: Path) -> None:
+    artifact = tmp_path / "points.jsonl"
+    artifact.write_text("{}\n", encoding="utf-8")
+    manifest_path_for(artifact).write_text(
+        json.dumps({"schema_version": 1, "content_sha256": sha256_path(artifact)}) + "\n",
+        encoding="utf-8",
+    )
+
+    assert cli._read_manifest_if_present(artifact)["content_sha256"] == sha256_path(artifact)

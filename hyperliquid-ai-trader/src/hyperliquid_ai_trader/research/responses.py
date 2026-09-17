@@ -155,6 +155,38 @@ def read_model_responses_jsonl(path: Path) -> list[ModelResponseRecord]:
     return records
 
 
+def write_model_responses_jsonl(path: Path, records: list[ModelResponseRecord]) -> None:
+    """Atomically save the provider-neutral response subset used by validation."""
+
+    if not records:
+        raise ResearchResponseError("model responses must not be empty")
+    if len({record.request_id for record in records}) != len(records):
+        raise ResearchResponseError("model response request IDs must be unique")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.tmp")
+    with temporary.open("w", encoding="utf-8", newline="\n") as handle:
+        for record in records:
+            handle.write(
+                json.dumps(
+                    {
+                        "request_id": record.request_id,
+                        "returned_model": record.returned_model,
+                        "received_at_ms": record.received_at_ms,
+                        "function_calls": [
+                            {"name": call.name, "args": call.args}
+                            for call in record.function_calls
+                        ],
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    allow_nan=False,
+                )
+            )
+            handle.write("\n")
+    temporary.replace(path)
+
+
 def validate_model_responses(
     *,
     config: ResearchConfig,

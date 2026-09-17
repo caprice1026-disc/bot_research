@@ -40,12 +40,20 @@
 - [x] (2026-09-13) Binance USD-Mでは公式Funding CSVを評価入力として読み、Funding CSV未指定・必要event不足を損益ゼロにせず`incomplete_funding`として保存するようにした。完結episodeと不足episodeが混在すれば`partial`、完結episodeがなければ`insufficient_data`とする。地点評価も非成功時のJSONL/manifestを残す。
 - [x] (2026-09-13) リモートIssue #8〜#16の研究経路を実装した。Binance最終部分月・CSV/アーカイブprovenance、artifact hash lineage、共通cost/funding、Trader v2 identity、Batch予約/unknown/sync、UTC日次Replay/Risk、Reviewerの証拠・遅延patch制限、freeze/paired Forward、fixture Testnet auditを追加し、専用テストを含めて検証した。
 - [x] (2026-09-15) Initial Strategy v2のStage 0〜2を再実行した。365日のBinance入力とFundingを検証し、条件付きラベル・prior-only regime比較・pending-exit Replayを実装して実行した。選出4候補はすべて約25% DDへ到達したため、v002は作らずv001を維持した。LLM/Batch/注文は行っていない。
+- [x] (2026-09-17) 明示許可された固定v001の最小pilot用に、Gemini 3.5 Flashのinline Batch adapter、送信前SQLite予約、job照会、単一`open_position`の正規化応答保存を追加した。Free TierではBatch不可のため、公開設定にモデル固定・thinking無効・50地点・200最大出力・$0.25予約を明記した。注文、Reviewer、strategy更新は呼ばない。
+- [x] (2026-09-17) fixed v001の50地点Gemini pilotを完了した。最初のtrial（`pilot-v001-gemini35-r1`）は50/50件`MALFORMED_FUNCTION_CALL`のため評価対象から隔離した。Gemini 3.5 Flash向けにFunction schemaの非対応制約を除き、`thinking=minimal`と512 tokenのcanaryを厳格validatorまで通過させた。別experiment/trial `pilot-v001-gemini35-minimal-r2` は50/50件を正規化・検証・評価し、50/50が`would_abstain=true`のshadowだった。費用込みshadowはnet -17.35435597 USDT、5/50勝、profit factor 0.0726で、実取引は0件。動作確認結果であり、strategy採用には使わない。
 - [x] M5：日次Reviewer、根拠検証、翌日strategy適用（UTC cutoff、closed evidence、patch制限、late hold、calibration helper）。
 - [x] M6：構成固定と将来Static/Adaptive比較（freeze manifest、drift検知、同一snapshot paired runner）。
 - [x] M7：Testnet注文監査と研究結果の引き渡し（外部注文を行わないfixture/frozen audit、実fill基準のrisk/hold/recovery）。
 
 ## Surprises & Discoveries
 
+
+最初の送信準備ではcanonical JSON中の`Decimal("0")` temperatureが文字列として残り、Gemini adapterの局所検証で拒否された。この失敗は`batches.create`の前であり外部jobは作成していない。Decimalを有限な数値へ明示変換する回帰テストを追加し、fresh trial IDで再準備してから一回だけ送信した。2026-09-17時点で送信済みjobは処理中であり、未確定応答として再送しない。
+
+`gemini-3.5-flash`の旧互換設定（`thinking_budget=0`、200 token、共有schemaの`additionalProperties=false`）では、最初の50件がすべて`MALFORMED_FUNCTION_CALL`となった。小さなFunction Call自体は動作したが、固定v001の全引数は最大200 tokenでは思考途中で切れた。GenerateContentの現行仕様に合わせ、Gemini wire schemaから厳格な未知field拒否だけを外し、`abstain_reason`は空文字を許すstringへ変換した。`thinking=minimal`と512 tokenの一件canaryは`STOP`、単一`open_position`、全キー、SL/TP制限のvalidator通過を確認した。旧Batchの実usageはinput 68,998、output 9,900 token（Batch料金表による推定$0.09629850、通常canaryは別途少額）であり、結果は採用・評価へ使わない。
+
+有効trialの50件はすべて`would_abstain=true`であった。提案方向はSHORT 38、LONG 12、confidenceは0.1帯1、0.3帯30、0.4帯19で、費用と低volatilityを主な見送り根拠にした。counterfactual shadowは45件max hold、3件SL、2件TP、gross -6.08045270、fee 11.24889827、funding -0.025005、net -17.35435597 USDT、5勝/50（10%）である。見送りが損失を避けた可能性は示すが、全件見送りのため「どの局面を選べるか」は測定できず、LLMの優位性・strategy更新・採用を示す結果ではない。有効Batchのusageはinput 69,898、output 13,838 tokenで、Batch料金表による推定$0.11469450（通常canaryと無効trialを除く）である。
 
 現行コードの調査基準はcommit `009eb6779c4569b2f518ace8b6e16614cdf65446`。作業開始時の`git status --short`は空だった。
 
@@ -154,6 +162,10 @@ Forwardは初期案を30日・自動延長なしとし、最低取引件数、�
 2026-09-13 / Codex：外部Batch adapterより先に、保存済み応答をプロバイダ非依存の小さい正規化形式に限定して検証する。準備済みrequestのID/hash/要求モデルと返却モデルを一対一で照合し、liveと共通のFunction Call parserおよび研究制限を通す。raw provider payload、API呼び出し、SQLite予約、注文をこの段階に混ぜず、異なる入力・モデル・schemaの回答が後続Simulatorへ流れない境界を先に固定するため。
 
 2026-09-13 / Codex：研究SQLiteはPostgreSQLへ移行せず、既存ライブSQLiteと同じWAL設定へ統一する。現在のローカル単一writer実験と少数の並行readerにはSQLiteで十分であり、別サーバー、認証情報、運用コスト、SQL方言差を導入しないため。複数writerや複数ホストが必要になった時点だけ再評価する。
+
+2026-09-17 / Codex：ユーザーが無料枠外の小額利用を明示許可したため、50地点を逐次送信せず`gemini-3.5-flash`のinline Batchにまとめる。BatchはFree Tierで利用できず、最大出力200 tokenと入力UTF-8 byteの保守的な上限予約を含めて公開設定の$0.25を超える送信を拒否する。固定strategy v001とprompt hashをrequest artifactへ残し、Reviewer、strategy patch、注文APIをこの実験から除外する。
+
+2026-09-17 / Codex：実canaryと現行Gemini 3.5 Flash仕様を優先し、pilotは`thinking=minimal`・512最大output tokenへ変更する。3.xのthinkingを0にせず、thinking tokenを含む上限で関数呼び出しが切れないようにするためである。入力UTF-8 byteによる保守的予約は$0.35へ上げるが、旧Batchはinvalid artifactとして隔離し、新trialの実費・usageを完了後に集計する。
 
 2026-09-13 / Codex：Binanceの一括取得CSVは既存downloaderのchecksum検証済み出力を、ローカルの`import-binance-csv`で正規化JSONLへ一度だけ変換する。Simulator・feature builderへCSV形式やネットワーク取得を混在させず、入力内容hashとvenue/symbolをmanifest・point artifactで追跡するため。
 
@@ -318,9 +330,16 @@ SQLite更新は一トランザクションで、decision消費とaccount更新�
 ## Outcomes & Retrospective
 
 
-v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、WALモードの研究専用SQLite証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールのUTC 5分slot時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用、送信しないrequest artifactの準備、保存済み正規化応答のID/hash/model/schema検証を追加した。M4では確定61本以後のUTC 5分slot候補と最大500の再現可能な層化順位、候補集合hash・分類条件・元データhash付き選定JSONL manifest、検証済み回答のtrade/shadow独立地点評価を追加した。公開データの実取得、funding event、Batch、3日Replay、Reviewer、Forwardは未実装であり、実取引・課金API・市場データ収集はこの時点でも実行していない。
+v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、WALモードの研究専用SQLite証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールのUTC 5分slot時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用、送信しないrequest artifactの準備、保存済み正規化応答のID/hash/model/schema検証、Gemini 3.5 Flash inline Batchを追加した。最初の50件Batchはschema/thinking設定が不適合で無効と記録した。互換schemaとminimal thinkingのcanary成功後、別experimentの50件Batchを送信済みである。M4では確定61本以後のUTC 5分slot候補と最大500の再現可能な層化順位、候補集合hash・分類条件・元ローソク足hash付き選定JSONL manifest、検証済み回答のtrade/shadow独立地点評価を追加した。2026-09-17時点の有効trialは処理中で、評価結果は未取得である。実取引、Reviewer、strategy更新、3日Replay、Forwardはこのpilotに含めない。
+v3は研究設計として採用可能。無条件に「問題なし」ではなく、証拠消費、日次patch合算、仮想根拠、confidenceの効果、Batch応答喪失、採用基準を補完した。本計画がこの補完を含む実装仕様となる。M1/M2の中核として、確定時刻を持つ1分OHLCV、未来情報を拒否する共通特徴量、WALモードの研究専用SQLite証拠台帳、費用込みSimulator、単純ルール、shadowと口座の分離を実装した。リモート実装統合後に、設定どおりの到着猶予、分単位の保有期限、Decimal数量のflat判定、Reviewerのcutoff/experiment境界を補正した。M1ではさらに、署名なしのHyperliquid公開足reader、未確定足除外、JSONL保存、最大5,000本のpublic `collect` CLI + source manifest、Binanceの1分足入力を追加した。M2では固定ルールのUTC 5分slot時系列baseline CLI、空/末尾不足の`insufficient_data`、専用shadow episodeを追加した。M3では課金なしの公開設定検証CLIと支出拒否に加え、canonical request hash、送信前SQLite予約、応答不明時の再送停止、研究専用prompt・OHLCV初期strategy・有限Function Call検証・見送りを含むSL/TP制限適用、送信しないrequest artifactの準備、保存済み正規化応答のID/hash/model/schema検証、Gemini 3.5 Flash inline Batchを追加した。最初の50件Batchはschema/thinking設定が不適合で無効と記録した。互換schemaとminimal thinkingのcanary成功後、別experimentの50件Batchを正規化・検証・評価した。M4では確定61本以後のUTC 5分slot候補と最大500の再現可能な層化順位、候補集合hash・分類条件・元ローソク足hash付き選定JSONL manifest、検証済み回答のtrade/shadow独立地点評価を追加した。有効trialは全件見送りで、counterfactual shadowのみが負の結果だったため、LLMの採用やstrategy更新は見送る。実取引、Reviewer、strategy更新、3日Replay、Forwardはこのpilotに含めない。
 
 変更履歴：2026-09-10、housinv3.mdのレビューと現行コード照合に基づいて初版作成。元文書を保持し、計画の重複作成を避けるためレビュー指摘と具体的工程を本ファイルへまとめた。
+
+変更履歴：2026-09-17、固定v001・Gemini 3.5 Flash・50地点の有料inline Batchを一回送信し、初回照会時点の処理中状態と局所temperature正規化修正を記録した。完了前に結果を採用判断へ使わない。
+
+変更履歴：2026-09-17、最初の50件がGemini Function Callingの非互換schema・thinking設定で全件不正だったため、結果を隔離した。実canaryで確認したminimal thinking・512 token・Gemini互換schemaの別experimentを作成し、50件Batchの同期専用watcherを起動した。
+
+変更履歴：2026-09-17、有効trialの50件をBatch同期、正規化応答照合、研究用Function Call検証、費用込みshadow評価まで完了した。manifest読込の二重suffix不具合を回帰テストとともに修正した。全件見送り・負のcounterfactualであり、pilotをstrategy採用には用いない。
 
 変更履歴：2026-09-10、M1の証拠台帳とM2のオフラインSimulatorの実装結果、検証件数、残作業を反映した。計画と実装状態を一致させるため。
 

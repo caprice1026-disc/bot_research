@@ -114,7 +114,7 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 研究台帳はライブ用`data/trader.db`とは別のSQLiteへ作成します。ライブ・研究ともSQLiteのWALモード、`synchronous=NORMAL`、5秒のwriter待機を使い、ローカルの単一writer／複数readerを前提にします。PostgreSQLは依存にも実装にも含めません。数量がflatになったepisodeだけを確定証拠とし、損益ゼロも除外しません。失敗したreviewへ送った証拠は評価済みにせず、正常な空patchまたは正常patchでのみ消費します。`shadow`（見送り時の仮想結果）は仮想口座へ加算されません。
 
-固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。`prepare-requests`は選定地点から将来のモデル入力を不変化し、`validate-responses`は正規化済みの保存応答を照合しますが、どちらもGeminiへ送信しません。研究v3全体のBatch送信・usage/job照会、LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
+固定ルールのReplayはネットワーク、秘密鍵、Gemini APIを必要としません。公開足の`collect`だけは署名なしのHyperliquid Mainnet Info APIへ接続しますが、秘密鍵・wallet・Gemini APIは使いません。`prepare-requests`は選定地点から将来のモデル入力を不変化し、`validate-responses`は正規化済みの保存応答を照合しますが、どちらもGeminiへ送信しません。固定v001の小規模pilotだけは、明示的な有料設定でGemini Batch APIへ送信できます。この経路は注文、Reviewer、strategy更新を行いません。LLM Replay、Reviewer、Forward比較CLIは未実装であり、既存Testnet Botの`dry-run`をオフラインSimulatorの代用にはしないでください。
 
 公開JSONの研究設定は、課金を明示許可しない限りモデルAPIを呼べません。まず設定だけを確認できます。
 
@@ -125,6 +125,54 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 研究用の固定指示は`prompts\research\`、OHLCVだけを前提にした初期strategyは`configs\research\initial_strategy.json`に分離しています。既存Testnet Botのpromptや、板/OIを含むstrategyは上書きしません。研究側のFunction Callは注文を実行せず、有限値・単一`open_position`提案として検証してから将来のSimulator入力に使います。
 
 `configs\research\development.json`の`decision`にはSL/TPの百分率範囲を固定します。通常提案と`would_abstain=true`の参考提案は同じ範囲検証を通るため、不正な仮想結果が研究台帳へ入ることはありません。
+
+### 固定v001 Gemini Batch pilot
+
+`configs\research\llm_pilot_v001_gemini_35_flash_minimal.json`はstrategy v001、`gemini-3.5-flash`、50地点、300秒保有条件、`thinking=minimal`、最大出力512 token、$0.35の保守的な予約上限を固定します。Gemini 3.5 Flashではthinkingを完全には無効化できず、`max_output_tokens`にはthinking tokenも含まれるためです。Gemini Batchは現行Free Tierで使えないため、この設定は小額の有料実験です。pilotの損益をstrategy採用には使いません。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli points `
+  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --candles data\research\binance-BTCUSDT-1m.jsonl `
+  --count 50 --seed 20260917 `
+  --output data\research\llm-pilot-v001\points.jsonl
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli prepare-requests `
+  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --points data\research\llm-pilot-v001\points.jsonl `
+  --trial-prefix pilot-v001-gemini35-minimal --temperature 0 --thinking minimal --max-output-tokens 512 `
+  --output data\research\llm-pilot-v001\requests.jsonl
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli batch `
+  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --action submit --provider gemini --requests data\research\llm-pilot-v001\requests.jsonl `
+  --store data\research\llm-pilot-v001\ledger.sqlite --max-output-tokens 512
+```
+
+Batch jobが完了するまで、同じ送信を再実行せず次の`sync`だけを繰り返します。50件すべての正規化応答が出た後に、同じ費用・Funding・Entry遅延・SL/TP・保有時間を使って評価します。`would_abstain=true`は`shadow`としてのみ評価し、口座へ加算しません。
+
+```powershell
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli batch `
+  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --action sync --provider gemini --requests data\research\llm-pilot-v001\requests.jsonl `
+  --store data\research\llm-pilot-v001\ledger.sqlite `
+  --max-output-tokens 512 `
+  --responses-output data\research\llm-pilot-v001\responses.jsonl
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli validate-responses `
+  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --requests data\research\llm-pilot-v001\requests.jsonl `
+  --responses data\research\llm-pilot-v001\responses.jsonl `
+  --output data\research\llm-pilot-v001\decisions.jsonl
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli evaluate-decisions `
+  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --candles data\research\binance-BTCUSDT-1m.jsonl `
+  --funding-csv ..\binance-btcusdt-futures-research\data\research\BTCUSDT-funding-2025-09-01_2026-08-31.csv `
+  --points data\research\llm-pilot-v001\points.jsonl `
+  --decisions data\research\llm-pilot-v001\decisions.jsonl `
+  --output data\research\llm-pilot-v001\evaluation.jsonl
+```
 
 Hyperliquid公開1分足は、最大5,000本の単一スナップショットだけを明示的に取得できます。確定足だけをJSONLへ保存し、同じ場所に取得範囲・受信時刻・内容hashを含むmanifestを作ります。空結果は`insufficient_data`で終了し、空の損益結果にはしません。
 
@@ -191,7 +239,15 @@ cd ..\hyperliquid-ai-trader
   --funding-csv ..\binance-btcusdt-futures-research\data\research\BTCUSDT-funding-2025-09-01_2026-08-31.csv `
   --analysis-dir data\research\conditional-edge-v2\analysis `
   --output-dir data\research\conditional-edge-v2\replay
+
+.\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli conditional-diagnose `
+  --study-config configs\research\conditional_edge_v2.json `
+  --analysis-dir data\research\conditional-edge-v2\analysis `
+  --replay-dir data\research\conditional-edge-v2\replay `
+  --output-dir data\research\conditional-edge-v2\diagnostic
 ```
+
+`conditional-diagnose`は、採用条件である検証期間の総件数・LONG/SHORT別件数・月別正率と、年間口座ReplayのDD停止を別々に表示する。保存済みepisodeから、約定調整前の価格変動、設定したspread/slippage、手数料、Funding、net PnLも候補別・方向別・決済月別に再結合する。候補ごとのReplayは別口座なので合算しない。
 
 2026-09-15の実行では、2025-09-01〜2026-09-01 UTCの正規化1分足と同期間のFundingを検証した。境界256ラベルを除き1,681,664件が完結したが、探索で選んだ4つのD候補（Q75 gate、5/10/15/30分、固定SL/TP）はいずれも連続口座で約25%のDD制限へ到達した。このため結果は`partial`かつ`inconclusive`であり、`initial_strategy_v002.json`は作らず、byte同一の`initial_strategy_v001.json`と空のactive rulesを維持する。Binanceの結果はHyperliquidでの収益性を意味しない。
 
@@ -242,6 +298,7 @@ Geminiの生レスポンスは、そのまま研究入力に使いません。�
 
 ## 参照
 
+- [5分ごとのLLMポジション管理と共通取引基盤の実装方針](../.agent/2026-09-17-position-management-and-shared-trading-core.md)：5分を判断周期にした継続保有・増減と、`trading-core/` への基盤移設の計画。新機能・移設は未実施。
 - [Hyperliquid API](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api)
 - [公式Python SDK TP/SL例](https://github.com/hyperliquid-dex/hyperliquid-python-sdk/blob/master/examples/basic_tpsl.py)
 - [Gemini Function Calling](https://ai.google.dev/gemini-api/docs/function-calling)

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "experiment_id": "llm-pilot-v001-gemini-35-flash-minimal-20260917",
+  "market": {
+    "venue": "binance_usdm_public",
+    "symbol": "BTCUSDT",
+    "interval": "1m"
+  },
+  "feature_set": "common_candles_v1",
+  "api": {
+    "allow_paid_api": true,
+    "budget_usd": "0.35",
+    "trader_model": "gemini-3.5-flash",
+    "reviewer_model": "gemini-3.6-flash"
+  },
+  "execution": {
+    "model_delay_ms": 1000,
+    "max_arrival_delay_ms": 60000,
+    "max_hold_ms": 300000,
+    "fee_rate": "0.00045",
+    "spread_bps": "2",
+    "slippage_bps": "1",
+    "sl_tp_basis": "execution_price"
+  },
+  "decision": {
+    "min_stop_loss_pct": "0.10",
+    "max_stop_loss_pct": "1.00",
+    "min_take_profit_pct": "0.10",
+    "max_take_profit_pct": "2.00"
+  },
+  "simulation": {
+    "initial_equity": "1000",
+    "reference_notional": "250"
+  },
+  "risk": {
+    "risk_per_trade_pct": "1",
+    "max_daily_loss_pct": "20",
+    "max_drawdown_pct": "25",
+    "max_position_notional_usd": "250",
+    "leverage": "5",
+    "min_notional_usd": "10"
+  }
+}

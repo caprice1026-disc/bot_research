@@ -6,7 +6,10 @@ import json
 from hyperliquid_ai_trader.research.binance import FundingSeries
 from hyperliquid_ai_trader.research.conditional_edge import write_conditional_labels
 from hyperliquid_ai_trader.research.conditional_report import (
+    _decompose_episode,
+    _promoted_candidates,
     analyze_conditional_study,
+    write_conditional_diagnostics,
     write_conditional_replays,
 )
 from hyperliquid_ai_trader.research.data import CANDLE_INTERVAL_MS
@@ -74,3 +77,102 @@ def test_analysis_uses_feature_artifacts_and_preserves_partial_coverage(tmp_path
     assert replay.status == "partial"
     assert replay.episodes_path.read_text(encoding="utf-8")
     assert json.loads(replay.report_path.read_text(encoding="utf-8"))["conclusion"] == "inconclusive"
+
+
+def test_promotion_uses_validation_side_counts_and_month_fraction(tmp_path) -> None:
+    study = load_conditional_study_config(_study_path(tmp_path))
+    summary = {
+        "candidate_id": "candidate-1",
+        "trade_count": 300,
+        "max_drawdown_pct": "1",
+        "direction_net_pnl": {"long": "20", "short": "20"},
+        "decision_status_counts": {"executed": 300},
+        "validation": {
+            "trade_count": 300,
+            "side": {
+                "long": {"trade_count": 49, "net_pnl": "20"},
+                "short": {"trade_count": 50, "net_pnl": "20"},
+            },
+            "monthly_net_pnl": {"2026-03": "1", "2026-04": "-1"},
+        },
+    }
+
+    assert _promoted_candidates([summary], study) == []
+
+    summary["validation"]["side"]["long"]["trade_count"] = 50
+    assert _promoted_candidates([summary], study) == ["candidate-1"]
+
+
+def test_episode_decomposition_reconciles_market_execution_fees_and_funding(tmp_path) -> None:
+    execution = load_conditional_study_config(_study_path(tmp_path)).base_config.execution
+    row = {
+        "side": "long",
+        "quantity": "1",
+        "gross_pnl": "0.9598",
+        "fee": "0.09044991",
+        "funding": "0.01",
+        "net_pnl": "0.87935009",
+    }
+
+    result = _decompose_episode(row, execution)
+
+    assert result["market_pnl_before_execution"] == "1"
+    assert result["spread_impact"] == "-0.0201"
+    assert result["slippage_impact"] == "-0.0201"
+    assert result["reconciliation_error"] == "0"
+
+
+def test_diagnostics_write_validation_audit_and_pnl_components(tmp_path) -> None:
+    study = replace(
+        load_conditional_study_config(_study_path(tmp_path)),
+        start_ms=0,
+        exploration_end_ms=120 * CANDLE_INTERVAL_MS,
+        validation_end_ms=200 * CANDLE_INTERVAL_MS,
+        confirmation_start_ms=200 * CANDLE_INTERVAL_MS,
+        end_ms=300 * CANDLE_INTERVAL_MS,
+    )
+    candles = [
+        replace(
+            candle,
+            open=100 + index * 0.1,
+            high=100 + index * 0.1 + 0.01,
+            low=100 + index * 0.1 - 0.01,
+            close=100 + index * 0.1,
+        )
+        for index, candle in enumerate(_candles(340))
+    ]
+    input_dir = tmp_path / "input"
+    write_conditional_labels(
+        output_dir=input_dir,
+        candles=candles,
+        funding=FundingSeries(()),
+        study_config=study,
+        candle_sha256="c" * 64,
+        funding_sha256="f" * 64,
+        code_commit_sha="d" * 40,
+    )
+    analyze_conditional_study(
+        study_config=study,
+        input_dir=input_dir,
+        output_dir=tmp_path / "analysis",
+    )
+    write_conditional_replays(
+        study_config=study,
+        candles=candles,
+        funding=FundingSeries(()),
+        analysis_dir=tmp_path / "analysis",
+        output_dir=tmp_path / "replay",
+    )
+
+    result = write_conditional_diagnostics(
+        study_config=study,
+        analysis_dir=tmp_path / "analysis",
+        replay_dir=tmp_path / "replay",
+        output_dir=tmp_path / "diagnostic",
+    )
+
+    payload = json.loads(result.report_path.read_text(encoding="utf-8"))
+    assert payload["artifact_type"] == "conditional_diagnostic_report"
+    assert payload["candidates"][0]["promotion_checks"]
+    assert "market_pnl_before_execution" in payload["candidates"][0]["pnl"]
+    assert result.report_markdown_path.read_text(encoding="utf-8")

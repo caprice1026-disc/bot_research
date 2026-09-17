@@ -16,7 +16,7 @@ class BatchError(ValueError):
 
 
 class BatchProvider(Protocol):
-    def submit(self, payloads: list[str]) -> str: ...
+    def submit(self, requests: list[PreparedModelRequest]) -> str: ...
 
     def sync(self, provider_job_id: str) -> list[dict[str, Any]]: ...
 
@@ -27,10 +27,17 @@ class BatchResult:
     submitted: int
     reused: int
     unknown: int
+    response_rows: tuple[dict[str, Any], ...] = ()
 
 
 class BatchManager:
     reserved_cost_per_output_token = Decimal("0.000001")
+
+    def __init__(self, *, reserved_cost_per_output_token: Decimal | None = None) -> None:
+        if reserved_cost_per_output_token is not None:
+            if not reserved_cost_per_output_token.is_finite() or reserved_cost_per_output_token < 0:
+                raise BatchError("reserved output token cost must be finite and non-negative")
+            self.reserved_cost_per_output_token = reserved_cost_per_output_token
 
     def submit(
         self,
@@ -80,7 +87,7 @@ class BatchManager:
         if not fresh:
             return BatchResult("reused", 0, reused, 0)
         try:
-            job_id = provider.submit([request.canonical_payload for request in fresh])
+            job_id = provider.submit(fresh)
         except TimeoutError:
             for request in fresh:
                 store.mark_submission_unknown(request.request_id)
@@ -111,6 +118,7 @@ class BatchManager:
         completed = 0
         failed = 0
         pending = 0
+        response_rows: list[dict[str, Any]] = []
         for job_id, request_ids in grouped.items():
             try:
                 results = provider.sync(job_id)
@@ -128,6 +136,11 @@ class BatchManager:
                 if item is None:
                     pending += 1
                     continue
+                error_type = item.get("error_type")
+                if isinstance(error_type, str) and error_type:
+                    store.mark_failed(request_id, error_type=error_type)
+                    failed += 1
+                    continue
                 actual = item.get("actual_cost_usd")
                 store.mark_completed(
                     request_id,
@@ -138,5 +151,6 @@ class BatchManager:
                     raw_response_ref=item.get("raw_response_ref"),
                 )
                 completed += 1
+                response_rows.append(item)
         status = "completed" if completed and not failed and not pending else "failed" if failed and not completed and not pending else "partial"
-        return BatchResult(status, completed, 0, 0)
+        return BatchResult(status, completed, 0, 0, tuple(response_rows))

@@ -12,9 +12,12 @@ import sys
 import time
 from typing import Sequence
 
+from dotenv import dotenv_values
+
 from .baseline import run_baseline
 from .artifacts import ArtifactError, load_artifact_manifest, sha256_path, verify_artifact
 from .batch import BatchError, BatchManager
+from .gemini_batch import GeminiBatchProvider
 from .binance import (
     BINANCE_USDM_VENUE,
     FundingDataError,
@@ -31,6 +34,7 @@ from .conditional_edge import (
 from .conditional_report import (
     ConditionalReportError,
     analyze_conditional_study,
+    write_conditional_diagnostics,
     write_conditional_replays,
 )
 from .config import ResearchConfigError, load_research_config
@@ -65,12 +69,15 @@ from .preparation import (
 from .request_identity import ModelRequestError
 from .request_identity import PreparedModelRequest
 from .responses import (
+    ModelResponseRecord,
     ResearchResponseError,
     read_model_responses_jsonl,
     read_prepared_requests_jsonl,
     validate_model_responses,
+    write_model_responses_jsonl,
     write_validated_decisions_jsonl,
 )
+from ..agents import FunctionCall
 from .simulator import SimulationError
 from .store import ResearchStore
 from .freeze import build_freeze_manifest, freeze_fingerprint, write_freeze_manifest
@@ -107,6 +114,13 @@ def _parser() -> argparse.ArgumentParser:
     conditional_replay.add_argument("--funding-csv", type=Path)
     conditional_replay.add_argument("--analysis-dir", type=Path, required=True)
     conditional_replay.add_argument("--output-dir", type=Path, required=True)
+    conditional_diagnose = commands.add_parser(
+        "conditional-diagnose", help="audit promotion gates and decompose saved conditional Replay PnL"
+    )
+    conditional_diagnose.add_argument("--study-config", type=Path, required=True)
+    conditional_diagnose.add_argument("--analysis-dir", type=Path, required=True)
+    conditional_diagnose.add_argument("--replay-dir", type=Path, required=True)
+    conditional_diagnose.add_argument("--output-dir", type=Path, required=True)
     validate = commands.add_parser("validate-config", help="validate a public research JSON config")
     validate.add_argument("--config", type=Path, required=True)
     baseline = commands.add_parser("baseline", help="replay one fixed rule from normalized candles")
@@ -186,6 +200,11 @@ def _parser() -> argparse.ArgumentParser:
     batch.add_argument("--requests", type=Path, required=True)
     batch.add_argument("--store", type=Path, required=True)
     batch.add_argument("--results", type=Path, help="saved provider result JSON for sync")
+    batch.add_argument("--provider", choices=("saved", "gemini"), default="saved")
+    batch.add_argument("--env-file", type=Path, default=_PROJECT_ROOT.parent / ".env")
+    batch.add_argument("--api-key-env", default="GEMINI_API_KEY")
+    batch.add_argument("--max-output-tokens", type=int, default=200)
+    batch.add_argument("--responses-output", type=Path)
     return parser
 
 
@@ -223,18 +242,77 @@ def _verify_optional_artifact(path: Path) -> dict[str, object] | None:
 
 def _read_manifest_if_present(path: Path) -> dict[str, object] | None:
     manifest_path = _manifest_path(path)
-    return load_artifact_manifest(manifest_path) if manifest_path.exists() else None
+    return load_artifact_manifest(path) if manifest_path.exists() else None
 
 
 class _SavedBatchProvider:
     def __init__(self, results: dict[str, list[dict[str, object]]] | None = None) -> None:
         self.results = results or {}
 
-    def submit(self, payloads: list[str]) -> str:
+    def submit(self, requests: list[PreparedModelRequest]) -> str:
         raise BatchError("batch submit requires an explicitly configured provider adapter")
 
     def sync(self, provider_job_id: str) -> list[dict[str, object]]:
         return self.results.get(provider_job_id, [])
+
+
+_GEMINI_35_FLASH_BATCH_INPUT_USD_PER_BYTE_UPPER_BOUND = Decimal("0.00000075")
+_GEMINI_35_FLASH_BATCH_OUTPUT_USD_PER_TOKEN = Decimal("0.0000045")
+
+
+def _gemini_api_key(*, env_file: Path, variable: str) -> str:
+    if not variable or not variable.replace("_", "").isalnum():
+        raise BatchError("Gemini API key environment variable name is invalid")
+    values = dotenv_values(env_file)
+    value = values.get(variable)
+    if not isinstance(value, str) or not value.strip():
+        raise BatchError(f"Gemini API key is missing from {env_file}")
+    return value.strip()
+
+
+def _gemini_batch_reservation(*, requests: list[PreparedModelRequest], max_output_tokens: int) -> Decimal:
+    if max_output_tokens <= 0:
+        raise BatchError("max_output_tokens must be positive")
+    output = _GEMINI_35_FLASH_BATCH_OUTPUT_USD_PER_TOKEN * max_output_tokens * len(requests)
+    # A UTF-8 byte cannot be cheaper than this upper bound on a token count.
+    # Reserving it prevents a long prompt from silently exceeding the public cap.
+    input_upper_bound = sum(
+        Decimal(len(request.canonical_payload.encode("utf-8")))
+        * _GEMINI_35_FLASH_BATCH_INPUT_USD_PER_BYTE_UPPER_BOUND
+        for request in requests
+    )
+    return output + input_upper_bound
+
+
+def _write_gemini_batch_responses(*, output: Path, rows: tuple[dict[str, object], ...], experiment_id: str) -> Path:
+    records: list[ModelResponseRecord] = []
+    for row in rows:
+        calls = row.get("function_calls")
+        if not isinstance(calls, list):
+            continue
+        records.append(
+            ModelResponseRecord(
+                request_id=str(row["request_id"]),
+                returned_model=str(row["returned_model"]),
+                received_at_ms=int(row["received_at_ms"]),
+                function_calls=tuple(
+                    FunctionCall(name=str(call["name"]), args=dict(call["args"]))
+                    for call in calls
+                    if isinstance(call, dict) and isinstance(call.get("args"), dict)
+                ),
+            )
+        )
+    write_model_responses_jsonl(output, records)
+    return _write_artifact_manifest(
+        output=output,
+        payload={
+            "mode": "gemini_batch_normalized_responses",
+            "experiment_id": experiment_id,
+            "response_count": len(records),
+            "input_tokens": sum(int(row.get("input_tokens") or 0) for row in rows),
+            "output_tokens": sum(int(row.get("output_tokens") or 0) for row in rows),
+        },
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -337,6 +415,27 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "episodes_path": str(result.episodes_path),
                         "decisions_path": str(result.decisions_path),
                         "report_path": str(result.report_path),
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+            )
+            return 0 if result.status == "ok" else 3
+        if args.command == "conditional-diagnose":
+            study_config = load_conditional_study_config(args.study_config)
+            result = write_conditional_diagnostics(
+                study_config=study_config,
+                analysis_dir=args.analysis_dir,
+                replay_dir=args.replay_dir,
+                output_dir=args.output_dir,
+            )
+            print(
+                json.dumps(
+                    {
+                        "status": result.status,
+                        "conclusion": result.conclusion,
+                        "report_path": str(result.report_path),
+                        "report_markdown_path": str(result.report_markdown_path),
                     },
                     ensure_ascii=False,
                     sort_keys=True,
@@ -598,22 +697,62 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
                 for row in request_records
             ]
+            if args.max_output_tokens <= 0:
+                raise BatchError("max_output_tokens must be positive")
+            if args.provider == "gemini":
+                if config.trader_model != "gemini-3.5-flash":
+                    raise BatchError("Gemini Batch pilot requires trader_model=gemini-3.5-flash")
+                if any(
+                    json.loads(request.canonical_payload).get("max_output_tokens") != args.max_output_tokens
+                    for request in requests
+                ):
+                    raise BatchError("prepared request max_output_tokens does not match batch submission")
+                provider = GeminiBatchProvider(
+                    api_key=_gemini_api_key(env_file=args.env_file, variable=args.api_key_env),
+                    model=config.trader_model,
+                )
+                reservation = _gemini_batch_reservation(
+                    requests=requests,
+                    max_output_tokens=args.max_output_tokens,
+                )
+                reserved_cost_per_output_token = reservation / (
+                    Decimal(args.max_output_tokens) * len(requests)
+                )
+            else:
+                provider = None
+                reserved_cost_per_output_token = None
             with ResearchStore(args.store) as store:
                 existing = store.connection.execute("SELECT 1 FROM experiments WHERE experiment_id=?", (config.experiment_id,)).fetchone()
                 if existing is None:
                     store.create_experiment(config.experiment_id, {"experiment_id": config.experiment_id}, _now_ms())
-                manager = BatchManager()
+                manager = BatchManager(reserved_cost_per_output_token=reserved_cost_per_output_token)
                 if args.action == "submit":
-                    result = manager.submit(config=config, requests=requests, store=store, provider=_SavedBatchProvider(), now_ms=_now_ms())
+                    result = manager.submit(
+                        config=config,
+                        requests=requests,
+                        store=store,
+                        provider=provider or _SavedBatchProvider(),
+                        now_ms=_now_ms(),
+                        max_output_tokens=args.max_output_tokens,
+                    )
                 else:
-                    if args.results is None:
-                        raise BatchError("batch sync requires --results")
-                    saved = json.loads(args.results.read_text(encoding="utf-8"))
-                    if not isinstance(saved, dict):
-                        raise BatchError("batch results must map provider job IDs to result arrays")
-                    provider = _SavedBatchProvider(saved)
+                    if args.provider == "saved":
+                        if args.results is None:
+                            raise BatchError("batch sync requires --results")
+                        saved = json.loads(args.results.read_text(encoding="utf-8"))
+                        if not isinstance(saved, dict):
+                            raise BatchError("batch results must map provider job IDs to result arrays")
+                        provider = _SavedBatchProvider(saved)
+                    assert provider is not None
                     result = manager.sync(store=store, provider=provider, now_ms=_now_ms())
-            print(json.dumps({"status": result.status, "submitted": result.submitted, "reused": result.reused, "unknown": result.unknown}, ensure_ascii=False, sort_keys=True))
+                responses_manifest_path = None
+                if args.provider == "gemini" and args.responses_output is not None and result.response_rows:
+                    responses_manifest_path = _write_gemini_batch_responses(
+                        output=args.responses_output,
+                        rows=result.response_rows,
+                        experiment_id=config.experiment_id,
+                    )
+            print(json.dumps({"status": result.status, "submitted": result.submitted, "reused": result.reused, "unknown": result.unknown, "responses_manifest_path": None if responses_manifest_path is None else str(responses_manifest_path)}, ensure_ascii=False, sort_keys=True))
             return 0 if result.status in {"submitted", "completed", "reused"} else 3
         if args.command == "evaluate-decisions":
             assert config is not None
