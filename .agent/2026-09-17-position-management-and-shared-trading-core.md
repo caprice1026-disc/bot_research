@@ -1,6 +1,6 @@
 # 5分ごとのLLMポジション管理と共通取引基盤の実装方針
 
-本書はリポジトリルートの `PLANS.md` に従う日本語ExecPlanである。実装時には Progress、Surprises & Discoveries、Decision Log、Outcomes & Retrospective を更新する。本依頼で行うのは方針作成と現状のmainへの保存であり、以下の移設・新売買機能・課金実験・発注はまだ実行しない。
+本書はリポジトリルートの `PLANS.md` に従う日本語ExecPlanである。実装時には Progress、Surprises & Discoveries、Decision Log、Outcomes & Retrospective を更新する。2026-09-17の実装では、外部API・課金実験・発注を行わず、共有coreとオフラインの継続ポジション管理fixtureまでを実装した。残る移設・Gemini接続・実取引はProgressに明記する。
 
 ## Purpose / Big Picture
 
@@ -17,13 +17,13 @@
 - [x] (2026-09-17) 現行の研究設定、Batch経路、独立episode Simulator、既存取引adapter、データ取得元、既存計画を調査した。
 - [x] (2026-09-17) 現状の全Hyperliquidテスト185件成功を確認した。一時ディレクトリACLを避ける実行権限で実施した。
 - [x] (2026-09-17) 共通基盤移設と継続ポジション管理を一つの段階的な実装方針として記述した。
-- [ ] M0：既存挙動・CLI・artifactの互換性検証用fixtureを固定する。
-- [ ] M1：共通パッケージとBTCデータ経路を抽出し、旧CLIからも同じ実装を利用する。
-- [ ] M2：既存執行・Risk・台帳・モデル送信基盤を移設し、旧テストと出力を維持する。
-- [ ] M3：目標建玉の判断schema、Risk検証、差分注文計画を実装する。
-- [ ] M4：増減・維持・SL・Fundingを時刻順に処理する口座Simulatorを実装する。
-- [ ] M5：状態付きLLM入力、逐次runner、再開・予算管理を実装する。
-- [ ] M6：比較実験、品質検証、報告、設定凍結を実装する。
+- [x] (2026-09-17) M0：既存Hyperliquidテスト185件を通常権限の専用一時領域で再実行し、既存のCLI、artifact、独立episode Simulatorの互換基準を固定した。
+- [ ] M1（部分完了）：`trading-core/` package、内容SHA-256付きdataset catalogと連続性検証を追加した。既存BTC downloader、Funding reader、normalizer、旧CLIを同じ実装へ委譲する移設は未完了である。
+- [ ] M2（部分完了）：新方式用のDecimal execution-cost、accounting、position-delta基盤を共有側へ置いた。既存Testnet adapter、旧Risk、旧Simulator、provider送信の移設と互換wrapperは未完了である。
+- [x] (2026-09-17) M3：厳格な`target_position` schema、固定anchorによる一回限りの数量化、差分計画、反転拒否、stop・notional・stop-risk制約を実装した。
+- [x] (2026-09-17) M4：open/hold/add/reduce/close、SL gap、Funding、保持上限、終端未決済を扱う一建玉Simulatorを実装した。
+- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、3連続無効応答の安全決済、モデル費用上限、SQLite WAL run DBによる再起動照合、原子的なoffline成果物を実装した。Gemini通常APIと実取引adapterは未実装である。
+- [ ] M6（部分完了）：fixture replayのJSON/Markdown reportを実装した。no-trade・固定方針・LLM各群の公平な比較と設定freezeは未実装である。
 - [ ] M7：将来データのshadow運転を実施し、別途承認した場合だけTestnetへ接続する。
 
 ## Context and Orientation
@@ -54,6 +54,10 @@ BTC価格取得は `binance-btcusdt-futures-research/download_binance_klines.py`
 
 2026-09-17：新方式の最初の比較ではReviewerを無効とし、モデル、prompt、strategy、行動集合、Riskを凍結する。状態付き判断による効果とstrategy更新の効果を混ぜない。
 
+2026-09-17：既存research moduleを直ちに共通coreへ移さない。新coreの契約をfixtureで先に実証し、旧CLIが`trading_core`のeditable installを暗黙に必要としない状態を維持する。旧経路をdelegationへ切り替えるのはM1/M2の残作業として、出力hash比較と同じcommitで行う。
+
+2026-09-17：初回の逐次runnerはScripted Policyのみとする。これによりGemini API費用やTestnet注文なしで、重複slot、stale応答、費用上限、連続応答不能の安全動作を検証できる。通常Gemini API、SQLite再開、Testnet adapterはこのfixture条件と明示予算を満たす次段階まで接続しない。
+
 ## Surprises & Discoveries
 
 
@@ -62,6 +66,10 @@ BTC価格取得は `binance-btcusdt-futures-research/download_binance_klines.py`
 Gemini Batchは今回すでに実装されている。過去の「adapter未実装」という説明は現状には適用しない。ただし独立50地点を一括送信する仕組みを、前の約定結果に依存する単一口座の将来判断へ流用できない。逐次判断を基本とし、Batchは独立した口座・実験間の同じステップを束ねる場合だけ将来の選択肢とする。
 
 全体テストは今回 `185 passed in 3.02s`。これは既存経路の回帰確認であり、本書で提案する継続管理の実装済み証拠ではない。研究成果物、APIキー、raw応答、SQLite、仮想環境はGitに含めない。
+
+2026-09-17：sandbox内でpytestが作成するbasetempは、実行終了時の走査で`WinError 5`になる。テスト本体の失敗ではなくACL境界であり、通常権限で`$env:TEMP`配下を指定すると既存185件と新規26件が正常終了した。以降はこのコマンドでコード不合格と環境ACLを区別する。
+
+2026-09-17：初期実装中にDecimalの`copy_sign`を符号比較として使うと、絶対値も比較されて同方向の追加まで反転と誤判定した。`quantity > 0`の真偽値を比較する実装へ改め、追加・縮小・反転の受入テストで固定した。
 
 ## Architecture and Directory Boundaries
 
@@ -290,18 +298,21 @@ AccountSnapshotはposition_version、signed_quantity、average_entry_price、cas
 ## Concrete Steps
 
 
-以下は将来実装するCLI契約であり、今は存在しない。作業ディレクトリはrepository root。M1/M2では既存環境を使ってlocal packageをinstallする。
+以下は実装済みまたは将来実装するCLI契約である。作業ディレクトリはrepository root。M1/M2では既存環境を使ってlocal packageをinstallする。
 
-    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pip install -e ".\trading-core[test,gemini,hyperliquid]"
+    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pip install -e ".\trading-core"
     .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pip install -e ".\llm-position-management[test]"
     .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m trading_core.cli data verify --catalog trading-core\data\catalog.json --inputs llm-position-management\configs\inputs.json
     .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m llm_position_management.cli validate-config --config llm-position-management\configs\pilot.json
-    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m llm_position_management.cli replay --config llm-position-management\configs\fixture.json --policy scripted --output llm-position-management\data\fixture-run
-    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m llm_position_management.cli report --run-dir llm-position-management\data\fixture-run
+    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m llm_position_management.cli replay --config llm-position-management\configs\fixture.json --output llm-position-management\data\fixture-run
 
 `inputs.json` はM1で登録した実在dataset参照を生成して使う。`fixture.json` はテストの10:00〜10:25市場データとscripted判断列を参照する公開configとし、外部APIなしで最後まで動く。`pilot.json` はallow_paid_api=falseを初期値とし、CLIの実行だけで課金を有効にしない。
 
-    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pytest trading-core\tests llm-position-management\tests hyperliquid-ai-trader\tests -q --basetemp .pytest-position-management -p no:cacheprovider
+2026-09-17にfixture replayを実行した。`decision_count=5`、`fill_count=4`、`hold=1`、最終signed quantity=0であり、`run_manifest.json`は`status=complete`、SQLiteの`journal_mode`は`wal`、decision rowsは5だった。これはfees=0の動作fixtureであり、収益性の結果ではない。
+
+    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pytest trading-core\tests -q --basetemp $env:TEMP\hl-core -p no:cacheprovider
+    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pytest llm-position-management\tests -q --basetemp $env:TEMP\hl-position -p no:cacheprovider
+    .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m pytest hyperliquid-ai-trader\tests -q --basetemp $env:TEMP\hl-legacy -p no:cacheprovider
     git diff --check
 
 EDA側の依存を含む既存環境で `binance-btcusdt-futures-research/tests` も別途実行する。環境の存在を確認し、依存が無いときに他projectへ暗黙installしない。Windows ACLで失敗した場合は新しい専用basetempで実行し、権限問題とテスト不合格を区別する。
@@ -340,6 +351,6 @@ LLMの理由文は観測根拠であり事実の証明ではない。引用し�
 ## Outcomes & Retrospective
 
 
-2026-09-17時点では詳細方針の作成と既存コードの全テスト確認を完了した。新 `trading-core/` と `llm-position-management/` はまだ作成していない。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。実装開始はM0→M1→M2→M3の順とし、共通化の同等性を確認した後に継続管理へ進む。
+2026-09-17時点で、新`trading-core/`と`llm-position-management/`の最小実装を追加した。`trading-core`はhash固定dataset catalog、差分注文計画、Decimal cost、時系列一建玉Simulatorを持つ。`llm-position-management`はstrict parser、scripted sequential runner、SQLite WALのrecovery、原子的なoffline replay成果物を持つ。M3/M4は受入テストで完了したが、M1/M2の旧経路移設、M5のGemini・実取引照合、M6の比較研究、M7のshadow/Testnetは未完了である。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。
 
-変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。
+変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。2026-09-17 実装更新。互換基準、new coreのM3/M4、Scripted-only M5、offline report、ACL回避手順と未完了範囲を反映した。

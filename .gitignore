@@ -224,6 +224,13 @@ hyperliquid-ai-trader/data/
 hyperliquid-ai-trader/logs/
 hyperliquid-ai-trader/reports/
 hyperliquid-ai-trader/.pytest-*/
+
+# Shared trading core and position-management runtime artifacts.
+trading-core/data/
+trading-core/.pytest-*/
+llm-position-management/data/
+llm-position-management/reports/
+llm-position-management/.pytest-*/
 .review-*/
 
 # Binance BTCUSDT futures research: verified but reproducible local downloads.
