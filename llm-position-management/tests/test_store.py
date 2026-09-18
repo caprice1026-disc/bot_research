@@ -232,6 +232,30 @@ def test_restart_executes_a_persisted_pending_safe_close(tmp_path: Path) -> None
     assert resumed.final_snapshot.signed_quantity == Decimal("0")
 
 
+def test_stop_that_resolves_a_pending_safe_close_claims_the_slot_across_restart(tmp_path: Path) -> None:
+    store = RunStore(tmp_path / "run.db")
+    first = _runner(store, _OpenThenConnectionErrors())
+    resolved = first.run(
+        [
+            _tick(0),
+            _tick(300_000),
+            _tick(600_000),
+            _tick(900_000),
+            _tick(1_200_000, "48000", low="48000", high="50000"),
+        ]
+    )
+
+    resumed = _runner(
+        store,
+        ScriptedPolicy({"fixture:1200000": _payload("fixture:1200000", "set_target", "0.5", "47000")}),
+    ).run([_tick(1_200_000, "48000", low="48000", high="50000")])
+
+    assert resolved.records[-1].status == "safe_close_already_flat"
+    assert resumed.final_snapshot.signed_quantity == Decimal("0")
+    assert resumed.fill_count == 2
+    assert [record.decision_id for record in resumed.records].count("fixture:1200000") == 1
+
+
 def test_restart_gap_since_the_persisted_tick_marks_the_report_partial(tmp_path: Path) -> None:
     store = RunStore(tmp_path / "run.db")
     _runner(store, ScriptedPolicy({"fixture:0": _payload("fixture:0", "set_target", "0.5", "49000")})).run([_tick(0)])

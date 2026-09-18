@@ -423,16 +423,22 @@ class PositionRunner:
         if not self._pending_safe_close:
             return False
         snapshot = self._account.snapshot(tick.timestamp_ms)
-        if snapshot.signed_quantity == 0:
-            self._pending_safe_close = False
-            self._persist_market_state(tick, ())
-            return True
-        self._pending_safe_close = False
         decision_id = f"{self._config.run_id}:{tick.timestamp_ms}"
         if decision_id in self._seen_slots:
             decision_id = f"{decision_id}:safe-close"
         self._seen_slots.add(decision_id)
         observation = build_observation(snapshot, tick, self._limits, previous_status="safe_close_pending")
+        if snapshot.signed_quantity == 0:
+            self._pending_safe_close = False
+            self._record(
+                decision_id=decision_id,
+                decision_tick=tick,
+                execution_tick=tick,
+                status="safe_close_already_flat",
+                observation=observation,
+            )
+            return True
+        self._pending_safe_close = False
         self._safe_close(
             decision_id,
             tick,
