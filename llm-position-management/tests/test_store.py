@@ -5,6 +5,7 @@ import sqlite3
 import pytest
 
 from llm_position_management.policy import ScriptedPolicy
+from llm_position_management.report import build_report
 from llm_position_management.runner import PositionRunner, RunnerConfig
 from llm_position_management.store import RunStore, StoreError
 from trading_core.accounting.models import AccountSnapshot
@@ -62,7 +63,7 @@ def test_restart_uses_saved_position_and_never_replays_an_existing_slot(tmp_path
     )
     result = second.run([_tick(0), _tick(300_000)])
 
-    assert [record.decision_id for record in result.records] == ["fixture:300000"]
+    assert [record.decision_id for record in result.records] == ["fixture:0", "fixture:300000"]
     assert result.final_snapshot.signed_quantity == Decimal("0.0025")
     assert store.decision_ids("fixture") == {"fixture:0", "fixture:300000"}
 
@@ -153,3 +154,23 @@ def test_schema_v1_database_is_migrated_to_the_stateful_run_schema(tmp_path: Pat
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
     assert version == 2
     assert {"runner_state", "account_events", "model_requests"} <= tables
+
+
+def test_resumed_run_reports_the_same_decisions_events_costs_and_account_as_an_uninterrupted_run(tmp_path: Path) -> None:
+    ticks = [_tick(0), _tick(300_000), _tick(600_000)]
+    decisions = {
+        "fixture:0": _payload("fixture:0", "set_target", "0.5", "49000"),
+        "fixture:300000": _payload("fixture:300000", "hold", None, None),
+        "fixture:600000": _payload("fixture:600000", "set_target", "0", None),
+    }
+    uninterrupted = _runner(RunStore(tmp_path / "uninterrupted.db"), ScriptedPolicy(decisions)).run(ticks)
+
+    resumed_store = RunStore(tmp_path / "resumed.db")
+    _runner(resumed_store, ScriptedPolicy(decisions)).run(ticks[:2])
+    resumed = _runner(resumed_store, ScriptedPolicy(decisions)).run(ticks[2:])
+
+    assert resumed.records == uninterrupted.records
+    assert resumed.events == uninterrupted.events
+    assert resumed.model_cost_usd == uninterrupted.model_cost_usd
+    assert resumed.final_snapshot == uninterrupted.final_snapshot
+    assert build_report(resumed) == build_report(uninterrupted)

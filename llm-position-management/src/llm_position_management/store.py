@@ -210,6 +210,16 @@ class RunStore:
         with self._connect() as connection:
             return {row[0] for row in connection.execute("SELECT decision_id FROM decisions WHERE run_id = ?", (run_id,))}
 
+    def decision_payloads(self, run_id: str) -> tuple[dict[str, Any], ...]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT record_json FROM decisions WHERE run_id = ? ORDER BY timestamp_ms, rowid", (run_id,)
+            ).fetchall()
+        try:
+            return tuple(json.loads(row[0]) for row in rows)
+        except (TypeError, json.JSONDecodeError) as error:
+            raise StoreError("persisted decision record is invalid") from error
+
     def claimed_ids(self, run_id: str) -> set[str]:
         """Return slots with a saved result or an externally submitted unknown request."""
 

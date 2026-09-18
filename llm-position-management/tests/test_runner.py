@@ -241,3 +241,40 @@ def test_response_is_not_executed_when_its_position_stops_out_while_waiting() ->
     assert result.records[-1].status == "stale_position"
     assert result.final_snapshot.signed_quantity == Decimal("0")
     assert len([event for event in result.events if event.kind == "fill"]) == 2
+
+
+def test_third_invalid_response_closes_at_the_first_market_tick_after_receipt() -> None:
+    invalid = {"schema_version": 1}
+    policy = ScriptedPolicy(
+        {
+            "fixture:0": _payload("fixture:0", "set_target", "0.5", "49000"),
+            "fixture:300000": PolicyResponse(invalid, 300_000, Decimal("0")),
+            "fixture:600000": PolicyResponse(invalid, 600_000, Decimal("0")),
+            "fixture:900000": PolicyResponse(invalid, 959_000, Decimal("0")),
+        }
+    )
+
+    result = _runner(policy).run(
+        [_tick(0, "50000"), _tick(300_000, "50000"), _tick(600_000, "50000"), _tick(900_000, "50000"), _tick(960_000, "51000")]
+    )
+
+    assert result.records[-1].status == "forced_safe_close"
+    assert result.records[-1].execution_timestamp_ms == 960_000
+    assert result.records[-1].events[0].price == Decimal("51000")
+
+
+def test_valid_response_is_not_executed_across_a_market_data_gap() -> None:
+    policy = ScriptedPolicy(
+        {
+            "fixture:0": PolicyResponse(
+                payload=_payload("fixture:0", "set_target", "0.5", "49000"),
+                received_at_ms=59_000,
+                estimated_cost_usd=Decimal("0"),
+            )
+        }
+    )
+
+    result = _runner(policy).run([_tick(0, "50000"), _tick(300_000, "51000")])
+
+    assert result.records[0].status == "market_data_gap"
+    assert result.final_snapshot.signed_quantity == Decimal("0")

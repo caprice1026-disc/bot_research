@@ -34,12 +34,13 @@ class RunnerConfig:
     decision_interval_ms: int
     max_response_age_ms: int
     max_model_cost_usd: Decimal
+    max_market_gap_ms: int = 60_000
 
     def __post_init__(self) -> None:
         if not self.run_id:
             raise RunnerError("run_id is required")
-        if self.decision_interval_ms <= 0 or self.max_response_age_ms < 0:
-            raise RunnerError("decision interval and response age must be non-negative")
+        if self.decision_interval_ms <= 0 or self.max_response_age_ms < 0 or self.max_market_gap_ms <= 0:
+            raise RunnerError("decision interval and market timing limits must be positive")
         if not self.max_model_cost_usd.is_finite() or self.max_model_cost_usd < 0:
             raise RunnerError("max_model_cost_usd must be finite and non-negative")
 
@@ -85,6 +86,46 @@ def _target_from_decision(decision: TargetDecision) -> PositionTarget:
     )
 
 
+def _event_from_payload(payload: dict[str, object]) -> AccountEvent:
+    return AccountEvent(
+        kind=str(payload["kind"]),
+        timestamp_ms=int(payload["timestamp_ms"]),
+        quantity=Decimal(str(payload["quantity"])),
+        price=Decimal(str(payload["price"])) if payload["price"] is not None else None,
+        amount=Decimal(str(payload["amount"])),
+        reason=str(payload["reason"]) if payload["reason"] is not None else None,
+    )
+
+
+def _plan_from_payload(payload: dict[str, object] | None) -> PlanResult | None:
+    if payload is None:
+        return None
+    return PlanResult(
+        status=str(payload["status"]),
+        reason=str(payload["reason"]) if payload["reason"] is not None else None,
+        delta_quantity=Decimal(str(payload["delta_quantity"])),
+        reduce_only=bool(payload["reduce_only"]),
+        target_quantity=Decimal(str(payload["target_quantity"])),
+        stop_price=Decimal(str(payload["stop_price"])) if payload["stop_price"] is not None else None,
+        expected_cost=Decimal(str(payload["expected_cost"])),
+        intent_id=str(payload["intent_id"]),
+    )
+
+
+def _record_from_payload(payload: dict[str, object]) -> DecisionRecord:
+    timestamp_ms = int(payload["timestamp_ms"])
+    return DecisionRecord(
+        decision_id=str(payload["decision_id"]),
+        timestamp_ms=timestamp_ms,
+        execution_timestamp_ms=int(payload.get("execution_timestamp_ms", timestamp_ms)),
+        status=str(payload["status"]),
+        plan=_plan_from_payload(payload["plan"]),
+        observation=dict(payload["observation"]),
+        events=tuple(_event_from_payload(event) for event in payload["events"]),
+        model_cost_usd=Decimal(str(payload["model_cost_usd"])),
+    )
+
+
 class PositionRunner:
     """One account, one ordered market stream, and at most one response per slot."""
 
@@ -126,6 +167,7 @@ class PositionRunner:
             self._model_cost = store.total_model_cost(config.run_id)
             self._reserved_model_cost = store.reserved_model_cost(config.run_id)
             self._events = list(store.account_events(config.run_id))
+            self._records = [_record_from_payload(payload) for payload in store.decision_payloads(config.run_id)]
         self._fill_count = sum(event.kind == "fill" for event in self._events)
 
     def _persist_market_state(self, tick: MarketTick, events: tuple[AccountEvent, ...]) -> None:
@@ -221,15 +263,26 @@ class PositionRunner:
         self,
         decision_id: str,
         decision_tick: MarketTick,
-        execution_tick: MarketTick,
+        execution_tick: MarketTick | None,
         observation: dict[str, object],
         status: str,
         *,
         model_cost_usd: Decimal,
     ) -> None:
         self._consecutive_failures += 1
-        snapshot = self._account.snapshot(execution_tick.timestamp_ms)
+        record_tick = execution_tick or decision_tick
+        snapshot = self._account.snapshot(record_tick.timestamp_ms)
         if self._consecutive_failures >= 3 and snapshot.signed_quantity != 0:
+            if execution_tick is None:
+                self._record(
+                    decision_id=decision_id,
+                    decision_tick=decision_tick,
+                    execution_tick=record_tick,
+                    status="safe_close_unavailable",
+                    observation=observation,
+                    model_cost_usd=model_cost_usd,
+                )
+                return
             self._safe_close(
                 decision_id,
                 decision_tick,
@@ -241,7 +294,7 @@ class PositionRunner:
         self._record(
             decision_id=decision_id,
             decision_tick=decision_tick,
-            execution_tick=execution_tick,
+            execution_tick=record_tick,
             status=status,
             observation=observation,
             model_cost_usd=model_cost_usd,
@@ -267,7 +320,7 @@ class PositionRunner:
             self._failure(
                 decision_id,
                 decision_tick,
-                decision_tick,
+                None,
                 observation,
                 "invalid_cost_reservation",
                 model_cost_usd=Decimal("0"),
@@ -293,7 +346,7 @@ class PositionRunner:
             self._failure(
                 decision_id,
                 decision_tick,
-                decision_tick,
+                None,
                 observation,
                 "model_request_unknown",
                 model_cost_usd=Decimal("0"),
@@ -306,7 +359,7 @@ class PositionRunner:
             self._failure(
                 decision_id,
                 decision_tick,
-                decision_tick,
+                None,
                 observation,
                 "invalid_response_cost",
                 model_cost_usd=Decimal("0"),
@@ -324,6 +377,13 @@ class PositionRunner:
             if ticks[index].timestamp_ms >= received_at_ms:
                 return index
         return None
+
+    @staticmethod
+    def _has_market_data_gap(ticks: list[MarketTick], start: int, end: int, max_gap_ms: int) -> bool:
+        return any(
+            ticks[index].timestamp_ms - ticks[index - 1].timestamp_ms > max_gap_ms
+            for index in range(start + 1, end + 1)
+        )
 
     def run(
         self,
@@ -358,27 +418,46 @@ class PositionRunner:
             if response is None:
                 index += 1
                 continue
-            if response.received_at_ms < decision_tick.timestamp_ms:
+            if not isinstance(response.received_at_ms, int):
                 self._failure(
                     decision_id,
                     decision_tick,
-                    decision_tick,
+                    None,
                     observation,
                     "invalid_response",
                     model_cost_usd=response.estimated_cost_usd,
                 )
                 index += 1
                 continue
+            execution_index = self._first_executable_index(sequence, index, response.received_at_ms)
+            execution_tick = None
+            if execution_index is not None:
+                for advanced_index in range(index + 1, execution_index + 1):
+                    execution_tick = sequence[advanced_index]
+                    latest_tick = execution_tick
+                    self._advance_tick(execution_tick, funding.get(execution_tick.timestamp_ms))
+                execution_tick = sequence[execution_index]
+            if response.received_at_ms < decision_tick.timestamp_ms:
+                self._failure(
+                    decision_id,
+                    decision_tick,
+                    execution_tick,
+                    observation,
+                    "invalid_response",
+                    model_cost_usd=response.estimated_cost_usd,
+                )
+                index = (execution_index + 1) if execution_index is not None else index + 1
+                continue
             if response.received_at_ms > decision_tick.timestamp_ms + self._config.max_response_age_ms:
                 self._failure(
                     decision_id,
                     decision_tick,
-                    decision_tick,
+                    execution_tick,
                     observation,
                     "stale_response",
                     model_cost_usd=response.estimated_cost_usd,
                 )
-                index += 1
+                index = (execution_index + 1) if execution_index is not None else index + 1
                 continue
             try:
                 if response.payload is None:
@@ -388,16 +467,15 @@ class PositionRunner:
                 self._failure(
                     decision_id,
                     decision_tick,
-                    decision_tick,
+                    execution_tick,
                     observation,
                     "invalid_response",
                     model_cost_usd=response.estimated_cost_usd,
                 )
-                index += 1
+                index = (execution_index + 1) if execution_index is not None else index + 1
                 continue
             target = freeze_target_quantity(_target_from_decision(decision), _market_snapshot(decision_tick), self._limits)
-            execution_index = self._first_executable_index(sequence, index, response.received_at_ms)
-            if execution_index is None:
+            if execution_tick is None or execution_index is None:
                 self._record(
                     decision_id=decision_id,
                     decision_tick=decision_tick,
@@ -408,11 +486,18 @@ class PositionRunner:
                 )
                 index += 1
                 continue
-            for advanced_index in range(index + 1, execution_index + 1):
-                execution_tick = sequence[advanced_index]
-                latest_tick = execution_tick
-                self._advance_tick(execution_tick, funding.get(execution_tick.timestamp_ms))
-            execution_tick = sequence[execution_index]
+            if self._has_market_data_gap(sequence, index, execution_index, self._config.max_market_gap_ms):
+                self._consecutive_failures = 0
+                self._record(
+                    decision_id=decision_id,
+                    decision_tick=decision_tick,
+                    execution_tick=execution_tick,
+                    status="market_data_gap",
+                    observation=observation,
+                    model_cost_usd=response.estimated_cost_usd,
+                )
+                index = execution_index + 1
+                continue
             execution_snapshot = self._account.snapshot(execution_tick.timestamp_ms)
             if execution_snapshot.position_version != snapshot.position_version:
                 self._record(

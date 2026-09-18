@@ -135,6 +135,7 @@ def replay(config_path: Path, output: Path) -> dict[str, Any]:
             decision_interval_ms=int(config["decision_interval_ms"]),
             max_response_age_ms=int(config["max_response_age_ms"]),
             max_model_cost_usd=_decimal(config["max_model_cost_usd"], name="max_model_cost_usd"),
+            max_market_gap_ms=int(config.get("max_market_gap_ms", 60_000)),
         ),
         policy=ScriptedPolicy(decisions),
         store=RunStore(temporary / "run.db"),
