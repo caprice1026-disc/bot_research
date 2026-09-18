@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from llm_position_management.policy import PolicyResponse, ScriptedPolicy
+from llm_position_management.report import build_report
 from llm_position_management.runner import PositionRunner, RunnerConfig
 from trading_core.accounting.models import AccountSnapshot
 from trading_core.execution.position_plan import ExecutionCosts, RiskLimits
@@ -64,6 +65,7 @@ def _runner(policy: object, **overrides: object) -> PositionRunner:
         "decision_interval_ms": 300_000,
         "max_response_age_ms": 60_000,
         "max_model_cost_usd": Decimal("1"),
+        "max_market_gap_ms": 300_000,
     }
     values.update(overrides)
     return PositionRunner(
@@ -274,7 +276,61 @@ def test_valid_response_is_not_executed_across_a_market_data_gap() -> None:
         }
     )
 
-    result = _runner(policy).run([_tick(0, "50000"), _tick(300_000, "51000")])
+    result = _runner(policy, max_market_gap_ms=60_000).run([_tick(0, "50000"), _tick(300_000, "51000")])
 
     assert result.records[0].status == "market_data_gap"
+    assert result.final_snapshot.signed_quantity == Decimal("0")
+
+
+class _OpenThenConnectionErrors:
+    def reserve_cost_usd(self, observation: dict[str, object], request_id: str) -> Decimal:
+        return Decimal("0")
+
+    def decide(self, observation: dict[str, object], request_id: str) -> PolicyResponse:
+        if request_id == "fixture:0":
+            return PolicyResponse(_payload(request_id, "set_target", "0.5", "49000"), 0, Decimal("0"))
+        raise ConnectionError("fixture network failure")
+
+
+def test_pending_safe_close_from_connection_errors_executes_at_the_next_tick() -> None:
+    result = _runner(_OpenThenConnectionErrors()).run(
+        [_tick(timestamp_ms, "51000" if timestamp_ms == 960_000 else "50000") for timestamp_ms in range(0, 960_001, 60_000)]
+    )
+
+    assert [record.status for record in result.records][-2:] == ["safe_close_pending", "forced_safe_close"]
+    assert result.records[-1].execution_timestamp_ms == 960_000
+    assert result.records[-1].events[0].price == Decimal("51000")
+    assert result.final_snapshot.signed_quantity == Decimal("0")
+
+
+def test_gap_while_holding_marks_the_result_partial_even_without_a_delayed_response() -> None:
+    policy = ScriptedPolicy({"fixture:0": _payload("fixture:0", "set_target", "0.5", "49000")})
+
+    result = _runner(policy, max_market_gap_ms=60_000).run([_tick(0, "50000"), _tick(60_000, "50000"), _tick(300_000, "51000")])
+
+    report = build_report(result)
+    assert any(event.kind == "market_data_gap" for event in result.events)
+    assert report["status"] == "partial"
+    assert report["market_data_complete"] is False
+
+
+class _OpenThenFailuresThenOpen:
+    def reserve_cost_usd(self, observation: dict[str, object], request_id: str) -> Decimal:
+        return Decimal("0")
+
+    def decide(self, observation: dict[str, object], request_id: str) -> PolicyResponse:
+        if request_id == "fixture:0":
+            return PolicyResponse(_payload(request_id, "set_target", "0.5", "49000"), 0, Decimal("0"))
+        if request_id in {"fixture:300000", "fixture:600000", "fixture:900000"}:
+            raise ConnectionError("fixture network failure")
+        return PolicyResponse(_payload(request_id, "set_target", "0.5", "50000"), 1_200_000, Decimal("0"))
+
+
+def test_pending_safe_close_claims_its_decision_slot_before_a_duplicate_tick() -> None:
+    result = _runner(_OpenThenFailuresThenOpen(), max_market_gap_ms=300_000).run(
+        [_tick(0, "50000"), _tick(300_000, "50000"), _tick(600_000, "50000"), _tick(900_000, "50000"), _tick(1_200_000, "51000"), _tick(1_200_000, "51000")]
+    )
+
+    assert result.records[-1].status == "forced_safe_close"
+    assert result.records[-1].decision_id == "fixture:1200000"
     assert result.final_snapshot.signed_quantity == Decimal("0")

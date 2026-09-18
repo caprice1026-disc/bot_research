@@ -64,6 +64,8 @@ class RunnerResult:
     final_snapshot: AccountSnapshot
     model_cost_usd: Decimal
     fill_count: int
+    pending_safe_close: bool
+    market_data_complete: bool
 
 
 def _market_snapshot(tick: MarketTick) -> MarketSnapshot:
@@ -146,6 +148,7 @@ class PositionRunner:
         self._policy = policy
         self._store = store
         self._records: list[DecisionRecord] = []
+        self._last_market_tick: MarketTick | None = None
         if store is None:
             self._account = PositionAccount(initial, limits, costs)
             self._seen_slots: set[str] = set()
@@ -153,16 +156,23 @@ class PositionRunner:
             self._reserved_model_cost = Decimal("0")
             self._consecutive_failures = 0
             self._events: list[AccountEvent] = []
+            self._pending_safe_close = False
+            self._market_data_complete = True
         else:
             store.begin(config.run_id, config_fingerprint)
             persisted = store.load_state(config.run_id)
             if persisted is None:
                 self._account = PositionAccount(initial, limits, costs)
                 self._consecutive_failures = 0
+                self._pending_safe_close = False
+                self._market_data_complete = True
             else:
                 self._account = PositionAccount(persisted.snapshot, limits, costs)
                 self._account.restore_tick(persisted.tick)
                 self._consecutive_failures = persisted.consecutive_failures
+                self._pending_safe_close = persisted.pending_safe_close
+                self._market_data_complete = persisted.market_data_complete
+                self._last_market_tick = persisted.tick
             self._seen_slots = store.claimed_ids(config.run_id)
             self._model_cost = store.total_model_cost(config.run_id)
             self._reserved_model_cost = store.reserved_model_cost(config.run_id)
@@ -180,11 +190,29 @@ class PositionRunner:
                 tick,
                 consecutive_failures=self._consecutive_failures,
                 model_cost_usd=self._model_cost,
+                pending_safe_close=self._pending_safe_close,
+                market_data_complete=self._market_data_complete,
                 events=events,
             )
 
     def _advance_tick(self, tick: MarketTick, funding_rate: Decimal | None) -> tuple[AccountEvent, ...]:
+        previous_tick = self._last_market_tick
         events = self._account.advance_to(tick, funding_rate=funding_rate)
+        if (
+            previous_tick is not None
+            and tick.timestamp_ms > previous_tick.timestamp_ms
+            and tick.timestamp_ms - previous_tick.timestamp_ms > self._config.max_market_gap_ms
+        ):
+            self._market_data_complete = False
+            events = (
+                AccountEvent(
+                    "market_data_gap",
+                    tick.timestamp_ms,
+                    reason=f"missing_market_data_after_{previous_tick.timestamp_ms}",
+                ),
+                *events,
+            )
+        self._last_market_tick = tick
         self._persist_market_state(tick, events)
         return events
 
@@ -221,6 +249,8 @@ class PositionRunner:
                 execution_tick,
                 consecutive_failures=self._consecutive_failures,
                 model_cost_usd=self._model_cost,
+                pending_safe_close=self._pending_safe_close,
+                market_data_complete=self._market_data_complete,
                 events=events,
             )
 
@@ -274,15 +304,17 @@ class PositionRunner:
         snapshot = self._account.snapshot(record_tick.timestamp_ms)
         if self._consecutive_failures >= 3 and snapshot.signed_quantity != 0:
             if execution_tick is None:
+                self._pending_safe_close = True
                 self._record(
                     decision_id=decision_id,
                     decision_tick=decision_tick,
                     execution_tick=record_tick,
-                    status="safe_close_unavailable",
+                    status="safe_close_pending",
                     observation=observation,
                     model_cost_usd=model_cost_usd,
                 )
                 return
+            self._pending_safe_close = False
             self._safe_close(
                 decision_id,
                 decision_tick,
@@ -385,6 +417,31 @@ class PositionRunner:
             for index in range(start + 1, end + 1)
         )
 
+    def _resolve_pending_safe_close(self, tick: MarketTick) -> bool:
+        """Close at the first known price after an earlier response-less safety failure."""
+
+        if not self._pending_safe_close:
+            return False
+        snapshot = self._account.snapshot(tick.timestamp_ms)
+        if snapshot.signed_quantity == 0:
+            self._pending_safe_close = False
+            self._persist_market_state(tick, ())
+            return True
+        self._pending_safe_close = False
+        decision_id = f"{self._config.run_id}:{tick.timestamp_ms}"
+        if decision_id in self._seen_slots:
+            decision_id = f"{decision_id}:safe-close"
+        self._seen_slots.add(decision_id)
+        observation = build_observation(snapshot, tick, self._limits, previous_status="safe_close_pending")
+        self._safe_close(
+            decision_id,
+            tick,
+            tick,
+            observation,
+            model_cost_usd=Decimal("0"),
+        )
+        return True
+
     def run(
         self,
         ticks: Iterable[MarketTick],
@@ -403,6 +460,9 @@ class PositionRunner:
             decision_tick = sequence[index]
             latest_tick = decision_tick
             self._advance_tick(decision_tick, funding.get(decision_tick.timestamp_ms))
+            if self._resolve_pending_safe_close(decision_tick):
+                index += 1
+                continue
             if decision_tick.timestamp_ms % self._config.decision_interval_ms:
                 index += 1
                 continue
@@ -414,6 +474,16 @@ class PositionRunner:
             snapshot = self._account.snapshot(decision_tick.timestamp_ms)
             previous_status = self._records[-1].status if self._records else None
             observation = build_observation(snapshot, decision_tick, self._limits, previous_status=previous_status)
+            if not self._market_data_complete:
+                self._record(
+                    decision_id=decision_id,
+                    decision_tick=decision_tick,
+                    execution_tick=decision_tick,
+                    status="market_data_incomplete",
+                    observation=observation,
+                )
+                index += 1
+                continue
             response = self._call_policy(observation, decision_id, decision_tick)
             if response is None:
                 index += 1
@@ -539,4 +609,6 @@ class PositionRunner:
             final_snapshot=self._account.snapshot(latest_tick.timestamp_ms),
             model_cost_usd=self._model_cost,
             fill_count=self._fill_count,
+            pending_safe_close=self._pending_safe_close,
+            market_data_complete=self._market_data_complete,
         )

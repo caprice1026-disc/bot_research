@@ -28,6 +28,8 @@ class StoredRunState:
     tick: MarketTick
     consecutive_failures: int
     model_cost_usd: Decimal
+    pending_safe_close: bool
+    market_data_complete: bool
 
 
 def _plain(value: Any) -> Any:
@@ -77,14 +79,14 @@ def _event_from_json(payload: dict[str, Any]) -> AccountEvent:
 class RunStore:
     """One local run database in WAL mode; it does not share any live trader DB."""
 
-    _SCHEMA_VERSION = 2
+    _SCHEMA_VERSION = 3
 
     def __init__(self, path: Path) -> None:
         self.path = path
         path.parent.mkdir(parents=True, exist_ok=True)
         with self._connect() as connection:
             version = connection.execute("PRAGMA user_version").fetchone()[0]
-            if version not in {0, 1, self._SCHEMA_VERSION}:
+            if version not in {0, 1, 2, self._SCHEMA_VERSION}:
                 raise StoreError(f"unsupported run DB schema version: {version}")
             connection.execute("PRAGMA journal_mode=WAL")
             connection.execute(
@@ -117,7 +119,9 @@ class RunStore:
                     snapshot_json TEXT NOT NULL,
                     tick_json TEXT NOT NULL,
                     consecutive_failures INTEGER NOT NULL,
-                    model_cost_usd TEXT NOT NULL
+                    model_cost_usd TEXT NOT NULL,
+                    pending_safe_close INTEGER NOT NULL DEFAULT 0,
+                    market_data_complete INTEGER NOT NULL DEFAULT 1
                 )"""
             )
             connection.execute(
@@ -138,6 +142,13 @@ class RunStore:
                     PRIMARY KEY (run_id, request_id)
                 )"""
             )
+            if version == 2:
+                connection.execute(
+                    "ALTER TABLE runner_state ADD COLUMN pending_safe_close INTEGER NOT NULL DEFAULT 0"
+                )
+                connection.execute(
+                    "ALTER TABLE runner_state ADD COLUMN market_data_complete INTEGER NOT NULL DEFAULT 1"
+                )
             connection.execute(f"PRAGMA user_version={self._SCHEMA_VERSION}")
 
     @contextmanager
@@ -167,17 +178,32 @@ class RunStore:
         *,
         consecutive_failures: int,
         model_cost_usd: Decimal,
+        pending_safe_close: bool,
+        market_data_complete: bool,
     ) -> None:
         if consecutive_failures < 0:
             raise StoreError("consecutive failures cannot be negative")
         connection.execute(
-            """INSERT INTO runner_state VALUES (?, ?, ?, ?, ?)
+            """INSERT INTO runner_state (
+                   run_id, snapshot_json, tick_json, consecutive_failures, model_cost_usd,
+                   pending_safe_close, market_data_complete
+               ) VALUES (?, ?, ?, ?, ?, ?, ?)
                ON CONFLICT(run_id) DO UPDATE SET
                    snapshot_json = excluded.snapshot_json,
                    tick_json = excluded.tick_json,
                    consecutive_failures = excluded.consecutive_failures,
-                   model_cost_usd = excluded.model_cost_usd""",
-            (run_id, self._json(snapshot), self._json(tick), consecutive_failures, str(model_cost_usd)),
+                   model_cost_usd = excluded.model_cost_usd,
+                   pending_safe_close = excluded.pending_safe_close,
+                   market_data_complete = excluded.market_data_complete""",
+            (
+                run_id,
+                self._json(snapshot),
+                self._json(tick),
+                consecutive_failures,
+                str(model_cost_usd),
+                int(pending_safe_close),
+                int(market_data_complete),
+            ),
         )
 
     def _write_events(
@@ -294,13 +320,14 @@ class RunStore:
     def load_state(self, run_id: str) -> StoredRunState | None:
         with self._connect() as connection:
             row = connection.execute(
-                """SELECT snapshot_json, tick_json, consecutive_failures, model_cost_usd
+                """SELECT snapshot_json, tick_json, consecutive_failures, model_cost_usd,
+                          pending_safe_close, market_data_complete
                    FROM runner_state WHERE run_id = ?""",
                 (run_id,),
             ).fetchone()
             if row is None:
                 row = connection.execute(
-                    """SELECT snapshot_json, tick_json, 0, '0' FROM snapshots
+                    """SELECT snapshot_json, tick_json, 0, '0', 0, 1 FROM snapshots
                        WHERE run_id = ? ORDER BY timestamp_ms DESC, rowid DESC LIMIT 1""",
                     (run_id,),
                 ).fetchone()
@@ -312,6 +339,8 @@ class RunStore:
                 tick=_tick_from_json(json.loads(row[1])),
                 consecutive_failures=int(row[2]),
                 model_cost_usd=Decimal(row[3]),
+                pending_safe_close=bool(row[4]),
+                market_data_complete=bool(row[5]),
             )
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
             raise StoreError("persisted run state is invalid") from error
@@ -340,6 +369,8 @@ class RunStore:
         *,
         consecutive_failures: int,
         model_cost_usd: Decimal,
+        pending_safe_close: bool,
+        market_data_complete: bool,
         events: tuple[AccountEvent, ...] = (),
     ) -> None:
         with self._connect() as connection:
@@ -350,6 +381,8 @@ class RunStore:
                 tick,
                 consecutive_failures=consecutive_failures,
                 model_cost_usd=model_cost_usd,
+                pending_safe_close=pending_safe_close,
+                market_data_complete=market_data_complete,
             )
             self._write_events(connection, run_id, events)
 
@@ -362,6 +395,8 @@ class RunStore:
         *,
         consecutive_failures: int,
         model_cost_usd: Decimal,
+        pending_safe_close: bool,
+        market_data_complete: bool,
         events: tuple[AccountEvent, ...],
     ) -> None:
         record_json = self._json(record)
@@ -384,6 +419,8 @@ class RunStore:
                     tick,
                     consecutive_failures=consecutive_failures,
                     model_cost_usd=model_cost_usd,
+                    pending_safe_close=pending_safe_close,
+                    market_data_complete=market_data_complete,
                 )
                 self._write_events(connection, run_id, events)
         except sqlite3.IntegrityError as error:

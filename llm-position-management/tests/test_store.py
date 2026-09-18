@@ -1,10 +1,12 @@
 from decimal import Decimal
+from dataclasses import asdict
+import json
 from pathlib import Path
 import sqlite3
 
 import pytest
 
-from llm_position_management.policy import ScriptedPolicy
+from llm_position_management.policy import PolicyResponse, ScriptedPolicy
 from llm_position_management.report import build_report
 from llm_position_management.runner import PositionRunner, RunnerConfig
 from llm_position_management.store import RunStore, StoreError
@@ -35,12 +37,12 @@ def _payload(decision_id: str, intent: str, fraction: str | None, stop: str | No
     return {"schema_version": 1, "decision_id": decision_id, "intent": intent, "target_fraction": fraction, "stop_price": stop, "thesis": "fixture", "invalidation": "fixture"}
 
 
-def _runner(store: RunStore, policy: ScriptedPolicy) -> PositionRunner:
+def _runner(store: RunStore, policy: ScriptedPolicy, *, max_market_gap_ms: int = 300_000) -> PositionRunner:
     return PositionRunner(
         initial=_initial(),
         limits=_limits(),
         costs=ExecutionCosts(fee_rate=Decimal("0"), spread_bps=Decimal("0"), slippage_bps=Decimal("0")),
-        config=RunnerConfig("fixture", 300_000, 60_000, Decimal("0")),
+        config=RunnerConfig("fixture", 300_000, 60_000, Decimal("0"), max_market_gap_ms=max_market_gap_ms),
         policy=policy,
         store=store,
         config_fingerprint="f" * 64,
@@ -129,7 +131,7 @@ def test_store_persists_actual_cost_after_a_pre_call_reservation(tmp_path: Path)
         initial=_initial(),
         limits=_limits(),
         costs=ExecutionCosts(fee_rate=Decimal("0"), spread_bps=Decimal("0"), slippage_bps=Decimal("0")),
-        config=RunnerConfig("fixture", 300_000, 60_000, Decimal("1")),
+        config=RunnerConfig("fixture", 300_000, 60_000, Decimal("1"), max_market_gap_ms=300_000),
         policy=_UnderReservedPolicy(),
         store=store,
         config_fingerprint="f" * 64,
@@ -152,8 +154,39 @@ def test_schema_v1_database_is_migrated_to_the_stateful_run_schema(tmp_path: Pat
     with sqlite3.connect(path) as connection:
         version = connection.execute("PRAGMA user_version").fetchone()[0]
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
-    assert version == 2
+    assert version == 3
     assert {"runner_state", "account_events", "model_requests"} <= tables
+
+
+def test_schema_v2_state_migrates_with_safe_defaults(tmp_path: Path) -> None:
+    path = tmp_path / "v2.db"
+    with sqlite3.connect(path) as connection:
+        connection.execute("PRAGMA user_version=2")
+        connection.execute(
+            """CREATE TABLE runner_state (
+                run_id TEXT PRIMARY KEY,
+                snapshot_json TEXT NOT NULL,
+                tick_json TEXT NOT NULL,
+                consecutive_failures INTEGER NOT NULL,
+                model_cost_usd TEXT NOT NULL
+            )"""
+        )
+        connection.execute(
+            "INSERT INTO runner_state VALUES (?, ?, ?, ?, ?)",
+            (
+                "fixture",
+                json.dumps(asdict(_initial()), default=str),
+                json.dumps(asdict(_tick(0)), default=str),
+                0,
+                "0",
+            ),
+        )
+
+    migrated = RunStore(path).load_state("fixture")
+
+    assert migrated is not None
+    assert migrated.pending_safe_close is False
+    assert migrated.market_data_complete is True
 
 
 def test_resumed_run_reports_the_same_decisions_events_costs_and_account_as_an_uninterrupted_run(tmp_path: Path) -> None:
@@ -174,3 +207,38 @@ def test_resumed_run_reports_the_same_decisions_events_costs_and_account_as_an_u
     assert resumed.model_cost_usd == uninterrupted.model_cost_usd
     assert resumed.final_snapshot == uninterrupted.final_snapshot
     assert build_report(resumed) == build_report(uninterrupted)
+
+
+class _OpenThenConnectionErrors:
+    def reserve_cost_usd(self, observation: dict[str, object], request_id: str) -> Decimal:
+        return Decimal("0")
+
+    def decide(self, observation: dict[str, object], request_id: str) -> PolicyResponse:
+        if request_id == "fixture:0":
+            return PolicyResponse(_payload(request_id, "set_target", "0.5", "49000"), 0, Decimal("0"))
+        raise ConnectionError("fixture network failure")
+
+
+def test_restart_executes_a_persisted_pending_safe_close(tmp_path: Path) -> None:
+    store = RunStore(tmp_path / "run.db")
+    first = _runner(store, _OpenThenConnectionErrors())
+    pending = first.run([_tick(timestamp_ms) for timestamp_ms in range(0, 900_001, 60_000)])
+
+    resumed = _runner(store, ScriptedPolicy({})).run([_tick(960_000, "51000")])
+
+    assert pending.records[-1].status == "safe_close_pending"
+    assert resumed.records[-1].status == "forced_safe_close"
+    assert resumed.records[-1].execution_timestamp_ms == 960_000
+    assert resumed.final_snapshot.signed_quantity == Decimal("0")
+
+
+def test_restart_gap_since_the_persisted_tick_marks_the_report_partial(tmp_path: Path) -> None:
+    store = RunStore(tmp_path / "run.db")
+    _runner(store, ScriptedPolicy({"fixture:0": _payload("fixture:0", "set_target", "0.5", "49000")})).run([_tick(0)])
+
+    resumed = _runner(store, ScriptedPolicy({}), max_market_gap_ms=60_000).run([_tick(300_000, "51000")])
+
+    report = build_report(resumed)
+    assert any(event.kind == "market_data_gap" for event in resumed.events)
+    assert report["status"] == "partial"
+    assert report["market_data_complete"] is False

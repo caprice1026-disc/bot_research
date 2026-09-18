@@ -12,7 +12,9 @@ def build_report(result: RunnerResult) -> dict[str, Any]:
     statuses = Counter(record.status for record in result.records)
     snapshot = result.final_snapshot
     return {
-        "status": "ok",
+        "status": "partial" if result.pending_safe_close or not result.market_data_complete else "ok",
+        "pending_safe_close": result.pending_safe_close,
+        "market_data_complete": result.market_data_complete,
         "decision_count": len(result.records),
         "fill_count": result.fill_count,
         "statuses": dict(sorted(statuses.items())),
@@ -29,6 +31,9 @@ def build_report(result: RunnerResult) -> dict[str, Any]:
 def render_report_markdown(report: dict[str, Any]) -> str:
     lines = ["# Position-management offline replay", ""]
     for key in (
+        "status",
+        "pending_safe_close",
+        "market_data_complete",
         "decision_count",
         "fill_count",
         "final_equity",

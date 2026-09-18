@@ -22,7 +22,8 @@
 - [ ] M2（部分完了）：新方式用のDecimal execution-cost、accounting、position-delta基盤を共有側へ置いた。既存Testnet adapter、旧Risk、旧Simulator、provider送信の移設と互換wrapperは未完了である。
 - [x] (2026-09-17) M3：厳格な`target_position` schema、固定anchorによる一回限りの数量化、差分計画、反転拒否、stop・notional・stop-risk制約を実装した。
 - [x] (2026-09-18) M4：open/hold/add/reduce/close、SL gap、Funding、保持上限、終端未決済に加え、含み損・fee・Fundingを含む日次損失/DD到達時の強制決済を扱う一建玉Simulatorを実装した。
-- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、受信後の市場tickでの3連続無効応答の安全決済、60秒超の市場tick欠損時の新規執行拒否、呼出前のモデル費用予約、SQLite WAL run DBによる市場イベント・最新口座状態・全判断履歴・連続失敗数の再起動照合、原子的なoffline成果物を実装した。Gemini通常APIと実取引adapterは未実装である。
+- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、受信後の市場tickでの3連続無効応答の安全決済、応答を得られない場合の保留決済と次tick/restartでの実行、全tick間・再開境界の60秒超市場欠損検出、欠損時の新規執行拒否と`partial`報告、呼出前のモデル費用予約、SQLite WAL run DBによる市場イベント・最新口座状態・全判断履歴・連続失敗数の再起動照合、原子的なoffline成果物を実装した。Gemini通常APIと実取引adapterは未実装である。
+- [x] (2026-09-18) 追加レビューの2件を回帰fixtureで固定した。通信例外3回後の次tick/restart安全決済、保有中・再開境界のtick欠損検出と`partial`報告、v2 SQLite stateのv3移行を検証した。
 - [ ] M6（部分完了）：fixture replayのJSON/Markdown reportを実装した。no-trade・固定方針・LLM各群の公平な比較と設定freezeは未実装である。
 - [ ] M7：将来データのshadow運転を実施し、別途承認した場合だけTestnetへ接続する。
 
@@ -64,6 +65,8 @@ BTC価格取得は `binance-btcusdt-futures-research/download_binance_klines.py`
 
 2026-09-18：異常・stale応答の3連続時も、保護決済は応答受領後の最初の市場tickでのみ行う。市場tickが欠けた場合、古い判断による新規・追加は拒否するが、保護決済は利用可能になった最初の市場価格まで待つ。再開結果はDB内の全判断・全イベント・全費用を復元し、中断なしの同一runと同じ集計範囲にする。
 
+2026-09-18：通信例外など受信時刻を得られない3回目の失敗は、古い価格で決済せず`pending_safe_close`としてSQLiteへ保存する。次の既知tickで保留を先に決済し、再起動しても同じ状態から再開する。市場tickの欠損は判断待ち区間だけでなく、すべての連続tickと再開境界で検出する。欠損期間のstop/fillは復元不能なので、通常のモデル判断を止め、口座結果を`partial`として損益採否から除外する。
+
 ## Surprises & Discoveries
 
 
@@ -80,6 +83,8 @@ Gemini Batchは今回すでに実装されている。過去の「adapter未実�
 2026-09-18：最初のfixtureは判断slotでのfillだけを成果物へ出していたため、1分後のSLがSQLiteの最新snapshotにもfill明細にも残らなかった。また、Scripted Policyの即時応答だけでは、応答待ちの価格変動とモデル費用の事前上限を検証できなかった。市場イベント台帳、state row、費用予約、受信時刻を分けた回帰fixtureを追加した。
 
 2026-09-18：valid応答だけは受信後に時間を進めていたが、invalid/stale応答による安全決済は判断時刻の価格を使っていた。また、再開時にeventsと費用だけを復元してdecision recordを復元しなかったため、Reportの分子が異なる状態になった。異常経路も受信後tickへ統一し、record JSONを復元するfixtureで中断なしrunとの完全一致を固定した。
+
+2026-09-18：受信時刻を持たない通信例外は後続tickがないと安全決済を実行できず、`safe_close_unavailable`を記録するだけで終了していた。また、欠損検査は応答待ちの内部tick進行に限定され、保有中の通常tickや再開時の最初のtickを検査していなかった。保留状態と市場完全性をrunner stateへ保存し、v2 SQLiteには安全な初期値を付けてv3へ移行する。
 
 ## Architecture and Directory Boundaries
 
@@ -361,6 +366,6 @@ LLMの理由文は観測根拠であり事実の証明ではない。引用し�
 ## Outcomes & Retrospective
 
 
-2026-09-18時点で、新`trading-core/`と`llm-position-management/`の最小実装を追加した。`trading-core`はhash固定dataset catalog、差分注文計画、Decimal cost、時系列一建玉Simulator、保有中のhard Risk強制決済を持つ。`llm-position-management`はstrict parser、Scripted sequential runner、SQLite WALの市場イベント台帳・state recovery・全判断履歴の復元・モデル費用予約、受信後tickのみでの安全決済、欠損市場データでの新規執行拒否、原子的なoffline replay成果物を持つ。M3/M4は受入テストで完了したが、M1/M2の旧経路移設、M5のGemini・実取引照合、M6の比較研究、M7のshadow/Testnetは未完了である。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。
+2026-09-18時点で、新`trading-core/`と`llm-position-management/`の最小実装を追加した。`trading-core`はhash固定dataset catalog、差分注文計画、Decimal cost、時系列一建玉Simulator、保有中のhard Risk強制決済を持つ。`llm-position-management`はstrict parser、Scripted sequential runner、SQLite WALの市場イベント台帳・state recovery・全判断履歴の復元・モデル費用予約、受信後tickのみでの安全決済、通信例外時の保留安全決済、全tick間・再開境界の市場欠損検出、欠損または決済保留を`partial`として示すoffline replay成果物を持つ。M3/M4は受入テストで完了したが、M1/M2の旧経路移設、M5のGemini・実取引照合、M6の比較研究、M7のshadow/Testnetは未完了である。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。
 
-変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。2026-09-17 実装更新。互換基準、new coreのM3/M4、Scripted-only M5、offline report、ACL回避手順と未完了範囲を反映した。2026-09-18 レビュー修正。各tickの口座状態/イベント永続化、応答受信後価格での執行、含み損込みの保有Risk、費用予約、連続失敗数の再開を追加した。2026-09-18 追加レビュー修正。異常応答の安全決済を受信後tickへ統一し、market-gap拒否と累積判断レポート復元を追加した。
+変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。2026-09-17 実装更新。互換基準、new coreのM3/M4、Scripted-only M5、offline report、ACL回避手順と未完了範囲を反映した。2026-09-18 レビュー修正。各tickの口座状態/イベント永続化、応答受信後価格での執行、含み損込みの保有Risk、費用予約、連続失敗数の再開を追加した。2026-09-18 追加レビュー修正。異常応答の安全決済を受信後tickへ統一し、market-gap拒否と累積判断レポート復元を追加した。2026-09-18 追加安全レビュー修正。通信例外の保留安全決済、全tick/restart境界の欠損検査、v3 SQLite state、partial reportを追加した。

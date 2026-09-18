@@ -13,6 +13,7 @@ def _config() -> dict[str, object]:
         "decision_interval_ms": 300000,
         "max_response_age_ms": 60000,
         "max_model_cost_usd": "0",
+        "max_market_gap_ms": 300000,
         "limits": {
             "exposure_anchor_usd": "250",
             "max_position_notional_usd": "250",
