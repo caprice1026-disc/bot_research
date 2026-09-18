@@ -232,6 +232,7 @@ llm-position-management/data/
 llm-position-management/reports/
 llm-position-management/.pytest-*/
 .review-*/
+/.pytest-*/
 
 # Binance BTCUSDT futures research: verified but reproducible local downloads.
 binance-btcusdt-futures-research/raw/

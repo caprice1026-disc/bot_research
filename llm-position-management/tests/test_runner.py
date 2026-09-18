@@ -58,7 +58,7 @@ def _payload(decision_id: str, intent: str, fraction: str | None, stop: str | No
     }
 
 
-def _runner(policy: ScriptedPolicy, **overrides: object) -> PositionRunner:
+def _runner(policy: object, **overrides: object) -> PositionRunner:
     values: dict[str, object] = {
         "run_id": "fixture",
         "decision_interval_ms": 300_000,
@@ -150,3 +150,94 @@ def test_budget_exhaustion_preserves_the_current_protected_position() -> None:
 
     assert result.records[-1].status == "model_budget_exhausted"
     assert result.final_snapshot.signed_quantity > 0
+
+
+class _CountingPolicy:
+    def __init__(self, response: PolicyResponse, reservation: Decimal) -> None:
+        self.response = response
+        self.reservation = reservation
+        self.calls = 0
+
+    def reserve_cost_usd(self, observation: dict[str, object], request_id: str) -> Decimal:
+        return self.reservation
+
+    def decide(self, observation: dict[str, object], request_id: str) -> PolicyResponse:
+        self.calls += 1
+        return self.response
+
+
+def test_budget_reservation_blocks_a_call_before_it_is_made() -> None:
+    policy = _CountingPolicy(
+        PolicyResponse(
+            payload=_payload("fixture:0", "set_target", "0.5", "49000"),
+            received_at_ms=0,
+            estimated_cost_usd=Decimal("2"),
+        ),
+        Decimal("2"),
+    )
+
+    result = _runner(policy, max_model_cost_usd=Decimal("1")).run([_tick(0, "50000"), _tick(300_000, "50000")])
+
+    assert policy.calls == 0
+    assert [record.status for record in result.records] == ["model_budget_exhausted", "model_budget_exhausted"]
+    assert result.model_cost_usd == Decimal("0")
+
+
+def test_incurred_model_cost_is_saved_even_when_it_exceeds_its_reservation() -> None:
+    policy = _CountingPolicy(
+        PolicyResponse(
+            payload=_payload("fixture:0", "set_target", "0.5", "49000"),
+            received_at_ms=0,
+            estimated_cost_usd=Decimal("2"),
+        ),
+        Decimal("1"),
+    )
+
+    result = _runner(policy, max_model_cost_usd=Decimal("1")).run([_tick(0, "50000"), _tick(300_000, "50000")])
+
+    assert policy.calls == 1
+    assert result.records[0].model_cost_usd == Decimal("2")
+    assert result.records[1].status == "model_budget_exhausted"
+    assert result.model_cost_usd == Decimal("2")
+
+
+def test_valid_response_executes_at_the_first_market_tick_after_it_is_received() -> None:
+    policy = ScriptedPolicy(
+        {
+            "fixture:0": PolicyResponse(
+                payload=_payload("fixture:0", "set_target", "0.5", "49000"),
+                received_at_ms=59_000,
+                estimated_cost_usd=Decimal("0"),
+            )
+        }
+    )
+
+    result = _runner(policy).run([_tick(0, "50000"), _tick(60_000, "51000")])
+
+    assert result.records[0].execution_timestamp_ms == 60_000
+    assert result.records[0].events[0].price == Decimal("51000")
+    assert result.final_snapshot.average_entry_price == Decimal("51000")
+
+
+def test_response_is_not_executed_when_its_position_stops_out_while_waiting() -> None:
+    policy = ScriptedPolicy(
+        {
+            "fixture:0": _payload("fixture:0", "set_target", "0.5", "49000"),
+            "fixture:300000": PolicyResponse(
+                payload=_payload("fixture:300000", "set_target", "1", "49000"),
+                received_at_ms=359_000,
+                estimated_cost_usd=Decimal("0"),
+            ),
+        }
+    )
+    ticks = [
+        _tick(0, "50000"),
+        _tick(300_000, "50000"),
+        MarketTick(360_000, Decimal("50000"), Decimal("50000"), Decimal("48000"), Decimal("48000")),
+    ]
+
+    result = _runner(policy).run(ticks)
+
+    assert result.records[-1].status == "stale_position"
+    assert result.final_snapshot.signed_quantity == Decimal("0")
+    assert len([event for event in result.events if event.kind == "fill"]) == 2

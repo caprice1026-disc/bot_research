@@ -158,7 +158,7 @@ def replay(config_path: Path, output: Path) -> dict[str, Any]:
         )
         _write_jsonl(temporary / "observations.jsonl", [record.observation for record in result.records])
         _write_jsonl(temporary / "decisions.jsonl", list(result.records))
-        _write_jsonl(temporary / "fills.jsonl", [event for record in result.records for event in record.events if event.kind == "fill"])
+        _write_jsonl(temporary / "fills.jsonl", [event for event in result.events if event.kind == "fill"])
         _write_jsonl(temporary / "equity.jsonl", [result.final_snapshot])
         _write_json(temporary / "report.json", report)
         (temporary / "report.md").write_text(render_report_markdown(report), encoding="utf-8", newline="\n")

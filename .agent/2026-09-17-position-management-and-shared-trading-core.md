@@ -21,8 +21,8 @@
 - [ ] M1（部分完了）：`trading-core/` package、内容SHA-256付きdataset catalogと連続性検証を追加した。既存BTC downloader、Funding reader、normalizer、旧CLIを同じ実装へ委譲する移設は未完了である。
 - [ ] M2（部分完了）：新方式用のDecimal execution-cost、accounting、position-delta基盤を共有側へ置いた。既存Testnet adapter、旧Risk、旧Simulator、provider送信の移設と互換wrapperは未完了である。
 - [x] (2026-09-17) M3：厳格な`target_position` schema、固定anchorによる一回限りの数量化、差分計画、反転拒否、stop・notional・stop-risk制約を実装した。
-- [x] (2026-09-17) M4：open/hold/add/reduce/close、SL gap、Funding、保持上限、終端未決済を扱う一建玉Simulatorを実装した。
-- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、3連続無効応答の安全決済、モデル費用上限、SQLite WAL run DBによる再起動照合、原子的なoffline成果物を実装した。Gemini通常APIと実取引adapterは未実装である。
+- [x] (2026-09-18) M4：open/hold/add/reduce/close、SL gap、Funding、保持上限、終端未決済に加え、含み損・fee・Fundingを含む日次損失/DD到達時の強制決済を扱う一建玉Simulatorを実装した。
+- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、3連続無効応答の安全決済、呼出前のモデル費用予約、SQLite WAL run DBによる市場イベント・最新口座状態・連続失敗数の再起動照合、原子的なoffline成果物を実装した。Gemini通常APIと実取引adapterは未実装である。
 - [ ] M6（部分完了）：fixture replayのJSON/Markdown reportを実装した。no-trade・固定方針・LLM各群の公平な比較と設定freezeは未実装である。
 - [ ] M7：将来データのshadow運転を実施し、別途承認した場合だけTestnetへ接続する。
 
@@ -58,6 +58,10 @@ BTC価格取得は `binance-btcusdt-futures-research/download_binance_klines.py`
 
 2026-09-17：初回の逐次runnerはScripted Policyのみとする。これによりGemini API費用やTestnet注文なしで、重複slot、stale応答、費用上限、連続応答不能の安全動作を検証できる。通常Gemini API、SQLite再開、Testnet adapterはこのfixture条件と明示予算を満たす次段階まで接続しない。
 
+2026-09-18：状態付きrunnerでは、判断slotだけでなく各市場tick後の口座状態とAccountEventを保存する。stop、Funding、保有上限、強制Risk決済は判断slot外にも起こるため、最後の判断snapshotだけから再開してはならない。
+
+2026-09-18：モデル呼出は予約費用を永続化してから一度だけ送る。応答受領後には最初に利用可能な市場tickまで口座を進め、その時点で建玉versionと保有中Riskを再確認してから差分を執行する。送信結果不明の予約は再送せず、将来の実API照合対象として残す。
+
 ## Surprises & Discoveries
 
 
@@ -70,6 +74,8 @@ Gemini Batchは今回すでに実装されている。過去の「adapter未実�
 2026-09-17：sandbox内でpytestが作成するbasetempは、実行終了時の走査で`WinError 5`になる。テスト本体の失敗ではなくACL境界であり、通常権限で`$env:TEMP`配下を指定すると既存185件と新規26件が正常終了した。以降はこのコマンドでコード不合格と環境ACLを区別する。
 
 2026-09-17：初期実装中にDecimalの`copy_sign`を符号比較として使うと、絶対値も比較されて同方向の追加まで反転と誤判定した。`quantity > 0`の真偽値を比較する実装へ改め、追加・縮小・反転の受入テストで固定した。
+
+2026-09-18：最初のfixtureは判断slotでのfillだけを成果物へ出していたため、1分後のSLがSQLiteの最新snapshotにもfill明細にも残らなかった。また、Scripted Policyの即時応答だけでは、応答待ちの価格変動とモデル費用の事前上限を検証できなかった。市場イベント台帳、state row、費用予約、受信時刻を分けた回帰fixtureを追加した。
 
 ## Architecture and Directory Boundaries
 
@@ -351,6 +357,6 @@ LLMの理由文は観測根拠であり事実の証明ではない。引用し�
 ## Outcomes & Retrospective
 
 
-2026-09-17時点で、新`trading-core/`と`llm-position-management/`の最小実装を追加した。`trading-core`はhash固定dataset catalog、差分注文計画、Decimal cost、時系列一建玉Simulatorを持つ。`llm-position-management`はstrict parser、scripted sequential runner、SQLite WALのrecovery、原子的なoffline replay成果物を持つ。M3/M4は受入テストで完了したが、M1/M2の旧経路移設、M5のGemini・実取引照合、M6の比較研究、M7のshadow/Testnetは未完了である。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。
+2026-09-18時点で、新`trading-core/`と`llm-position-management/`の最小実装を追加した。`trading-core`はhash固定dataset catalog、差分注文計画、Decimal cost、時系列一建玉Simulator、保有中のhard Risk強制決済を持つ。`llm-position-management`はstrict parser、Scripted sequential runner、SQLite WALの市場イベント台帳・state recovery・モデル費用予約、原子的なoffline replay成果物を持つ。M3/M4は受入テストで完了したが、M1/M2の旧経路移設、M5のGemini・実取引照合、M6の比較研究、M7のshadow/Testnetは未完了である。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。
 
-変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。2026-09-17 実装更新。互換基準、new coreのM3/M4、Scripted-only M5、offline report、ACL回避手順と未完了範囲を反映した。
+変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。2026-09-17 実装更新。互換基準、new coreのM3/M4、Scripted-only M5、offline report、ACL回避手順と未完了範囲を反映した。2026-09-18 レビュー修正。各tickの口座状態/イベント永続化、応答受信後価格での執行、含み損込みの保有Risk、費用予約、連続失敗数の再開を追加した。

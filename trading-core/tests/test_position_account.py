@@ -173,3 +173,47 @@ def test_utc_day_boundary_resets_only_the_daily_realized_counter() -> None:
 
     assert snapshot.daily_realized_pnl == Decimal("0")
     assert snapshot.day_start_equity == snapshot.equity
+
+
+def test_unrealized_loss_and_fees_force_a_close_at_the_daily_risk_limit() -> None:
+    limits = RiskLimits(
+        exposure_anchor_usd=Decimal("250"),
+        max_position_notional_usd=Decimal("250"),
+        min_notional_usd=Decimal("10"),
+        risk_per_position_pct=Decimal("10"),
+        max_daily_loss_pct=Decimal("0.1"),
+        max_drawdown_pct=Decimal("25"),
+        max_hold_ms=86_400_000,
+    )
+    costs = ExecutionCosts(fee_rate=Decimal("0.001"), spread_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    account = PositionAccount(_snapshot(), limits, costs)
+    account.advance_to(_tick(0, "100"))
+    account.apply_plan(_plan("1", "1", stop="50"), executable_at_ms=0)
+
+    events = account.advance_to(_tick(60_000, "99"))
+
+    assert [event.kind for event in events] == ["risk_limit_triggered", "fill"]
+    assert events[0].reason == "daily_loss_limit"
+    assert events[1].reason == "daily_loss_limit"
+    assert account.snapshot(60_000).signed_quantity == Decimal("0")
+
+
+def test_unrealized_loss_forces_a_close_at_the_drawdown_limit() -> None:
+    limits = RiskLimits(
+        exposure_anchor_usd=Decimal("250"),
+        max_position_notional_usd=Decimal("250"),
+        min_notional_usd=Decimal("10"),
+        risk_per_position_pct=Decimal("10"),
+        max_daily_loss_pct=Decimal("20"),
+        max_drawdown_pct=Decimal("0.1"),
+        max_hold_ms=86_400_000,
+    )
+    account = PositionAccount(_snapshot(), limits, _costs())
+    account.advance_to(_tick(0, "100"))
+    account.apply_plan(_plan("1", "1", stop="50"), executable_at_ms=0)
+
+    events = account.advance_to(_tick(60_000, "99"))
+
+    assert [event.kind for event in events] == ["risk_limit_triggered", "fill"]
+    assert events[0].reason == "drawdown_limit"
+    assert account.snapshot(60_000).signed_quantity == Decimal("0")

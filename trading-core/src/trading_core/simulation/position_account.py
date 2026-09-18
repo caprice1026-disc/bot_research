@@ -57,6 +57,34 @@ class PositionAccount:
     def _refresh_peak(self, mark: Decimal) -> None:
         self._peak_equity = max(self._peak_equity, self._equity(mark))
 
+    @staticmethod
+    def _reaches_limit(value: Decimal, limit: Decimal) -> bool:
+        """Treat a zero limit as no loss allowance without blocking a flat account."""
+
+        return value >= limit if limit > 0 else value > 0
+
+    def _enforce_holding_risk(self) -> tuple[AccountEvent, ...]:
+        """Close an existing position when realized or mark-to-market loss reaches a hard limit."""
+
+        if self._quantity == 0 or self._last_tick is None:
+            return ()
+        mark = self._last_tick.close_price
+        equity = self._equity(mark)
+        daily_loss = max(Decimal("0"), self._day_start_equity - equity)
+        daily_limit = self._day_start_equity * self._limits.max_daily_loss_pct / Decimal("100")
+        if self._reaches_limit(daily_loss, daily_limit):
+            reason = "daily_loss_limit"
+        else:
+            drawdown = max(Decimal("0"), self._peak_equity - equity)
+            drawdown_limit = self._peak_equity * self._limits.max_drawdown_pct / Decimal("100")
+            if not self._reaches_limit(drawdown, drawdown_limit):
+                return ()
+            reason = "drawdown_limit"
+        return (
+            AccountEvent("risk_limit_triggered", self._last_tick.timestamp_ms, price=mark, reason=reason),
+            self._fill(-self._quantity, mark, self._last_tick.timestamp_ms, reason=reason),
+        )
+
     def _advance_utc_day(self, timestamp_ms: int, mark: Decimal) -> None:
         day = timestamp_ms // 86_400_000
         if self._utc_day is None:
@@ -108,6 +136,8 @@ class PositionAccount:
 
         if self._last_tick is not None and tick.timestamp_ms < self._last_tick.timestamp_ms:
             raise PositionAccountError("market ticks must be time ordered")
+        if self._last_tick is not None and tick.timestamp_ms == self._last_tick.timestamp_ms:
+            return ()
         events: list[AccountEvent] = []
         if self._quantity and self._stop_price is not None:
             stop_hit = tick.low_price <= self._stop_price if self._quantity > 0 else tick.high_price >= self._stop_price
@@ -129,6 +159,7 @@ class PositionAccount:
         self._last_tick = tick
         self._advance_utc_day(tick.timestamp_ms, tick.close_price)
         self._refresh_peak(tick.close_price)
+        events.extend(self._enforce_holding_risk())
         return tuple(events)
 
     def restore_tick(self, tick: MarketTick) -> None:
@@ -152,7 +183,7 @@ class PositionAccount:
             raise PositionAccountError("reduce-only plan increases exposure")
         event = self._fill(plan.delta_quantity, self._last_tick.close_price, executable_at_ms, reason="target_delta")
         self._stop_price = plan.stop_price if self._quantity else None
-        return (event,)
+        return (event, *self._enforce_holding_risk())
 
     def snapshot(self, timestamp_ms: int) -> AccountSnapshot:
         """Return the current state without forcing an end-of-run close."""

@@ -17,6 +17,8 @@ class PolicyResponse:
 
 
 class PositionPolicy(Protocol):
+    def reserve_cost_usd(self, observation: dict[str, Any], request_id: str) -> Decimal: ...
+
     def decide(self, observation: dict[str, Any], request_id: str) -> PolicyResponse: ...
 
 
@@ -25,6 +27,10 @@ class ScriptedPolicy:
 
     def __init__(self, responses: Mapping[str, dict[str, Any] | PolicyResponse | None]) -> None:
         self._responses = dict(responses)
+
+    def reserve_cost_usd(self, observation: dict[str, Any], request_id: str) -> Decimal:
+        response = self._responses.get(request_id)
+        return response.estimated_cost_usd if isinstance(response, PolicyResponse) else Decimal("0")
 
     def decide(self, observation: dict[str, Any], request_id: str) -> PolicyResponse:
         response = self._responses.get(request_id)

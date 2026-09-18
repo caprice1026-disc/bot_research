@@ -183,8 +183,11 @@ def _risk_limited(account: AccountSnapshot, limits: RiskLimits) -> bool:
     if account.day_start_equity <= 0 or account.peak_equity <= 0:
         return True
     daily_limit = account.day_start_equity * limits.max_daily_loss_pct / Decimal("100")
+    daily_loss = max(Decimal("0"), account.day_start_equity - account.equity)
     drawdown_pct = (account.peak_equity - account.equity) / account.peak_equity * Decimal("100")
-    return -account.daily_realized_pnl >= daily_limit or drawdown_pct >= limits.max_drawdown_pct
+    reaches_daily_limit = daily_loss >= daily_limit if daily_limit > 0 else daily_loss > 0
+    reaches_drawdown_limit = drawdown_pct >= limits.max_drawdown_pct if limits.max_drawdown_pct > 0 else drawdown_pct > 0
+    return reaches_daily_limit or reaches_drawdown_limit
 
 
 def plan_position_delta(

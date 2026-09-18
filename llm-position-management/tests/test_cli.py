@@ -63,6 +63,7 @@ def test_replay_cli_writes_an_atomic_complete_offline_run(tmp_path: Path, capsys
     assert summary["decision_count"] == 2
     assert json.loads((output / "run_manifest.json").read_text(encoding="utf-8"))["status"] == "complete"
     assert len((output / "observations.jsonl").read_text(encoding="utf-8").splitlines()) == 2
+    assert len((output / "fills.jsonl").read_text(encoding="utf-8").splitlines()) == 1
     assert "final_equity" in (output / "report.md").read_text(encoding="utf-8")
 
 

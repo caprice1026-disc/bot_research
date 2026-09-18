@@ -12,6 +12,6 @@ Then run the checked-in lifecycle fixture:
 
     .\hyperliquid-ai-trader\.venv\Scripts\python.exe -m llm_position_management.cli replay --config .\llm-position-management\configs\fixture.json --output .\llm-position-management\data\fixture-run
 
-The output directory is created atomically and contains a complete manifest, observations, decisions, fills, final equity snapshot, and a Markdown report.  The CLI refuses to overwrite an existing run directory.
+The output directory is created atomically and contains a complete manifest, observations, decisions, every simulated account event (including an SL/TP-style protective fill between decision slots), final equity snapshot, and a Markdown report.  SQLite uses WAL mode and persists the latest account state, consecutive response failures, and model-cost reservations before a policy call.  The CLI refuses to overwrite an existing run directory.
 
-The fixture demonstrates open, hold, add, reduce, and close.  It is a behavior test, not a profitability result and not a Testnet run.
+The fixture demonstrates open, hold, add, reduce, and close.  Any valid delayed response is applied only at the first recorded market tick at or after its receipt time; a position change, SL, funding, or hard Risk close while waiting invalidates that response.  It is a behavior test, not a profitability result and not a Testnet run.
