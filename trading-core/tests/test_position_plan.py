@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+import pytest
+
 from trading_core.accounting.models import AccountSnapshot
 from trading_core.execution.position_plan import (
     ExecutionCosts,
@@ -153,3 +155,28 @@ def test_execution_costs_are_included_once_in_a_planned_delta() -> None:
     plan = plan_position_delta(target, _account(), _market(), _limits(), costs=costs)
 
     assert plan.expected_cost == Decimal("0.1500")
+
+
+@pytest.mark.parametrize("quantity,fraction,old_stop,new_stop", [
+    ("0.005", "0.5", "49000", "51000"),
+    ("0.005", "0.5", "49000", "50000"),
+    ("-0.005", "-0.5", "51000", "49000"),
+    ("-0.005", "-0.5", "51000", "50000"),
+])
+def test_partial_reduction_rejects_stop_at_or_across_market(quantity, fraction, old_stop, new_stop):
+    target = freeze_target_quantity(_target(fraction=fraction, stop=new_stop), _market(), _limits())
+    plan = plan_position_delta(target, _account(quantity=quantity, stop=old_stop), _market(), _limits())
+    assert plan.status == "rejected"
+    assert plan.reason == "invalid_or_missing_stop"
+
+
+@pytest.mark.parametrize("quantity,fraction,old_stop,new_stop", [
+    ("0.005", "0.5", "49000", "49500"),
+    ("-0.005", "-0.5", "51000", "50500"),
+])
+def test_partial_reduction_accepts_valid_tighter_stop(quantity, fraction, old_stop, new_stop):
+    target = freeze_target_quantity(_target(fraction=fraction, stop=new_stop), _market(), _limits())
+    plan = plan_position_delta(target, _account(quantity=quantity, stop=old_stop), _market(), _limits())
+    assert plan.status == "planned"
+    assert plan.reduce_only
+    assert plan.stop_price == Decimal(new_stop)

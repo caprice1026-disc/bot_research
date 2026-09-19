@@ -237,8 +237,11 @@ def plan_position_delta(
         max_risk = snapshot.equity * limits.risk_per_position_pct / Decimal("100")
         if stop_risk > max_risk:
             return _result(target, status="rejected", reason="stop_risk_limit", current=current)
-    elif desired != 0 and effective_stop is None:
-        return _result(target, status="rejected", reason="missing_existing_stop", current=current)
+    elif desired != 0:
+        if effective_stop is None:
+            return _result(target, status="rejected", reason="missing_existing_stop", current=current)
+        if not _is_stop_valid(desired, effective_stop, market.mark_price):
+            return _result(target, status="rejected", reason="invalid_or_missing_stop", current=current)
 
     return _result(
         target,

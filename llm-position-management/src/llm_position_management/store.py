@@ -334,12 +334,17 @@ class RunStore:
         if row is None:
             return None
         try:
+            snapshot = _snapshot_from_json(json.loads(row[0]))
+            failures = int(row[2])
+            # v2 had no pending flag. Also recover DBs already migrated with a
+            # false default: three failures with an open position still require exit.
+            pending_safe_close = bool(row[4]) or (failures >= 3 and snapshot.signed_quantity != 0)
             return StoredRunState(
-                snapshot=_snapshot_from_json(json.loads(row[0])),
+                snapshot=snapshot,
                 tick=_tick_from_json(json.loads(row[1])),
-                consecutive_failures=int(row[2]),
+                consecutive_failures=failures,
                 model_cost_usd=Decimal(row[3]),
-                pending_safe_close=bool(row[4]),
+                pending_safe_close=pending_safe_close,
                 market_data_complete=bool(row[5]),
             )
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:

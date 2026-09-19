@@ -14,6 +14,8 @@
 ## Progress
 
 
+- [x] (2026-09-19) 減額時の不正SLと旧DBの安全決済状態復元を修正した。実データreaderを共有coreへ追加し、1日Replayで1,440本・Funding 3件、SQLite再開一致、最終flatを確認した。
+- [x] (2026-09-19) 同じ固定scripted条件の2025年9月全体を実行し、43,200本・Funding 90件、8,640判断・479約定、最終flat、途中停止を含む再開一致を確認した。検証詳細と近似条件は `llm-position-management/REAL_REPLAY_VALIDATION.md` に記録した。
 - [x] (2026-09-17) 現行の研究設定、Batch経路、独立episode Simulator、既存取引adapter、データ取得元、既存計画を調査した。
 - [x] (2026-09-17) 現状の全Hyperliquidテスト185件成功を確認した。一時ディレクトリACLを避ける実行権限で実施した。
 - [x] (2026-09-17) 共通基盤移設と継続ポジション管理を一つの段階的な実装方針として記述した。

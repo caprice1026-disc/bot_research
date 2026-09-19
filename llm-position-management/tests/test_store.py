@@ -189,6 +189,30 @@ def test_schema_v2_state_migrates_with_safe_defaults(tmp_path: Path) -> None:
     assert migrated.market_data_complete is True
 
 
+@pytest.mark.parametrize("schema_version", [2, 3])
+def test_old_state_restores_safe_close_after_three_failures(tmp_path: Path, schema_version: int) -> None:
+    path = tmp_path / "v2-pending.db"
+    store = RunStore(path)
+    _runner(store, _OpenThenConnectionErrors()).run(
+        [_tick(timestamp_ms) for timestamp_ms in range(0, 900_001, 60_000)]
+    )
+    # Reproduce the v2 schema, which persisted the count but had no pending flag.
+    with sqlite3.connect(path) as connection:
+        if schema_version == 2:
+            connection.execute("ALTER TABLE runner_state DROP COLUMN pending_safe_close")
+            connection.execute("ALTER TABLE runner_state DROP COLUMN market_data_complete")
+            connection.execute("PRAGMA user_version=2")
+        else:
+            connection.execute("UPDATE runner_state SET pending_safe_close=0")
+
+    migrated_store = RunStore(path)
+    state = migrated_store.load_state("fixture")
+    assert state is not None and state.pending_safe_close
+    resumed = _runner(migrated_store, ScriptedPolicy({})).run([_tick(960_000)])
+    assert resumed.records[-1].status == "forced_safe_close"
+    assert resumed.final_snapshot.signed_quantity == Decimal("0")
+
+
 def test_resumed_run_reports_the_same_decisions_events_costs_and_account_as_an_uninterrupted_run(tmp_path: Path) -> None:
     ticks = [_tick(0), _tick(300_000), _tick(600_000)]
     decisions = {
