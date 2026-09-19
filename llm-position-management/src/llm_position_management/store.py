@@ -282,11 +282,20 @@ class RunStore:
             )
             return sum((Decimal(row[0]) for row in rows), Decimal("0"))
 
-    def reserve_model_request(self, run_id: str, request_id: str, reserved_cost_usd: Decimal) -> None:
+    def reserve_model_request(self, run_id: str, request_id: str, reserved_cost_usd: Decimal,
+                              *, budget_limit: Decimal | None = None) -> None:
         if not reserved_cost_usd.is_finite() or reserved_cost_usd < 0:
             raise StoreError("reserved model cost must be finite and non-negative")
         try:
             with self._connect() as connection:
+                if budget_limit is not None:
+                    connection.execute("BEGIN IMMEDIATE")
+                    costs = connection.execute(
+                        "SELECT reserved_cost_usd, actual_cost_usd FROM model_requests WHERE run_id = ?", (run_id,)
+                    ).fetchall()
+                    committed = sum((Decimal(actual if actual is not None else reserved) for reserved, actual in costs), Decimal(0))
+                    if committed + reserved_cost_usd > budget_limit:
+                        raise StoreError("shared API budget exhausted")
                 connection.execute(
                     "INSERT INTO model_requests VALUES (?, ?, ?, NULL, 'reserved')",
                     (run_id, request_id, str(reserved_cost_usd)),

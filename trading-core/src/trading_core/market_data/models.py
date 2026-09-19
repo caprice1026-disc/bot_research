@@ -36,6 +36,20 @@ class MarketSnapshot:
 
 
 @dataclass(frozen=True)
+class FundingSettlement:
+    """Exchange-reported settlement time, rate and settlement mark price."""
+
+    timestamp_ms: int
+    rate: Decimal
+    mark_price: Decimal
+
+    def __post_init__(self) -> None:
+        if self.timestamp_ms < 0 or not self.rate.is_finite():
+            raise MarketDataError("invalid Funding settlement")
+        _positive(self.mark_price, name="funding.mark_price")
+
+
+@dataclass(frozen=True)
 class MarketTick:
     """One completed minute used by the stateful simulator after a decision."""
 

@@ -15,6 +15,10 @@
 
 
 - [x] (2026-09-19) 減額時の不正SLと旧DBの安全決済状態復元を修正した。実データreaderを共有coreへ追加し、1日Replayで1,440本・Funding 3件、SQLite再開一致、最終flatを確認した。
+- [x] (2026-09-19) 実Funding time/markPriceを取り込む共有reader、intrabarのSL順序不明フラグと不利側cashflow評価、跨日の日次Risk基準、API送信後クラッシュの再送禁止・安全終了を実装し75テスト成功。
+- [x] (2026-09-20) 共通予算10 USDでGemini通常API canaryを実施した。修正後11応答すべて有効、遅延1,548〜2,274 ms、費用0.0281385 USD。全runの再開で追加送信なし・成果物hash一致を確認した。
+- [x] (2026-09-20) 修正後の2026-09-03 UTC一日を4群で完走した。LLM群は実行中の長時間待機・結果不明によりpartial、追加/縮小も0件で効果はinconclusive。全先行費用2.2572615 USD＋不明分予約0.10 USD、265テスト成功。詳細は llm-position-management/STAGE2_VALIDATION.md。
+- [x] (2026-09-19) 9月2日比較の前半でholdに非null target/stopを含む応答が発生したため、そのcohortをpartialで中止した。ローカル厳格検証と安全決済は作動したが、送信用schemaの条件不足だった。hold/flat/nonzeroのanyOfと、保有中の増減なし群のhold/flat限定を追加した。売買仮説は調整せず、9月3日を新しい未使用比較期間に固定した。旧cohortの費用も同じSQLite予算台帳へ含める。
 - [x] (2026-09-19) 同じ固定scripted条件の2025年9月全体を実行し、43,200本・Funding 90件、8,640判断・479約定、最終flat、途中停止を含む再開一致を確認した。検証詳細と近似条件は `llm-position-management/REAL_REPLAY_VALIDATION.md` に記録した。
 - [x] (2026-09-17) 現行の研究設定、Batch経路、独立episode Simulator、既存取引adapter、データ取得元、既存計画を調査した。
 - [x] (2026-09-17) 現状の全Hyperliquidテスト185件成功を確認した。一時ディレクトリACLを避ける実行権限で実施した。
@@ -24,10 +28,10 @@
 - [ ] M2（部分完了）：新方式用のDecimal execution-cost、accounting、position-delta基盤を共有側へ置いた。既存Testnet adapter、旧Risk、旧Simulator、provider送信の移設と互換wrapperは未完了である。
 - [x] (2026-09-17) M3：厳格な`target_position` schema、固定anchorによる一回限りの数量化、差分計画、反転拒否、stop・notional・stop-risk制約を実装した。
 - [x] (2026-09-18) M4：open/hold/add/reduce/close、SL gap、Funding、保持上限、終端未決済に加え、含み損・fee・Fundingを含む日次損失/DD到達時の強制決済を扱う一建玉Simulatorを実装した。
-- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、受信後の市場tickでの3連続無効応答の安全決済、応答を得られない場合の保留決済と次tick/restartでの実行、全tick間・再開境界の60秒超市場欠損検出、欠損時の新規執行拒否と`partial`報告、呼出前のモデル費用予約、SQLite WAL run DBによる市場イベント・最新口座状態・全判断履歴・連続失敗数の再起動照合、原子的なoffline成果物を実装した。Gemini通常APIと実取引adapterは未実装である。
+- [ ] M5（部分完了）：scripted policyだけを使う逐次runner、重複slot防止、60秒stale判定、受信後の市場tickでの3連続無効応答の安全決済、応答を得られない場合の保留決済と次tick/restartでの実行、全tick間・再開境界の60秒超市場欠損検出、欠損時の新規執行拒否と`partial`報告、呼出前のモデル費用予約、SQLite WAL run DBによる市場イベント・最新口座状態・全判断履歴・連続失敗数の再起動照合、原子的なoffline成果物を実装した。Gemini通常APIの予算付き履歴Replay接続は2026-09-20に検証済み。実取引adapterは未実装である。
 - [x] (2026-09-18) 追加レビューの2件を回帰fixtureで固定した。通信例外3回後の次tick/restart安全決済、保有中・再開境界のtick欠損検出と`partial`報告、v2 SQLite stateのv3移行を検証した。
 - [x] (2026-09-18) SL等で保留安全決済がすでにflatになった場合も、`safe_close_already_flat`の判断記録としてslotを永続化し、同じtickの再開・再入力で再建てしないことを検証した。
-- [ ] M6（部分完了）：fixture replayのJSON/Markdown reportを実装した。no-trade・固定方針・LLM各群の公平な比較と設定freezeは未実装である。
+- [ ] M6（部分完了）：4群の独立口座比較、入力/prompt/schema/設定freeze、DD・保有時間・turnover・費用分解、実データ一日比較を実装した。長期の未使用期間での採否検証は未実施である。
 - [ ] M7：将来データのshadow運転を実施し、別途承認した場合だけTestnetへ接続する。
 
 ## Context and Orientation
@@ -376,3 +380,5 @@ LLMの理由文は観測根拠であり事実の証明ではない。引用し�
 2026-09-18時点で、新`trading-core/`と`llm-position-management/`の最小実装を追加した。`trading-core`はhash固定dataset catalog、差分注文計画、Decimal cost、時系列一建玉Simulator、保有中のhard Risk強制決済を持つ。`llm-position-management`はstrict parser、Scripted sequential runner、SQLite WALの市場イベント台帳・state recovery・全判断履歴の復元・モデル費用予約、受信後tickのみでの安全決済、通信例外時の保留安全決済、SLによる保留決済済みslotの永続化、全tick間・再開境界の市場欠損検出、欠損または決済保留を`partial`として示すoffline replay成果物を持つ。M3/M4は受入テストで完了したが、M1/M2の旧経路移設、M5のGemini・実取引照合、M6の比較研究、M7のshadow/Testnetは未完了である。ディレクトリ移動、データ再取得、新しいモデル呼出、注文は行っていない。
 
 変更履歴：2026-09-17 初版。5分を観測周期とするユーザーの意図、継続ポジション管理、共通データ・取引基盤への集中を反映した。過去の独立5分episode実験は履歴として維持する。2026-09-17 実装更新。互換基準、new coreのM3/M4、Scripted-only M5、offline report、ACL回避手順と未完了範囲を反映した。2026-09-18 レビュー修正。各tickの口座状態/イベント永続化、応答受信後価格での執行、含み損込みの保有Risk、費用予約、連続失敗数の再開を追加した。2026-09-18 追加レビュー修正。異常応答の安全決済を受信後tickへ統一し、market-gap拒否と累積判断レポート復元を追加した。2026-09-18 追加安全レビュー修正。通信例外の保留安全決済、全tick/restart境界の欠損検査、v3 SQLite state、partial reportを追加した。2026-09-18 保留決済slot修正。SLで先にflatとなった判断slotも永続化して重複tickでの再建てを防止した。
+
+2026-09-20 実行更新：Funding実時刻/mark、SL順序の曖昧性、API共有予算、条件分岐schema、独立比較と費用込み指標を実装した。schema不備の先行cohortを保管して分離し、次の未使用日に固定条件で比較した。結果はpartial/inconclusiveであり採用しない。

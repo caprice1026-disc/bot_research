@@ -15,7 +15,7 @@ from trading_core.execution.position_plan import (
     freeze_target_quantity,
     plan_position_delta,
 )
-from trading_core.market_data.models import MarketSnapshot, MarketTick
+from trading_core.market_data.models import FundingSettlement, MarketSnapshot, MarketTick
 from trading_core.simulation.position_account import AccountEvent, PositionAccount
 
 from .decisions import DecisionContext, DecisionError, TargetDecision, parse_target_decision
@@ -178,6 +178,13 @@ class PositionRunner:
             self._reserved_model_cost = store.reserved_model_cost(config.run_id)
             self._events = list(store.account_events(config.run_id))
             self._records = [_record_from_payload(payload) for payload in store.decision_payloads(config.run_id)]
+            unresolved = self._seen_slots - store.decision_ids(config.run_id)
+            if unresolved:
+                # A crash after submission must not silently become a successful
+                # hold. Do not resend; freeze the run and close any surviving risk.
+                self._market_data_complete = False
+                if persisted is not None and persisted.snapshot.signed_quantity:
+                    self._pending_safe_close = True
         self._fill_count = sum(event.kind == "fill" for event in self._events)
 
     def _persist_market_state(self, tick: MarketTick, events: tuple[AccountEvent, ...]) -> None:
@@ -195,9 +202,11 @@ class PositionRunner:
                 events=events,
             )
 
-    def _advance_tick(self, tick: MarketTick, funding_rate: Decimal | None) -> tuple[AccountEvent, ...]:
+    def _advance_tick(self, tick: MarketTick, funding_rate: Decimal | FundingSettlement | None) -> tuple[AccountEvent, ...]:
         previous_tick = self._last_market_tick
-        events = self._account.advance_to(tick, funding_rate=funding_rate)
+        events = (self._account.advance_to(tick, funding_settlement=funding_rate)
+                  if isinstance(funding_rate, FundingSettlement)
+                  else self._account.advance_to(tick, funding_rate=funding_rate))
         if (
             previous_tick is not None
             and tick.timestamp_ms > previous_tick.timestamp_ms
@@ -452,7 +461,7 @@ class PositionRunner:
         self,
         ticks: Iterable[MarketTick],
         *,
-        funding_by_timestamp_ms: dict[int, Decimal] | None = None,
+        funding_by_timestamp_ms: dict[int, Decimal | FundingSettlement] | None = None,
     ) -> RunnerResult:
         """Run ordered fixture ticks. Repeating a slot produces no second decision."""
 

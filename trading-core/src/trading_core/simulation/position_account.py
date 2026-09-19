@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from ..accounting.models import AccountSnapshot
 from ..execution.position_plan import ExecutionCosts, PlanResult, RiskLimits
-from ..market_data.models import MarketTick
+from ..market_data.models import FundingSettlement, MarketTick
 
 
 class PositionAccountError(ValueError):
@@ -131,14 +131,34 @@ class PositionAccount:
         self._refresh_peak(raw_price)
         return AccountEvent("fill", timestamp_ms, quantity=delta, price=execution_price, amount=-fee, reason=reason)
 
-    def advance_to(self, tick: MarketTick, *, funding_rate: Decimal | None = None) -> tuple[AccountEvent, ...]:
+    def advance_to(self, tick: MarketTick, *, funding_rate: Decimal | None = None,
+                   funding_settlement: FundingSettlement | None = None) -> tuple[AccountEvent, ...]:
         """Process stop, emergency holding cap, funding, and then the new mark."""
 
         if self._last_tick is not None and tick.timestamp_ms < self._last_tick.timestamp_ms:
             raise PositionAccountError("market ticks must be time ordered")
         if self._last_tick is not None and tick.timestamp_ms == self._last_tick.timestamp_ms:
             return ()
+        if funding_rate is not None and funding_settlement is not None:
+            raise PositionAccountError("cannot mix legacy and precise Funding")
+        if funding_settlement is not None:
+            lower = self._last_tick.timestamp_ms if self._last_tick else tick.timestamp_ms - 60_000
+            if not lower < funding_settlement.timestamp_ms <= tick.timestamp_ms:
+                raise PositionAccountError("Funding settlement is outside the market interval")
         events: list[AccountEvent] = []
+        # Reset against the previous known mark BEFORE new-day charges or losses.
+        self._advance_utc_day(tick.timestamp_ms, self._last_tick.close_price if self._last_tick else tick.open_price)
+        stop_hit = bool(self._quantity and self._stop_price is not None and (
+            tick.low_price <= self._stop_price if self._quantity > 0 else tick.high_price >= self._stop_price))
+        if funding_settlement is not None and funding_settlement.timestamp_ms < tick.timestamp_ms:
+            ambiguous = stop_hit or (self._opened_at_ms is not None and
+                tick.timestamp_ms - self._opened_at_ms >= self._limits.max_hold_ms)
+            if ambiguous:
+                events.append(AccountEvent("funding_stop_ambiguous", funding_settlement.timestamp_ms,
+                    reason="intraminute_exit_order_unknown; adverse_cashflow_bound"))
+            # In an ambiguous candle, charge payers before exit; omit receivers.
+            if not ambiguous or self._quantity * funding_settlement.rate > 0:
+                events.extend(self._settle_funding(funding_settlement))
         if self._quantity and self._stop_price is not None:
             stop_hit = tick.low_price <= self._stop_price if self._quantity > 0 else tick.high_price >= self._stop_price
             if stop_hit:
@@ -156,11 +176,22 @@ class PositionAccount:
                 self._funding_paid += payment
                 self._daily_realized_pnl += payment
                 events.append(AccountEvent("funding", tick.timestamp_ms, quantity=self._quantity, price=tick.open_price, amount=payment))
+        if funding_settlement is not None and funding_settlement.timestamp_ms == tick.timestamp_ms:
+            events.extend(self._settle_funding(funding_settlement))
         self._last_tick = tick
-        self._advance_utc_day(tick.timestamp_ms, tick.close_price)
         self._refresh_peak(tick.close_price)
         events.extend(self._enforce_holding_risk())
         return tuple(events)
+
+    def _settle_funding(self, settlement: FundingSettlement) -> tuple[AccountEvent, ...]:
+        if not self._quantity or self._opened_at_ms is None or self._opened_at_ms >= settlement.timestamp_ms:
+            return ()
+        payment = -self._quantity * settlement.mark_price * settlement.rate
+        self._cash += payment
+        self._funding_paid += payment
+        self._daily_realized_pnl += payment
+        return (AccountEvent("funding", settlement.timestamp_ms, quantity=self._quantity,
+                             price=settlement.mark_price, amount=payment),)
 
     def restore_tick(self, tick: MarketTick) -> None:
         """Restore the already-accounted market boundary when resuming from SQLite."""

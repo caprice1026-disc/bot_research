@@ -290,3 +290,13 @@ def test_restart_gap_since_the_persisted_tick_marks_the_report_partial(tmp_path:
     assert any(event.kind == "market_data_gap" for event in resumed.events)
     assert report["status"] == "partial"
     assert report["market_data_complete"] is False
+
+
+def test_crash_after_request_reservation_freezes_and_closes_without_resending(tmp_path: Path) -> None:
+    store = RunStore(tmp_path / "run.db")
+    _runner(store, ScriptedPolicy({"fixture:0": _payload("fixture:0", "set_target", "0.5", "49000")})).run([_tick(0)])
+    store.reserve_model_request("fixture", "fixture:300000", Decimal("0"))
+    resumed = _runner(store, ScriptedPolicy({})).run([_tick(60_000)])
+    assert resumed.final_snapshot.signed_quantity == 0
+    assert resumed.records[-1].status == "forced_safe_close"
+    assert build_report(resumed)["status"] == "partial"
