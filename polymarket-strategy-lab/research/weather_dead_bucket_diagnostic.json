@@ -1,0 +1,1212 @@
+{
+  "generated_at_utc": "2026-10-04T14:38:49.867762+00:00",
+  "config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+  "strategy": "observed_dead_bucket_no",
+  "thresholds_unchanged": true,
+  "measurement": "Stage counts are market-hour checks, not independent trades; unique condition-days reported separately.",
+  "decision_hours": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "observation_release_lag_minutes": 30,
+  "dead_margin_fahrenheit": 2.0,
+  "minimum_net_edge": 0.015,
+  "assumed_no_probability": 0.995,
+  "price_markup": 0.01,
+  "periods": {
+    "calibration_in_sample": {
+      "stage_counts": {
+        "decision_hours": 390,
+        "decision_hours_with_released_observation": 390,
+        "market_hour_checks": 4290,
+        "not_dead_after_margin": 3272,
+        "dead_by_released_station_max": 1018,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 1018,
+        "open_dead_without_recent_no_print": 958,
+        "open_dead_with_recent_no_print": 60,
+        "recent_no_price_at_or_above_one_after_markup": 60,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      },
+      "unique_condition_days_by_stage": {
+        "dead_by_released_station_max": 123,
+        "dead_and_market_open": 123,
+        "open_dead_without_recent_no_print": 122,
+        "open_dead_with_recent_no_print": 39,
+        "recent_no_price_at_or_above_one_after_markup": 39
+      }
+    },
+    "out_of_sample": {
+      "stage_counts": {
+        "decision_hours": 390,
+        "decision_hours_with_released_observation": 390,
+        "market_hour_checks": 4290,
+        "not_dead_after_margin": 3042,
+        "dead_by_released_station_max": 1248,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 1248,
+        "open_dead_without_recent_no_print": 1180,
+        "open_dead_with_recent_no_print": 68,
+        "recent_no_price_at_or_above_one_after_markup": 68,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      },
+      "unique_condition_days_by_stage": {
+        "dead_by_released_station_max": 135,
+        "dead_and_market_open": 135,
+        "open_dead_with_recent_no_print": 46,
+        "recent_no_price_at_or_above_one_after_markup": 46,
+        "open_dead_without_recent_no_print": 135
+      }
+    }
+  },
+  "days": [
+    {
+      "date": "2026-08-01",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 91,
+        "dead_by_released_station_max": 52,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 52,
+        "open_dead_without_recent_no_print": 48,
+        "open_dead_with_recent_no_print": 4,
+        "recent_no_price_at_or_above_one_after_markup": 4,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-02",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 96,
+        "dead_by_released_station_max": 47,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 47,
+        "open_dead_without_recent_no_print": 47,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-03",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 90,
+        "dead_by_released_station_max": 53,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 53,
+        "open_dead_without_recent_no_print": 51,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-04",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 106,
+        "dead_by_released_station_max": 37,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 37,
+        "open_dead_without_recent_no_print": 36,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-05",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 115,
+        "dead_by_released_station_max": 28,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 28,
+        "open_dead_without_recent_no_print": 23,
+        "open_dead_with_recent_no_print": 5,
+        "recent_no_price_at_or_above_one_after_markup": 5,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-06",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 117,
+        "dead_by_released_station_max": 26,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 26,
+        "open_dead_without_recent_no_print": 22,
+        "open_dead_with_recent_no_print": 4,
+        "recent_no_price_at_or_above_one_after_markup": 4,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 101,
+        "dead_by_released_station_max": 42,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 42,
+        "open_dead_without_recent_no_print": 39,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-08",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 110,
+        "dead_by_released_station_max": 33,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 33,
+        "open_dead_without_recent_no_print": 33,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-09",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 117,
+        "dead_by_released_station_max": 26,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 26,
+        "open_dead_without_recent_no_print": 23,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-10",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 107,
+        "dead_by_released_station_max": 36,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 36,
+        "open_dead_without_recent_no_print": 34,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-11",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 112,
+        "dead_by_released_station_max": 31,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 31,
+        "open_dead_without_recent_no_print": 25,
+        "open_dead_with_recent_no_print": 6,
+        "recent_no_price_at_or_above_one_after_markup": 6,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 129,
+        "dead_by_released_station_max": 14,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 14,
+        "open_dead_without_recent_no_print": 9,
+        "open_dead_with_recent_no_print": 5,
+        "recent_no_price_at_or_above_one_after_markup": 5,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-13",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 83,
+        "dead_by_released_station_max": 60,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 60,
+        "open_dead_without_recent_no_print": 57,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 118,
+        "dead_by_released_station_max": 25,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 25,
+        "open_dead_without_recent_no_print": 21,
+        "open_dead_with_recent_no_print": 4,
+        "recent_no_price_at_or_above_one_after_markup": 4,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-15",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 132,
+        "dead_by_released_station_max": 11,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 11,
+        "open_dead_without_recent_no_print": 10,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-16",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 113,
+        "dead_by_released_station_max": 30,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 30,
+        "open_dead_without_recent_no_print": 29,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-17",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 127,
+        "dead_by_released_station_max": 16,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 16,
+        "open_dead_without_recent_no_print": 16,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 107,
+        "dead_by_released_station_max": 36,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 36,
+        "open_dead_without_recent_no_print": 35,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-19",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 88,
+        "dead_by_released_station_max": 55,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 55,
+        "open_dead_without_recent_no_print": 52,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 105,
+        "dead_by_released_station_max": 38,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 38,
+        "open_dead_without_recent_no_print": 38,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 104,
+        "dead_by_released_station_max": 39,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 39,
+        "open_dead_without_recent_no_print": 37,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-22",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 93,
+        "dead_by_released_station_max": 50,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 50,
+        "open_dead_without_recent_no_print": 49,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-23",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 95,
+        "dead_by_released_station_max": 48,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 48,
+        "open_dead_without_recent_no_print": 47,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-24",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 109,
+        "dead_by_released_station_max": 34,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 34,
+        "open_dead_without_recent_no_print": 34,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-25",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 113,
+        "dead_by_released_station_max": 30,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 30,
+        "open_dead_without_recent_no_print": 30,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-26",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 113,
+        "dead_by_released_station_max": 30,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 30,
+        "open_dead_without_recent_no_print": 30,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-27",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 111,
+        "dead_by_released_station_max": 32,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 32,
+        "open_dead_without_recent_no_print": 30,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 114,
+        "dead_by_released_station_max": 29,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 29,
+        "open_dead_without_recent_no_print": 27,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-29",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 129,
+        "dead_by_released_station_max": 14,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 14,
+        "open_dead_without_recent_no_print": 12,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-30",
+      "period": "calibration_in_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 127,
+        "dead_by_released_station_max": 16,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 16,
+        "open_dead_without_recent_no_print": 14,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 133,
+        "dead_by_released_station_max": 10,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 10,
+        "open_dead_without_recent_no_print": 9,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 94,
+        "dead_by_released_station_max": 49,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 49,
+        "open_dead_without_recent_no_print": 44,
+        "open_dead_with_recent_no_print": 5,
+        "recent_no_price_at_or_above_one_after_markup": 5,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 96,
+        "dead_by_released_station_max": 47,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 47,
+        "open_dead_without_recent_no_print": 44,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 92,
+        "dead_by_released_station_max": 51,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 51,
+        "open_dead_without_recent_no_print": 48,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 101,
+        "dead_by_released_station_max": 42,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 42,
+        "open_dead_without_recent_no_print": 36,
+        "open_dead_with_recent_no_print": 6,
+        "recent_no_price_at_or_above_one_after_markup": 6,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 104,
+        "dead_by_released_station_max": 39,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 39,
+        "open_dead_without_recent_no_print": 39,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-06",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 114,
+        "dead_by_released_station_max": 29,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 29,
+        "open_dead_without_recent_no_print": 27,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-07",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 106,
+        "dead_by_released_station_max": 37,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 37,
+        "open_dead_without_recent_no_print": 33,
+        "open_dead_with_recent_no_print": 4,
+        "recent_no_price_at_or_above_one_after_markup": 4,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-08",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 119,
+        "dead_by_released_station_max": 24,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 24,
+        "open_dead_without_recent_no_print": 22,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-09",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 125,
+        "dead_by_released_station_max": 18,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 18,
+        "open_dead_without_recent_no_print": 18,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-10",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 109,
+        "dead_by_released_station_max": 34,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 34,
+        "open_dead_without_recent_no_print": 33,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-11",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 102,
+        "dead_by_released_station_max": 41,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 41,
+        "open_dead_without_recent_no_print": 39,
+        "open_dead_with_recent_no_print": 2,
+        "recent_no_price_at_or_above_one_after_markup": 2,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-12",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 83,
+        "dead_by_released_station_max": 60,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 60,
+        "open_dead_without_recent_no_print": 57,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-13",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 109,
+        "dead_by_released_station_max": 34,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 34,
+        "open_dead_without_recent_no_print": 31,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-14",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 114,
+        "dead_by_released_station_max": 29,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 29,
+        "open_dead_without_recent_no_print": 28,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-15",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 104,
+        "dead_by_released_station_max": 39,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 39,
+        "open_dead_without_recent_no_print": 29,
+        "open_dead_with_recent_no_print": 10,
+        "recent_no_price_at_or_above_one_after_markup": 10,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-16",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 74,
+        "dead_by_released_station_max": 69,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 69,
+        "open_dead_without_recent_no_print": 68,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-17",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 107,
+        "dead_by_released_station_max": 36,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 36,
+        "open_dead_without_recent_no_print": 32,
+        "open_dead_with_recent_no_print": 4,
+        "recent_no_price_at_or_above_one_after_markup": 4,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-18",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 97,
+        "dead_by_released_station_max": 46,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 46,
+        "open_dead_without_recent_no_print": 45,
+        "open_dead_with_recent_no_print": 1,
+        "recent_no_price_at_or_above_one_after_markup": 1,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-19",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 143,
+        "dead_by_released_station_max": 0,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 0,
+        "open_dead_without_recent_no_print": 0,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-20",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 78,
+        "dead_by_released_station_max": 65,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 65,
+        "open_dead_without_recent_no_print": 62,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-21",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 71,
+        "dead_by_released_station_max": 72,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 72,
+        "open_dead_without_recent_no_print": 68,
+        "open_dead_with_recent_no_print": 4,
+        "recent_no_price_at_or_above_one_after_markup": 4,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-22",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 96,
+        "dead_by_released_station_max": 47,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 47,
+        "open_dead_without_recent_no_print": 47,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-23",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 80,
+        "dead_by_released_station_max": 63,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 63,
+        "open_dead_without_recent_no_print": 60,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-24",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 83,
+        "dead_by_released_station_max": 60,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 60,
+        "open_dead_without_recent_no_print": 60,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-25",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 104,
+        "dead_by_released_station_max": 39,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 39,
+        "open_dead_without_recent_no_print": 39,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-26",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 107,
+        "dead_by_released_station_max": 36,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 36,
+        "open_dead_without_recent_no_print": 36,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-27",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 91,
+        "dead_by_released_station_max": 52,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 52,
+        "open_dead_without_recent_no_print": 49,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-28",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 110,
+        "dead_by_released_station_max": 33,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 33,
+        "open_dead_without_recent_no_print": 33,
+        "open_dead_with_recent_no_print": 0,
+        "recent_no_price_at_or_above_one_after_markup": 0,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    },
+    {
+      "date": "2026-09-29",
+      "period": "out_of_sample",
+      "counts": {
+        "decision_hours": 13,
+        "decision_hours_with_released_observation": 13,
+        "market_hour_checks": 143,
+        "not_dead_after_margin": 96,
+        "dead_by_released_station_max": 47,
+        "dead_but_market_already_closed": 0,
+        "dead_and_market_open": 47,
+        "open_dead_without_recent_no_print": 44,
+        "open_dead_with_recent_no_print": 3,
+        "recent_no_price_at_or_above_one_after_markup": 3,
+        "recent_no_insufficient_net_edge": 0,
+        "qualifying_signal": 0
+      }
+    }
+  ],
+  "examples": [
+    {
+      "date": "2026-08-01",
+      "local_hour": 8,
+      "bucket": "63°F or below",
+      "released_max_f": 72.0,
+      "terminal_reason": "open_dead_without_recent_no_print"
+    },
+    {
+      "date": "2026-08-01",
+      "local_hour": 8,
+      "bucket": "64-65°F",
+      "released_max_f": 72.0,
+      "terminal_reason": "open_dead_without_recent_no_print"
+    },
+    {
+      "date": "2026-08-01",
+      "local_hour": 8,
+      "bucket": "66-67°F",
+      "released_max_f": 72.0,
+      "terminal_reason": "open_dead_without_recent_no_print"
+    },
+    {
+      "date": "2026-08-01",
+      "local_hour": 10,
+      "bucket": "66-67°F",
+      "released_max_f": 72.0,
+      "no_print_price": 0.999,
+      "modeled_entry_price": 1.009,
+      "terminal_reason": "recent_no_price_at_or_above_one_after_markup"
+    },
+    {
+      "date": "2026-08-01",
+      "local_hour": 10,
+      "bucket": "68-69°F",
+      "released_max_f": 72.0,
+      "no_print_price": 0.999,
+      "modeled_entry_price": 1.009,
+      "terminal_reason": "recent_no_price_at_or_above_one_after_markup"
+    },
+    {
+      "date": "2026-08-01",
+      "local_hour": 12,
+      "bucket": "66-67°F",
+      "released_max_f": 72.0,
+      "no_print_price": 0.999,
+      "modeled_entry_price": 1.009,
+      "terminal_reason": "recent_no_price_at_or_above_one_after_markup"
+    }
+  ],
+  "limitations": [
+    "Missing recent No trade print does not prove missing executable book liquidity.",
+    "This is a read-only diagnosis of the original trade-proxy rule; it does not expand S5 to full historical books.",
+    "Temperature is a lagged KORD archive observation; exact official vendor publication vintage remains unverified."
+  ]
+}

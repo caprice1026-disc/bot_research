@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "scope_frozen_before_evaluation": true,
+  "start_date": "2026-08-31",
+  "end_date": "2026-09-29",
+  "decision_utc_hour": 15,
+  "station": "KORD",
+  "observation_release_lag_minutes": 30,
+  "dead_bucket_margin_fahrenheit": 2.0,
+  "dead_bucket_no_probability": 0.995,
+  "dead_bucket_min_net_edge": 0.015,
+  "order_shares": 5.0,
+  "current_taker_fee_rate": 0.05,
+  "max_quote_age_seconds": 60,
+  "price_markup": 0.01,
+  "baseline_config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+  "scope": "Read-only signal diagnosis at one fixed time per event; no fills, PnL, new acquisition, or 13-hour strategy replacement"
+}

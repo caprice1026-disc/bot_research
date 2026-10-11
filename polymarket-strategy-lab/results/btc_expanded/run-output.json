@@ -1,0 +1,329 @@
+{
+  "rows": 107849,
+  "markets": 360,
+  "results": {
+    "complete_set": {
+      "base": {
+        "all": {
+          "trades": 0,
+          "markets": 0,
+          "cost": 0,
+          "net_pnl": 0,
+          "return_on_initial_cash": 0.0,
+          "roi_on_deployed_cost": null,
+          "fees": 0,
+          "wins": 0,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 0.0
+        },
+        "first_half": {
+          "trades": 0,
+          "markets": 0,
+          "cost": 0,
+          "net_pnl": 0,
+          "return_on_initial_cash": 0.0,
+          "roi_on_deployed_cost": null,
+          "fees": 0,
+          "wins": 0,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 0.0
+        },
+        "second_half": {
+          "trades": 0,
+          "markets": 0,
+          "cost": 0,
+          "net_pnl": 0,
+          "return_on_initial_cash": 0.0,
+          "roi_on_deployed_cost": null,
+          "fees": 0,
+          "wins": 0,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 0.0
+        },
+        "diagnostics": {
+          "attempted_markets": 0,
+          "ending_cash_before_final_settlement": 1000.0
+        }
+      },
+      "fixed_fill_cost_stress_all": {
+        "extra_slippage_per_share": 0.01,
+        "net_pnl": 0,
+        "trade_count": 0
+      },
+      "fixed_fill_cost_stress_holdout": {
+        "extra_slippage_per_share": 0.01,
+        "net_pnl": 0,
+        "trade_count": 0
+      },
+      "holdout_day_bootstrap": {
+        "days": 15,
+        "mean_daily_pnl_ci95": null,
+        "reason": "no_executed_trades"
+      },
+      "stress": {
+        "all": {
+          "trades": 0,
+          "markets": 0,
+          "cost": 0,
+          "net_pnl": 0,
+          "return_on_initial_cash": 0.0,
+          "roi_on_deployed_cost": null,
+          "fees": 0,
+          "wins": 0,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 0.0
+        },
+        "first_half": {
+          "trades": 0,
+          "markets": 0,
+          "cost": 0,
+          "net_pnl": 0,
+          "return_on_initial_cash": 0.0,
+          "roi_on_deployed_cost": null,
+          "fees": 0,
+          "wins": 0,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 0.0
+        },
+        "second_half": {
+          "trades": 0,
+          "markets": 0,
+          "cost": 0,
+          "net_pnl": 0,
+          "return_on_initial_cash": 0.0,
+          "roi_on_deployed_cost": null,
+          "fees": 0,
+          "wins": 0,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 0.0
+        },
+        "diagnostics": {
+          "attempted_markets": 0,
+          "ending_cash_before_final_settlement": 1000.0
+        }
+      },
+      "status": "no_executable_opportunities_in_sample",
+      "observed_result": "no_executable_trades"
+    },
+    "btc_fair_value": {
+      "base": {
+        "all": {
+          "trades": 178,
+          "markets": 178,
+          "cost": 1104.69089,
+          "net_pnl": -24.69089,
+          "return_on_initial_cash": -0.024691,
+          "roi_on_deployed_cost": -0.022351,
+          "fees": 25.39089,
+          "wins": 108,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 83.23371
+        },
+        "first_half": {
+          "trades": 88,
+          "markets": 88,
+          "cost": 533.12065,
+          "net_pnl": -3.12065,
+          "return_on_initial_cash": -0.003121,
+          "roi_on_deployed_cost": -0.005854,
+          "fees": 12.62065,
+          "wins": 53,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 44.04066
+        },
+        "second_half": {
+          "trades": 90,
+          "markets": 90,
+          "cost": 571.57024,
+          "net_pnl": -21.57024,
+          "return_on_initial_cash": -0.02157,
+          "roi_on_deployed_cost": -0.037739,
+          "fees": 12.77024,
+          "wins": 55,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 51.11479
+        },
+        "diagnostics": {
+          "signals": 295,
+          "unfilled": 117,
+          "attempted_markets": 295,
+          "ending_cash_before_final_settlement": 915.30911
+        }
+      },
+      "fixed_fill_cost_stress_all": {
+        "extra_slippage_per_share": 0.01,
+        "net_pnl": -42.21341,
+        "trade_count": 178
+      },
+      "fixed_fill_cost_stress_holdout": {
+        "extra_slippage_per_share": 0.01,
+        "net_pnl": -30.41162,
+        "trade_count": 90
+      },
+      "holdout_day_bootstrap": {
+        "days": 15,
+        "mean_daily_pnl_ci95": [
+          -5.733782000000001,
+          2.8941939999999993
+        ],
+        "method": "fixed-seed circular three-UTC-day block bootstrap, 2000 draws; exploratory after testing five candidates"
+      },
+      "stress": {
+        "all": {
+          "trades": 144,
+          "markets": 144,
+          "cost": 912.10322,
+          "net_pnl": -62.10322,
+          "return_on_initial_cash": -0.062103,
+          "roi_on_deployed_cost": -0.068088,
+          "fees": 20.30322,
+          "wins": 85,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 129.42782
+        },
+        "first_half": {
+          "trades": 70,
+          "markets": 70,
+          "cost": 438.31231,
+          "net_pnl": -28.31231,
+          "return_on_initial_cash": -0.028312,
+          "roi_on_deployed_cost": -0.064594,
+          "fees": 10.01231,
+          "wins": 41,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 76.47568
+        },
+        "second_half": {
+          "trades": 74,
+          "markets": 74,
+          "cost": 473.79091,
+          "net_pnl": -33.79091,
+          "return_on_initial_cash": -0.033791,
+          "roi_on_deployed_cost": -0.07132,
+          "fees": 10.29091,
+          "wins": 44,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 60.23943
+        },
+        "diagnostics": {
+          "signals": 290,
+          "unfilled": 146,
+          "attempted_markets": 290,
+          "ending_cash_before_final_settlement": 887.89678
+        }
+      },
+      "status": "rejected_negative_holdout",
+      "observed_result": "negative_in_observed_sample"
+    },
+    "late_favorite": {
+      "base": {
+        "all": {
+          "trades": 28,
+          "markets": 28,
+          "cost": 261.05244,
+          "net_pnl": -11.05244,
+          "return_on_initial_cash": -0.011052,
+          "roi_on_deployed_cost": -0.042338,
+          "fees": 1.25244,
+          "wins": 25,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 14.99274
+        },
+        "first_half": {
+          "trades": 8,
+          "markets": 8,
+          "cost": 75.8877,
+          "net_pnl": -5.8877,
+          "return_on_initial_cash": -0.005888,
+          "roi_on_deployed_cost": -0.077584,
+          "fees": 0.2877,
+          "wins": 7,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 9.53325
+        },
+        "second_half": {
+          "trades": 20,
+          "markets": 20,
+          "cost": 185.16474,
+          "net_pnl": -5.16474,
+          "return_on_initial_cash": -0.005165,
+          "roi_on_deployed_cost": -0.027893,
+          "fees": 0.96474,
+          "wins": 18,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 13.23386
+        },
+        "diagnostics": {
+          "signals": 111,
+          "unfilled": 83,
+          "attempted_markets": 111,
+          "ending_cash_before_final_settlement": 968.94756
+        }
+      },
+      "fixed_fill_cost_stress_all": {
+        "extra_slippage_per_share": 0.01,
+        "net_pnl": -13.68276,
+        "trade_count": 28
+      },
+      "fixed_fill_cost_stress_holdout": {
+        "extra_slippage_per_share": 0.01,
+        "net_pnl": -7.04546,
+        "trade_count": 20
+      },
+      "holdout_day_bootstrap": {
+        "days": 15,
+        "mean_daily_pnl_ci95": [
+          -1.899827333333334,
+          0.7950019999999998
+        ],
+        "method": "fixed-seed circular three-UTC-day block bootstrap, 2000 draws; exploratory after testing five candidates"
+      },
+      "stress": {
+        "all": {
+          "trades": 27,
+          "markets": 27,
+          "cost": 245.48246,
+          "net_pnl": -15.48246,
+          "return_on_initial_cash": -0.015482,
+          "roi_on_deployed_cost": -0.06307,
+          "fees": 1.48246,
+          "wins": 23,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 22.17313
+        },
+        "first_half": {
+          "trades": 12,
+          "markets": 12,
+          "cost": 107.95348,
+          "net_pnl": -17.95348,
+          "return_on_initial_cash": -0.017953,
+          "roi_on_deployed_cost": -0.166308,
+          "fees": 0.75348,
+          "wins": 9,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 22.17313
+        },
+        "second_half": {
+          "trades": 15,
+          "markets": 15,
+          "cost": 137.52898,
+          "net_pnl": 2.47102,
+          "return_on_initial_cash": 0.002471,
+          "roi_on_deployed_cost": 0.017967,
+          "fees": 0.72898,
+          "wins": 14,
+          "partial_pairs": 0,
+          "settlement_order_max_drawdown": 8.68428
+        },
+        "diagnostics": {
+          "signals": 111,
+          "unfilled": 84,
+          "attempted_markets": 111,
+          "ending_cash_before_final_settlement": 964.51754
+        }
+      },
+      "status": "insufficient_holdout_trades",
+      "observed_result": "negative_in_observed_sample"
+    }
+  }
+}

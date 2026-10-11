@@ -1,0 +1,24 @@
+metadata 10/162 errors=0
+metadata 20/162 errors=0
+metadata 30/162 errors=0
+metadata 40/162 errors=0
+metadata 50/162 errors=0
+metadata 60/162 errors=0
+metadata 70/162 errors=0
+metadata 80/162 errors=0
+metadata 90/162 errors=0
+metadata 100/162 errors=0
+metadata 110/162 errors=0
+metadata 120/162 errors=0
+metadata 130/162 errors=0
+metadata 140/162 errors=0
+metadata 150/162 errors=0
+metadata 160/162 errors=0
+{
+  "config_sha256": "9a12e61422a35ecc702efd7b4e843515e06510e20769935ef7f45f10008b85ab",
+  "requested_new_city_days": 72,
+  "errors": [],
+  "requested_metadata_city_days": 162,
+  "complete": true,
+  "created_at_utc": "2026-10-05T12:59:35.010768+00:00"
+}

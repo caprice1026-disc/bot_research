@@ -1,0 +1,218 @@
+{
+  "scope": "Exploratory robustness; descriptive bootstrap tails are not frequentist p-values",
+  "joint_calendar_dates": 34,
+  "block_lengths": {
+    "1": {
+      "total_pnl_95pct": [
+        2.01632,
+        68.81314
+      ],
+      "fraction_bootstrap_pnl_le_zero": 0.0194
+    },
+    "3": {
+      "total_pnl_95pct": [
+        1.38324,
+        67.96112
+      ],
+      "fraction_bootstrap_pnl_le_zero": 0.0216
+    },
+    "5": {
+      "total_pnl_95pct": [
+        7.9499,
+        63.43032
+      ],
+      "fraction_bootstrap_pnl_le_zero": 0.006
+    },
+    "7": {
+      "total_pnl_95pct": [
+        17.3084,
+        56.5027
+      ],
+      "fraction_bootstrap_pnl_le_zero": 0.0
+    },
+    "10": {
+      "total_pnl_95pct": [
+        13.58958,
+        52.64722
+      ],
+      "fraction_bootstrap_pnl_le_zero": 0.001
+    }
+  },
+  "new_pnl_without_best_day": 28.1905,
+  "new_pnl_without_best_three_days": 18.02556,
+  "scenario_aggregate": {
+    "primary": {
+      "fills": 64,
+      "pnl": 35.60954,
+      "three_day_pnl_95pct": [
+        1.38324,
+        67.96112
+      ]
+    },
+    "age_5": {
+      "fills": 21,
+      "pnl": 7.206,
+      "three_day_pnl_95pct": [
+        -14.51214,
+        28.88408
+      ]
+    },
+    "age_15": {
+      "fills": 46,
+      "pnl": 17.22732,
+      "three_day_pnl_95pct": [
+        -14.00204,
+        49.08802
+      ]
+    },
+    "age_30": {
+      "fills": 59,
+      "pnl": 22.26136,
+      "three_day_pnl_95pct": [
+        -9.6859,
+        52.14156
+      ]
+    },
+    "age_120": {
+      "fills": 65,
+      "pnl": 37.89726,
+      "three_day_pnl_95pct": [
+        3.03352,
+        70.66294
+      ]
+    },
+    "age_300": {
+      "fills": 65,
+      "pnl": 37.89726,
+      "three_day_pnl_95pct": [
+        3.03352,
+        70.66294
+      ]
+    },
+    "latency_1": {
+      "fills": 64,
+      "pnl": 35.55478,
+      "three_day_pnl_95pct": [
+        1.46102,
+        67.62034
+      ]
+    },
+    "latency_30": {
+      "fills": 64,
+      "pnl": 35.708,
+      "three_day_pnl_95pct": [
+        1.47428,
+        68.08162
+      ]
+    },
+    "latency_120": {
+      "fills": 61,
+      "pnl": 30.91526,
+      "three_day_pnl_95pct": [
+        -0.80384,
+        60.54114
+      ]
+    },
+    "latency_300": {
+      "fills": 51,
+      "pnl": 23.53562,
+      "three_day_pnl_95pct": [
+        -5.02382,
+        51.97176
+      ]
+    },
+    "markup_0.025": {
+      "fills": 60,
+      "pnl": 34.06021,
+      "three_day_pnl_95pct": [
+        3.4957,
+        63.38598
+      ]
+    },
+    "markup_0.05": {
+      "fills": 53,
+      "pnl": 13.73266,
+      "three_day_pnl_95pct": [
+        -18.29058,
+        43.8716
+      ]
+    },
+    "shares_10": {
+      "fills": 51,
+      "pnl": 38.28702,
+      "three_day_pnl_95pct": [
+        -11.33442,
+        91.0162
+      ]
+    },
+    "shares_25": {
+      "fills": 33,
+      "pnl": 64.89969,
+      "three_day_pnl_95pct": [
+        -29.31456,
+        172.44633
+      ]
+    },
+    "shares_50": {
+      "fills": 22,
+      "pnl": 68.1671,
+      "three_day_pnl_95pct": [
+        -93.48025,
+        239.87459
+      ]
+    },
+    "edge_0.04": {
+      "fills": 70,
+      "pnl": 27.993,
+      "three_day_pnl_95pct": [
+        -5.10934,
+        59.19026
+      ]
+    },
+    "edge_0.12": {
+      "fills": 59,
+      "pnl": 34.69868,
+      "three_day_pnl_95pct": [
+        0.03668,
+        66.58942
+      ]
+    }
+  },
+  "mean_selected_probability": 0.6271295558508944,
+  "actual_win_fraction": 0.5,
+  "freshness_trade_set_contrasts": {
+    "chicago": {
+      "common_trades": 0,
+      "common_primary_pnl": 0,
+      "fixed_primary_fresh_5_fills": 0,
+      "fixed_primary_fresh_5_pnl": 0
+    },
+    "nyc": {
+      "common_trades": 8,
+      "common_primary_pnl": 6.31528,
+      "fixed_primary_fresh_5_fills": 8,
+      "fixed_primary_fresh_5_pnl": 6.31528
+    },
+    "atlanta": {
+      "common_trades": 9,
+      "common_primary_pnl": -4.54104,
+      "fixed_primary_fresh_5_fills": 9,
+      "fixed_primary_fresh_5_pnl": -4.54104
+    }
+  },
+  "persistence_control": {
+    "study_type": "exploratory control added after new primary evaluation; no primary rule changed",
+    "fills": 69,
+    "pnl": 27.92558,
+    "three_day_pnl_95pct": [
+      -1.95691,
+      55.54541
+    ],
+    "forecast_minus_control_pnl": 7.68396,
+    "paired_three_day_incremental_pnl_95pct": [
+      -5.40544,
+      21.25928
+    ],
+    "primary_summary_sha256": "f333011389322e3eaeda40447f928ed0a1313089bd21eb9ccfee7ec74c8324f2"
+  }
+}

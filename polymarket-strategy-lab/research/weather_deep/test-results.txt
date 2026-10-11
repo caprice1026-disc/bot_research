@@ -1,0 +1,5 @@
+Command: .\Polymarket_5m_btc\.venv\Scripts\python.exe -m unittest discover -s polymarket-strategy-lab/tests -v
+Verified 2026-10-05: Ran 52 tests in 0.053s, OK; exit code 0.
+Primary artifacts: 908 scenario fills / 72 city-days, passed.
+Control artifacts: 69 fills / 34 paired dates, passed.
+Original verify_artifacts.py: validation_complete=true, passed=true, allow_pending=false; exit code 0.

@@ -1,0 +1,440 @@
+{
+  "generated_at_utc": "2026-10-04T14:41:49.500819+00:00",
+  "study_type": "exploratory_followup_not_untouched_holdout",
+  "strategy": "forecast_probability_edge",
+  "config": {
+    "version": 1,
+    "study_type": "exploratory_followup_not_untouched_holdout",
+    "frozen_before_full_cohort_pnl": true,
+    "baseline_config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+    "start_date": "2026-08-31",
+    "end_date": "2026-09-29",
+    "expected_days": 30,
+    "expected_markets_per_day": 11,
+    "decision_utc_hour": 15,
+    "execution_latency_seconds": 60,
+    "primary_max_quote_age_seconds": 60,
+    "sensitivity_max_quote_age_seconds": [
+      5,
+      300
+    ],
+    "forecast_min_net_edge": 0.08,
+    "order_shares": 5.0,
+    "initial_capital": 1000.0,
+    "current_taker_fee_rate": 0.05,
+    "base_price_markup": 0.01,
+    "stress_price_markups": [
+      0.025,
+      0.05
+    ],
+    "max_price_move": 0.05,
+    "bootstrap_seed": 20261004,
+    "bootstrap_samples": 2000,
+    "candidate_tie_break": "max(net_edge, condition_id, outcome)",
+    "execution_model": "fixed delayed actual top ask plus adverse cost buffer, requires observed depth for all shares",
+    "historical_tick_policy": "buffer is a stress cost, not a literal order price; missing historical tick is disclosed"
+  },
+  "config_sha256": "8a9e1949f5c797c784e9cd964b880ff2dd7e7e57f99bcf68c54a9108d12cab79",
+  "input_manifest_sha256": "6cba0dd5640baed4e8606b02fc81abc897cc6e5e3ec7299eef3b6d15f57f6836",
+  "data_sha256": "d0ef6cd5333d8520da2762ff00c019ba213635fa99343e314d5b55cd6ee2262e",
+  "calibration": {
+    "days": 30,
+    "through": "2026-08-30",
+    "model_mae_f": {
+      "gfs_global": 1.5799999999999992,
+      "ecmwf_ifs025": 1.5633333333333326
+    },
+    "weights": {
+      "gfs_global": 0.49734888653234355,
+      "ecmwf_ifs025": 0.5026511134676563
+    },
+    "bias_f": -0.6232944503357984,
+    "sigma_f": 2.0,
+    "fit_period_is_in_sample": true
+  },
+  "days": 30,
+  "markets": 330,
+  "outcome_snapshots": 660,
+  "date_range": [
+    "2026-08-31",
+    "2026-09-29"
+  ],
+  "primary_scenario": "age_60_markup_0.01",
+  "verdict": "conditional_candidate_not_supported",
+  "live_execution_verified": false,
+  "untouched_holdout": false,
+  "scenarios": {
+    "age_60_markup_0.01": {
+      "max_quote_age_seconds": 60,
+      "price_markup": 0.01,
+      "result_file": "age_60_markup_0.01.json",
+      "result_sha256": "0369e7c33541d7b896ac01e97a7169f7fbfb13647942e7d7485bbe05624042a3",
+      "days": 30,
+      "attempts": 28,
+      "fills": 27,
+      "wins": 15,
+      "net_pnl": 17.95562,
+      "capital_return_pct": 1.795562,
+      "cost_roi_pct": 31.47658,
+      "deployed_cost": 57.04438,
+      "fees": 1.33938,
+      "settlement_equity_max_drawdown_pct": 0.534775,
+      "minimum_cash": 996.83286,
+      "maximum_reserved_cost": 4.37828,
+      "ending_cash": 1017.95562,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -1.04438,
+        37.36698
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 27,
+        "execution_price_limit": 1
+      },
+      "win_rate_pct": 55.555556,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 355,
+        "signal_price_limit": 58,
+        "eligible": 65,
+        "missing_or_nonfinite_book_ask": 145,
+        "stale_received_quote": 33,
+        "insufficient_top_depth": 4
+      },
+      "unknown_historical_tick_fills": 27
+    },
+    "age_60_markup_0.025": {
+      "max_quote_age_seconds": 60,
+      "price_markup": 0.025,
+      "result_file": "age_60_markup_0.025.json",
+      "result_sha256": "e9a10262060e06ff7217d0aabd5fc6a5a2510d7917ef6ee8bd4e6725ad64e9d9",
+      "days": 30,
+      "attempts": 27,
+      "fills": 24,
+      "wins": 14,
+      "net_pnl": 19.2252,
+      "capital_return_pct": 1.92252,
+      "cost_roi_pct": 37.863665,
+      "deployed_cost": 50.7748,
+      "fees": 1.1698,
+      "settlement_equity_max_drawdown_pct": 0.54842,
+      "minimum_cash": 999.14056,
+      "maximum_reserved_cost": 4.45044,
+      "ending_cash": 1019.2252,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -0.28381,
+        38.42706
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 24,
+        "execution_price_limit": 3
+      },
+      "win_rate_pct": 58.333333,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 347,
+        "signal_price_limit": 72,
+        "eligible": 59,
+        "missing_or_nonfinite_book_ask": 145,
+        "stale_received_quote": 33,
+        "insufficient_top_depth": 4
+      },
+      "unknown_historical_tick_fills": 24
+    },
+    "age_60_markup_0.05": {
+      "max_quote_age_seconds": 60,
+      "price_markup": 0.05,
+      "result_file": "age_60_markup_0.05.json",
+      "result_sha256": "0dd772d2fa13578386ed352706029d9e12a0fbaffc6d74d4de1a5767ae0eb9e8",
+      "days": 30,
+      "attempts": 24,
+      "fills": 17,
+      "wins": 10,
+      "net_pnl": 15.8928,
+      "capital_return_pct": 1.58928,
+      "cost_roi_pct": 46.596613,
+      "deployed_cost": 34.1072,
+      "fees": 0.8522,
+      "settlement_equity_max_drawdown_pct": 0.335481,
+      "minimum_cash": 994.92602,
+      "maximum_reserved_cost": 3.60148,
+      "ending_cash": 1015.8928,
+      "three_day_block_bootstrap_pnl_95pct": [
+        1.96904,
+        31.83998
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "execution_price_limit": 7,
+        "conditional_book_fill": 17
+      },
+      "win_rate_pct": 58.823529,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 341,
+        "signal_price_limit": 91,
+        "eligible": 46,
+        "missing_or_nonfinite_book_ask": 145,
+        "stale_received_quote": 33,
+        "insufficient_top_depth": 4
+      },
+      "unknown_historical_tick_fills": 17
+    },
+    "age_5_markup_0.01": {
+      "max_quote_age_seconds": 5,
+      "price_markup": 0.01,
+      "result_file": "age_5_markup_0.01.json",
+      "result_sha256": "64dbc9ebf24557a3b3083cf9720ce3fd3480ad06fb4b377dd980a03e51d87aba",
+      "days": 30,
+      "attempts": 14,
+      "fills": 9,
+      "wins": 3,
+      "net_pnl": -2.13668,
+      "capital_return_pct": -0.213668,
+      "cost_roi_pct": -12.468459,
+      "deployed_cost": 17.13668,
+      "fees": 0.43668,
+      "settlement_equity_max_drawdown_pct": 0.873556,
+      "minimum_cash": 990.79396,
+      "maximum_reserved_cost": 3.40528,
+      "ending_cash": 997.86332,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -17.9286,
+        18.21336
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 9,
+        "stale_received_quote": 5
+      },
+      "win_rate_pct": 33.333333,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 93,
+        "signal_price_limit": 12,
+        "stale_received_quote": 385,
+        "missing_or_nonfinite_book_ask": 145,
+        "eligible": 20,
+        "insufficient_top_depth": 2,
+        "stale_or_future_source_quote": 3
+      },
+      "unknown_historical_tick_fills": 9
+    },
+    "age_5_markup_0.025": {
+      "max_quote_age_seconds": 5,
+      "price_markup": 0.025,
+      "result_file": "age_5_markup_0.025.json",
+      "result_sha256": "4ae4af3adda4042ca12a41414476da9350db5fd475f2115177430479ce6d8bee",
+      "days": 30,
+      "attempts": 13,
+      "fills": 7,
+      "wins": 3,
+      "net_pnl": 1.49417,
+      "capital_return_pct": 0.149417,
+      "cost_roi_pct": 11.063148,
+      "deployed_cost": 13.50583,
+      "fees": 0.33083,
+      "settlement_equity_max_drawdown_pct": 0.472358,
+      "minimum_cash": 994.72793,
+      "maximum_reserved_cost": 3.47894,
+      "ending_cash": 1001.49417,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -11.99601,
+        19.44746
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 7,
+        "execution_price_limit": 1,
+        "stale_received_quote": 5
+      },
+      "win_rate_pct": 42.857143,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 91,
+        "signal_price_limit": 16,
+        "stale_received_quote": 385,
+        "missing_or_nonfinite_book_ask": 145,
+        "eligible": 18,
+        "insufficient_top_depth": 2,
+        "stale_or_future_source_quote": 3
+      },
+      "unknown_historical_tick_fills": 7
+    },
+    "age_5_markup_0.05": {
+      "max_quote_age_seconds": 5,
+      "price_markup": 0.05,
+      "result_file": "age_5_markup_0.05.json",
+      "result_sha256": "7d5a755df8db38f209c21522c03d8f627d03e1210477524aa9bbff26c0f44ef9",
+      "days": 30,
+      "attempts": 12,
+      "fills": 7,
+      "wins": 3,
+      "net_pnl": 0.6094,
+      "capital_return_pct": 0.06094,
+      "cost_roi_pct": 4.234709,
+      "deployed_cost": 14.3906,
+      "fees": 0.3406,
+      "settlement_equity_max_drawdown_pct": 0.497428,
+      "minimum_cash": 994.34744,
+      "maximum_reserved_cost": 3.60148,
+      "ending_cash": 1000.6094,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -12.92772,
+        18.30148
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 7,
+        "execution_price_limit": 1,
+        "stale_received_quote": 4
+      },
+      "win_rate_pct": 42.857143,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 85,
+        "signal_price_limit": 23,
+        "stale_received_quote": 385,
+        "missing_or_nonfinite_book_ask": 145,
+        "eligible": 17,
+        "insufficient_top_depth": 2,
+        "stale_or_future_source_quote": 3
+      },
+      "unknown_historical_tick_fills": 7
+    },
+    "age_300_markup_0.01": {
+      "max_quote_age_seconds": 300,
+      "price_markup": 0.01,
+      "result_file": "age_300_markup_0.01.json",
+      "result_sha256": "092c4e85670b6182a1f9f785e2250af695279fbc4b4390d7c23f7d02aaab0cce",
+      "days": 30,
+      "attempts": 28,
+      "fills": 27,
+      "wins": 15,
+      "net_pnl": 17.95562,
+      "capital_return_pct": 1.795562,
+      "cost_roi_pct": 31.47658,
+      "deployed_cost": 57.04438,
+      "fees": 1.33938,
+      "settlement_equity_max_drawdown_pct": 0.534775,
+      "minimum_cash": 996.83286,
+      "maximum_reserved_cost": 4.37828,
+      "ending_cash": 1017.95562,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -1.04438,
+        37.36698
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 27,
+        "execution_price_limit": 1
+      },
+      "win_rate_pct": 55.555556,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 384,
+        "signal_price_limit": 60,
+        "eligible": 67,
+        "missing_or_nonfinite_book_ask": 145,
+        "insufficient_top_depth": 4
+      },
+      "unknown_historical_tick_fills": 27
+    },
+    "age_300_markup_0.025": {
+      "max_quote_age_seconds": 300,
+      "price_markup": 0.025,
+      "result_file": "age_300_markup_0.025.json",
+      "result_sha256": "6e3cb7b16eec708a6680f83fa5489fc401b2397504a5b8846ccef963bb3c4428",
+      "days": 30,
+      "attempts": 27,
+      "fills": 24,
+      "wins": 14,
+      "net_pnl": 19.2252,
+      "capital_return_pct": 1.92252,
+      "cost_roi_pct": 37.863665,
+      "deployed_cost": 50.7748,
+      "fees": 1.1698,
+      "settlement_equity_max_drawdown_pct": 0.54842,
+      "minimum_cash": 999.14056,
+      "maximum_reserved_cost": 4.45044,
+      "ending_cash": 1019.2252,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -0.28381,
+        38.42706
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 24,
+        "execution_price_limit": 3
+      },
+      "win_rate_pct": 58.333333,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 375,
+        "signal_price_limit": 75,
+        "eligible": 61,
+        "missing_or_nonfinite_book_ask": 145,
+        "insufficient_top_depth": 4
+      },
+      "unknown_historical_tick_fills": 24
+    },
+    "age_300_markup_0.05": {
+      "max_quote_age_seconds": 300,
+      "price_markup": 0.05,
+      "result_file": "age_300_markup_0.05.json",
+      "result_sha256": "570b56e3a8a58154cb15744d2bcdbb6fa09ee1503ae111097dc7df86b82fa594",
+      "days": 30,
+      "attempts": 24,
+      "fills": 17,
+      "wins": 10,
+      "net_pnl": 15.8928,
+      "capital_return_pct": 1.58928,
+      "cost_roi_pct": 46.596613,
+      "deployed_cost": 34.1072,
+      "fees": 0.8522,
+      "settlement_equity_max_drawdown_pct": 0.335481,
+      "minimum_cash": 994.92602,
+      "maximum_reserved_cost": 3.60148,
+      "ending_cash": 1015.8928,
+      "three_day_block_bootstrap_pnl_95pct": [
+        1.96904,
+        31.83998
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "execution_price_limit": 7,
+        "conditional_book_fill": 17
+      },
+      "win_rate_pct": 58.823529,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 369,
+        "signal_price_limit": 94,
+        "eligible": 48,
+        "missing_or_nonfinite_book_ask": 145,
+        "insufficient_top_depth": 4
+      },
+      "unknown_historical_tick_fills": 17
+    }
+  },
+  "baseline_observation_settlement_mismatches": [
+    {
+      "date": "2026-08-14",
+      "iem_high_f": 79,
+      "winning_bucket": "80-81°F"
+    },
+    {
+      "date": "2026-08-31",
+      "iem_high_f": 85,
+      "winning_bucket": "86-87°F"
+    },
+    {
+      "date": "2026-09-20",
+      "iem_high_f": 69,
+      "winning_bucket": "70-71°F"
+    }
+  ],
+  "limitations": [
+    "Exploratory follow-up selected after the same dates' trade-proxy results and 20-attempt L2 audit were examined; no untouched holdout remains.",
+    "Book archive receipt timestamps are observed for the archive collector, not a trading bot; feed continuity between archived events is assumed.",
+    "Five shares must exist at the actual outcome's top ask at both signal and delayed execution; displayed liquidity is not a guarantee of live fills.",
+    "Adverse ask markups are modeled costs, not literal tick-valid limit orders. Historical initial tick/minimum-order metadata may be missing; current five-share size is assumed.",
+    "Current 0.05 taker rate is a counterfactual current-cost scenario; historical fee schedules are not reconstructed.",
+    "Cost and age scenarios rerun the frozen decision rule and may select different orders; higher stress PnL is not improved performance of a fixed portfolio.",
+    "Forecast run plus six-hour availability and IEM historical observation publication are assumptions; forecast grid differs from station point.",
+    "Cash is reserved until official chain resolution; drawdown marks open positions at cost, not at executable liquidation value.",
+    "One city and 30 correlated event days; three-day block bootstrap intervals do not account for strategy selection or additional model risk."
+  ]
+}

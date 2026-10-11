@@ -1,0 +1,685 @@
+{
+  "generated_at_utc": "2026-10-04T14:13:28.861909+00:00",
+  "config": {
+    "version": 1,
+    "frozen_before_oos_evaluation": true,
+    "city": "chicago",
+    "station": "KORD",
+    "latitude": 41.98,
+    "longitude": -87.904,
+    "timezone": "America/Chicago",
+    "utc_offset_hours": -5,
+    "start_date": "2026-08-01",
+    "end_date": "2026-09-29",
+    "calibration_end": "2026-08-30",
+    "forecast_models": [
+      "gfs_global",
+      "ecmwf_ifs025"
+    ],
+    "forecast_run_utc_hour": 0,
+    "forecast_release_lag_hours": 6,
+    "forecast_decision_local_hour": 10,
+    "forecast_min_net_edge": 0.08,
+    "sigma_floor_fahrenheit": 2.0,
+    "observed_decision_local_hours": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "observation_release_lag_minutes": 30,
+    "dead_bucket_margin_fahrenheit": 2.0,
+    "dead_bucket_no_probability": 0.995,
+    "dead_bucket_min_net_edge": 0.015,
+    "max_signal_price_age_seconds": 1800,
+    "execution_latency_seconds": 60,
+    "execution_expiry_seconds": 900,
+    "max_price_move": 0.05,
+    "tape_participation_cap": 0.1,
+    "order_shares": 5.0,
+    "initial_capital": 1000.0,
+    "current_taker_fee_rate": 0.05,
+    "base_price_markup": 0.01,
+    "stress_price_markups": [
+      0.025,
+      0.05
+    ],
+    "bootstrap_seed": 20261004,
+    "bootstrap_samples": 2000,
+    "execution_evidence": "historical trade print proxy; executable historical order books unavailable",
+    "observation_evidence": "IEM archive for NOAA KORD routine hourly reports; exact vendor publication history unavailable"
+  },
+  "config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+  "calibration": {
+    "days": 30,
+    "through": "2026-08-30",
+    "model_mae_f": {
+      "gfs_global": 1.5799999999999992,
+      "ecmwf_ifs025": 1.5633333333333326
+    },
+    "weights": {
+      "gfs_global": 0.49734888653234355,
+      "ecmwf_ifs025": 0.5026511134676563
+    },
+    "bias_f": -0.6232944503357984,
+    "sigma_f": 2.0,
+    "fit_period_is_in_sample": true
+  },
+  "requested_period": [
+    "2026-08-01",
+    "2026-09-29"
+  ],
+  "measured_days": 60,
+  "integrity": {
+    "raw_trade_rows": 93852,
+    "duplicate_trade_rows": 0,
+    "observation_settlement_mismatches": [
+      {
+        "date": "2026-08-14",
+        "iem_high_f": 79,
+        "winning_bucket": "80-81°F"
+      },
+      {
+        "date": "2026-08-31",
+        "iem_high_f": 85,
+        "winning_bucket": "86-87°F"
+      },
+      {
+        "date": "2026-09-20",
+        "iem_high_f": 69,
+        "winning_bucket": "70-71°F"
+      }
+    ],
+    "incomplete_observation_days": [],
+    "model_grid_coordinates": {
+      "2026-08-01": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-02": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-03": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-04": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-05": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-06": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-07": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-08": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-09": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-10": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-11": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-12": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-13": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-14": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-15": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-16": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-17": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-18": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-19": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-20": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-21": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-22": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-23": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-24": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-25": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-26": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-27": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-28": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-29": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-30": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-08-31": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-01": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-02": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-03": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-04": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-05": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-06": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-07": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-08": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-09": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-10": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-11": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-12": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-13": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-14": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-15": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-16": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-17": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-18": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-19": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-20": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-21": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-22": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-23": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-24": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-25": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-26": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-27": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-28": [
+        41.998047,
+        -87.890625
+      ],
+      "2026-09-29": [
+        41.998047,
+        -87.890625
+      ]
+    },
+    "fee_rates_in_gamma": [
+      0.05
+    ],
+    "settlement_sources": {
+      "Wunderground_KORD": 242,
+      "NOAA_KORD": 11,
+      "NOAA_KORD_hourly": 407
+    }
+  },
+  "strategies": {
+    "forecast_probability_edge": {
+      "verdict": "insufficient_out_of_sample_fills",
+      "scenarios": {
+        "0.01": {
+          "calibration_in_sample": {
+            "days": 30,
+            "attempts": 13,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {
+              "execution_timeout": 6,
+              "insufficient_print_size": 6,
+              "no_next_buy_print": 1
+            },
+            "win_rate_pct": null
+          },
+          "out_of_sample": {
+            "days": 30,
+            "attempts": 20,
+            "fills": 1,
+            "wins": 0,
+            "net_pnl": -0.2096,
+            "capital_return_pct": -0.02096,
+            "cost_roi_pct": -100.0,
+            "deployed_cost": 0.2096,
+            "fees": 0.0096,
+            "settlement_equity_max_drawdown_pct": 0.02096,
+            "minimum_cash": 999.7904,
+            "maximum_reserved_cost": 0.2096,
+            "ending_cash": 999.7904,
+            "three_day_block_bootstrap_pnl_95pct": [
+              -0.6288,
+              0.0
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {
+              "insufficient_print_size": 7,
+              "execution_timeout": 8,
+              "proxy_fill": 1,
+              "no_next_buy_print": 1,
+              "price_limit": 3
+            },
+            "win_rate_pct": 0.0
+          }
+        },
+        "0.025": {
+          "calibration_in_sample": {
+            "days": 30,
+            "attempts": 13,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {
+              "execution_timeout": 6,
+              "insufficient_print_size": 6,
+              "no_next_buy_print": 1
+            },
+            "win_rate_pct": null
+          },
+          "out_of_sample": {
+            "days": 30,
+            "attempts": 18,
+            "fills": 1,
+            "wins": 0,
+            "net_pnl": -0.28799,
+            "capital_return_pct": -0.028799,
+            "cost_roi_pct": -100.0,
+            "deployed_cost": 0.28799,
+            "fees": 0.01299,
+            "settlement_equity_max_drawdown_pct": 0.028799,
+            "minimum_cash": 999.71201,
+            "maximum_reserved_cost": 0.28799,
+            "ending_cash": 999.71201,
+            "three_day_block_bootstrap_pnl_95pct": [
+              -0.86397,
+              0.0
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {
+              "price_limit": 5,
+              "execution_timeout": 7,
+              "insufficient_print_size": 4,
+              "proxy_fill": 1,
+              "no_next_buy_print": 1
+            },
+            "win_rate_pct": 0.0
+          }
+        },
+        "0.05": {
+          "calibration_in_sample": {
+            "days": 30,
+            "attempts": 10,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {
+              "execution_timeout": 5,
+              "price_limit": 3,
+              "insufficient_print_size": 2
+            },
+            "win_rate_pct": null
+          },
+          "out_of_sample": {
+            "days": 30,
+            "attempts": 14,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {
+              "execution_timeout": 6,
+              "insufficient_print_size": 1,
+              "price_limit": 6,
+              "no_next_buy_print": 1
+            },
+            "win_rate_pct": null
+          }
+        }
+      }
+    },
+    "observed_dead_bucket_no": {
+      "verdict": "insufficient_out_of_sample_fills",
+      "scenarios": {
+        "0.01": {
+          "calibration_in_sample": {
+            "days": 30,
+            "attempts": 0,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {},
+            "win_rate_pct": null
+          },
+          "out_of_sample": {
+            "days": 30,
+            "attempts": 0,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {},
+            "win_rate_pct": null
+          }
+        },
+        "0.025": {
+          "calibration_in_sample": {
+            "days": 30,
+            "attempts": 0,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {},
+            "win_rate_pct": null
+          },
+          "out_of_sample": {
+            "days": 30,
+            "attempts": 0,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {},
+            "win_rate_pct": null
+          }
+        },
+        "0.05": {
+          "calibration_in_sample": {
+            "days": 30,
+            "attempts": 0,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {},
+            "win_rate_pct": null
+          },
+          "out_of_sample": {
+            "days": 30,
+            "attempts": 0,
+            "fills": 0,
+            "wins": 0,
+            "net_pnl": 0,
+            "capital_return_pct": 0.0,
+            "cost_roi_pct": null,
+            "deployed_cost": 0,
+            "fees": 0,
+            "settlement_equity_max_drawdown_pct": 0.0,
+            "minimum_cash": 1000.0,
+            "maximum_reserved_cost": 0.0,
+            "ending_cash": 1000.0,
+            "three_day_block_bootstrap_pnl_95pct": [
+              null,
+              null
+            ],
+            "fill_model": "assumed execution at first subsequent observed BUY plus price markup",
+            "attempt_outcomes": {},
+            "win_rate_pct": null
+          }
+        }
+      }
+    }
+  },
+  "live_execution_verified": false,
+  "limitations": [
+    "Historical executable quotes/depth unavailable; fills and participation are assumptions.",
+    "Trade-proxy price is rounded up to 0.001; this is a modeling precision, not verified historical tick-size metadata.",
+    "IEM KORD routine NOAA reports match the station/hourly convention but do not prove historical vendor publication timing or revisions.",
+    "Forecast run initialization plus six hours is an availability assumption, not observed historical delivery.",
+    "Current 0.05 taker rate is applied as a current-cost scenario; historical fees are not independently reconstructed.",
+    "Only one city and 30 out-of-sample days; correlated buckets restricted to one attempted order per event.",
+    "Drawdown uses realized settlement timestamps; open positions remain at cost, not executable liquidation value."
+  ],
+  "actual_oos_date_range": [
+    "2026-08-31",
+    "2026-09-29"
+  ]
+}

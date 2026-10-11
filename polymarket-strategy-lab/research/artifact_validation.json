@@ -1,0 +1,66 @@
+{
+  "created_at_utc": "2026-10-11T10:38:40.486468+00:00",
+  "allow_pending": false,
+  "scope": "Artifact provenance and arithmetic, not a certification of profitability, strategy selection, live fills or full-day coverage.",
+  "financial_success_certified": false,
+  "checks": {
+    "reference_sources": {
+      "status": "passed",
+      "repositories": 4,
+      "source_files_hashed": 2206,
+      "manifest_sha256": "72637f13889075390c1e157dab9d0846a78a5e56bd9d621213ed6bdcf4555fd4"
+    },
+    "btc_local": {
+      "status": "passed",
+      "rows": 7198,
+      "markets": 25,
+      "trades_checked_across_scenarios": 23,
+      "data_sha256": "5999d1d3b655ccda154ef19159129325eca0d80414154515c76cc0f0cbb4c3e1",
+      "summary_sha256": "6b55b298015a263619645f606e3bec36182172aac73da2ec8ae5ba4be3630de4",
+      "strategy_verdicts": {
+        "complete_set": "insufficient_data",
+        "btc_fair_value": "insufficient_data",
+        "late_favorite": "insufficient_data"
+      }
+    },
+    "btc_expanded_30_days": {
+      "status": "passed",
+      "rows": 107849,
+      "markets": 360,
+      "trades_checked_across_scenarios": 377,
+      "data_sha256": "ed8388acef72de335bbe7d97b73dd2e8b73b2c52e5cd265d6f7b47f95f228392",
+      "summary_sha256": "5ece1043bce1ac14f071aa1ca8167b59a98de6da7f0ccff2b14920d1f7b191b3",
+      "strategy_verdicts": {
+        "complete_set": "no_executable_opportunities_in_sample",
+        "btc_fair_value": "rejected_negative_holdout",
+        "late_favorite": "insufficient_holdout_trades"
+      }
+    },
+    "weather_60_days": {
+      "status": "passed",
+      "days": 60,
+      "markets": 660,
+      "raw_trade_rows": 93852,
+      "base_fills_checked": 1,
+      "report_sha256": "0d64e8b82e6cb0c4f35cfb1a7333b90772d87d18e8d8f4e8a6535ac296666441",
+      "strategy_verdicts": {
+        "forecast_probability_edge": "insufficient_out_of_sample_fills",
+        "observed_dead_bucket_no": "insufficient_out_of_sample_fills"
+      },
+      "scope": "Base fill records and summary mathematics verified; stress fills are not separately persisted."
+    },
+    "weather_full_books_30_days": {
+      "status": "passed",
+      "days": 30,
+      "markets": 330,
+      "outcome_snapshots": 660,
+      "fills_checked_across_scenarios": 159,
+      "summary_sha256": "19717c0e909f776a48df62a69fd1c01f7b3cbb80c88c1e528130030d9459a2d7",
+      "verdict": "conditional_candidate_not_supported",
+      "untouched_holdout": false
+    }
+  },
+  "passed": true,
+  "validation_complete": true,
+  "status": "passed"
+}

@@ -1,0 +1,160 @@
+{
+  "study_type": "exploratory control added after new primary evaluation; no primary rule changed",
+  "config_sha256": "9a12e61422a35ecc702efd7b4e843515e06510e20769935ef7f45f10008b85ab",
+  "primary_summary_sha256": "f333011389322e3eaeda40447f928ed0a1313089bd21eb9ccfee7ec74c8324f2",
+  "cities": {
+    "chicago": {
+      "fit": {
+        "days": 23,
+        "through": "2026-08-30",
+        "model_mae_f": {
+          "persistence": 2.5403726708074537
+        },
+        "weights": {
+          "persistence": 1.0
+        },
+        "bias_f": -0.14285714285714188,
+        "sigma_f": 3.003090554028589,
+        "fit_period_is_in_sample": true
+      },
+      "summary": {
+        "days": 4,
+        "attempts": 4,
+        "fills": 4,
+        "wins": 1,
+        "net_pnl": -0.39961,
+        "capital_return_pct": -0.039961,
+        "cost_roi_pct": -7.40072,
+        "deployed_cost": 5.39961,
+        "fees": 0.13461,
+        "settlement_equity_max_drawdown_pct": 0.222504,
+        "minimum_cash": 996.8295,
+        "maximum_reserved_cost": 2.9609,
+        "ending_cash": 999.60039,
+        "three_day_block_bootstrap_pnl_95pct": [
+          -4.59961,
+          3.80039
+        ],
+        "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+        "attempt_outcomes": {
+          "conditional_book_fill": 4
+        },
+        "win_rate_pct": 25.0,
+        "candidate_outcomes": {
+          "stale_received_quote": 9,
+          "missing_or_nonfinite_book_ask": 23,
+          "eligible": 17,
+          "signal_price_limit": 6,
+          "insufficient_net_edge": 32,
+          "insufficient_top_depth": 1
+        },
+        "unknown_historical_tick_fills": 3
+      },
+      "result_sha256": "3ee8d1d1d9edf5114056f0b70f553805fa8aea205515796fe0ee6a1429d32796"
+    },
+    "nyc": {
+      "fit": {
+        "days": 23,
+        "through": "2026-08-30",
+        "model_mae_f": {
+          "persistence": 3.267080745341614
+        },
+        "weights": {
+          "persistence": 1.0
+        },
+        "bias_f": -1.2919254658385078,
+        "sigma_f": 3.5632317003018894,
+        "fit_period_is_in_sample": true
+      },
+      "summary": {
+        "days": 34,
+        "attempts": 34,
+        "fills": 33,
+        "wins": 18,
+        "net_pnl": 16.00184,
+        "capital_return_pct": 1.600184,
+        "cost_roi_pct": 21.624646,
+        "deployed_cost": 73.99816,
+        "fees": 1.83816,
+        "settlement_equity_max_drawdown_pct": 0.630773,
+        "minimum_cash": 997.18812,
+        "maximum_reserved_cost": 3.2576,
+        "ending_cash": 1016.00184,
+        "three_day_block_bootstrap_pnl_95pct": [
+          -5.1526,
+          36.62496
+        ],
+        "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+        "attempt_outcomes": {
+          "conditional_book_fill": 33,
+          "execution_price_limit": 1
+        },
+        "win_rate_pct": 54.545455,
+        "candidate_outcomes": {
+          "stale_received_quote": 41,
+          "missing_or_nonfinite_book_ask": 170,
+          "insufficient_net_edge": 327,
+          "eligible": 141,
+          "signal_price_limit": 63,
+          "insufficient_top_depth": 4,
+          "stale_or_future_source_quote": 2
+        },
+        "unknown_historical_tick_fills": 33
+      },
+      "result_sha256": "899a634ba8615b980b9b0561d8a024b08ad058c5f16f5aee2abb42849c6ad8e6"
+    },
+    "atlanta": {
+      "fit": {
+        "days": 23,
+        "through": "2026-08-30",
+        "model_mae_f": {
+          "persistence": 2.465838509316771
+        },
+        "weights": {
+          "persistence": 1.0
+        },
+        "bias_f": 0.4658385093167699,
+        "sigma_f": 2.792521616442961,
+        "fit_period_is_in_sample": true
+      },
+      "summary": {
+        "days": 34,
+        "attempts": 34,
+        "fills": 32,
+        "wins": 16,
+        "net_pnl": 12.32335,
+        "capital_return_pct": 1.232335,
+        "cost_roi_pct": 18.209161,
+        "deployed_cost": 67.67665,
+        "fees": 1.64165,
+        "settlement_equity_max_drawdown_pct": 0.909269,
+        "minimum_cash": 997.2379,
+        "maximum_reserved_cost": 3.69928,
+        "ending_cash": 1012.32335,
+        "three_day_block_bootstrap_pnl_95pct": [
+          -14.72161,
+          40.11274
+        ],
+        "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+        "attempt_outcomes": {
+          "conditional_book_fill": 32,
+          "execution_price_limit": 2
+        },
+        "win_rate_pct": 50.0,
+        "candidate_outcomes": {
+          "insufficient_net_edge": 302,
+          "missing_or_nonfinite_book_ask": 162,
+          "eligible": 136,
+          "signal_price_limit": 67,
+          "insufficient_top_depth": 4,
+          "stale_received_quote": 72,
+          "stale_or_future_source_quote": 5
+        },
+        "unknown_historical_tick_fills": 32
+      },
+      "result_sha256": "6feb96f5c58d5e3da58bc02d377721832abd7b741c0033e0c179b7768cb4439b"
+    }
+  },
+  "aggregate_pnl": 27.92558,
+  "aggregate_fills": 69
+}

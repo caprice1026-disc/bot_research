@@ -1,0 +1,130 @@
+{
+  "aggregate": {
+    "days": 34,
+    "attempts": 64,
+    "fills": 64,
+    "wins": 32,
+    "net_pnl": 35.60954,
+    "capital_return_pct": 1.186985,
+    "cost_roi_pct": 28.627228,
+    "deployed_cost": 124.39046,
+    "fees": 3.20046,
+    "settlement_equity_max_drawdown_pct": 0.30454,
+    "minimum_cash": 2994.42602,
+    "maximum_reserved_cost": 6.73608,
+    "ending_cash": 3035.60954,
+    "three_day_block_bootstrap_pnl_95pct": [
+      1.38324,
+      67.96112
+    ],
+    "fill_model": "Conditional displayed depth; bootstrap groups all cities by calendar date",
+    "attempt_outcomes": {
+      "conditional_book_fill": 64
+    },
+    "win_rate_pct": 50.0,
+    "city_days": 72
+  },
+  "cities": {
+    "chicago": {
+      "days": 4,
+      "attempts": 3,
+      "fills": 3,
+      "wins": 1,
+      "net_pnl": -0.3314,
+      "capital_return_pct": -0.03314,
+      "cost_roi_pct": -6.216003,
+      "deployed_cost": 5.3314,
+      "fees": 0.1314,
+      "settlement_equity_max_drawdown_pct": 0.215695,
+      "minimum_cash": 996.8295,
+      "maximum_reserved_cost": 2.9609,
+      "ending_cash": 999.6686,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -4.5314,
+        3.8686
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 3
+      },
+      "win_rate_pct": 33.333333,
+      "candidate_outcomes": {
+        "stale_received_quote": 9,
+        "missing_or_nonfinite_book_ask": 23,
+        "eligible": 8,
+        "signal_price_limit": 6,
+        "insufficient_net_edge": 41,
+        "insufficient_top_depth": 1
+      },
+      "unknown_historical_tick_fills": 2
+    },
+    "nyc": {
+      "days": 34,
+      "attempts": 32,
+      "fills": 32,
+      "wins": 16,
+      "net_pnl": 15.78206,
+      "capital_return_pct": 1.578206,
+      "cost_roi_pct": 24.575781,
+      "deployed_cost": 64.21794,
+      "fees": 1.67794,
+      "settlement_equity_max_drawdown_pct": 0.63418,
+      "minimum_cash": 995.83988,
+      "maximum_reserved_cost": 3.06,
+      "ending_cash": 1015.78206,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -6.16562,
+        38.27914
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 32
+      },
+      "win_rate_pct": 50.0,
+      "candidate_outcomes": {
+        "stale_received_quote": 41,
+        "missing_or_nonfinite_book_ask": 170,
+        "insufficient_net_edge": 390,
+        "eligible": 78,
+        "signal_price_limit": 63,
+        "insufficient_top_depth": 4,
+        "stale_or_future_source_quote": 2
+      },
+      "unknown_historical_tick_fills": 32
+    },
+    "atlanta": {
+      "days": 34,
+      "attempts": 29,
+      "fills": 29,
+      "wins": 15,
+      "net_pnl": 20.15888,
+      "capital_return_pct": 2.015888,
+      "cost_roi_pct": 36.758695,
+      "deployed_cost": 54.84112,
+      "fees": 1.39112,
+      "settlement_equity_max_drawdown_pct": 0.757768,
+      "minimum_cash": 997.2379,
+      "maximum_reserved_cost": 4.47448,
+      "ending_cash": 1020.15888,
+      "three_day_block_bootstrap_pnl_95pct": [
+        -7.5645,
+        49.84022
+      ],
+      "fill_model": "conditional historical top-ask depth after 60s plus adverse cost buffer",
+      "attempt_outcomes": {
+        "conditional_book_fill": 29
+      },
+      "win_rate_pct": 51.724138,
+      "candidate_outcomes": {
+        "insufficient_net_edge": 372,
+        "missing_or_nonfinite_book_ask": 162,
+        "eligible": 66,
+        "signal_price_limit": 67,
+        "insufficient_top_depth": 4,
+        "stale_received_quote": 72,
+        "stale_or_future_source_quote": 5
+      },
+      "unknown_historical_tick_fills": 29
+    }
+  }
+}

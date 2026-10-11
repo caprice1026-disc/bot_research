@@ -1,0 +1,2990 @@
+{
+  "status": "audited",
+  "created_at": "2026-10-04T14:22:47.727109+00:00",
+  "config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+  "selected_attempts_sha256": "94eda1f3ed5c797c7bd375becdd43286da8734823a3dc4628456adfc882b3432",
+  "selected_attempt_count": 20,
+  "audited_attempt_count": 20,
+  "errors": [],
+  "usable_signal_books": 7,
+  "usable_delayed_execution_books": 10,
+  "all_conditional_gates_pass": 3,
+  "freshness_gate_seconds": 5,
+  "execution_delay_seconds": 60,
+  "age_sensitivity_counts": {
+    "5": {
+      "usable_signal_books": 7,
+      "usable_execution_books": 10,
+      "all_conditional_gates_pass": 3
+    },
+    "60": {
+      "usable_signal_books": 20,
+      "usable_execution_books": 20,
+      "all_conditional_gates_pass": 15
+    },
+    "300": {
+      "usable_signal_books": 20,
+      "usable_execution_books": 20,
+      "all_conditional_gates_pass": 15
+    }
+  },
+  "selection": "Only existing out-of-sample forecast trade-tape attempts, fixed before this supplemental L2 audit",
+  "limitations": [
+    "Conditional subset audit, not a full L2 strategy backtest or performance estimate",
+    "Archive collector receipt differs from a hypothetical bot's network receipt",
+    "Full snapshots and price changes reconstructed; BBO mismatch invalidates sizes until a subsequent depth delta reconciles both top prices or a fresh snapshot arrives",
+    "Archive continuity is assumed; quiet periods are not treated as proven feed disconnections",
+    "Only one preceding hour and two following minutes per selected market requested; no snapshot is a data gap, not no liquidity",
+    "Published full-archive hash retained but full remote file is not downloaded or independently hashed",
+    "Minimum notional and initial historical tick are not observable in these selected archive fields",
+    "Quote/depth plus current-fee adverse buffer still does not prove real live execution"
+  ],
+  "rows": [
+    {
+      "date": "2026-08-31",
+      "condition_id": "0x7270dcc22cb68fad957d2cc661ba668222d2c6c8f878d26eb1f83b4ca116c951",
+      "token_id": "12745338967945836865460954045837065837635805849947312585373238704175408449548",
+      "outcome": "No",
+      "decision_timestamp": 1788188400,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.72,
+      "model_probability": 0.8274118898963837,
+      "signal": {
+        "timestamp": 1788188400,
+        "book_bid": 0.65,
+        "book_ask": 0.69,
+        "book_bid_size": 12.26,
+        "book_ask_size": 5.6,
+        "book_quote_recv_ts": 1788188383.123998,
+        "book_quote_source_ts": 1788188383.078,
+        "book_quote_age_seconds": 16.876002073287964,
+        "book_book_snapshot_age_seconds": 732.7361409664154,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-08-31",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.65,
+          "ask": 0.69,
+          "recv_ts": 1788188383.123998,
+          "source_ts": 1788188383.078,
+          "age_seconds": 16.876002073287964
+        },
+        "last_full_snapshot": {
+          "bid": 0.66,
+          "ask": 0.72,
+          "bid_size": 5.0,
+          "ask_size": 3.87,
+          "recv_ts": 1788187667.263859,
+          "source_ts": 1788187667.143,
+          "age_seconds": 732.7361409664154
+        }
+      },
+      "execution": {
+        "timestamp": 1788188460,
+        "book_bid": 0.66,
+        "book_ask": 0.71,
+        "book_bid_size": 5.0,
+        "book_ask_size": 41.0,
+        "book_quote_recv_ts": 1788188443.842907,
+        "book_quote_source_ts": 1788188443.789,
+        "book_quote_age_seconds": 16.157093048095703,
+        "book_book_snapshot_age_seconds": 43.328409910202026,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-08-31",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.66,
+          "ask": 0.71,
+          "recv_ts": 1788188443.842907,
+          "source_ts": 1788188443.789,
+          "age_seconds": 16.157093048095703
+        },
+        "last_full_snapshot": {
+          "bid": 0.66,
+          "ask": 0.7,
+          "bid_size": 10.0,
+          "ask_size": 19.6,
+          "recv_ts": 1788188416.67159,
+          "source_ts": 1788188416.601,
+          "age_seconds": 43.328409910202026
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 244,
+        "delta_reconciliation_checks": 244
+      },
+      "subsets": [
+        {
+          "condition_id": "0x7270dcc22cb68fad957d2cc661ba668222d2c6c8f878d26eb1f83b4ca116c951",
+          "start": 1788184800,
+          "end": 1788188400,
+          "rows": 4008,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-08-31/14/2026-08-31T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-08-31/14/manifest.json",
+          "source_published_sha256": "5814404f98c24d65bf9d18f6d00f207547be614a6ea6cc91acc5c1b397df927c",
+          "source_published_bytes": 968578504,
+          "source_manifest_sha256": "24889722f05edc4f0f225c3ac42c2e1c4c3da4e1b718271f26950c0c2a77d68d",
+          "subset_sha256": "1c1c34056118652182dc5b5b33e27d83a684034a775ff120b5512abad21bfb11",
+          "subset_bytes": 64737
+        },
+        {
+          "condition_id": "0x7270dcc22cb68fad957d2cc661ba668222d2c6c8f878d26eb1f83b4ca116c951",
+          "start": 1788188400,
+          "end": 1788188520,
+          "rows": 238,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-08-31/15/2026-08-31T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-08-31/15/manifest.json",
+          "source_published_sha256": "14f5af8a02f3541d071f9da67c38e3eb8de141aa467e659950b84488a3441bf1",
+          "source_published_bytes": 977564812,
+          "source_manifest_sha256": "b7b4a579100285d8841196db275b3a3bb01841e6f140ca832bbe280e1370027e",
+          "subset_sha256": "d8a9b34783747c31a0fe9517bccd25a7831c940e90be84e8c665819b20702d80",
+          "subset_bytes": 8521
+        }
+      ]
+    },
+    {
+      "date": "2026-09-03",
+      "condition_id": "0x6200ca753b93d7e4771a8f0cd54809848eb22b44fbb7b15b10cd7d7c165a0003",
+      "token_id": "17014858362258518692329089775439526340579469787104382015583231103202564366529",
+      "outcome": "No",
+      "decision_timestamp": 1788447600,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.5,
+      "model_probability": 0.6213530013399944,
+      "signal": {
+        "timestamp": 1788447600,
+        "book_bid": 0.5,
+        "book_ask": 0.53,
+        "book_bid_size": 6.43,
+        "book_ask_size": 49.0,
+        "book_quote_recv_ts": 1788447597.628843,
+        "book_quote_source_ts": 1788447597.587,
+        "book_quote_age_seconds": 2.371156930923462,
+        "book_book_snapshot_age_seconds": 515.3413529396057,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-03",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.5,
+          "ask": 0.53,
+          "recv_ts": 1788447597.628843,
+          "source_ts": 1788447597.587,
+          "age_seconds": 2.371156930923462
+        },
+        "last_full_snapshot": {
+          "bid": 0.5,
+          "ask": 0.53,
+          "bid_size": 6.43,
+          "ask_size": 31.0,
+          "recv_ts": 1788447084.658647,
+          "source_ts": 1788447077.825,
+          "age_seconds": 515.3413529396057
+        }
+      },
+      "execution": {
+        "timestamp": 1788447660,
+        "book_bid": 0.5,
+        "book_ask": 0.53,
+        "book_bid_size": 0.43,
+        "book_ask_size": 26.0,
+        "book_quote_recv_ts": 1788447659.4916039,
+        "book_quote_source_ts": 1788447659.449,
+        "book_quote_age_seconds": 0.5083961486816406,
+        "book_book_snapshot_age_seconds": 31.71110987663269,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-03",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.5,
+          "ask": 0.53,
+          "recv_ts": 1788447659.4916039,
+          "source_ts": 1788447659.449,
+          "age_seconds": 0.5083961486816406
+        },
+        "last_full_snapshot": {
+          "bid": 0.5,
+          "ask": 0.53,
+          "bid_size": 0.43,
+          "ask_size": 49.0,
+          "recv_ts": 1788447628.2888901,
+          "source_ts": 1788447628.12,
+          "age_seconds": 31.71110987663269
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": 0.06893300133999435,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.54,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 2.7621,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 10,
+        "delta_reconciliation_checks": 10
+      },
+      "subsets": [
+        {
+          "condition_id": "0x6200ca753b93d7e4771a8f0cd54809848eb22b44fbb7b15b10cd7d7c165a0003",
+          "start": 1788444000,
+          "end": 1788447600,
+          "rows": 2594,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-03/14/2026-09-03T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-03/14/manifest.json",
+          "source_published_sha256": "aeda1ba9d75a28e4c82e8440e8d5ffdb5988dd17f8f8c6b2a4804defd13a7886",
+          "source_published_bytes": 1143593318,
+          "source_manifest_sha256": "f7376c9883175e02faaea5d6b917523114aa703a982ff3336aed21ca8b11f38c",
+          "subset_sha256": "b5026746f4e0467a3348007aeec9f874a0f84c22db2202b2dc6a38f2578a607c",
+          "subset_bytes": 44683
+        },
+        {
+          "condition_id": "0x6200ca753b93d7e4771a8f0cd54809848eb22b44fbb7b15b10cd7d7c165a0003",
+          "start": 1788447600,
+          "end": 1788447720,
+          "rows": 154,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-03/15/2026-09-03T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-03/15/manifest.json",
+          "source_published_sha256": "8275430c8a274f6ee3e16a41bfd560b3e33dc752d2ae63d9eff88d1da3ff5777",
+          "source_published_bytes": 1213134390,
+          "source_manifest_sha256": "5731cb1de671009966877bd6659518bd26bce6790bfd5262d72ca64d7f6f9483",
+          "subset_sha256": "836efbaf0bb4bdfdfa43696e5538867649c09eb4ad45148c9bc0f9e481322307",
+          "subset_bytes": 6564
+        }
+      ]
+    },
+    {
+      "date": "2026-09-04",
+      "condition_id": "0x3830d3e0dc9e268df5f7631221fcc895b217187d7d73840b2df799296995ab8e",
+      "token_id": "57417453751656437730168208207165065908379320606204898332188947607750801708618",
+      "outcome": "No",
+      "decision_timestamp": 1788534000,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.48,
+      "model_probability": 0.8584210395035088,
+      "signal": {
+        "timestamp": 1788534000,
+        "book_bid": 0.47,
+        "book_ask": 0.49,
+        "book_bid_size": 5.0,
+        "book_ask_size": 56.3,
+        "book_quote_recv_ts": 1788533984.371666,
+        "book_quote_source_ts": 1788533984.174,
+        "book_quote_age_seconds": 15.628334045410156,
+        "book_book_snapshot_age_seconds": 262.0919349193573,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-04",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.47,
+          "ask": 0.49,
+          "recv_ts": 1788533984.371666,
+          "source_ts": 1788533984.174,
+          "age_seconds": 15.628334045410156
+        },
+        "last_full_snapshot": {
+          "bid": 0.48,
+          "ask": 0.49,
+          "bid_size": 4.22,
+          "ask_size": 56.3,
+          "recv_ts": 1788533737.908065,
+          "source_ts": 1788533737.865,
+          "age_seconds": 262.0919349193573
+        }
+      },
+      "execution": {
+        "timestamp": 1788534060,
+        "book_bid": 0.47,
+        "book_ask": 0.49,
+        "book_bid_size": 5.0,
+        "book_ask_size": 56.3,
+        "book_quote_recv_ts": 1788534013.397844,
+        "book_quote_source_ts": 1788534013.355,
+        "book_quote_age_seconds": 46.602155923843384,
+        "book_book_snapshot_age_seconds": 322.0919349193573,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-04",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.47,
+          "ask": 0.49,
+          "recv_ts": 1788534013.397844,
+          "source_ts": 1788534013.355,
+          "age_seconds": 46.602155923843384
+        },
+        "last_full_snapshot": {
+          "bid": 0.48,
+          "ask": 0.49,
+          "bid_size": 4.22,
+          "ask_size": 56.3,
+          "recv_ts": 1788533737.908065,
+          "source_ts": 1788533737.865,
+          "age_seconds": 322.0919349193573
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 83,
+        "delta_reconciliation_checks": 83,
+        "empty_or_crossed_book": 1
+      },
+      "subsets": [
+        {
+          "condition_id": "0x3830d3e0dc9e268df5f7631221fcc895b217187d7d73840b2df799296995ab8e",
+          "start": 1788530400,
+          "end": 1788534000,
+          "rows": 5924,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-04/14/2026-09-04T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-04/14/manifest.json",
+          "source_published_sha256": "3b2aa803c6a8e975b12f295f8ad5bf8676a3309a59df866e680c94b18289c253",
+          "source_published_bytes": 1132559936,
+          "source_manifest_sha256": "22c7feef4ab5c52d27a1180dcd4d1bc1d2dd92fb5bf47a30a11679127ac0529d",
+          "subset_sha256": "0f09ef2df79a48479f8f653147475280a65e0f2fbf04fcc8f3c425a87fde23bd",
+          "subset_bytes": 93575
+        },
+        {
+          "condition_id": "0x3830d3e0dc9e268df5f7631221fcc895b217187d7d73840b2df799296995ab8e",
+          "start": 1788534000,
+          "end": 1788534120,
+          "rows": 132,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-04/15/2026-09-04T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-04/15/manifest.json",
+          "source_published_sha256": "00df5206f2e24461c104b465b4f1d031eb9b2b8c7baed12b9f542471d6ce0fff",
+          "source_published_bytes": 1112067446,
+          "source_manifest_sha256": "a207ab66440b71c26390dd8d80f279aea4cecf3b4076f3e8ffcb4259f5d859dc",
+          "subset_sha256": "0b12f1c87883c6e86bbf79aa1445cf6cef59e6f01a053c0d9738462205765aa1",
+          "subset_bytes": 5149
+        }
+      ]
+    },
+    {
+      "date": "2026-09-05",
+      "condition_id": "0x84cb750aa6ce0b01788d7e360ea87559ca3a548281646eddaa87213a49ead807",
+      "token_id": "45543305073435467896460989286470299406284394752835050206199143744875283685145",
+      "outcome": "Yes",
+      "decision_timestamp": 1788620400,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.04,
+      "model_probability": 0.17370279324430954,
+      "signal": {
+        "timestamp": 1788620400,
+        "book_bid": 0.03,
+        "book_ask": 0.05,
+        "book_bid_size": 26.75,
+        "book_ask_size": 27.99,
+        "book_quote_recv_ts": 1788620380.638714,
+        "book_quote_source_ts": 1788620380.547,
+        "book_quote_age_seconds": 19.3612859249115,
+        "book_book_snapshot_age_seconds": 335.954078912735,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-05",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.03,
+          "ask": 0.05,
+          "recv_ts": 1788620380.638714,
+          "source_ts": 1788620380.547,
+          "age_seconds": 19.3612859249115
+        },
+        "last_full_snapshot": {
+          "bid": 0.03,
+          "ask": 0.05,
+          "bid_size": 37.75,
+          "ask_size": 7.99,
+          "recv_ts": 1788620064.045921,
+          "source_ts": 1788620063.942,
+          "age_seconds": 335.954078912735
+        }
+      },
+      "execution": {
+        "timestamp": 1788620460,
+        "book_bid": 0.03,
+        "book_ask": 0.05,
+        "book_bid_size": 26.75,
+        "book_ask_size": 27.99,
+        "book_quote_recv_ts": 1788620459.142529,
+        "book_quote_source_ts": 1788620459.051,
+        "book_quote_age_seconds": 0.8574709892272949,
+        "book_book_snapshot_age_seconds": 395.954078912735,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-05",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.03,
+          "ask": 0.05,
+          "recv_ts": 1788620459.142529,
+          "source_ts": 1788620459.051,
+          "age_seconds": 0.8574709892272949
+        },
+        "last_full_snapshot": {
+          "bid": 0.03,
+          "ask": 0.05,
+          "bid_size": 37.75,
+          "ask_size": 7.99,
+          "recv_ts": 1788620064.045921,
+          "source_ts": 1788620063.942,
+          "age_seconds": 395.954078912735
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.060000000000000005,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 0.31410000000000005,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": true,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 15,
+        "delta_reconciliation_checks": 15,
+        "empty_or_crossed_book": 1
+      },
+      "subsets": [
+        {
+          "condition_id": "0x84cb750aa6ce0b01788d7e360ea87559ca3a548281646eddaa87213a49ead807",
+          "start": 1788616800,
+          "end": 1788620400,
+          "rows": 3870,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-05/14/2026-09-05T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-05/14/manifest.json",
+          "source_published_sha256": "c9270f191d4e88781274f834fb4912753209110d919378b2214d534f0f443714",
+          "source_published_bytes": 1419072328,
+          "source_manifest_sha256": "793c548e790ee48178cbc073b9dd030dd4b9d407a52741ba5e08cdef147dd2ba",
+          "subset_sha256": "0198e62fc661181019ce070177d480e40920c8c6283cf42f60dfd315c116afa0",
+          "subset_bytes": 52863
+        },
+        {
+          "condition_id": "0x84cb750aa6ce0b01788d7e360ea87559ca3a548281646eddaa87213a49ead807",
+          "start": 1788620400,
+          "end": 1788620520,
+          "rows": 22,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-05/15/2026-09-05T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-05/15/manifest.json",
+          "source_published_sha256": "b3180dc53662704fbae05a8dd4b7ccb5ac561ec9fac0685746afb6af982255df",
+          "source_published_bytes": 1245627855,
+          "source_manifest_sha256": "d408f007e2eaee2b3ce886e8a3bdc84348b4310ab4d4d3221ef3fd09cb09f133",
+          "subset_sha256": "c84eb92018e9d5dfee2e6690b59049c6e88f93c45b8305b1429efaff150703ae",
+          "subset_bytes": 4530
+        }
+      ]
+    },
+    {
+      "date": "2026-09-07",
+      "condition_id": "0x3ebdfcb13a22af52ac5ae2eaecb677823cef9b0995288e065e598d2f26ec4db5",
+      "token_id": "40081705560228099097777063460926374594293716924589101107920057237693750224497",
+      "outcome": "No",
+      "decision_timestamp": 1788793200,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.43,
+      "model_probability": 0.6560702725893967,
+      "signal": {
+        "timestamp": 1788793200,
+        "book_bid": 0.43,
+        "book_ask": 0.44,
+        "book_bid_size": 10.0,
+        "book_ask_size": 85.0,
+        "book_quote_recv_ts": 1788793198.748657,
+        "book_quote_source_ts": 1788793198.74,
+        "book_quote_age_seconds": 1.251343011856079,
+        "book_book_snapshot_age_seconds": 235.2032060623169,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-07",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.43,
+          "ask": 0.44,
+          "recv_ts": 1788793198.748657,
+          "source_ts": 1788793198.74,
+          "age_seconds": 1.251343011856079
+        },
+        "last_full_snapshot": {
+          "bid": 0.43,
+          "ask": 0.44,
+          "bid_size": 10.0,
+          "ask_size": 135.0,
+          "recv_ts": 1788792964.796794,
+          "source_ts": 1788792964.789,
+          "age_seconds": 235.2032060623169
+        }
+      },
+      "execution": {
+        "timestamp": 1788793260,
+        "book_bid": 0.43,
+        "book_ask": 0.44,
+        "book_bid_size": 10.0,
+        "book_ask_size": 40.0,
+        "book_quote_recv_ts": 1788793248.706712,
+        "book_quote_source_ts": 1788793248.702,
+        "book_quote_age_seconds": 11.293287992477417,
+        "book_book_snapshot_age_seconds": 295.2032060623169,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-07",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.43,
+          "ask": 0.44,
+          "recv_ts": 1788793248.706712,
+          "source_ts": 1788793248.702,
+          "age_seconds": 11.293287992477417
+        },
+        "last_full_snapshot": {
+          "bid": 0.43,
+          "ask": 0.44,
+          "bid_size": 10.0,
+          "ask_size": 135.0,
+          "recv_ts": 1788792964.796794,
+          "source_ts": 1788792964.789,
+          "age_seconds": 295.2032060623169
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": 0.19369527258939664,
+      "edge_survives_actual_ask": true,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": false,
+          "signal_reason": "usable",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 46,
+        "delta_reconciliation_checks": 46,
+        "empty_or_crossed_book": 1
+      },
+      "subsets": [
+        {
+          "condition_id": "0x3ebdfcb13a22af52ac5ae2eaecb677823cef9b0995288e065e598d2f26ec4db5",
+          "start": 1788789600,
+          "end": 1788793200,
+          "rows": 5644,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-07/14/2026-09-07T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-07/14/manifest.json",
+          "source_published_sha256": "7b72fbb0aa4a5a5db59ff6baf768a24a2a4ac8a210915b74ca422df99593a08c",
+          "source_published_bytes": 1059184610,
+          "source_manifest_sha256": "43be985e956b8f6db625b9b1b3ef979ac5041176046f8d02457c290923e32dba",
+          "subset_sha256": "1f524612d6634f9dfbb752a7b3fa51a791e637de5d43e06ded41a94e6793242e",
+          "subset_bytes": 89218
+        },
+        {
+          "condition_id": "0x3ebdfcb13a22af52ac5ae2eaecb677823cef9b0995288e065e598d2f26ec4db5",
+          "start": 1788793200,
+          "end": 1788793320,
+          "rows": 84,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-07/15/2026-09-07T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-07/15/manifest.json",
+          "source_published_sha256": "5b0d6e5a725fa46bd342d5866a8010a56654325a94bd58027ab7d2b542d50956",
+          "source_published_bytes": 1017310449,
+          "source_manifest_sha256": "63b940b882fba94dff83c0957c428535ffe5acfe5fa6813743da76674608c3d1",
+          "subset_sha256": "ec30fb4d3ae89fb96db567e9420ca64341be30c8452fd51c73d9786b0633ca9f",
+          "subset_bytes": 4302
+        }
+      ]
+    },
+    {
+      "date": "2026-09-08",
+      "condition_id": "0x361c502573b8d06b780224424a47df5486849ada7ede946b89eebbbdae5e2b65",
+      "token_id": "89053392288963529392635157497460331463600694363085520737364672932610202894844",
+      "outcome": "No",
+      "decision_timestamp": 1788879600,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.48,
+      "model_probability": 0.622962126966325,
+      "signal": {
+        "timestamp": 1788879600,
+        "book_bid": 0.46,
+        "book_ask": 0.48,
+        "book_bid_size": 14.99,
+        "book_ask_size": 85.08,
+        "book_quote_recv_ts": 1788879598.730818,
+        "book_quote_source_ts": 1788879598.727,
+        "book_quote_age_seconds": 1.2691819667816162,
+        "book_book_snapshot_age_seconds": 746.5493710041046,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-08",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.46,
+          "ask": 0.48,
+          "recv_ts": 1788879598.730818,
+          "source_ts": 1788879598.727,
+          "age_seconds": 1.2691819667816162
+        },
+        "last_full_snapshot": {
+          "bid": 0.45,
+          "ask": 0.48,
+          "bid_size": 14.99,
+          "ask_size": 85.08,
+          "recv_ts": 1788878853.450629,
+          "source_ts": 1788878846.384,
+          "age_seconds": 746.5493710041046
+        }
+      },
+      "execution": {
+        "timestamp": 1788879660,
+        "book_bid": 0.45,
+        "book_ask": 0.47,
+        "book_bid_size": 7.99,
+        "book_ask_size": 32.0,
+        "book_quote_recv_ts": 1788879659.026771,
+        "book_quote_source_ts": 1788879659.023,
+        "book_quote_age_seconds": 0.973228931427002,
+        "book_book_snapshot_age_seconds": 10.02874207496643,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-08",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.45,
+          "ask": 0.47,
+          "recv_ts": 1788879659.026771,
+          "source_ts": 1788879659.023,
+          "age_seconds": 0.973228931427002
+        },
+        "last_full_snapshot": {
+          "bid": 0.45,
+          "ask": 0.48,
+          "bid_size": 2.99,
+          "ask_size": 185.18,
+          "recv_ts": 1788879649.971258,
+          "source_ts": 1788879649.887,
+          "age_seconds": 10.02874207496643
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": 0.12046712696632503,
+      "edge_survives_actual_ask": true,
+      "hypothetical_execution_price": 0.48,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 2.4623999999999997,
+      "all_conditional_gates_pass": true,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 73,
+        "delta_reconciliation_checks": 73
+      },
+      "subsets": [
+        {
+          "condition_id": "0x361c502573b8d06b780224424a47df5486849ada7ede946b89eebbbdae5e2b65",
+          "start": 1788876000,
+          "end": 1788879600,
+          "rows": 10520,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-08/14/2026-09-08T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-08/14/manifest.json",
+          "source_published_sha256": "5d08797467512133e7f4ce7d23f7683cf71772fb6751aeea78d45e991c08e8a9",
+          "source_published_bytes": 1134518671,
+          "source_manifest_sha256": "ed67ffb3fcf27ea7b84c32bfebeec6835cc120fb0fe645f0e069376833a0ead6",
+          "subset_sha256": "899ef472c26effabdd2b109c8bcc305196dc9041f73ecd01385b4d39f7eef2b6",
+          "subset_bytes": 175743
+        },
+        {
+          "condition_id": "0x361c502573b8d06b780224424a47df5486849ada7ede946b89eebbbdae5e2b65",
+          "start": 1788879600,
+          "end": 1788879720,
+          "rows": 292,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-08/15/2026-09-08T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-08/15/manifest.json",
+          "source_published_sha256": "c3e583a7ade730adae8b171d532f9dcdf1bd210199ff7ccade07ed0da50b57ba",
+          "source_published_bytes": 1127675087,
+          "source_manifest_sha256": "bbfa35a7c3437c0fcf8f8c164e1dfee99ec609538911b3f59fa778991c0d28e7",
+          "subset_sha256": "510892a7da8e4996588a54980a564c7a101cc54774b4ef22d1e12e91185701b2",
+          "subset_bytes": 9173
+        }
+      ]
+    },
+    {
+      "date": "2026-09-09",
+      "condition_id": "0xcd056214fb7f3b8859d8a33a5dc4c1958c6f858c0cd743669aeb2cd340f3c4fd",
+      "token_id": "43053929142217221577661980942222006970219103988531115836226374267609881705085",
+      "outcome": "No",
+      "decision_timestamp": 1788966000,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.54,
+      "model_probability": 0.7623944709898856,
+      "signal": {
+        "timestamp": 1788966000,
+        "book_bid": 0.51,
+        "book_ask": 0.55,
+        "book_bid_size": 10.0,
+        "book_ask_size": 8.59,
+        "book_quote_recv_ts": 1788965993.988031,
+        "book_quote_source_ts": 1788965993.981,
+        "book_quote_age_seconds": 6.011969089508057,
+        "book_book_snapshot_age_seconds": 49.528815031051636,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-09",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.51,
+          "ask": 0.55,
+          "recv_ts": 1788965993.988031,
+          "source_ts": 1788965993.981,
+          "age_seconds": 6.011969089508057
+        },
+        "last_full_snapshot": {
+          "bid": 0.51,
+          "ask": 0.55,
+          "bid_size": 10.0,
+          "ask_size": 8.59,
+          "recv_ts": 1788965950.471185,
+          "source_ts": 1788965943.548,
+          "age_seconds": 49.528815031051636
+        }
+      },
+      "execution": {
+        "timestamp": 1788966060,
+        "book_bid": 0.51,
+        "book_ask": 0.56,
+        "book_bid_size": 10.0,
+        "book_ask_size": 10.0,
+        "book_quote_recv_ts": 1788966059.781807,
+        "book_quote_source_ts": 1788966059.773,
+        "book_quote_age_seconds": 0.21819305419921875,
+        "book_book_snapshot_age_seconds": 109.52881503105164,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-09",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.51,
+          "ask": 0.56,
+          "recv_ts": 1788966059.781807,
+          "source_ts": 1788966059.773,
+          "age_seconds": 0.21819305419921875
+        },
+        "last_full_snapshot": {
+          "bid": 0.51,
+          "ask": 0.55,
+          "bid_size": 10.0,
+          "ask_size": 8.59,
+          "recv_ts": 1788965950.471185,
+          "source_ts": 1788965943.548,
+          "age_seconds": 109.52881503105164
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.5700000000000001,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 2.9112700000000005,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": true,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 105,
+        "delta_reconciliation_checks": 105,
+        "empty_or_crossed_book": 1
+      },
+      "subsets": [
+        {
+          "condition_id": "0xcd056214fb7f3b8859d8a33a5dc4c1958c6f858c0cd743669aeb2cd340f3c4fd",
+          "start": 1788962400,
+          "end": 1788966000,
+          "rows": 5228,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-09/14/2026-09-09T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-09/14/manifest.json",
+          "source_published_sha256": "5769d7865d439410501ad016f08bc406dc558773e0fe97a6d8b03d23260b1daa",
+          "source_published_bytes": 1336446552,
+          "source_manifest_sha256": "8c2263d9333569c07b1e1e41466ea715d19099f971874e14135fc2f4b761ed9b",
+          "subset_sha256": "b91b3782c2f16beb574394210daac9a0d6a775108dc0e293f1f0a79d75532766",
+          "subset_bytes": 89351
+        },
+        {
+          "condition_id": "0xcd056214fb7f3b8859d8a33a5dc4c1958c6f858c0cd743669aeb2cd340f3c4fd",
+          "start": 1788966000,
+          "end": 1788966120,
+          "rows": 360,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-09/15/2026-09-09T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-09/15/manifest.json",
+          "source_published_sha256": "34bcb163b0183ff463b70bd2f2eb9ae912d85be6211035d07c9eb3ba4a9ea5a4",
+          "source_published_bytes": 1385013709,
+          "source_manifest_sha256": "3aa7c785815e248e41ba6903f50ebc32e19c54805476e5b2fc9a52ff1bdf5763",
+          "subset_sha256": "0b6278ef352a541945ff892857345d2c969acfa1e11bdce37069007742dd676e",
+          "subset_bytes": 10286
+        }
+      ]
+    },
+    {
+      "date": "2026-09-10",
+      "condition_id": "0x2a982e9a455c9fc70825129e66bce11b5d010c155ed48f31325c43e245090e9a",
+      "token_id": "18044815839621831108559336219788153642884394548512504108599758986069493531054",
+      "outcome": "Yes",
+      "decision_timestamp": 1789052400,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.07,
+      "model_probability": 0.33127233048299876,
+      "signal": {
+        "timestamp": 1789052400,
+        "book_bid": 0.07,
+        "book_ask": 0.08,
+        "book_bid_size": 556.28,
+        "book_ask_size": 5.99,
+        "book_quote_recv_ts": 1789052398.1794188,
+        "book_quote_source_ts": 1789052398.174,
+        "book_quote_age_seconds": 1.8205811977386475,
+        "book_book_snapshot_age_seconds": 346.6223568916321,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-10",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.07,
+          "ask": 0.08,
+          "recv_ts": 1789052398.1794188,
+          "source_ts": 1789052398.174,
+          "age_seconds": 1.8205811977386475
+        },
+        "last_full_snapshot": {
+          "bid": 0.07,
+          "ask": 0.08,
+          "bid_size": 452.86,
+          "ask_size": 5.99,
+          "recv_ts": 1789052053.377643,
+          "source_ts": 1789052053.372,
+          "age_seconds": 346.6223568916321
+        }
+      },
+      "execution": {
+        "timestamp": 1789052460,
+        "book_bid": 0.07,
+        "book_ask": 0.08,
+        "book_bid_size": 556.28,
+        "book_ask_size": 5.99,
+        "book_quote_recv_ts": 1789052459.914932,
+        "book_quote_source_ts": 1789052459.909,
+        "book_quote_age_seconds": 0.0850679874420166,
+        "book_book_snapshot_age_seconds": 406.6223568916321,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-10",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.07,
+          "ask": 0.08,
+          "recv_ts": 1789052459.914932,
+          "source_ts": 1789052459.909,
+          "age_seconds": 0.0850679874420166
+        },
+        "last_full_snapshot": {
+          "bid": 0.07,
+          "ask": 0.08,
+          "bid_size": 452.86,
+          "ask_size": 5.99,
+          "recv_ts": 1789052053.377643,
+          "source_ts": 1789052053.372,
+          "age_seconds": 406.6223568916321
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": 0.23717733048299877,
+      "edge_survives_actual_ask": true,
+      "hypothetical_execution_price": 0.09,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 0.47047999999999995,
+      "all_conditional_gates_pass": true,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 9,
+        "delta_reconciliation_checks": 9,
+        "empty_or_crossed_book": 1
+      },
+      "subsets": [
+        {
+          "condition_id": "0x2a982e9a455c9fc70825129e66bce11b5d010c155ed48f31325c43e245090e9a",
+          "start": 1789048800,
+          "end": 1789052400,
+          "rows": 1772,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-10/14/2026-09-10T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-10/14/manifest.json",
+          "source_published_sha256": "e0ea6626e82c090508d75c7420f905ac165b4051a8ba6f0de6980a21de0e092c",
+          "source_published_bytes": 1302829766,
+          "source_manifest_sha256": "1c0c90905bb1fecd7507ca93d20ac36330b12a0376f3719c7407b29b9b57da2b",
+          "subset_sha256": "d37a95b00d215178e08415920da53a55850e2a40b31d577591764d22765fe861",
+          "subset_bytes": 32895
+        },
+        {
+          "condition_id": "0x2a982e9a455c9fc70825129e66bce11b5d010c155ed48f31325c43e245090e9a",
+          "start": 1789052400,
+          "end": 1789052520,
+          "rows": 92,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-10/15/2026-09-10T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-10/15/manifest.json",
+          "source_published_sha256": "083c72465e6ecf351957d7bc433b9512dec7a375d256ee05835b2d2cbeb1bc5b",
+          "source_published_bytes": 1233652120,
+          "source_manifest_sha256": "3830813b8d3858d6d3f3c32f73f0e720b4e45a9a655a4501f89448daadfdb737",
+          "subset_sha256": "39a1d2803a4b3391e8b61064afa8224042addc41b3e54b942901da37228ad8fc",
+          "subset_bytes": 4410
+        }
+      ]
+    },
+    {
+      "date": "2026-09-14",
+      "condition_id": "0x6a940ecb5831b031c95c777f50578d756a127e1f7ffb32caf25dfb2b06c945bc",
+      "token_id": "95241799517759600607983594891160992345911311324303776023959168360920658129687",
+      "outcome": "No",
+      "decision_timestamp": 1789398000,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.5,
+      "model_probability": 0.7483390704261994,
+      "signal": {
+        "timestamp": 1789398000,
+        "book_bid": 0.49,
+        "book_ask": 0.51,
+        "book_bid_size": 44.0,
+        "book_ask_size": 5.0,
+        "book_quote_recv_ts": 1789397992.50069,
+        "book_quote_source_ts": 1789397992.496,
+        "book_quote_age_seconds": 7.49931001663208,
+        "book_book_snapshot_age_seconds": 588.1364390850067,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-14",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.49,
+          "ask": 0.51,
+          "recv_ts": 1789397992.50069,
+          "source_ts": 1789397992.496,
+          "age_seconds": 7.49931001663208
+        },
+        "last_full_snapshot": {
+          "bid": 0.47,
+          "ask": 0.5,
+          "bid_size": 30.04,
+          "ask_size": 11.0,
+          "recv_ts": 1789397411.863561,
+          "source_ts": 1789397411.855,
+          "age_seconds": 588.1364390850067
+        }
+      },
+      "execution": {
+        "timestamp": 1789398060,
+        "book_bid": 0.48,
+        "book_ask": 0.51,
+        "book_bid_size": 10.0,
+        "book_ask_size": 11.42,
+        "book_quote_recv_ts": 1789398059.997927,
+        "book_quote_source_ts": 1789398059.992,
+        "book_quote_age_seconds": 0.002073049545288086,
+        "book_book_snapshot_age_seconds": 648.1364390850067,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-14",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.48,
+          "ask": 0.51,
+          "recv_ts": 1789398059.997927,
+          "source_ts": 1789398059.992,
+          "age_seconds": 0.002073049545288086
+        },
+        "last_full_snapshot": {
+          "bid": 0.47,
+          "ask": 0.5,
+          "bid_size": 30.04,
+          "ask_size": 11.0,
+          "recv_ts": 1789397411.863561,
+          "source_ts": 1789397411.855,
+          "age_seconds": 648.1364390850067
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.52,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 2.6624,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": true,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 77,
+        "delta_reconciliation_checks": 77
+      },
+      "subsets": [
+        {
+          "condition_id": "0x6a940ecb5831b031c95c777f50578d756a127e1f7ffb32caf25dfb2b06c945bc",
+          "start": 1789394400,
+          "end": 1789398000,
+          "rows": 5932,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-14/14/2026-09-14T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-14/14/manifest.json",
+          "source_published_sha256": "85a28f95ee7632d788de1c73941de4b4a6eb55d6ea873a2087db954394f62f14",
+          "source_published_bytes": 1234397221,
+          "source_manifest_sha256": "58821095d9c40907135796abab9df4da91504f29597e6189d0980c4bee3677bb",
+          "subset_sha256": "4b61079ed82030753641d9b273ee42ae1bcb535a8f8eb52d4c9f72b0d1455156",
+          "subset_bytes": 93230
+        },
+        {
+          "condition_id": "0x6a940ecb5831b031c95c777f50578d756a127e1f7ffb32caf25dfb2b06c945bc",
+          "start": 1789398000,
+          "end": 1789398120,
+          "rows": 1534,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-14/15/2026-09-14T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-14/15/manifest.json",
+          "source_published_sha256": "e115903eeda44c57c2195cd47e301f9db96cbceef712d578d4d1f2376b2e7a68",
+          "source_published_bytes": 1284257438,
+          "source_manifest_sha256": "8a44b3e45bd3a0bec251de0716c88edcfab1baf823abdf5dffae56924e924a9b",
+          "subset_sha256": "e2ac29d0d18916154d03a27f1059416ac4075f0030e8a8b5ecf195b547fa50ba",
+          "subset_bytes": 22405
+        }
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "condition_id": "0xaf2fb7f1bc1269cd3cdaca1909964d7724e5645fb26092961864e089471a332e",
+      "token_id": "30765051438209245998729612706411493763681997899108938289486396415865637701996",
+      "outcome": "No",
+      "decision_timestamp": 1789484400,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.87,
+      "model_probability": 0.9933965803944227,
+      "signal": {
+        "timestamp": 1789484400,
+        "book_bid": 0.83,
+        "book_ask": 0.86,
+        "book_bid_size": 5.0,
+        "book_ask_size": 20.0,
+        "book_quote_recv_ts": 1789484384.711896,
+        "book_quote_source_ts": 1789484384.707,
+        "book_quote_age_seconds": 15.288104057312012,
+        "book_book_snapshot_age_seconds": 356.9527611732483,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-15",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.83,
+          "ask": 0.86,
+          "recv_ts": 1789484384.711896,
+          "source_ts": 1789484384.707,
+          "age_seconds": 15.288104057312012
+        },
+        "last_full_snapshot": {
+          "bid": 0.81,
+          "ask": 0.86,
+          "bid_size": 40.5,
+          "ask_size": 5.0,
+          "recv_ts": 1789484043.0472388,
+          "source_ts": 1789484043.04,
+          "age_seconds": 356.9527611732483
+        }
+      },
+      "execution": {
+        "timestamp": 1789484460,
+        "book_bid": 0.81,
+        "book_ask": 0.86,
+        "book_bid_size": 86.29,
+        "book_ask_size": 18.95,
+        "book_quote_recv_ts": 1789484458.573866,
+        "book_quote_source_ts": 1789484458.569,
+        "book_quote_age_seconds": 1.4261341094970703,
+        "book_book_snapshot_age_seconds": 8.383511066436768,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-15",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.81,
+          "ask": 0.86,
+          "recv_ts": 1789484458.573866,
+          "source_ts": 1789484458.569,
+          "age_seconds": 1.4261341094970703
+        },
+        "last_full_snapshot": {
+          "bid": 0.8,
+          "ask": 0.86,
+          "bid_size": 43.16,
+          "ask_size": 20.0,
+          "recv_ts": 1789484451.616489,
+          "source_ts": 1789484451.606,
+          "age_seconds": 8.383511066436768
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.87,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 4.378279999999999,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": true,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 192,
+        "delta_reconciliation_checks": 192
+      },
+      "subsets": [
+        {
+          "condition_id": "0xaf2fb7f1bc1269cd3cdaca1909964d7724e5645fb26092961864e089471a332e",
+          "start": 1789480800,
+          "end": 1789484400,
+          "rows": 8876,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-15/14/2026-09-15T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-15/14/manifest.json",
+          "source_published_sha256": "8c1d20cd464e98f417e69e86e509b98df1deadc9637eb8e890af82f11144088d",
+          "source_published_bytes": 1298050175,
+          "source_manifest_sha256": "3849b9be9962522c8a29ed65347b6711ca6854a7b4cc32407da42664e58ed425",
+          "subset_sha256": "1160c88c59aeb7654e43a33f561ce8585d597732ff1da17428cab5b24932f11d",
+          "subset_bytes": 141914
+        },
+        {
+          "condition_id": "0xaf2fb7f1bc1269cd3cdaca1909964d7724e5645fb26092961864e089471a332e",
+          "start": 1789484400,
+          "end": 1789484520,
+          "rows": 318,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-15/15/2026-09-15T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-15/15/manifest.json",
+          "source_published_sha256": "c3a348982f31d19551702356322b5bc7c73ae0f3e28af326205f56993b789c33",
+          "source_published_bytes": 1325905366,
+          "source_manifest_sha256": "3d63d0b571fd87b5f885dd62b02235b7775d17b16ec7a5a377e5123c8dd60617",
+          "subset_sha256": "9a3e4cbf17cdbe4bd5a4bd4e5de650a6ae4f05f8c902d8c636ea3dabe7a39ec3",
+          "subset_bytes": 9619
+        }
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "condition_id": "0xfff7b887132e9eeaa3ca6854f1e5844cda30d0951ab6a7eedee2a36fee4efbdb",
+      "token_id": "3228068672710319914210908572374455171307043979045846069420802958663679747097",
+      "outcome": "Yes",
+      "decision_timestamp": 1789570800,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.1265754114,
+      "model_probability": 0.382697272650261,
+      "signal": {
+        "timestamp": 1789570800,
+        "book_bid": 0.08,
+        "book_ask": 0.14,
+        "book_bid_size": 18.93,
+        "book_ask_size": 5.02,
+        "book_quote_recv_ts": 1789570789.3218782,
+        "book_quote_source_ts": 1789570789.316,
+        "book_quote_age_seconds": 10.67812180519104,
+        "book_book_snapshot_age_seconds": 356.0099148750305,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-16",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.08,
+          "ask": 0.14,
+          "recv_ts": 1789570789.3218782,
+          "source_ts": 1789570789.316,
+          "age_seconds": 10.67812180519104
+        },
+        "last_full_snapshot": {
+          "bid": 0.09,
+          "ask": 0.14,
+          "bid_size": 40.0,
+          "ask_size": 98.54,
+          "recv_ts": 1789570443.9900851,
+          "source_ts": 1789570443.968,
+          "age_seconds": 356.0099148750305
+        }
+      },
+      "execution": {
+        "timestamp": 1789570860,
+        "book_bid": 0.09,
+        "book_ask": 0.14,
+        "book_bid_size": 15.79,
+        "book_ask_size": 5.02,
+        "book_quote_recv_ts": 1789570846.9637032,
+        "book_quote_source_ts": 1789570846.957,
+        "book_quote_age_seconds": 13.036296844482422,
+        "book_book_snapshot_age_seconds": 416.0099148750305,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-16",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.09,
+          "ask": 0.14,
+          "recv_ts": 1789570846.9637032,
+          "source_ts": 1789570846.957,
+          "age_seconds": 13.036296844482422
+        },
+        "last_full_snapshot": {
+          "bid": 0.09,
+          "ask": 0.14,
+          "bid_size": 40.0,
+          "ask_size": 98.54,
+          "recv_ts": 1789570443.9900851,
+          "source_ts": 1789570443.968,
+          "age_seconds": 416.0099148750305
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 88,
+        "delta_reconciliation_checks": 88
+      },
+      "subsets": [
+        {
+          "condition_id": "0xfff7b887132e9eeaa3ca6854f1e5844cda30d0951ab6a7eedee2a36fee4efbdb",
+          "start": 1789567200,
+          "end": 1789570800,
+          "rows": 6446,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-16/14/2026-09-16T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-16/14/manifest.json",
+          "source_published_sha256": "423314b6cd6fbc0b5c1e0a56b481ac33c3677b7cf45b950c5b4254f00dfb9568",
+          "source_published_bytes": 1252260382,
+          "source_manifest_sha256": "a20040b427284f4f1b5bfc2989d92e073ded5bee8a3fd0f46cdaf588b1bccf87",
+          "subset_sha256": "e7191734b8f6f635ecd5cfecc448a34423f89ab7b07a59b3dc659b2252aea9bf",
+          "subset_bytes": 96868
+        },
+        {
+          "condition_id": "0xfff7b887132e9eeaa3ca6854f1e5844cda30d0951ab6a7eedee2a36fee4efbdb",
+          "start": 1789570800,
+          "end": 1789570920,
+          "rows": 116,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-16/15/2026-09-16T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-16/15/manifest.json",
+          "source_published_sha256": "869c752dd1c94174a5457e17fa63b5e422190730d2df7e3bd740b2b96d2cea05",
+          "source_published_bytes": 1314822772,
+          "source_manifest_sha256": "aee90a3fc55bda50e01b78f723320a489a9404e12c65247715cd922b14530941",
+          "subset_sha256": "8664c6c01fb3043d178bcda36422608291ff9fe428ecccb00f9c29ac0c54d1ee",
+          "subset_bytes": 4901
+        }
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "condition_id": "0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38",
+      "token_id": "106718394304699264921041830979513804204363574235593732764759842921710939721811",
+      "outcome": "Yes",
+      "decision_timestamp": 1789657200,
+      "original_attempt_reason": "proxy_fill",
+      "original_signal_price": 0.02,
+      "model_probability": 0.2399637338980436,
+      "signal": {
+        "timestamp": 1789657200,
+        "book_bid": 0.01,
+        "book_ask": 0.03,
+        "book_bid_size": 547.43,
+        "book_ask_size": 62.87,
+        "book_quote_recv_ts": 1789657182.91608,
+        "book_quote_source_ts": 1789657182.91,
+        "book_quote_age_seconds": 17.083920001983643,
+        "book_book_snapshot_age_seconds": 648.5577850341797,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-17",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.01,
+          "ask": 0.03,
+          "recv_ts": 1789657182.91608,
+          "source_ts": 1789657182.91,
+          "age_seconds": 17.083920001983643
+        },
+        "last_full_snapshot": {
+          "bid": 0.01,
+          "ask": 0.03,
+          "bid_size": 550.8,
+          "ask_size": 62.87,
+          "recv_ts": 1789656551.442215,
+          "source_ts": 1789656551.422,
+          "age_seconds": 648.5577850341797
+        }
+      },
+      "execution": {
+        "timestamp": 1789657260,
+        "book_bid": 0.01,
+        "book_ask": 0.03,
+        "book_bid_size": 552.43,
+        "book_ask_size": 70.52,
+        "book_quote_recv_ts": 1789657249.1927588,
+        "book_quote_source_ts": 1789657249.189,
+        "book_quote_age_seconds": 10.807241201400757,
+        "book_book_snapshot_age_seconds": 708.5577850341797,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-17",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.01,
+          "ask": 0.03,
+          "recv_ts": 1789657249.1927588,
+          "source_ts": 1789657249.189,
+          "age_seconds": 10.807241201400757
+        },
+        "last_full_snapshot": {
+          "bid": 0.01,
+          "ask": 0.03,
+          "bid_size": 550.8,
+          "ask_size": 62.87,
+          "recv_ts": 1789656551.442215,
+          "source_ts": 1789656551.422,
+          "age_seconds": 708.5577850341797
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 4,
+        "delta_reconciliation_checks": 4
+      },
+      "subsets": [
+        {
+          "condition_id": "0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38",
+          "start": 1789653600,
+          "end": 1789657200,
+          "rows": 642,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-17/14/2026-09-17T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-17/14/manifest.json",
+          "source_published_sha256": "a6719851fdeb9447d90803e4d3d2e6dee4bf8ab5420070e4809722a3054bc53e",
+          "source_published_bytes": 1373093673,
+          "source_manifest_sha256": "f59bdf7078729fe22ab428ba2cfeb5f6202bafed4d09d14ff7c961027ae4fe1a",
+          "subset_sha256": "47818ea25766b7fc4c35df8ca415fbd3300b48630cef9a42b212a96c4743f659",
+          "subset_bytes": 16623
+        },
+        {
+          "condition_id": "0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38",
+          "start": 1789657200,
+          "end": 1789657320,
+          "rows": 144,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-17/15/2026-09-17T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-17/15/manifest.json",
+          "source_published_sha256": "6ff289d5e6f99a5e1b2a497dccbe557509f069b7df3f398cddd3cee123a4e60f",
+          "source_published_bytes": 1189172222,
+          "source_manifest_sha256": "69f0ea20ee478d8eeea7ff30863eb367bd7dfa57eaed3063b862cdea674cb570",
+          "subset_sha256": "9fd25be5512caa34adff6597e1f037005e68633445fc573593fd4857fecd3588",
+          "subset_bytes": 6667
+        }
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "condition_id": "0x76bde05a3e27007d3b146f5c601139b2efd27736cf982a9bcb61b238d97556cf",
+      "token_id": "90926074030780425550529711536456695576855891673395567850984340293865132629387",
+      "outcome": "No",
+      "decision_timestamp": 1789743600,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.54,
+      "model_probability": 0.6569279704977543,
+      "signal": {
+        "timestamp": 1789743600,
+        "book_bid": 0.53,
+        "book_ask": 0.55,
+        "book_bid_size": 50.0,
+        "book_ask_size": 50.0,
+        "book_quote_recv_ts": 1789743583.49871,
+        "book_quote_source_ts": 1789743583.493,
+        "book_quote_age_seconds": 16.50129008293152,
+        "book_book_snapshot_age_seconds": 210.45804405212402,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-18",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.53,
+          "ask": 0.55,
+          "recv_ts": 1789743583.49871,
+          "source_ts": 1789743583.493,
+          "age_seconds": 16.50129008293152
+        },
+        "last_full_snapshot": {
+          "bid": 0.53,
+          "ask": 0.55,
+          "bid_size": 15.0,
+          "ask_size": 10.0,
+          "recv_ts": 1789743389.541956,
+          "source_ts": 1789743376.466,
+          "age_seconds": 210.45804405212402
+        }
+      },
+      "execution": {
+        "timestamp": 1789743660,
+        "book_bid": 0.53,
+        "book_ask": 0.55,
+        "book_bid_size": 50.0,
+        "book_ask_size": 50.0,
+        "book_quote_recv_ts": 1789743653.5050821,
+        "book_quote_source_ts": 1789743653.492,
+        "book_quote_age_seconds": 6.494917869567871,
+        "book_book_snapshot_age_seconds": 270.458044052124,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-18",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.53,
+          "ask": 0.55,
+          "recv_ts": 1789743653.5050821,
+          "source_ts": 1789743653.492,
+          "age_seconds": 6.494917869567871
+        },
+        "last_full_snapshot": {
+          "bid": 0.53,
+          "ask": 0.55,
+          "bid_size": 15.0,
+          "ask_size": 10.0,
+          "recv_ts": 1789743389.541956,
+          "source_ts": 1789743376.466,
+          "age_seconds": 270.458044052124
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 214,
+        "delta_reconciliation_checks": 214,
+        "empty_or_crossed_book": 1
+      },
+      "subsets": [
+        {
+          "condition_id": "0x76bde05a3e27007d3b146f5c601139b2efd27736cf982a9bcb61b238d97556cf",
+          "start": 1789740000,
+          "end": 1789743600,
+          "rows": 6808,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-18/14/2026-09-18T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-18/14/manifest.json",
+          "source_published_sha256": "f5062428b6b39d0594e36a4ceecb90ed8a87a1e08072beac239555e7c8bfdfab",
+          "source_published_bytes": 1578412607,
+          "source_manifest_sha256": "c8960f4bdb9d50c3c0f93bca7be1e1ed2bc728ad722cba622a09cadba810e03c",
+          "subset_sha256": "32340658e0066a5ac0ae1909ad9366f287e726245c83acdd1b2a02d25e512fd1",
+          "subset_bytes": 102079
+        },
+        {
+          "condition_id": "0x76bde05a3e27007d3b146f5c601139b2efd27736cf982a9bcb61b238d97556cf",
+          "start": 1789743600,
+          "end": 1789743720,
+          "rows": 244,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-18/15/2026-09-18T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-18/15/manifest.json",
+          "source_published_sha256": "38ef1b14bbb5dab430505e6480540c77b31a426d1b5a82a66287f369ad5baf2d",
+          "source_published_bytes": 1506837009,
+          "source_manifest_sha256": "312635c82da994c1629a33ba994800d0bdf31604846b1da2bca4f7dcfd43a86c",
+          "subset_sha256": "1a0d511102c76260c3bc655a1a192b28a245c12969c9fdf7dff7cabc090cfb34",
+          "subset_bytes": 8246
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "condition_id": "0x5b44b3b7cf0d6417509b885e9aa97223f76fb760204a3fc693c7d283bcf5282e",
+      "token_id": "29773316585175950881794993819155968507576222065184647263412706376535404105941",
+      "outcome": "No",
+      "decision_timestamp": 1789916400,
+      "original_attempt_reason": "no_next_buy_print",
+      "original_signal_price": 0.1,
+      "model_probability": 0.9348084907225899,
+      "signal": {
+        "timestamp": 1789916400,
+        "book_bid": 0.06,
+        "book_ask": 0.08,
+        "book_bid_size": 41.0,
+        "book_ask_size": 44.4,
+        "book_quote_recv_ts": 1789916364.210916,
+        "book_quote_source_ts": 1789916364.203,
+        "book_quote_age_seconds": 35.78908395767212,
+        "book_book_snapshot_age_seconds": 308.657124042511,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-20",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.06,
+          "ask": 0.08,
+          "recv_ts": 1789916364.210916,
+          "source_ts": 1789916364.203,
+          "age_seconds": 35.78908395767212
+        },
+        "last_full_snapshot": {
+          "bid": 0.06,
+          "ask": 0.12,
+          "bid_size": 41.0,
+          "ask_size": 48.4,
+          "recv_ts": 1789916091.342876,
+          "source_ts": 1789916088.592,
+          "age_seconds": 308.657124042511
+        }
+      },
+      "execution": {
+        "timestamp": 1789916460,
+        "book_bid": 0.06,
+        "book_ask": 0.08,
+        "book_bid_size": 20.0,
+        "book_ask_size": 23.4,
+        "book_quote_recv_ts": 1789916401.825745,
+        "book_quote_source_ts": 1789916401.806,
+        "book_quote_age_seconds": 58.17425489425659,
+        "book_book_snapshot_age_seconds": 368.657124042511,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-20",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.06,
+          "ask": 0.08,
+          "recv_ts": 1789916401.825745,
+          "source_ts": 1789916401.806,
+          "age_seconds": 58.17425489425659
+        },
+        "last_full_snapshot": {
+          "bid": 0.06,
+          "ask": 0.12,
+          "bid_size": 41.0,
+          "ask_size": 48.4,
+          "recv_ts": 1789916091.342876,
+          "source_ts": 1789916088.592,
+          "age_seconds": 368.657124042511
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 163,
+        "delta_reconciliation_checks": 163
+      },
+      "subsets": [
+        {
+          "condition_id": "0x5b44b3b7cf0d6417509b885e9aa97223f76fb760204a3fc693c7d283bcf5282e",
+          "start": 1789912800,
+          "end": 1789916400,
+          "rows": 2372,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-20/14/2026-09-20T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-20/14/manifest.json",
+          "source_published_sha256": "3cf22d3bab52c670d983c0762589c40b259c9a5dcd096b451038eccf51ba95d8",
+          "source_published_bytes": 1514966664,
+          "source_manifest_sha256": "6ae717ecf0433e536c01d8539edf689e33ea08d6e0b2062fd6d04b6a48ed88ca",
+          "subset_sha256": "124b3415dfdeab59a2774df974a1ef2626a529f603a6d6eaedee527c2c531032",
+          "subset_bytes": 38310
+        },
+        {
+          "condition_id": "0x5b44b3b7cf0d6417509b885e9aa97223f76fb760204a3fc693c7d283bcf5282e",
+          "start": 1789916400,
+          "end": 1789916520,
+          "rows": 16,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-20/15/2026-09-20T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-20/15/manifest.json",
+          "source_published_sha256": "959caa008f162477222db05eeb3bbc9fdaaf1c0c013be2b708feb3cd52633ada",
+          "source_published_bytes": 1537586873,
+          "source_manifest_sha256": "faa12e5e7febfb1ee8359227bd1f6978677a84e550e040c5973fec36401e7719",
+          "subset_sha256": "ffa5b1cd162e7f86b0e4a781695c983477c6190a3a788d624efe5ec2460bc206",
+          "subset_bytes": 3198
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "condition_id": "0xac268e8455a788743bb00204e106fed9687c59250a5c1788c3c78263a1b4451c",
+      "token_id": "58370209975507033775155788779039461096848424363625605862292467535631198443315",
+      "outcome": "No",
+      "decision_timestamp": 1790089200,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.51,
+      "model_probability": 0.687656800536125,
+      "signal": {
+        "timestamp": 1790089200,
+        "book_bid": 0.5,
+        "book_ask": 0.53,
+        "book_bid_size": 16.0,
+        "book_ask_size": 200.0,
+        "book_quote_recv_ts": 1790089199.977658,
+        "book_quote_source_ts": 1790089199.972,
+        "book_quote_age_seconds": 0.02234196662902832,
+        "book_book_snapshot_age_seconds": 247.8829309940338,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-22",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.5,
+          "ask": 0.53,
+          "recv_ts": 1790089199.977658,
+          "source_ts": 1790089199.972,
+          "age_seconds": 0.02234196662902832
+        },
+        "last_full_snapshot": {
+          "bid": 0.52,
+          "ask": 0.53,
+          "bid_size": 20.0,
+          "ask_size": 100.0,
+          "recv_ts": 1790088952.117069,
+          "source_ts": 1790088950.293,
+          "age_seconds": 247.8829309940338
+        }
+      },
+      "execution": {
+        "timestamp": 1790089260,
+        "book_bid": 0.5,
+        "book_ask": 0.52,
+        "book_bid_size": 1.0,
+        "book_ask_size": 34.25,
+        "book_quote_recv_ts": 1790089259.109938,
+        "book_quote_source_ts": 1790089259.097,
+        "book_quote_age_seconds": 0.8900620937347412,
+        "book_book_snapshot_age_seconds": 19.513453006744385,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-22",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.5,
+          "ask": 0.52,
+          "recv_ts": 1790089259.109938,
+          "source_ts": 1790089259.097,
+          "age_seconds": 0.8900620937347412
+        },
+        "last_full_snapshot": {
+          "bid": 0.5,
+          "ask": 0.53,
+          "bid_size": 1.0,
+          "ask_size": 100.0,
+          "recv_ts": 1790089240.486547,
+          "source_ts": 1790089240.478,
+          "age_seconds": 19.513453006744385
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": 0.13523680053612497,
+      "edge_survives_actual_ask": true,
+      "hypothetical_execution_price": 0.53,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 2.7122800000000002,
+      "all_conditional_gates_pass": true,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 30,
+        "delta_reconciliation_checks": 30
+      },
+      "subsets": [
+        {
+          "condition_id": "0xac268e8455a788743bb00204e106fed9687c59250a5c1788c3c78263a1b4451c",
+          "start": 1790085600,
+          "end": 1790089200,
+          "rows": 19258,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-22/14/2026-09-22T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-22/14/manifest.json",
+          "source_published_sha256": "4fe9ed9aaa516f4b9695e1d35476f6c6080372a8465f8e4f9529582246f67c20",
+          "source_published_bytes": 1429723130,
+          "source_manifest_sha256": "f112a520ff2600d572b31ab1f16f099213726d07f1ce1560f06437fa3cae83a3",
+          "subset_sha256": "022c226b87eb53a9b5f9b623c78c7e723aa8584a61d81a7f1f896ca5cfd892f7",
+          "subset_bytes": 339469
+        },
+        {
+          "condition_id": "0xac268e8455a788743bb00204e106fed9687c59250a5c1788c3c78263a1b4451c",
+          "start": 1790089200,
+          "end": 1790089320,
+          "rows": 192,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-22/15/2026-09-22T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-22/15/manifest.json",
+          "source_published_sha256": "9237d3768589c0801286256d0b29b0bb8f229854f2da71857675d5c905c850a6",
+          "source_published_bytes": 1300156176,
+          "source_manifest_sha256": "19a2c45de10f9ab5d4b898f7b00f85f6c6a329b0d030c8a5a0b4d8c707103f00",
+          "subset_sha256": "446f2ea5beebe054640b568417ca8fae174c4480f7ce9e1981d984a1ef95d60b",
+          "subset_bytes": 7752
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "condition_id": "0x8b75d418b0b4375ba07e5bb8f6a494efd0156ea9e5c9c813f26fed7279089685",
+      "token_id": "1887411847682643217636774922967761261976509814615264193932779832757059144671",
+      "outcome": "Yes",
+      "decision_timestamp": 1790175600,
+      "original_attempt_reason": "insufficient_print_size",
+      "original_signal_price": 0.26,
+      "model_probability": 0.37953076440344946,
+      "signal": {
+        "timestamp": 1790175600,
+        "book_bid": 0.26,
+        "book_ask": 0.3,
+        "book_bid_size": 77.0,
+        "book_ask_size": 50.0,
+        "book_quote_recv_ts": 1790175598.605103,
+        "book_quote_source_ts": 1790175598.601,
+        "book_quote_age_seconds": 1.3948969841003418,
+        "book_book_snapshot_age_seconds": 55.75432515144348,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-23",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.26,
+          "ask": 0.3,
+          "recv_ts": 1790175598.605103,
+          "source_ts": 1790175598.601,
+          "age_seconds": 1.3948969841003418
+        },
+        "last_full_snapshot": {
+          "bid": 0.26,
+          "ask": 0.3,
+          "bid_size": 77.0,
+          "ask_size": 50.0,
+          "recv_ts": 1790175544.2456748,
+          "source_ts": 1790175540.411,
+          "age_seconds": 55.75432515144348
+        }
+      },
+      "execution": {
+        "timestamp": 1790175660,
+        "book_bid": 0.26,
+        "book_ask": 0.3,
+        "book_bid_size": 51.0,
+        "book_ask_size": 25.0,
+        "book_quote_recv_ts": 1790175658.697838,
+        "book_quote_source_ts": 1790175658.688,
+        "book_quote_age_seconds": 1.3021619319915771,
+        "book_book_snapshot_age_seconds": 54.7958300113678,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-23",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.26,
+          "ask": 0.3,
+          "recv_ts": 1790175658.697838,
+          "source_ts": 1790175658.688,
+          "age_seconds": 1.3021619319915771
+        },
+        "last_full_snapshot": {
+          "bid": 0.26,
+          "ask": 0.3,
+          "bid_size": 41.18,
+          "ask_size": 25.0,
+          "recv_ts": 1790175605.20417,
+          "source_ts": 1790175605.199,
+          "age_seconds": 54.7958300113678
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": 0.05883576440344947,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.31,
+      "fixed_original_price_limit_pass": true,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 1.60348,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 92,
+        "delta_reconciliation_checks": 92
+      },
+      "subsets": [
+        {
+          "condition_id": "0x8b75d418b0b4375ba07e5bb8f6a494efd0156ea9e5c9c813f26fed7279089685",
+          "start": 1790172000,
+          "end": 1790175600,
+          "rows": 6518,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-23/14/2026-09-23T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-23/14/manifest.json",
+          "source_published_sha256": "843d861f5d2244879136626185932cede9106582cb4d3afa15e2e5c0c7e8b9bb",
+          "source_published_bytes": 1671956547,
+          "source_manifest_sha256": "e41484d40e97325f639060bd965a4727188b3fd5682e89a096e81e4bad92de71",
+          "subset_sha256": "27ecc631c0420d6a4b5e02d05f60664c95f2bde54ea84f8358f94b5736f1c5e5",
+          "subset_bytes": 105413
+        },
+        {
+          "condition_id": "0x8b75d418b0b4375ba07e5bb8f6a494efd0156ea9e5c9c813f26fed7279089685",
+          "start": 1790175600,
+          "end": 1790175720,
+          "rows": 194,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-23/15/2026-09-23T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-23/15/manifest.json",
+          "source_published_sha256": "a12aa8ec5ee7aabd9f67063bfd539e0b2662858ba895369784f04610b34fbfd1",
+          "source_published_bytes": 1372424658,
+          "source_manifest_sha256": "32f9097622fb6164ecabd8dc9981637a998c0c107b0dbe40454f9f79a48c5891",
+          "subset_sha256": "0e9e24e167460ddf442633ddbd27a9a1fb9f061aea43ad33499d040014ed9fe1",
+          "subset_bytes": 7284
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "condition_id": "0xea2cc80ec527881dd02365f1911d430afd6015bb241dd591346ec80554710d2e",
+      "token_id": "24250146269560824544491971287048989609147551771125632126148722167784255147033",
+      "outcome": "No",
+      "decision_timestamp": 1790262000,
+      "original_attempt_reason": "execution_timeout",
+      "original_signal_price": 0.4847261576,
+      "model_probability": 0.6499445861691546,
+      "signal": {
+        "timestamp": 1790262000,
+        "book_bid": 0.44,
+        "book_ask": 0.48,
+        "book_bid_size": 5.0,
+        "book_ask_size": 15.57,
+        "book_quote_recv_ts": 1790261999.782737,
+        "book_quote_source_ts": 1790261999.776,
+        "book_quote_age_seconds": 0.21726298332214355,
+        "book_book_snapshot_age_seconds": 291.57753014564514,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-24",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.44,
+          "ask": 0.48,
+          "recv_ts": 1790261999.782737,
+          "source_ts": 1790261999.776,
+          "age_seconds": 0.21726298332214355
+        },
+        "last_full_snapshot": {
+          "bid": 0.44,
+          "ask": 0.48,
+          "bid_size": 5.0,
+          "ask_size": 15.57,
+          "recv_ts": 1790261708.4224699,
+          "source_ts": 1790261664.932,
+          "age_seconds": 291.57753014564514
+        }
+      },
+      "execution": {
+        "timestamp": 1790262060,
+        "book_bid": 0.44,
+        "book_ask": 0.48,
+        "book_bid_size": 5.0,
+        "book_ask_size": 15.57,
+        "book_quote_recv_ts": 1790262049.787521,
+        "book_quote_source_ts": 1790262049.783,
+        "book_quote_age_seconds": 10.21247911453247,
+        "book_book_snapshot_age_seconds": 351.57753014564514,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-24",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.44,
+          "ask": 0.48,
+          "recv_ts": 1790262049.787521,
+          "source_ts": 1790262049.783,
+          "age_seconds": 10.21247911453247
+        },
+        "last_full_snapshot": {
+          "bid": 0.44,
+          "ask": 0.48,
+          "bid_size": 5.0,
+          "ask_size": 15.57,
+          "recv_ts": 1790261708.4224699,
+          "source_ts": 1790261664.932,
+          "age_seconds": 351.57753014564514
+        }
+      },
+      "signal_usable": true,
+      "signal_book_reason": "usable",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": 0.14744958616915463,
+      "edge_survives_actual_ask": true,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": true,
+          "execution_usable": false,
+          "signal_reason": "usable",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": true
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 73,
+        "delta_reconciliation_checks": 73
+      },
+      "subsets": [
+        {
+          "condition_id": "0xea2cc80ec527881dd02365f1911d430afd6015bb241dd591346ec80554710d2e",
+          "start": 1790258400,
+          "end": 1790262000,
+          "rows": 5178,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-24/14/2026-09-24T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-24/14/manifest.json",
+          "source_published_sha256": "dc6ea96a333510b693aa1c7e6f364f45a9792dd8afe088a7e0b8c2c0dcbfff21",
+          "source_published_bytes": 1477281124,
+          "source_manifest_sha256": "fd9701817a8c5b5cf691b31f984023e4580b4ba5b71191355a7e77d4c1ca3afc",
+          "subset_sha256": "f2364bfb8d94703179ec1ecd27a6d3f510afe2337213c5283399e8940c272c7e",
+          "subset_bytes": 80658
+        },
+        {
+          "condition_id": "0xea2cc80ec527881dd02365f1911d430afd6015bb241dd591346ec80554710d2e",
+          "start": 1790262000,
+          "end": 1790262120,
+          "rows": 48,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-24/15/2026-09-24T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-24/15/manifest.json",
+          "source_published_sha256": "8ca7f374563b1688ebd4245a2139152913313d299fe50dc43ba9d883465a38fb",
+          "source_published_bytes": 1393771360,
+          "source_manifest_sha256": "106b81ae48d858a9b8532ca1e0cc1baeb990cb4197ce596554c0685c879ce741",
+          "subset_sha256": "440a84fe6ef13dca7d8be4adaf6d33b6c42a0bb387a388b6598f2eb6a1be69a0",
+          "subset_bytes": 3726
+        }
+      ]
+    },
+    {
+      "date": "2026-09-26",
+      "condition_id": "0x4d13d4a1b6536c2474ff3d2bd9cefbd12ac707f574307e9bae0d3a70a67c5b4d",
+      "token_id": "46901421440631315165027313890062057521287525230093910616395238664836783051319",
+      "outcome": "No",
+      "decision_timestamp": 1790434800,
+      "original_attempt_reason": "price_limit",
+      "original_signal_price": 0.43,
+      "model_probability": 0.6194535298980693,
+      "signal": {
+        "timestamp": 1790434800,
+        "book_bid": 0.43,
+        "book_ask": 0.48,
+        "book_bid_size": 5.0,
+        "book_ask_size": 15.0,
+        "book_quote_recv_ts": 1790434758.38744,
+        "book_quote_source_ts": 1790434758.383,
+        "book_quote_age_seconds": 41.61256003379822,
+        "book_book_snapshot_age_seconds": 266.20506501197815,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-26",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.43,
+          "ask": 0.48,
+          "recv_ts": 1790434758.38744,
+          "source_ts": 1790434758.383,
+          "age_seconds": 41.61256003379822
+        },
+        "last_full_snapshot": {
+          "bid": 0.43,
+          "ask": 0.46,
+          "bid_size": 0.66,
+          "ask_size": 1.66,
+          "recv_ts": 1790434533.794935,
+          "source_ts": 1790434533.786,
+          "age_seconds": 266.20506501197815
+        }
+      },
+      "execution": {
+        "timestamp": 1790434860,
+        "book_bid": 0.42,
+        "book_ask": 0.56,
+        "book_bid_size": 5.0,
+        "book_ask_size": 10.0,
+        "book_quote_recv_ts": 1790434859.175971,
+        "book_quote_source_ts": 1790434859.17,
+        "book_quote_age_seconds": 0.8240289688110352,
+        "book_book_snapshot_age_seconds": 326.20506501197815,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-26",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.42,
+          "ask": 0.56,
+          "recv_ts": 1790434859.175971,
+          "source_ts": 1790434859.17,
+          "age_seconds": 0.8240289688110352
+        },
+        "last_full_snapshot": {
+          "bid": 0.43,
+          "ask": 0.46,
+          "bid_size": 0.66,
+          "ask_size": 1.66,
+          "recv_ts": 1790434533.794935,
+          "source_ts": 1790434533.786,
+          "age_seconds": 326.20506501197815
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": true,
+      "execution_book_reason": "usable",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": 0.5700000000000001,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": true,
+      "before_trading_stop": true,
+      "estimated_cost_with_current_fee": 2.9112700000000005,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": true,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 1214,
+        "delta_reconciliation_checks": 1213
+      },
+      "subsets": [
+        {
+          "condition_id": "0x4d13d4a1b6536c2474ff3d2bd9cefbd12ac707f574307e9bae0d3a70a67c5b4d",
+          "start": 1790431200,
+          "end": 1790434800,
+          "rows": 9562,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-26/14/2026-09-26T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-26/14/manifest.json",
+          "source_published_sha256": "404d1e7ef2cbb935d0f5af30052163af5762ddc1703e23ade62146bd603f96cc",
+          "source_published_bytes": 1245924354,
+          "source_manifest_sha256": "adf441a514a47fd1da8a9fb53cb8985cf1dc7f59ef7e6410ec353d10ada85539",
+          "subset_sha256": "b37fb605f4d22982edb08db0071bf08b5596f56dafd65cad31ad941d4a9ab08a",
+          "subset_bytes": 155025
+        },
+        {
+          "condition_id": "0x4d13d4a1b6536c2474ff3d2bd9cefbd12ac707f574307e9bae0d3a70a67c5b4d",
+          "start": 1790434800,
+          "end": 1790434920,
+          "rows": 2796,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-26/15/2026-09-26T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-26/15/manifest.json",
+          "source_published_sha256": "5c5c4bb0c721956283590e65395b5e6e6a44f70fb4b7d0a1230f3edc43e26778",
+          "source_published_bytes": 1191038632,
+          "source_manifest_sha256": "414dc77ca086ca505734b725b83599d29aa00750cf9cc4f731e331a7be28c5ad",
+          "subset_sha256": "7887f2f6105b72c5f0c081b95dd1856e610b0a64bcf8d461aafa1b177bdc8c30",
+          "subset_bytes": 42197
+        }
+      ]
+    },
+    {
+      "date": "2026-09-28",
+      "condition_id": "0xecae2fc48652dbce5dcce1e140225cac45e17c18396b22d710812d7d3fb027a4",
+      "token_id": "95632630843428726716162960620343192684428700104216407546783830565583810398603",
+      "outcome": "No",
+      "decision_timestamp": 1790607600,
+      "original_attempt_reason": "price_limit",
+      "original_signal_price": 0.3922755004,
+      "model_probability": 0.6431026338632109,
+      "signal": {
+        "timestamp": 1790607600,
+        "book_bid": 0.39,
+        "book_ask": 0.44,
+        "book_bid_size": 5.0,
+        "book_ask_size": 217.58,
+        "book_quote_recv_ts": 1790607555.491073,
+        "book_quote_source_ts": 1790607555.486,
+        "book_quote_age_seconds": 44.5089271068573,
+        "book_book_snapshot_age_seconds": 1426.9748978614807,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-28",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.39,
+          "ask": 0.44,
+          "recv_ts": 1790607555.491073,
+          "source_ts": 1790607555.486,
+          "age_seconds": 44.5089271068573
+        },
+        "last_full_snapshot": {
+          "bid": 0.36,
+          "ask": 0.41,
+          "bid_size": 10.55,
+          "ask_size": 165.17,
+          "recv_ts": 1790606173.0251021,
+          "source_ts": 1790606173.016,
+          "age_seconds": 1426.9748978614807
+        }
+      },
+      "execution": {
+        "timestamp": 1790607660,
+        "book_bid": 0.37,
+        "book_ask": 0.48,
+        "book_bid_size": 5.0,
+        "book_ask_size": 5.0,
+        "book_quote_recv_ts": 1790607634.018669,
+        "book_quote_source_ts": 1790607633.943,
+        "book_quote_age_seconds": 25.98133111000061,
+        "book_book_snapshot_age_seconds": 1486.9748978614807,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-28",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.37,
+          "ask": 0.48,
+          "recv_ts": 1790607634.018669,
+          "source_ts": 1790607633.943,
+          "age_seconds": 25.98133111000061
+        },
+        "last_full_snapshot": {
+          "bid": 0.36,
+          "ask": 0.41,
+          "bid_size": 10.55,
+          "ask_size": 165.17,
+          "recv_ts": 1790606173.0251021,
+          "source_ts": 1790606173.016,
+          "age_seconds": 1486.9748978614807
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 77,
+        "delta_reconciliation_checks": 77
+      },
+      "subsets": [
+        {
+          "condition_id": "0xecae2fc48652dbce5dcce1e140225cac45e17c18396b22d710812d7d3fb027a4",
+          "start": 1790604000,
+          "end": 1790607600,
+          "rows": 4724,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-28/14/2026-09-28T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-28/14/manifest.json",
+          "source_published_sha256": "2a84ba994450ea88daeb1f8ddfd2242b3bb8386bfc019a3742f4bb8677e9aab4",
+          "source_published_bytes": 1167290035,
+          "source_manifest_sha256": "d08830495a5716d124c60b8a07a76999a2780aa51a2b6a78a0f57685d07f43a2",
+          "subset_sha256": "56be8da7de1accf46d3ef316b45adf4acb7d0d2f4dd7d7a2044a46cf4c605bec",
+          "subset_bytes": 71328
+        },
+        {
+          "condition_id": "0xecae2fc48652dbce5dcce1e140225cac45e17c18396b22d710812d7d3fb027a4",
+          "start": 1790607600,
+          "end": 1790607720,
+          "rows": 690,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-28/15/2026-09-28T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-28/15/manifest.json",
+          "source_published_sha256": "c7e86118e26fc054cdd5ceb417f92725a44911b12fe17f1da3edab6cde5a9cd5",
+          "source_published_bytes": 1161023982,
+          "source_manifest_sha256": "d02cd31680224d9b6a355a09188283c33f9ac883e1c2fa5ff5912d611021d049",
+          "subset_sha256": "a99020359378b351773a5441ab3ed226a72da4264b711df36d349b619a4127c8",
+          "subset_bytes": 14575
+        }
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "condition_id": "0xdf18d55ff5eed0a38c7daae4e2252c9e938e6ff0e09416ccd0caf36a0b6c3bec",
+      "token_id": "66183792386072392523536880694032104733433842795416388494126477956692160792722",
+      "outcome": "Yes",
+      "decision_timestamp": 1790694000,
+      "original_attempt_reason": "price_limit",
+      "original_signal_price": 0.15,
+      "model_probability": 0.36642662385522806,
+      "signal": {
+        "timestamp": 1790694000,
+        "book_bid": 0.11,
+        "book_ask": 0.19,
+        "book_bid_size": 25.36,
+        "book_ask_size": 45.09,
+        "book_quote_recv_ts": 1790693991.908171,
+        "book_quote_source_ts": 1790693991.903,
+        "book_quote_age_seconds": 8.091829061508179,
+        "book_book_snapshot_age_seconds": 792.1477000713348,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-29",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.11,
+          "ask": 0.19,
+          "recv_ts": 1790693991.908171,
+          "source_ts": 1790693991.903,
+          "age_seconds": 8.091829061508179
+        },
+        "last_full_snapshot": {
+          "bid": 0.11,
+          "ask": 0.17,
+          "bid_size": 39.54,
+          "ask_size": 40.0,
+          "recv_ts": 1790693207.8523,
+          "source_ts": 1790693207.804,
+          "age_seconds": 792.1477000713348
+        }
+      },
+      "execution": {
+        "timestamp": 1790694060,
+        "book_bid": 0.1,
+        "book_ask": 0.22,
+        "book_bid_size": 15.0,
+        "book_ask_size": 15.59,
+        "book_quote_recv_ts": 1790694049.409128,
+        "book_quote_source_ts": 1790694049.4,
+        "book_quote_age_seconds": 10.590872049331665,
+        "book_book_snapshot_age_seconds": 852.1477000713348,
+        "book_book_valid": true,
+        "book_invalid_reason": "",
+        "book_connection_id": "archive-continuity-assumption:2026-09-29",
+        "book_tick_size": null,
+        "book_min_order_size": null,
+        "last_reported_quote": {
+          "bid": 0.1,
+          "ask": 0.22,
+          "recv_ts": 1790694049.409128,
+          "source_ts": 1790694049.4,
+          "age_seconds": 10.590872049331665
+        },
+        "last_full_snapshot": {
+          "bid": 0.11,
+          "ask": 0.17,
+          "bid_size": 39.54,
+          "ask_size": 40.0,
+          "recv_ts": 1790693207.8523,
+          "source_ts": 1790693207.804,
+          "age_seconds": 852.1477000713348
+        }
+      },
+      "signal_usable": false,
+      "signal_book_reason": "stale_book_quote_age_seconds",
+      "execution_usable": false,
+      "execution_book_reason": "stale_book_quote_age_seconds",
+      "actual_ask_based_net_edge": null,
+      "edge_survives_actual_ask": false,
+      "hypothetical_execution_price": null,
+      "fixed_original_price_limit_pass": false,
+      "top_depth_sufficient": false,
+      "before_trading_stop": false,
+      "estimated_cost_with_current_fee": null,
+      "all_conditional_gates_pass": false,
+      "metadata_min_order_shares_current_reference_only": 5,
+      "minimum_order_notional": null,
+      "historical_tick_size": null,
+      "age_sensitivities": {
+        "5": {
+          "signal_usable": false,
+          "execution_usable": false,
+          "signal_reason": "stale_book_quote_age_seconds",
+          "execution_reason": "stale_book_quote_age_seconds",
+          "edge_survives_actual_ask": false,
+          "all_conditional_gates_pass": false
+        },
+        "60": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        },
+        "300": {
+          "signal_usable": true,
+          "execution_usable": true,
+          "signal_reason": "usable",
+          "execution_reason": "usable",
+          "edge_survives_actual_ask": true,
+          "all_conditional_gates_pass": false
+        }
+      },
+      "reconstruction_counts": {
+        "reported_bbo_mismatch": 254,
+        "delta_reconciliation_checks": 254
+      },
+      "subsets": [
+        {
+          "condition_id": "0xdf18d55ff5eed0a38c7daae4e2252c9e938e6ff0e09416ccd0caf36a0b6c3bec",
+          "start": 1790690400,
+          "end": 1790694000,
+          "rows": 5652,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-29/14/2026-09-29T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-29/14/manifest.json",
+          "source_published_sha256": "1482ff7a72bb905f65d43d151fc309b3258aba49b0a69ab8dc53c482f04f6b62",
+          "source_published_bytes": 1353130886,
+          "source_manifest_sha256": "8fa549b56186f244c123a23fa2b781f8da6acee56254ebc42f51941088f870f5",
+          "subset_sha256": "4e9b159d07209acacfb9791549d0695f018d0fb0a547c1ec9719cb4fb41b12b4",
+          "subset_bytes": 89740
+        },
+        {
+          "condition_id": "0xdf18d55ff5eed0a38c7daae4e2252c9e938e6ff0e09416ccd0caf36a0b6c3bec",
+          "start": 1790694000,
+          "end": 1790694120,
+          "rows": 848,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-29/15/2026-09-29T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-29/15/manifest.json",
+          "source_published_sha256": "a12612facf7cb44faeb95c2aebedde51327553bb5ffbdb71333307ddb2692b15",
+          "source_published_bytes": 1166253673,
+          "source_manifest_sha256": "a8c89da638b1e1bd595058d31a7918869a57655bb5cf38c5891679799deffd1f",
+          "subset_sha256": "96d878bd3426e8c363c5fb40691fd1fb6a3ceffe5e34a649c1e8c8fe77269dc8",
+          "subset_bytes": 15063
+        }
+      ]
+    }
+  ]
+}

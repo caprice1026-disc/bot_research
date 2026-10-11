@@ -1,0 +1,2323 @@
+{
+  "complete": true,
+  "created_at_utc": "2026-10-04T14:39:46.592402+00:00",
+  "scope_path": "research\\weather_full_book_acquisition_config_v2.json",
+  "scope_sha256": "c47a1f43c4d12e71a2f9f66363a6e4f170dcd02d50afb52db1ad797918e242f4",
+  "extractor_sources_sha256": {
+    "weather_full_book_data.py": "9025228b7bff2a5e82334b80740ab1abc064f03a405e1ee5d2655e2751b8d6fa",
+    "weather_book_check.py": "ff4f5c16e5611facb21882a3732be446f371d7b01ca88735bf8ffa68b3c57a39",
+    "btc_data.py": "638e239f7afb520d1bd19155cd6e058ffdf86a71667158cc02e991c1c2fc19c1",
+    "expanded_book_data.py": "61b4d878dace494c31c8d3bd4715b893e80d4136242c3d0f2148e384a9e9ae40"
+  },
+  "original_weather_config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+  "requested_days": 30,
+  "completed_days": 30,
+  "requested_markets": 330,
+  "market_count": 330,
+  "expected_outcome_snapshots": 660,
+  "outcome_snapshots": 660,
+  "archive_rows": 874270,
+  "errors": [],
+  "snapshots_path": "data\\weather_full_books\\snapshots.jsonl",
+  "snapshots_sha256": "d0ef6cd5333d8520da2762ff00c019ba213635fa99343e314d5b55cd6ee2262e",
+  "primary_book_age_seconds": 60,
+  "usable_by_age_seconds": {
+    "5": {
+      "signal": 127,
+      "execution": 200
+    },
+    "60": {
+      "signal": 482,
+      "execution": 492
+    },
+    "300": {
+      "signal": 515,
+      "execution": 515
+    }
+  },
+  "missing_signal_initial_snapshot": 0,
+  "ineligible_closed_outcomes": 0,
+  "no_ask_signal_outcomes": 145,
+  "invalid_signal_reasons": {},
+  "days": [
+    {
+      "date": "2026-08-31",
+      "metadata_sha256": "71486d56dc83ea285fd63706f6fb52774904be288cc9a808b83cbb555e4ab960",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 24110,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x04186837b5b44755ddc8f1661b7fd823ee7a8648ddaa39890a4babf5f504f05b",
+            "0x06a0cf79cc3c6107e1ae9195c7873109db3a4c115f984147b47c3cf1c1d29c7c",
+            "0x0a07862f7a613e06f48569c95695726129e44f7d808ec9ed81e19ed69fe70496",
+            "0x14095bc36bd00fb34ee7b9d8b9791086f0473edca30416d969aeabb572c007d5",
+            "0x4634d93ed1169af9841d39d5d3e8942e3e9e40092db8141ab40ac5ec63cf0b85",
+            "0x7270dcc22cb68fad957d2cc661ba668222d2c6c8f878d26eb1f83b4ca116c951",
+            "0xabf718f11e3d2526ee4378649624ee7d6568c7126f16ce649f587131c48470cd",
+            "0xb35725e19bfaea57542714d0c4273cc2803ecb3876297e354cc88174b1d31c17",
+            "0xc59271de2752fcdfb4d7d2e82d57a0e08981ad5cea17af7f739a22fbd356fb3e",
+            "0xc6eca553745711440d0ab22e567976fc27b4c527cccd0bcab4fe0d0007f9765b",
+            "0xca1372c3fb002045e9a34d5f76a97b2fc771f9d5457800fdc1d2485682b6e6b7"
+          ],
+          "start": 1788184800,
+          "end": 1788188400,
+          "rows": 18100,
+          "event_counts": {
+            "best_bid_ask": 1214,
+            "price_change": 16822,
+            "book": 64
+          },
+          "first_recv_ts": 1788184804.3306758,
+          "last_recv_ts": 1788188397.8232439,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-08-31/14/2026-08-31T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-08-31/14/manifest.json",
+          "source_published_sha256": "5814404f98c24d65bf9d18f6d00f207547be614a6ea6cc91acc5c1b397df927c",
+          "source_published_bytes": 968578504,
+          "source_manifest_sha256": "b4b8f9dc3a2a7ee0d2f0346a074bd43808618b1e916685c59e2d18342cdeab39",
+          "subset_sha256": "5a045e6245d1900c60b44508e8dfbe0447bd3cedd68728d380ae78aefc16551c",
+          "subset_bytes": 292904,
+          "subset_path": "data\\weather_full_books\\2026-08-31T14-9da8e8f21cf0.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x04186837b5b44755ddc8f1661b7fd823ee7a8648ddaa39890a4babf5f504f05b",
+            "0x06a0cf79cc3c6107e1ae9195c7873109db3a4c115f984147b47c3cf1c1d29c7c",
+            "0x0a07862f7a613e06f48569c95695726129e44f7d808ec9ed81e19ed69fe70496",
+            "0x14095bc36bd00fb34ee7b9d8b9791086f0473edca30416d969aeabb572c007d5",
+            "0x4634d93ed1169af9841d39d5d3e8942e3e9e40092db8141ab40ac5ec63cf0b85",
+            "0x7270dcc22cb68fad957d2cc661ba668222d2c6c8f878d26eb1f83b4ca116c951",
+            "0xabf718f11e3d2526ee4378649624ee7d6568c7126f16ce649f587131c48470cd",
+            "0xb35725e19bfaea57542714d0c4273cc2803ecb3876297e354cc88174b1d31c17",
+            "0xc59271de2752fcdfb4d7d2e82d57a0e08981ad5cea17af7f739a22fbd356fb3e",
+            "0xc6eca553745711440d0ab22e567976fc27b4c527cccd0bcab4fe0d0007f9765b",
+            "0xca1372c3fb002045e9a34d5f76a97b2fc771f9d5457800fdc1d2485682b6e6b7"
+          ],
+          "start": 1788188400,
+          "end": 1788188520,
+          "rows": 848,
+          "event_counts": {
+            "price_change": 812,
+            "book": 8,
+            "best_bid_ask": 28
+          },
+          "first_recv_ts": 1788188401.030965,
+          "last_recv_ts": 1788188513.287405,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-08-31/15/2026-08-31T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-08-31/15/manifest.json",
+          "source_published_sha256": "14f5af8a02f3541d071f9da67c38e3eb8de141aa467e659950b84488a3441bf1",
+          "source_published_bytes": 977564812,
+          "source_manifest_sha256": "354021f8576eff91f59131e8d6dbfcc16ca4cc68a2c7ee3bb937713dd6ddc6c5",
+          "subset_sha256": "da2ccf526028cf13d8bd0856f508fa5e39e905d456ea878f59094f900535b496",
+          "subset_bytes": 20429,
+          "subset_path": "data\\weather_full_books\\2026-08-31T15-9da8e8f21cf0.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x14095bc36bd00fb34ee7b9d8b9791086f0473edca30416d969aeabb572c007d5",
+            "0x4634d93ed1169af9841d39d5d3e8942e3e9e40092db8141ab40ac5ec63cf0b85",
+            "0xc6eca553745711440d0ab22e567976fc27b4c527cccd0bcab4fe0d0007f9765b",
+            "0xca1372c3fb002045e9a34d5f76a97b2fc771f9d5457800fdc1d2485682b6e6b7"
+          ],
+          "start": 1788181200,
+          "end": 1788184800,
+          "rows": 5162,
+          "event_counts": {
+            "best_bid_ask": 192,
+            "book": 12,
+            "price_change": 4958
+          },
+          "first_recv_ts": 1788181201.346349,
+          "last_recv_ts": 1788184778.221164,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-08-31/13/2026-08-31T13.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-08-31/13/manifest.json",
+          "source_published_sha256": "0bb2e8446570e31720dd700d418c04eb57bce1fc97b6645c155041c091f245f5",
+          "source_published_bytes": 1025507665,
+          "source_manifest_sha256": "d2ec68994fd0f3d4d9dd1134ee0e437b138e2b155502f761ece5e56d64d18e0a",
+          "subset_sha256": "0d536399b659b81fe9cee6b522451313f1c932b24571c5d5f73332cd45bdf1f5",
+          "subset_bytes": 79893,
+          "subset_path": "data\\weather_full_books\\2026-08-31T13-d60886e12663.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-01",
+      "metadata_sha256": "596ea845149b6db34e058832736ff5d176f1a9c95dd0c99a77926f9862c714fe",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 16800,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x2d1b7ba29e8f278ce978f883fd1d4918d023fa11fdaa861f8ccc87d95443473c",
+            "0x30ee2bfdb2ff1cca33cf373c28db61db10f96ca5f8be25e12c6801c48fff91f7",
+            "0x47741400df6eb5a54901d63af7d40c3e34c262c7421b1f89eaf24014d8ba8b29",
+            "0x7f06e48b6c99511d21b3ff133bf99146f80dbae2ad60fc7150ed147774e482b2",
+            "0xaf18f66fe3c19d5aabdd4ee41e43f671b09352c86feb5cbbb473ace4390167a8",
+            "0xc113a930e75fefc28479bf21ec34278b078999f4c8709a57b892472bafab6086",
+            "0xd4b0c4d1473996162550431fc7e50a9100c49b7bd663ad36943e7d7112d2d28d",
+            "0xe0c665d9b818f9c57e5fb96bdcd121522e7c9b1b3094904f2e4c18d0b88fb0f8",
+            "0xeb3d7924921f7077d76e7bdc6c5ad117275a223f95770f683c5f389805e223c3",
+            "0xf77a686e4a1b7515c50b1f204b67591dd6c38167e421258a4d6ebde14a6cbce7",
+            "0xfa83453c2040f0ed53fb8e4599acceaea30faa50586eb8f45c64dc30de45e7a1"
+          ],
+          "start": 1788271200,
+          "end": 1788274800,
+          "rows": 14566,
+          "event_counts": {
+            "best_bid_ask": 1056,
+            "price_change": 13414,
+            "book": 96
+          },
+          "first_recv_ts": 1788271202.706346,
+          "last_recv_ts": 1788274799.17296,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-01/14/2026-09-01T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-01/14/manifest.json",
+          "source_published_sha256": "9ae6e0ddaf69f4dcfa068bab5e859106d94963e7e7a9c7092f3b1de00c01a799",
+          "source_published_bytes": 1008011111,
+          "source_manifest_sha256": "f714e483230e2a3e8a5a5a920c11bf7673add5a6f5e8d8356bc56b698da930e6",
+          "subset_sha256": "55caaaa903f6cad521d8eb18d7b3532b1eb04c05e28d9a3c37a1546a2bc27718",
+          "subset_bytes": 229504,
+          "subset_path": "data\\weather_full_books\\2026-09-01T14-7bb58f30c2e0.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x2d1b7ba29e8f278ce978f883fd1d4918d023fa11fdaa861f8ccc87d95443473c",
+            "0x30ee2bfdb2ff1cca33cf373c28db61db10f96ca5f8be25e12c6801c48fff91f7",
+            "0x47741400df6eb5a54901d63af7d40c3e34c262c7421b1f89eaf24014d8ba8b29",
+            "0x7f06e48b6c99511d21b3ff133bf99146f80dbae2ad60fc7150ed147774e482b2",
+            "0xaf18f66fe3c19d5aabdd4ee41e43f671b09352c86feb5cbbb473ace4390167a8",
+            "0xc113a930e75fefc28479bf21ec34278b078999f4c8709a57b892472bafab6086",
+            "0xd4b0c4d1473996162550431fc7e50a9100c49b7bd663ad36943e7d7112d2d28d",
+            "0xe0c665d9b818f9c57e5fb96bdcd121522e7c9b1b3094904f2e4c18d0b88fb0f8",
+            "0xeb3d7924921f7077d76e7bdc6c5ad117275a223f95770f683c5f389805e223c3",
+            "0xf77a686e4a1b7515c50b1f204b67591dd6c38167e421258a4d6ebde14a6cbce7",
+            "0xfa83453c2040f0ed53fb8e4599acceaea30faa50586eb8f45c64dc30de45e7a1"
+          ],
+          "start": 1788274800,
+          "end": 1788274920,
+          "rows": 2234,
+          "event_counts": {
+            "book": 2,
+            "price_change": 2126,
+            "best_bid_ask": 106
+          },
+          "first_recv_ts": 1788274800.432482,
+          "last_recv_ts": 1788274919.37486,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-01/15/2026-09-01T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-01/15/manifest.json",
+          "source_published_sha256": "be1140f147ee686857349081aaef160349a1e321c749e87f783689c68ca3a3cf",
+          "source_published_bytes": 996936275,
+          "source_manifest_sha256": "e9391bf8e75044e1290c072b6c65ec931f8b90190b1d6c60f1da713f64a4b121",
+          "subset_sha256": "b44d94dd196896e524a6e3f5998bd2be4437d49656c61175cf37de76d48ef836",
+          "subset_bytes": 38672,
+          "subset_path": "data\\weather_full_books\\2026-09-01T15-7bb58f30c2e0.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-02",
+      "metadata_sha256": "7e449bdbb3770e76a76932ab600bad77c3fbd96e31114b51bcaa2c434d6fca1e",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 36418,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x01b064ccc45b22f3269efd372abd94a8a5e8cd05a004b7adcb34c77a0b801041",
+            "0x07e9bdac586a614ff4bba260ad4581a355d1dd8910606447f922bbc108befef5",
+            "0x08ebd9f82e91ad678d1308d419de3e0677b7ea5d79fb33fddd361e9c374e40d5",
+            "0x115ea6d28f7ddcef060918b320a9bcbedb743e72ab2aeda80167632f40b63b59",
+            "0x2ae3a7867574568f96c70d338e018270bf47221d28ef5e74f01859882994a136",
+            "0x2fdcaa3abfecaaa24541311626fa747aaa59c3aa4957a6f5614034d55bfe716b",
+            "0x787ab60f21ee9bf84e933b41808aee42e2b6ffb4bb4b41efd7acd60e440fa1c3",
+            "0xccaefe7d038913619e6c86d1a1d49b7170c5abbd3c9c748e3ba698fba7d45bd2",
+            "0xda90935039aee96258564578c5cc18ad141167b65cc79e92663370809156724b",
+            "0xe1f7c7ad4b920864e8c559a0afbb999caeb8c4f82b93d312d04ffa5a0c9e852b",
+            "0xecfb7b2fcfa5532f0774b0d89e55ad3e68e5b06845155d5105b78b5fa239fb42"
+          ],
+          "start": 1788357600,
+          "end": 1788361200,
+          "rows": 35562,
+          "event_counts": {
+            "price_change": 34982,
+            "book": 130,
+            "best_bid_ask": 450
+          },
+          "first_recv_ts": 1788357605.102307,
+          "last_recv_ts": 1788361199.490124,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-02/14/2026-09-02T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-02/14/manifest.json",
+          "source_published_sha256": "df0c44ad5ed3a166d4e52c72ae302abe08f4b05f03b5dda445803f773fc8cc8d",
+          "source_published_bytes": 1183935379,
+          "source_manifest_sha256": "8737c4d3a4b1311c203f4c747be6f7517337f4ba3b9c48fd950e7f9ef72c15bd",
+          "subset_sha256": "76a14f4977cf52ed7504b420d4638f4aecb6b5336bf115e1fe809858caf43f71",
+          "subset_bytes": 600247,
+          "subset_path": "data\\weather_full_books\\2026-09-02T14-360e4fe5e0a9.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x01b064ccc45b22f3269efd372abd94a8a5e8cd05a004b7adcb34c77a0b801041",
+            "0x07e9bdac586a614ff4bba260ad4581a355d1dd8910606447f922bbc108befef5",
+            "0x08ebd9f82e91ad678d1308d419de3e0677b7ea5d79fb33fddd361e9c374e40d5",
+            "0x115ea6d28f7ddcef060918b320a9bcbedb743e72ab2aeda80167632f40b63b59",
+            "0x2ae3a7867574568f96c70d338e018270bf47221d28ef5e74f01859882994a136",
+            "0x2fdcaa3abfecaaa24541311626fa747aaa59c3aa4957a6f5614034d55bfe716b",
+            "0x787ab60f21ee9bf84e933b41808aee42e2b6ffb4bb4b41efd7acd60e440fa1c3",
+            "0xccaefe7d038913619e6c86d1a1d49b7170c5abbd3c9c748e3ba698fba7d45bd2",
+            "0xda90935039aee96258564578c5cc18ad141167b65cc79e92663370809156724b",
+            "0xe1f7c7ad4b920864e8c559a0afbb999caeb8c4f82b93d312d04ffa5a0c9e852b",
+            "0xecfb7b2fcfa5532f0774b0d89e55ad3e68e5b06845155d5105b78b5fa239fb42"
+          ],
+          "start": 1788361200,
+          "end": 1788361320,
+          "rows": 856,
+          "event_counts": {
+            "price_change": 806,
+            "best_bid_ask": 48,
+            "book": 2
+          },
+          "first_recv_ts": 1788361200.760352,
+          "last_recv_ts": 1788361318.721432,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-02/15/2026-09-02T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-02/15/manifest.json",
+          "source_published_sha256": "b8f3214fcea4ff1dcba5738604c0c4f9c197af38d69abcb7515a5f988b933132",
+          "source_published_bytes": 1123791824,
+          "source_manifest_sha256": "9ca25d238e79f1d6ad020a94f1cea3934b784a8d891af358138f4b4b14a0a609",
+          "subset_sha256": "991d9f65fb11938debc777b8cec179730ee1dafd0b0fbecbd06bc22c234351c8",
+          "subset_bytes": 18672,
+          "subset_path": "data\\weather_full_books\\2026-09-02T15-360e4fe5e0a9.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-03",
+      "metadata_sha256": "5e7271208426548762fa61a6ef5d3965b29453453ff0b05a766a0f4dded06e6d",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 25266,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x17436a8e743cb6c101fe09578c3acce233b28558d7d18eec7d83336bbdb5c899",
+            "0x3f4f76d23bd75a29b260516442198f2ff676da1c9e1311b9dcfb2be068b31c38",
+            "0x55798120707ac585363586d9c6c96d559531cb4ab2e31f6616d8e5911721fe14",
+            "0x5890569495091cec84ffa42fc6a6f8ab0ab9cb3ae00324b6075d4685c6dd3644",
+            "0x6200ca753b93d7e4771a8f0cd54809848eb22b44fbb7b15b10cd7d7c165a0003",
+            "0x6347a2a959ec21f46e6721972624342a1cad4eb842d28629e3348cd43801300d",
+            "0x7628d9e824fbd0980ccf52d414df672ab052d93a88b2d44a7af3a8120df44f53",
+            "0x9ea28825d05850242de49cc9d04bef7ec91a3cee3bde1632212787f1312cdd8e",
+            "0xa45417fc0fc913e2f9170f61ceef96acd7b6b85ca21561c142f6361048146d67",
+            "0xb85c91d462453b93be3def7d370326b9d7bfeae6ff5ccd0d1ed67108936ee7cf",
+            "0xfc9047620cea42b3bd2764ac28184ab51d130a0112f041556728a5369180ae88"
+          ],
+          "start": 1788444000,
+          "end": 1788447600,
+          "rows": 24256,
+          "event_counts": {
+            "price_change": 22524,
+            "book": 126,
+            "best_bid_ask": 1606
+          },
+          "first_recv_ts": 1788444007.629262,
+          "last_recv_ts": 1788447598.046748,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-03/14/2026-09-03T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-03/14/manifest.json",
+          "source_published_sha256": "aeda1ba9d75a28e4c82e8440e8d5ffdb5988dd17f8f8c6b2a4804defd13a7886",
+          "source_published_bytes": 1143593318,
+          "source_manifest_sha256": "c9bd26a6bdaf69ecb210b82161e23c15a522f975babcbf582e914b65b69ba78d",
+          "subset_sha256": "3b2181db295597648b59ff6d09790810250dd0485580771e7c0e4b3b4e4d12ec",
+          "subset_bytes": 389544,
+          "subset_path": "data\\weather_full_books\\2026-09-03T14-3562da82f4af.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x17436a8e743cb6c101fe09578c3acce233b28558d7d18eec7d83336bbdb5c899",
+            "0x3f4f76d23bd75a29b260516442198f2ff676da1c9e1311b9dcfb2be068b31c38",
+            "0x55798120707ac585363586d9c6c96d559531cb4ab2e31f6616d8e5911721fe14",
+            "0x5890569495091cec84ffa42fc6a6f8ab0ab9cb3ae00324b6075d4685c6dd3644",
+            "0x6200ca753b93d7e4771a8f0cd54809848eb22b44fbb7b15b10cd7d7c165a0003",
+            "0x6347a2a959ec21f46e6721972624342a1cad4eb842d28629e3348cd43801300d",
+            "0x7628d9e824fbd0980ccf52d414df672ab052d93a88b2d44a7af3a8120df44f53",
+            "0x9ea28825d05850242de49cc9d04bef7ec91a3cee3bde1632212787f1312cdd8e",
+            "0xa45417fc0fc913e2f9170f61ceef96acd7b6b85ca21561c142f6361048146d67",
+            "0xb85c91d462453b93be3def7d370326b9d7bfeae6ff5ccd0d1ed67108936ee7cf",
+            "0xfc9047620cea42b3bd2764ac28184ab51d130a0112f041556728a5369180ae88"
+          ],
+          "start": 1788447600,
+          "end": 1788447720,
+          "rows": 1010,
+          "event_counts": {
+            "best_bid_ask": 54,
+            "book": 2,
+            "price_change": 954
+          },
+          "first_recv_ts": 1788447600.8378768,
+          "last_recv_ts": 1788447717.625875,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-03/15/2026-09-03T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-03/15/manifest.json",
+          "source_published_sha256": "8275430c8a274f6ee3e16a41bfd560b3e33dc752d2ae63d9eff88d1da3ff5777",
+          "source_published_bytes": 1213134390,
+          "source_manifest_sha256": "87188a91fa6b0f0f4b3ed4a965af80105fbd26a2ffe428f3ec603b8f687496b0",
+          "subset_sha256": "94ec26ae3e4d5962cc50aa1f109184d11fbdc9022dd6d69ac9525d9bf3a5ca40",
+          "subset_bytes": 20814,
+          "subset_path": "data\\weather_full_books\\2026-09-03T15-3562da82f4af.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-04",
+      "metadata_sha256": "c5bdb37c4504132b9f8f5a78c204a4c50059de9882fb00ce5bc62cd26674326e",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 38664,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x2aa9ee450da9e7d873aa3e6e3a6489d11146b235131cce7c73ce51bea719fbb8",
+            "0x2b70978602736869200ef2b4fbd606454fa390321fd2f2123905856c492edcc7",
+            "0x3830d3e0dc9e268df5f7631221fcc895b217187d7d73840b2df799296995ab8e",
+            "0x782f86a0d95c0398efafb5342c5c82d495103a9ac8193db5ed78644b6812bca9",
+            "0xbecf144dd39ed629bb27a942cb1ba8f4181c6c3a03b8a216a0df524b83b34581",
+            "0xc12e0f83fc5046e3f8b037f50fe5a86f23da4244025d84bb4354749280036b13",
+            "0xcec074b7845da63a5685efe57b4eb5f318b3051d27f531c9b5e2034fd94e9a68",
+            "0xe11c80a6862312a13acc623178ef2737e67c83792a49b942fca686b9432d5203",
+            "0xe6fc2c9fd1ca272f743f9baa0e677028dab32962cc0e1a1eaca8a0a519f38e54",
+            "0xeb8d13f360b53b9a6f78be1df78d68d104c101a4cf9e58ea58d3ef9417f64371",
+            "0xf01d2f1c1085b3b595346497f6825e4aee5ce2193e05a428cd28b761324753b5"
+          ],
+          "start": 1788530400,
+          "end": 1788534000,
+          "rows": 36210,
+          "event_counts": {
+            "best_bid_ask": 1178,
+            "price_change": 34918,
+            "book": 114
+          },
+          "first_recv_ts": 1788530400.068496,
+          "last_recv_ts": 1788533999.968371,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-04/14/2026-09-04T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-04/14/manifest.json",
+          "source_published_sha256": "3b2aa803c6a8e975b12f295f8ad5bf8676a3309a59df866e680c94b18289c253",
+          "source_published_bytes": 1132559936,
+          "source_manifest_sha256": "e235472f07cea80c7fc66084090560c08c4441b34598b67837557dd94eb48eed",
+          "subset_sha256": "abf37874bc760258cfb01e1cf6d209a202ca094070e345f1db14fb3a82370143",
+          "subset_bytes": 592673,
+          "subset_path": "data\\weather_full_books\\2026-09-04T14-ba1b7910b741.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x2aa9ee450da9e7d873aa3e6e3a6489d11146b235131cce7c73ce51bea719fbb8",
+            "0x2b70978602736869200ef2b4fbd606454fa390321fd2f2123905856c492edcc7",
+            "0x3830d3e0dc9e268df5f7631221fcc895b217187d7d73840b2df799296995ab8e",
+            "0x782f86a0d95c0398efafb5342c5c82d495103a9ac8193db5ed78644b6812bca9",
+            "0xbecf144dd39ed629bb27a942cb1ba8f4181c6c3a03b8a216a0df524b83b34581",
+            "0xc12e0f83fc5046e3f8b037f50fe5a86f23da4244025d84bb4354749280036b13",
+            "0xcec074b7845da63a5685efe57b4eb5f318b3051d27f531c9b5e2034fd94e9a68",
+            "0xe11c80a6862312a13acc623178ef2737e67c83792a49b942fca686b9432d5203",
+            "0xe6fc2c9fd1ca272f743f9baa0e677028dab32962cc0e1a1eaca8a0a519f38e54",
+            "0xeb8d13f360b53b9a6f78be1df78d68d104c101a4cf9e58ea58d3ef9417f64371",
+            "0xf01d2f1c1085b3b595346497f6825e4aee5ce2193e05a428cd28b761324753b5"
+          ],
+          "start": 1788534000,
+          "end": 1788534120,
+          "rows": 2454,
+          "event_counts": {
+            "book": 8,
+            "price_change": 2340,
+            "best_bid_ask": 106
+          },
+          "first_recv_ts": 1788534000.345415,
+          "last_recv_ts": 1788534119.895626,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-04/15/2026-09-04T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-04/15/manifest.json",
+          "source_published_sha256": "00df5206f2e24461c104b465b4f1d031eb9b2b8c7baed12b9f542471d6ce0fff",
+          "source_published_bytes": 1112067446,
+          "source_manifest_sha256": "f3ca337e1336e5afa3bd7e1fe2f34e13593a7baf21af8eadee20a04c6c6fcfad",
+          "subset_sha256": "23005af6d10e8e3583af849b173f27d957f4b3f4ad6e6a4f87782af0a6f82345",
+          "subset_bytes": 42877,
+          "subset_path": "data\\weather_full_books\\2026-09-04T15-ba1b7910b741.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-05",
+      "metadata_sha256": "5af4450b7d6c78eadbb90d255e06050206b94f01da4c3162e1bbb953c4af91b2",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 13348,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x37215455f229707cf1b3a994b388070968830d236d16e324cfda03eec23ce40e",
+            "0x3d57685f29439c007ace0bd9c77a2ae019c8bbe975c40c59fb7bbc54a7beb73e",
+            "0x57a5a853a4b5a60006a68981685bb06a35aa5ea8990b925f0bd4b7d3136736f4",
+            "0x74ef2e3f0c3dac98d8d97f562123bdaf5473b047864c34e8a84599e892b56b7b",
+            "0x84cb750aa6ce0b01788d7e360ea87559ca3a548281646eddaa87213a49ead807",
+            "0x85217bb7fb9aaa5659f79bdabd64f812d27b9d53f2d0abbab10c9478239abafc",
+            "0xab1275f89066137e73eace990c379deb954297dce3077588935b03ad80b825d0",
+            "0xd25627847fe96c7fa6eb0b8fec44e1cf607f8205856a7fee290c98340af5cabb",
+            "0xf1c549eed3d1810f9dfd228c5bb1141428faff905ae99a37cf77294fe282bc03",
+            "0xf1df631849d60e947223c1552efd806b22679ef2e316a097bb21f5d47f48e969",
+            "0xfa7bf02f1493d600f441c52f233403603c4fdcb7313417c3a6de9ce7734717dd"
+          ],
+          "start": 1788616800,
+          "end": 1788620400,
+          "rows": 13042,
+          "event_counts": {
+            "book": 220,
+            "best_bid_ask": 234,
+            "price_change": 12588
+          },
+          "first_recv_ts": 1788616808.856854,
+          "last_recv_ts": 1788620389.89131,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-05/14/2026-09-05T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-05/14/manifest.json",
+          "source_published_sha256": "c9270f191d4e88781274f834fb4912753209110d919378b2214d534f0f443714",
+          "source_published_bytes": 1419072328,
+          "source_manifest_sha256": "bb422464de3f19ab25fe3d8b43543c9923db46310865c46f2f953c62463e61f6",
+          "subset_sha256": "750fefe81305ebcd69e098f932b5402667ba4487572f902839f7917207c0d136",
+          "subset_bytes": 207795,
+          "subset_path": "data\\weather_full_books\\2026-09-05T14-d366995d71cf.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x37215455f229707cf1b3a994b388070968830d236d16e324cfda03eec23ce40e",
+            "0x3d57685f29439c007ace0bd9c77a2ae019c8bbe975c40c59fb7bbc54a7beb73e",
+            "0x57a5a853a4b5a60006a68981685bb06a35aa5ea8990b925f0bd4b7d3136736f4",
+            "0x74ef2e3f0c3dac98d8d97f562123bdaf5473b047864c34e8a84599e892b56b7b",
+            "0x84cb750aa6ce0b01788d7e360ea87559ca3a548281646eddaa87213a49ead807",
+            "0x85217bb7fb9aaa5659f79bdabd64f812d27b9d53f2d0abbab10c9478239abafc",
+            "0xab1275f89066137e73eace990c379deb954297dce3077588935b03ad80b825d0",
+            "0xd25627847fe96c7fa6eb0b8fec44e1cf607f8205856a7fee290c98340af5cabb",
+            "0xf1c549eed3d1810f9dfd228c5bb1141428faff905ae99a37cf77294fe282bc03",
+            "0xf1df631849d60e947223c1552efd806b22679ef2e316a097bb21f5d47f48e969",
+            "0xfa7bf02f1493d600f441c52f233403603c4fdcb7313417c3a6de9ce7734717dd"
+          ],
+          "start": 1788620400,
+          "end": 1788620520,
+          "rows": 306,
+          "event_counts": {
+            "book": 2,
+            "price_change": 302,
+            "best_bid_ask": 2
+          },
+          "first_recv_ts": 1788620400.7207851,
+          "last_recv_ts": 1788620512.388783,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-05/15/2026-09-05T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-05/15/manifest.json",
+          "source_published_sha256": "b3180dc53662704fbae05a8dd4b7ccb5ac561ec9fac0685746afb6af982255df",
+          "source_published_bytes": 1245627855,
+          "source_manifest_sha256": "c3c66e553090aedf2b87fe8e0e516cc736522eed64e946b502628f8c2bc2dfc8",
+          "subset_sha256": "200b7b447eecfdbfb3fc74fc0c390167d59e8aeb3a74b7163242e18dfea189b1",
+          "subset_bytes": 10793,
+          "subset_path": "data\\weather_full_books\\2026-09-05T15-d366995d71cf.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-06",
+      "metadata_sha256": "2765d164405b843eacd37f69f1988ae93aa74919903fa84e9a2d2ef0d7259d8d",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 9494,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x0a9ef8ee1d84d71b7a2e241558cf7ca6c2f84d1dffbd5a6ad98745a7596e5d78",
+            "0x4d0f4d7e646fa6f065bb1acb3a37305f3bce4436ccb53ad4a91071155107c64e",
+            "0x941b674f227a480d450b5522a7f34472980f2ff32b3110551dbe8f9370a11f35",
+            "0x9d9e66fc0ffe1bbd679537f0573e008cd430f3f0c54b509d373e1ee7a64628c1",
+            "0xa0b562b02e86f1f389daa79bd0a09086c0b50833819cbe465a3273d301d3757b",
+            "0xa5da03fee95e529b8f5fd6fc5a507c8e08ceb798da3c19a2dae742c4940928e7",
+            "0xcce7442ae017dee5cde1c3103387d296e9d7bb7413315cd702ed858e76fce423",
+            "0xd9f4e4fcdb5bc3c87472e9d0c1984603a3202b79b8bb30f7d6aaacb201acd2a9",
+            "0xf1545f4603d48e37fb93c17949c6496b2a4a445c4b3197212f02c301d5c849e0",
+            "0xf2bbecb797ce4175cd29919fc6e63f31f750926e442f8912458cff5408b693bd",
+            "0xfd3bd65880840584227b21faf6a3bd94e969d898e282d7137fc6890e568383a4"
+          ],
+          "start": 1788703200,
+          "end": 1788706800,
+          "rows": 9136,
+          "event_counts": {
+            "price_change": 8522,
+            "book": 286,
+            "best_bid_ask": 328
+          },
+          "first_recv_ts": 1788703200.966418,
+          "last_recv_ts": 1788706795.57572,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-06/14/2026-09-06T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-06/14/manifest.json",
+          "source_published_sha256": "54ecbb9a192d6c503d86c53e0e660bbe0962f3341806e8a9e2ade029c6fb58b4",
+          "source_published_bytes": 1402892855,
+          "source_manifest_sha256": "cbabd9b8df3fbf05cead00272aeea7210fc967536d30cec0c795d9a564494e15",
+          "subset_sha256": "b6f2e795131c977f4e376f65487a881ca02540c77472ca003cd1eb115343503c",
+          "subset_bytes": 164456,
+          "subset_path": "data\\weather_full_books\\2026-09-06T14-29abbd9852ae.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x0a9ef8ee1d84d71b7a2e241558cf7ca6c2f84d1dffbd5a6ad98745a7596e5d78",
+            "0x4d0f4d7e646fa6f065bb1acb3a37305f3bce4436ccb53ad4a91071155107c64e",
+            "0x941b674f227a480d450b5522a7f34472980f2ff32b3110551dbe8f9370a11f35",
+            "0x9d9e66fc0ffe1bbd679537f0573e008cd430f3f0c54b509d373e1ee7a64628c1",
+            "0xa0b562b02e86f1f389daa79bd0a09086c0b50833819cbe465a3273d301d3757b",
+            "0xa5da03fee95e529b8f5fd6fc5a507c8e08ceb798da3c19a2dae742c4940928e7",
+            "0xcce7442ae017dee5cde1c3103387d296e9d7bb7413315cd702ed858e76fce423",
+            "0xd9f4e4fcdb5bc3c87472e9d0c1984603a3202b79b8bb30f7d6aaacb201acd2a9",
+            "0xf1545f4603d48e37fb93c17949c6496b2a4a445c4b3197212f02c301d5c849e0",
+            "0xf2bbecb797ce4175cd29919fc6e63f31f750926e442f8912458cff5408b693bd",
+            "0xfd3bd65880840584227b21faf6a3bd94e969d898e282d7137fc6890e568383a4"
+          ],
+          "start": 1788706800,
+          "end": 1788706920,
+          "rows": 358,
+          "event_counts": {
+            "price_change": 350,
+            "book": 2,
+            "best_bid_ask": 6
+          },
+          "first_recv_ts": 1788706800.485462,
+          "last_recv_ts": 1788706917.241304,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-06/15/2026-09-06T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-06/15/manifest.json",
+          "source_published_sha256": "64907f34a5ba4f905cb52db532dd6ef5c098a824f46eb9bad3e4e88c164fd48f",
+          "source_published_bytes": 1398908863,
+          "source_manifest_sha256": "cd3ff75cacb0300f6e4ad5725c4a81d3c485d83c01e5bf7074ed13db04fb6ee6",
+          "subset_sha256": "65091912452c1a7bf285c4f4bcd8cafa28b1a1310dcab184d14293d99b6acaad",
+          "subset_bytes": 11752,
+          "subset_path": "data\\weather_full_books\\2026-09-06T15-29abbd9852ae.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-07",
+      "metadata_sha256": "570187bf1dad9a8a709161e891ea20852c6aa4601a9db0a41b9114d04e7fb84f",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 32566,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x1c0bdf6f429af9ee84a4f0bbad324403e1971b6ca264e48b19d11c608fb362e8",
+            "0x33edc6d63be889ad60f9d0533a2f6d58945eb1a9fbb7aaec18b271aa2ddd6572",
+            "0x3ebdfcb13a22af52ac5ae2eaecb677823cef9b0995288e065e598d2f26ec4db5",
+            "0x46a0ca57c8b944ff1f498d510129c913f0533af7d1a79715d6eb444b60d9cf09",
+            "0x7d89f19d9104b1709620b83bbb2a245b3f711f657e399e5d4f65c33e391deceb",
+            "0x9b9b4bbae83dc6608a8641303a307c78f45f5009a27111aaba89fe687617cdd4",
+            "0xa84c5e7214a04e6e3f073066c9ae39d3f7212937a40999e97a3b44d76fa8f94b",
+            "0xbed98c8f2cbd5a0a5c54a22d4df2d30f99f2a4dcb0d0d924aa93a13bc6d5aba5",
+            "0xd77e70a85e50ba9490eb0f6c55d6ee284df316114294a1a4ba26c8f0df0618b6",
+            "0xdede8223fc923a7cd8d68c5a966ef013bec29c98b57d36acc99ee330f0d39479",
+            "0xe16c8c6a4063f8303580f86c0a339c9aeb4a161d0450cff4e6e4993c5597dfd1"
+          ],
+          "start": 1788789600,
+          "end": 1788793200,
+          "rows": 31314,
+          "event_counts": {
+            "book": 126,
+            "price_change": 30796,
+            "best_bid_ask": 392
+          },
+          "first_recv_ts": 1788789600.07495,
+          "last_recv_ts": 1788793199.9928632,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-07/14/2026-09-07T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-07/14/manifest.json",
+          "source_published_sha256": "7b72fbb0aa4a5a5db59ff6baf768a24a2a4ac8a210915b74ca422df99593a08c",
+          "source_published_bytes": 1059184610,
+          "source_manifest_sha256": "50061624ffab8e7f4b504ed76c89afa80163bc8e1f702066289ec4647add2dac",
+          "subset_sha256": "1fcbb8cef872f834b7be930b8496c7512d1a54e9a89adc88f4dde0817632ab41",
+          "subset_bytes": 490553,
+          "subset_path": "data\\weather_full_books\\2026-09-07T14-d3086efd2dd8.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x1c0bdf6f429af9ee84a4f0bbad324403e1971b6ca264e48b19d11c608fb362e8",
+            "0x33edc6d63be889ad60f9d0533a2f6d58945eb1a9fbb7aaec18b271aa2ddd6572",
+            "0x3ebdfcb13a22af52ac5ae2eaecb677823cef9b0995288e065e598d2f26ec4db5",
+            "0x46a0ca57c8b944ff1f498d510129c913f0533af7d1a79715d6eb444b60d9cf09",
+            "0x7d89f19d9104b1709620b83bbb2a245b3f711f657e399e5d4f65c33e391deceb",
+            "0x9b9b4bbae83dc6608a8641303a307c78f45f5009a27111aaba89fe687617cdd4",
+            "0xa84c5e7214a04e6e3f073066c9ae39d3f7212937a40999e97a3b44d76fa8f94b",
+            "0xbed98c8f2cbd5a0a5c54a22d4df2d30f99f2a4dcb0d0d924aa93a13bc6d5aba5",
+            "0xd77e70a85e50ba9490eb0f6c55d6ee284df316114294a1a4ba26c8f0df0618b6",
+            "0xdede8223fc923a7cd8d68c5a966ef013bec29c98b57d36acc99ee330f0d39479",
+            "0xe16c8c6a4063f8303580f86c0a339c9aeb4a161d0450cff4e6e4993c5597dfd1"
+          ],
+          "start": 1788793200,
+          "end": 1788793320,
+          "rows": 1252,
+          "event_counts": {
+            "best_bid_ask": 4,
+            "book": 4,
+            "price_change": 1244
+          },
+          "first_recv_ts": 1788793200.016017,
+          "last_recv_ts": 1788793318.745507,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-07/15/2026-09-07T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-07/15/manifest.json",
+          "source_published_sha256": "5b0d6e5a725fa46bd342d5866a8010a56654325a94bd58027ab7d2b542d50956",
+          "source_published_bytes": 1017310449,
+          "source_manifest_sha256": "db3f227edb0e6e4669d1c56567c1d08ef3a638a48d1a2a60c068179d6bb4ce52",
+          "subset_sha256": "dff8f73a4a37bea860b1eba9b97a315348b0a33f8cb441434d8ac205e3aa0f4a",
+          "subset_bytes": 23865,
+          "subset_path": "data\\weather_full_books\\2026-09-07T15-d3086efd2dd8.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-08",
+      "metadata_sha256": "c59d8439e9e2a70f057607430cf64d14774b07139e276e81748e79b5f49201af",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 37782,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x0cce6e53967fa2e894f0798aef3c2ad449fea199b3cf18cb5d7629eb42956e95",
+            "0x361c502573b8d06b780224424a47df5486849ada7ede946b89eebbbdae5e2b65",
+            "0x4047d20ac8a0c13c7543db14a08dd74a17f29baf2ecc05a04984559db553d00d",
+            "0x497200289c7029ebeab21449564cc3085adb0113a6f3b1265462807a3d4e9e8c",
+            "0x53f35a108aaded1cf5014cc2b9be3a06d3c5baa4e2f1efe6a797cfbe4e66be38",
+            "0x78656fe713baf0d6abdebb2bac3423b573feefe4e5730e875fa956ad43de5d3a",
+            "0x78a7f3687ad15f39d6f877981f01cef2a1237c9f30604184e23d6b5c2904fbae",
+            "0x8b0c451ee379c9757ddd6da679e6c8062fd31687e500aa9019090e83d58c73ae",
+            "0x8de3bd5da11c6939448778a317ec2fe686f7673f4a95c0661c241787ff114cda",
+            "0xa72ba556af848811da3d7f3a28453f2db89f10e7a62db9dfa166fc099a4b0971",
+            "0xda176af80835c1e440b41ba2e7155253e7d65492c2fbbff2d91502f4473b8e38"
+          ],
+          "start": 1788876000,
+          "end": 1788879600,
+          "rows": 35122,
+          "event_counts": {
+            "price_change": 34274,
+            "best_bid_ask": 658,
+            "book": 190
+          },
+          "first_recv_ts": 1788876000.063926,
+          "last_recv_ts": 1788879599.96788,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-08/14/2026-09-08T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-08/14/manifest.json",
+          "source_published_sha256": "5d08797467512133e7f4ce7d23f7683cf71772fb6751aeea78d45e991c08e8a9",
+          "source_published_bytes": 1134518671,
+          "source_manifest_sha256": "8e8ab3273d63e08b9e394be9b0531ae9b21dc7ab066efffbc93398076158161a",
+          "subset_sha256": "69662792106d9b90c71f21e6e33523bd6f951e5d295496a159a5225b1df885a6",
+          "subset_bytes": 553149,
+          "subset_path": "data\\weather_full_books\\2026-09-08T14-37f01f536695.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x0cce6e53967fa2e894f0798aef3c2ad449fea199b3cf18cb5d7629eb42956e95",
+            "0x361c502573b8d06b780224424a47df5486849ada7ede946b89eebbbdae5e2b65",
+            "0x4047d20ac8a0c13c7543db14a08dd74a17f29baf2ecc05a04984559db553d00d",
+            "0x497200289c7029ebeab21449564cc3085adb0113a6f3b1265462807a3d4e9e8c",
+            "0x53f35a108aaded1cf5014cc2b9be3a06d3c5baa4e2f1efe6a797cfbe4e66be38",
+            "0x78656fe713baf0d6abdebb2bac3423b573feefe4e5730e875fa956ad43de5d3a",
+            "0x78a7f3687ad15f39d6f877981f01cef2a1237c9f30604184e23d6b5c2904fbae",
+            "0x8b0c451ee379c9757ddd6da679e6c8062fd31687e500aa9019090e83d58c73ae",
+            "0x8de3bd5da11c6939448778a317ec2fe686f7673f4a95c0661c241787ff114cda",
+            "0xa72ba556af848811da3d7f3a28453f2db89f10e7a62db9dfa166fc099a4b0971",
+            "0xda176af80835c1e440b41ba2e7155253e7d65492c2fbbff2d91502f4473b8e38"
+          ],
+          "start": 1788879600,
+          "end": 1788879720,
+          "rows": 2660,
+          "event_counts": {
+            "best_bid_ask": 24,
+            "book": 2,
+            "price_change": 2634
+          },
+          "first_recv_ts": 1788879600.063577,
+          "last_recv_ts": 1788879719.425967,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-08/15/2026-09-08T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-08/15/manifest.json",
+          "source_published_sha256": "c3e583a7ade730adae8b171d532f9dcdf1bd210199ff7ccade07ed0da50b57ba",
+          "source_published_bytes": 1127675087,
+          "source_manifest_sha256": "236b503eb39cec57641210913c1259ba523f416977c07c6edbc58257eb5e89e2",
+          "subset_sha256": "9d6b3217a3e8be3d7777e1f85223313d44592ace9b4c64a5442451a198ac1982",
+          "subset_bytes": 45414,
+          "subset_path": "data\\weather_full_books\\2026-09-08T15-37f01f536695.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-09",
+      "metadata_sha256": "0d6e45bba655f65a151e86da466af23b69ca33cb2110137371cd2d8331b82755",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 32442,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x08578eb5e44d551802cc73255250cefe0b076586dd43f6996e04d9879ef1b5d6",
+            "0x2ab62b86cbabfc2940190cb16359dfb6f395d24e65bcb1d1b583c00e3ac54bda",
+            "0x2e804304fb7b83beb63e93cf2b94ff9b42ade7082f09cc3ae4849a7ae15d1778",
+            "0x3058708fe9f9658075fb853e98283558ab6b51e6ae8a847214adb370a3f5eb33",
+            "0x42591e7ec2f1dddc33c4603e60f2b7c4f64524dbde86fb9faf52be384529950a",
+            "0x42ab9ed057c08352a42889c6d2504d251716f138e47a1be531d968e79c6703ec",
+            "0x53104dccacf55075955afc45a002ae6a442a7d90cdcc209897a0b044e6f22607",
+            "0x5c8d566d995d3fdb4dbea00f5d34c402ebe02c519c81b91082177ba9f13bb0e1",
+            "0x658753b367f34c8f89ee13f34d1c3e03163fb3b0f692884e3a761ba09ea9c619",
+            "0x83bf51ef2dc73cf4f9a4b3eb7b2c560f19c748490acc5d880bb14d7840730de8",
+            "0xcd056214fb7f3b8859d8a33a5dc4c1958c6f858c0cd743669aeb2cd340f3c4fd"
+          ],
+          "start": 1788962400,
+          "end": 1788966000,
+          "rows": 28792,
+          "event_counts": {
+            "best_bid_ask": 1552,
+            "price_change": 26884,
+            "book": 356
+          },
+          "first_recv_ts": 1788962400.658414,
+          "last_recv_ts": 1788965994.5410688,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-09/14/2026-09-09T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-09/14/manifest.json",
+          "source_published_sha256": "5769d7865d439410501ad016f08bc406dc558773e0fe97a6d8b03d23260b1daa",
+          "source_published_bytes": 1336446552,
+          "source_manifest_sha256": "a386fbd86ac2fcc542bf493a834cb12c52ab30dce83818187d31a447db0c8c28",
+          "subset_sha256": "57a2396d121c27d523344ae5950577373ea32deddeca1dbb622d93071cd5c3ef",
+          "subset_bytes": 487570,
+          "subset_path": "data\\weather_full_books\\2026-09-09T14-af3071adfda8.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x08578eb5e44d551802cc73255250cefe0b076586dd43f6996e04d9879ef1b5d6",
+            "0x2ab62b86cbabfc2940190cb16359dfb6f395d24e65bcb1d1b583c00e3ac54bda",
+            "0x2e804304fb7b83beb63e93cf2b94ff9b42ade7082f09cc3ae4849a7ae15d1778",
+            "0x3058708fe9f9658075fb853e98283558ab6b51e6ae8a847214adb370a3f5eb33",
+            "0x42591e7ec2f1dddc33c4603e60f2b7c4f64524dbde86fb9faf52be384529950a",
+            "0x42ab9ed057c08352a42889c6d2504d251716f138e47a1be531d968e79c6703ec",
+            "0x53104dccacf55075955afc45a002ae6a442a7d90cdcc209897a0b044e6f22607",
+            "0x5c8d566d995d3fdb4dbea00f5d34c402ebe02c519c81b91082177ba9f13bb0e1",
+            "0x658753b367f34c8f89ee13f34d1c3e03163fb3b0f692884e3a761ba09ea9c619",
+            "0x83bf51ef2dc73cf4f9a4b3eb7b2c560f19c748490acc5d880bb14d7840730de8",
+            "0xcd056214fb7f3b8859d8a33a5dc4c1958c6f858c0cd743669aeb2cd340f3c4fd"
+          ],
+          "start": 1788966000,
+          "end": 1788966120,
+          "rows": 3650,
+          "event_counts": {
+            "book": 10,
+            "price_change": 3354,
+            "best_bid_ask": 286
+          },
+          "first_recv_ts": 1788966000.418966,
+          "last_recv_ts": 1788966116.914009,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-09/15/2026-09-09T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-09/15/manifest.json",
+          "source_published_sha256": "34bcb163b0183ff463b70bd2f2eb9ae912d85be6211035d07c9eb3ba4a9ea5a4",
+          "source_published_bytes": 1385013709,
+          "source_manifest_sha256": "37ccb2bd43fbb34b957827e57e92b7b661b78a6f0b024d0f8409b42c45964e32",
+          "subset_sha256": "c9c74bf3f982ce45bd43c0b0227abb3321b9d6df8e01d032c5c78ea419ae125d",
+          "subset_bytes": 58427,
+          "subset_path": "data\\weather_full_books\\2026-09-09T15-af3071adfda8.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-10",
+      "metadata_sha256": "35bd7efdaac2123b7aad44dd1244211b1a655be4dec9f5af6e37e9efd941af00",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 17916,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x0bea1dc01787ba87ac80023933ad81408fa6f5769d763476f7fae200974f6407",
+            "0x0fb0d690cc98f671d8b29e0fc8dfe126a10d6418f735e43eb01213738ff4b5e6",
+            "0x2a982e9a455c9fc70825129e66bce11b5d010c155ed48f31325c43e245090e9a",
+            "0x743168ac77a28b1d63036f5c8591bcd0711899227bb9b362f79dacfdc439e762",
+            "0x874ff77e8e62de26995973c4605390d394f4cc1bc811a03de50759d099909a8f",
+            "0x8c69a35a938a0a02bc1d05ed81b7e333e6cd574fce1cd06380003a891be95d80",
+            "0xa5167448393862291ec7666675c74f9d2133c75f81e63c5640ad0c7515e8f9b7",
+            "0xc210501fcad0515b0cb64c90f6185d0fa906a3da432d2eb153387db28d2f9db7",
+            "0xc825cfcaaf00a23307c175b580c41dfa522be848641e49736f17a7376efcb2c5",
+            "0xd21ff5b4328a8e2e1064fed18cd616e9b15910313a0b79f9708e2adce1660bb8",
+            "0xfbaef8766b083ff0dacfddbfe49ad86fcc46606adf1f858b4ae45a1b366505b9"
+          ],
+          "start": 1789048800,
+          "end": 1789052400,
+          "rows": 17112,
+          "event_counts": {
+            "best_bid_ask": 362,
+            "price_change": 16566,
+            "book": 184
+          },
+          "first_recv_ts": 1789048801.249428,
+          "last_recv_ts": 1789052398.1794188,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-10/14/2026-09-10T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-10/14/manifest.json",
+          "source_published_sha256": "e0ea6626e82c090508d75c7420f905ac165b4051a8ba6f0de6980a21de0e092c",
+          "source_published_bytes": 1302829766,
+          "source_manifest_sha256": "5f8148ad03021326a9c9c5447f79aae36c48d467165329f233c62c1a4fa35ab2",
+          "subset_sha256": "83a649b981e632430cc86e4e137a7920ed313aff5abaca653e2178fc486062e2",
+          "subset_bytes": 302486,
+          "subset_path": "data\\weather_full_books\\2026-09-10T14-ba9e90878e79.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x0bea1dc01787ba87ac80023933ad81408fa6f5769d763476f7fae200974f6407",
+            "0x0fb0d690cc98f671d8b29e0fc8dfe126a10d6418f735e43eb01213738ff4b5e6",
+            "0x2a982e9a455c9fc70825129e66bce11b5d010c155ed48f31325c43e245090e9a",
+            "0x743168ac77a28b1d63036f5c8591bcd0711899227bb9b362f79dacfdc439e762",
+            "0x874ff77e8e62de26995973c4605390d394f4cc1bc811a03de50759d099909a8f",
+            "0x8c69a35a938a0a02bc1d05ed81b7e333e6cd574fce1cd06380003a891be95d80",
+            "0xa5167448393862291ec7666675c74f9d2133c75f81e63c5640ad0c7515e8f9b7",
+            "0xc210501fcad0515b0cb64c90f6185d0fa906a3da432d2eb153387db28d2f9db7",
+            "0xc825cfcaaf00a23307c175b580c41dfa522be848641e49736f17a7376efcb2c5",
+            "0xd21ff5b4328a8e2e1064fed18cd616e9b15910313a0b79f9708e2adce1660bb8",
+            "0xfbaef8766b083ff0dacfddbfe49ad86fcc46606adf1f858b4ae45a1b366505b9"
+          ],
+          "start": 1789052400,
+          "end": 1789052520,
+          "rows": 804,
+          "event_counts": {
+            "best_bid_ask": 12,
+            "price_change": 792
+          },
+          "first_recv_ts": 1789052400.166498,
+          "last_recv_ts": 1789052519.197761,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-10/15/2026-09-10T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-10/15/manifest.json",
+          "source_published_sha256": "083c72465e6ecf351957d7bc433b9512dec7a375d256ee05835b2d2cbeb1bc5b",
+          "source_published_bytes": 1233652120,
+          "source_manifest_sha256": "9e3cb1acd8f526fe18f4d540238e62f356b54bb29135c3cf13f65372eafd4001",
+          "subset_sha256": "7b829a276f004c4e3a4ae410cb6e4d92efa04068bcf473df406854af05744082",
+          "subset_bytes": 16302,
+          "subset_path": "data\\weather_full_books\\2026-09-10T15-ba9e90878e79.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-11",
+      "metadata_sha256": "02762dd3f2d72ea59d5ebd2bfb657d7d2898058300302044710c08b80eb364ef",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 37812,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x0ca2ee23b57f53a187e857753df3bcdbcb219f6283c3f4b537a9ecd720171c79",
+            "0x331d0e6cd7d7343df7b24064970ba5565d38eaf9d7857558fc498ada064a7767",
+            "0x3cf82cd649e0f153ba3d226e44c96c529f774c9c2ea869d2853060417883ac19",
+            "0x4645cb8198dc5c69d6b3b60e0166b4e747538f6548f98b9bd3cb30ef8f6d7040",
+            "0x66864661202d5df0e31c4bd5a93f46a0b41ccf34f9750fbae6ee40363c7ecede",
+            "0x89950548de8440c9426fc4906be29d458ac6340627bdd6cd0bb0b84ee7397b4a",
+            "0x98be64bfe3d00d1099841661c208d622e865b18f55d530a49414097330de58e4",
+            "0x9f3d763552aa23df1a7959bfca0e8b92e964709b24f8616a607170b961db3d17",
+            "0xa4e14cb7f71d24510a4fb520076212c887ec50101f5e443cde31ef6a337ada15",
+            "0xc08c3da2387d61ba29c8c19dc0b65d56c15e4d91ec64b42217082a552c57177e",
+            "0xe030b25b29c78f9797f7905f47a0f625e20cf092142562ca263f05690a22f68a"
+          ],
+          "start": 1789135200,
+          "end": 1789138800,
+          "rows": 34934,
+          "event_counts": {
+            "best_bid_ask": 744,
+            "price_change": 34022,
+            "book": 168
+          },
+          "first_recv_ts": 1789135200.0228171,
+          "last_recv_ts": 1789138798.175124,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-11/14/2026-09-11T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-11/14/manifest.json",
+          "source_published_sha256": "0ae649b47fbb3cf17a15d0d8ddc1b3d2c7fa102aa7c8f10fdda8746f6d860eab",
+          "source_published_bytes": 1325453213,
+          "source_manifest_sha256": "40f4b4a21e1d124a77e32d787d2a77c0846eccefff51ee0b2222e21e33779ed2",
+          "subset_sha256": "a5bc2c1a48f647894aafb3dfce9bbb63c45830a0e576fb12818f9cde45d6b0e1",
+          "subset_bytes": 618586,
+          "subset_path": "data\\weather_full_books\\2026-09-11T14-50adbce77659.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x0ca2ee23b57f53a187e857753df3bcdbcb219f6283c3f4b537a9ecd720171c79",
+            "0x331d0e6cd7d7343df7b24064970ba5565d38eaf9d7857558fc498ada064a7767",
+            "0x3cf82cd649e0f153ba3d226e44c96c529f774c9c2ea869d2853060417883ac19",
+            "0x4645cb8198dc5c69d6b3b60e0166b4e747538f6548f98b9bd3cb30ef8f6d7040",
+            "0x66864661202d5df0e31c4bd5a93f46a0b41ccf34f9750fbae6ee40363c7ecede",
+            "0x89950548de8440c9426fc4906be29d458ac6340627bdd6cd0bb0b84ee7397b4a",
+            "0x98be64bfe3d00d1099841661c208d622e865b18f55d530a49414097330de58e4",
+            "0x9f3d763552aa23df1a7959bfca0e8b92e964709b24f8616a607170b961db3d17",
+            "0xa4e14cb7f71d24510a4fb520076212c887ec50101f5e443cde31ef6a337ada15",
+            "0xc08c3da2387d61ba29c8c19dc0b65d56c15e4d91ec64b42217082a552c57177e",
+            "0xe030b25b29c78f9797f7905f47a0f625e20cf092142562ca263f05690a22f68a"
+          ],
+          "start": 1789138800,
+          "end": 1789138920,
+          "rows": 2878,
+          "event_counts": {
+            "price_change": 2834,
+            "book": 4,
+            "best_bid_ask": 40
+          },
+          "first_recv_ts": 1789138800.507191,
+          "last_recv_ts": 1789138919.963691,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-11/15/2026-09-11T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-11/15/manifest.json",
+          "source_published_sha256": "79b795320af71c5a89c496cc137bcbbf2c20c04de9823b55de33eb1287d256ce",
+          "source_published_bytes": 1347114516,
+          "source_manifest_sha256": "620e028c25fde101c872a04bc28a7288327cf6e770ed7f621ae60a1ffaba4d61",
+          "subset_sha256": "5fd264881c943cd2b4d81e691f38d1e8d6fd2cdd20f810a2217f7517fdbc334b",
+          "subset_bytes": 45152,
+          "subset_path": "data\\weather_full_books\\2026-09-11T15-50adbce77659.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-12",
+      "metadata_sha256": "9ff95667aaa6ef732eec2b2baeb6893054611ef80b79d43650788be51c19c74d",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 17870,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x130f32cea8d0bd0f2aa9c8d86b212d6b5d6f11b287afe2c5232a7805dc3d2302",
+            "0x3962af6893b4cdaa26365f6c33263c6734dd14023fe28e1f5d8413421423d810",
+            "0x401cd1ebf69b8f4e3d89a91128ec51f1a5d742fc8969d9bf0c8726117cdc54ac",
+            "0x4c8aa70564255b3b1f30ee39600944abf5fd8096fca1981dd87b30fc62a465bb",
+            "0x7c5c95e085dacb5b27100ecb3550421b2fccd89fb0ee90b15311091065493141",
+            "0x7e5387e4843eeefa9984b440b7986b4e86b3ea6e3ce3a78d3edee32763ab2740",
+            "0x979d5cd5f1cb5f5fcfd42b784c5a802c5e663a129e97c8f2596e8be76c4bcee6",
+            "0xccdfdfdd7b98d8784174fe7749849625d82f341d862970fc155c07b3bb11eb88",
+            "0xd72095b6360121ab9ba68c1130117a6d24a009396d557ec83e9ce0c292c2fd26",
+            "0xde6bdd8d377c70e7818a6fdbf849a8217f310cfeb1c015b68d1540415ac1b409",
+            "0xf1a6138cda50d9f69fd681000d97358d617f1ad2e83de14f4444ae682d49b1d2"
+          ],
+          "start": 1789221600,
+          "end": 1789225200,
+          "rows": 16854,
+          "event_counts": {
+            "price_change": 16166,
+            "book": 362,
+            "best_bid_ask": 326
+          },
+          "first_recv_ts": 1789221600.006614,
+          "last_recv_ts": 1789225185.0972528,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-12/14/2026-09-12T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-12/14/manifest.json",
+          "source_published_sha256": "4fbdbc2d8ed68bf739b267b5f6c7e69eadcde02addc6c1dcf55efe673b98f316",
+          "source_published_bytes": 1572747248,
+          "source_manifest_sha256": "f9a09bae6e5cdde3e07cb9e98b3f7a8c8e71ce3c54473f401d99edab9496db13",
+          "subset_sha256": "8d0621e4b11563ff09b3daa9ace5044a725caf33ff9f546f226b196413ef7336",
+          "subset_bytes": 275303,
+          "subset_path": "data\\weather_full_books\\2026-09-12T14-b9381a89d1cd.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x130f32cea8d0bd0f2aa9c8d86b212d6b5d6f11b287afe2c5232a7805dc3d2302",
+            "0x3962af6893b4cdaa26365f6c33263c6734dd14023fe28e1f5d8413421423d810",
+            "0x401cd1ebf69b8f4e3d89a91128ec51f1a5d742fc8969d9bf0c8726117cdc54ac",
+            "0x4c8aa70564255b3b1f30ee39600944abf5fd8096fca1981dd87b30fc62a465bb",
+            "0x7c5c95e085dacb5b27100ecb3550421b2fccd89fb0ee90b15311091065493141",
+            "0x7e5387e4843eeefa9984b440b7986b4e86b3ea6e3ce3a78d3edee32763ab2740",
+            "0x979d5cd5f1cb5f5fcfd42b784c5a802c5e663a129e97c8f2596e8be76c4bcee6",
+            "0xccdfdfdd7b98d8784174fe7749849625d82f341d862970fc155c07b3bb11eb88",
+            "0xd72095b6360121ab9ba68c1130117a6d24a009396d557ec83e9ce0c292c2fd26",
+            "0xde6bdd8d377c70e7818a6fdbf849a8217f310cfeb1c015b68d1540415ac1b409",
+            "0xf1a6138cda50d9f69fd681000d97358d617f1ad2e83de14f4444ae682d49b1d2"
+          ],
+          "start": 1789225200,
+          "end": 1789225320,
+          "rows": 1016,
+          "event_counts": {
+            "best_bid_ask": 52,
+            "book": 6,
+            "price_change": 958
+          },
+          "first_recv_ts": 1789225200.51057,
+          "last_recv_ts": 1789225319.852565,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-12/15/2026-09-12T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-12/15/manifest.json",
+          "source_published_sha256": "f92d77dc03c0a30152554c405fb21827bec780f5a61b83ac1a8ce89b39361e37",
+          "source_published_bytes": 1490380992,
+          "source_manifest_sha256": "90b4d3b72bdc4f46628f98043e2e64643a5e4845aa3ae2bd295fec3efa70bfa0",
+          "subset_sha256": "84b94493b053542613fed54f211640cdac2c463024296774faa307945f286889",
+          "subset_bytes": 21945,
+          "subset_path": "data\\weather_full_books\\2026-09-12T15-b9381a89d1cd.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-13",
+      "metadata_sha256": "6de70b5b6b4bb9936c9f336d689c4cac75476058840a5a900e4b75add523dad6",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 26162,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x022ebde775a74d24f28bef7b3f4db6ba606182085a52a7b7bdf78d9b6385ea31",
+            "0x3a77a8d42c5b31bd6c55bfeab88b566acef8b4117a6bc78fdd3ba69ba827c92e",
+            "0x70d52ba25e520d57335fd3565e7910d58553c24a159cde9c17bea3866997f6c1",
+            "0xa48496f3f81d03fa95aa686f3da44f112ea160b33a1065b721ae0104edfc2ecd",
+            "0xb6f45e8c1220a26ca24dad1fb6b5c204432cd462274fee351a0d05ccc1283c85",
+            "0xd63992dc50f9386e950508c65b99c954e777582dabe8578b380dfa35250b68e0",
+            "0xda254b268984ac6f3c643c401137ec9d65281ad9350acab88db4278f4637571e",
+            "0xf143918e4e5cad923615b8021839188a89a3f49c59958e78e0d4c738d25bdb4e",
+            "0xf3c3638a8bc041cca410e693f2ca7bb0006cc824e77595659dc960476c81f135",
+            "0xf796225d3a8f3e3c781699dc47bda70e8b6c63dc886a0827a13745d9540dce2b",
+            "0xf796aaf84598f5490fb29047e5a8e11d463ab5409e11c08118b7607d53df0353"
+          ],
+          "start": 1789308000,
+          "end": 1789311600,
+          "rows": 25508,
+          "event_counts": {
+            "book": 228,
+            "best_bid_ask": 614,
+            "price_change": 24666
+          },
+          "first_recv_ts": 1789308005.174409,
+          "last_recv_ts": 1789311598.050211,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-13/14/2026-09-13T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-13/14/manifest.json",
+          "source_published_sha256": "fcc1de4a32c2e45916519374b0c68b2fb0cacc2aa89311194709a3a6ec3c4fbe",
+          "source_published_bytes": 1251140185,
+          "source_manifest_sha256": "12a9bdada482590296efb8cfab59fdd1ceebd5936c83db74c5561d88eeba94ca",
+          "subset_sha256": "f6ad306c4c2f0c3d44af42cc0d34dec6c45423ce911bb374e651b3549b78fdb8",
+          "subset_bytes": 444158,
+          "subset_path": "data\\weather_full_books\\2026-09-13T14-5d3497c3cbc5.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x022ebde775a74d24f28bef7b3f4db6ba606182085a52a7b7bdf78d9b6385ea31",
+            "0x3a77a8d42c5b31bd6c55bfeab88b566acef8b4117a6bc78fdd3ba69ba827c92e",
+            "0x70d52ba25e520d57335fd3565e7910d58553c24a159cde9c17bea3866997f6c1",
+            "0xa48496f3f81d03fa95aa686f3da44f112ea160b33a1065b721ae0104edfc2ecd",
+            "0xb6f45e8c1220a26ca24dad1fb6b5c204432cd462274fee351a0d05ccc1283c85",
+            "0xd63992dc50f9386e950508c65b99c954e777582dabe8578b380dfa35250b68e0",
+            "0xda254b268984ac6f3c643c401137ec9d65281ad9350acab88db4278f4637571e",
+            "0xf143918e4e5cad923615b8021839188a89a3f49c59958e78e0d4c738d25bdb4e",
+            "0xf3c3638a8bc041cca410e693f2ca7bb0006cc824e77595659dc960476c81f135",
+            "0xf796225d3a8f3e3c781699dc47bda70e8b6c63dc886a0827a13745d9540dce2b",
+            "0xf796aaf84598f5490fb29047e5a8e11d463ab5409e11c08118b7607d53df0353"
+          ],
+          "start": 1789311600,
+          "end": 1789311720,
+          "rows": 654,
+          "event_counts": {
+            "price_change": 642,
+            "best_bid_ask": 12
+          },
+          "first_recv_ts": 1789311600.461541,
+          "last_recv_ts": 1789311715.782021,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-13/15/2026-09-13T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-13/15/manifest.json",
+          "source_published_sha256": "56d0b1fe01d5b964916190053b6506bb4de957113036a1d1bfd3e575b04c9091",
+          "source_published_bytes": 1267793016,
+          "source_manifest_sha256": "fd1a5682759e82b427d7767000a1a5bb28ece74179eea0a5cbfb65083ea130b0",
+          "subset_sha256": "4821d0d685e31d52388d53557e4b8760fe5e48d02bbd082fabd23df750d64eec",
+          "subset_bytes": 13875,
+          "subset_path": "data\\weather_full_books\\2026-09-13T15-5d3497c3cbc5.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-14",
+      "metadata_sha256": "e424b3a719fd9d9a7ef38d022bfd755e3a8ffb820e62593817599a8d1604cafd",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 39124,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x197b330d084f9a29a3a1803b44b4212fe0bcdd0b9491ee6fd61e9730b8050263",
+            "0x3ca6a28ec6136d94068a761d7ee9ab8dd9540114b6a0f8cf39c4e943be2d61bc",
+            "0x5d34a942a0fa2c3a83791d19e636a81aac213a8843eb3f177c93bf945e421fc0",
+            "0x6a940ecb5831b031c95c777f50578d756a127e1f7ffb32caf25dfb2b06c945bc",
+            "0x6d64db7a7bdddbe0a6bad8aa1404393197c70392ea9ca93660bea2582f0192b3",
+            "0xa1f1d1e41096fee718135cffc6ed5c4dea0b68d7b479701382fc46e403a87a8c",
+            "0xaba397aaa15ccdf78e45895510faed740a026fbad217e3fa75dfaa092ef9abb0",
+            "0xb285cb63d6ceeef2fccdc019d619fd8347747192d8a61a95f082419c3e2a8e34",
+            "0xc31a7f74c5fa94add3160304d45936d6c2a888b54f06e6e686ba61b3cea8d4cc",
+            "0xe0ee971e949c5b903070f031e3f2b1fcc36caf4256e869687f47c0ceef051ddb",
+            "0xfedf6ca8b6b6eb29321783f8455c004d070b2056f924c35836bff7757f4286f3"
+          ],
+          "start": 1789394400,
+          "end": 1789398000,
+          "rows": 36030,
+          "event_counts": {
+            "price_change": 35312,
+            "best_bid_ask": 558,
+            "book": 160
+          },
+          "first_recv_ts": 1789394405.0858521,
+          "last_recv_ts": 1789397999.54619,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-14/14/2026-09-14T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-14/14/manifest.json",
+          "source_published_sha256": "85a28f95ee7632d788de1c73941de4b4a6eb55d6ea873a2087db954394f62f14",
+          "source_published_bytes": 1234397221,
+          "source_manifest_sha256": "d3897e3f60e3960a5354153a0adf93ca83438afa7c69d04a29767476d5e5b06e",
+          "subset_sha256": "1d1aa122c7e90c45c7fdefa4d6ad8513186fb5353ce16773c3de6faea46e9678",
+          "subset_bytes": 574009,
+          "subset_path": "data\\weather_full_books\\2026-09-14T14-d6517dc23a43.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x197b330d084f9a29a3a1803b44b4212fe0bcdd0b9491ee6fd61e9730b8050263",
+            "0x3ca6a28ec6136d94068a761d7ee9ab8dd9540114b6a0f8cf39c4e943be2d61bc",
+            "0x5d34a942a0fa2c3a83791d19e636a81aac213a8843eb3f177c93bf945e421fc0",
+            "0x6a940ecb5831b031c95c777f50578d756a127e1f7ffb32caf25dfb2b06c945bc",
+            "0x6d64db7a7bdddbe0a6bad8aa1404393197c70392ea9ca93660bea2582f0192b3",
+            "0xa1f1d1e41096fee718135cffc6ed5c4dea0b68d7b479701382fc46e403a87a8c",
+            "0xaba397aaa15ccdf78e45895510faed740a026fbad217e3fa75dfaa092ef9abb0",
+            "0xb285cb63d6ceeef2fccdc019d619fd8347747192d8a61a95f082419c3e2a8e34",
+            "0xc31a7f74c5fa94add3160304d45936d6c2a888b54f06e6e686ba61b3cea8d4cc",
+            "0xe0ee971e949c5b903070f031e3f2b1fcc36caf4256e869687f47c0ceef051ddb",
+            "0xfedf6ca8b6b6eb29321783f8455c004d070b2056f924c35836bff7757f4286f3"
+          ],
+          "start": 1789398000,
+          "end": 1789398120,
+          "rows": 3094,
+          "event_counts": {
+            "price_change": 3048,
+            "book": 6,
+            "best_bid_ask": 40
+          },
+          "first_recv_ts": 1789398000.39391,
+          "last_recv_ts": 1789398119.1737611,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-14/15/2026-09-14T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-14/15/manifest.json",
+          "source_published_sha256": "e115903eeda44c57c2195cd47e301f9db96cbceef712d578d4d1f2376b2e7a68",
+          "source_published_bytes": 1284257438,
+          "source_manifest_sha256": "35216a21003ef2a489e6e4ad0f2c8305a8378db14dce0582e2dee25987284992",
+          "subset_sha256": "84015a7a02c5c2300cd08d162da52afea340321c9f2b72a9d8cc17fa9ec7c1ee",
+          "subset_bytes": 48866,
+          "subset_path": "data\\weather_full_books\\2026-09-14T15-d6517dc23a43.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-15",
+      "metadata_sha256": "ae7966b51a2c6c2ce85e9b263646a09a9236e959f908cf547ce20f39845de1d7",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 81474,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x1c690bb3b0d5b242698fe729f414ec57b1369dc5af6737c1e50460c5cbcb8f61",
+            "0x24a9a3529ab46248eb41d3d41addb43fe6f0af6171178ba88ab41535162a58a3",
+            "0x2c887509358df800089cf49b1f90832b8f130b65366d9ca8ebe2c5ae592bb14c",
+            "0x5c4d4375e103a022a41d37c2296bf6509e46ceb3aa9ca788c1c328016b364f6d",
+            "0x8662d82bee9eefaade1e873895918bdb47c7528fd2e1f30936b8b656c3367106",
+            "0xaf2fb7f1bc1269cd3cdaca1909964d7724e5645fb26092961864e089471a332e",
+            "0xbe9782746b72b37e9b9602b75a6faa432a474a618f29215af36e076b22205670",
+            "0xc955676f2b84cdcc5dfdf08febbacc8a5441aaa3b953e2d1eec8b70ee0c08f47",
+            "0xd1b2af5684098b51d7b1108bdefa8c8007f0c20713179ece4daff4f1920ba2c6",
+            "0xe54325dd80249e3ed7941c9e338d6a8b5f88e97f3d07398f1e0e879cbf8c7cab",
+            "0xfa70fc5287752850da8aada297b28f07ce8d52c83169990b657091914d98b405"
+          ],
+          "start": 1789480800,
+          "end": 1789484400,
+          "rows": 78874,
+          "event_counts": {
+            "price_change": 74154,
+            "best_bid_ask": 4090,
+            "book": 630
+          },
+          "first_recv_ts": 1789480800.016215,
+          "last_recv_ts": 1789484390.645421,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-15/14/2026-09-15T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-15/14/manifest.json",
+          "source_published_sha256": "8c1d20cd464e98f417e69e86e509b98df1deadc9637eb8e890af82f11144088d",
+          "source_published_bytes": 1298050175,
+          "source_manifest_sha256": "43241281a6667d4c91ef9ce4bd5640827b10b49406151b2c487347f3563a74a5",
+          "subset_sha256": "4acd390d09f6e0de265af7cb197834f18b6b375e9b13d896547cde216efca52f",
+          "subset_bytes": 1378096,
+          "subset_path": "data\\weather_full_books\\2026-09-15T14-4e8dbd770957.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x1c690bb3b0d5b242698fe729f414ec57b1369dc5af6737c1e50460c5cbcb8f61",
+            "0x24a9a3529ab46248eb41d3d41addb43fe6f0af6171178ba88ab41535162a58a3",
+            "0x2c887509358df800089cf49b1f90832b8f130b65366d9ca8ebe2c5ae592bb14c",
+            "0x5c4d4375e103a022a41d37c2296bf6509e46ceb3aa9ca788c1c328016b364f6d",
+            "0x8662d82bee9eefaade1e873895918bdb47c7528fd2e1f30936b8b656c3367106",
+            "0xaf2fb7f1bc1269cd3cdaca1909964d7724e5645fb26092961864e089471a332e",
+            "0xbe9782746b72b37e9b9602b75a6faa432a474a618f29215af36e076b22205670",
+            "0xc955676f2b84cdcc5dfdf08febbacc8a5441aaa3b953e2d1eec8b70ee0c08f47",
+            "0xd1b2af5684098b51d7b1108bdefa8c8007f0c20713179ece4daff4f1920ba2c6",
+            "0xe54325dd80249e3ed7941c9e338d6a8b5f88e97f3d07398f1e0e879cbf8c7cab",
+            "0xfa70fc5287752850da8aada297b28f07ce8d52c83169990b657091914d98b405"
+          ],
+          "start": 1789484400,
+          "end": 1789484520,
+          "rows": 2600,
+          "event_counts": {
+            "best_bid_ask": 162,
+            "book": 54,
+            "price_change": 2384
+          },
+          "first_recv_ts": 1789484400.5844152,
+          "last_recv_ts": 1789484519.80695,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-15/15/2026-09-15T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-15/15/manifest.json",
+          "source_published_sha256": "c3a348982f31d19551702356322b5bc7c73ae0f3e28af326205f56993b789c33",
+          "source_published_bytes": 1325905366,
+          "source_manifest_sha256": "64634e1044912329bb7911049cef9fc30e5735a5a8251d4209a4db0ca16ab942",
+          "subset_sha256": "e05bc406c7e44f31659a17ebae159002b3f732b10a55d8db63daeff8c6032d2a",
+          "subset_bytes": 53281,
+          "subset_path": "data\\weather_full_books\\2026-09-15T15-4e8dbd770957.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "metadata_sha256": "a36ad3e861164ac6092fb675c0d7edb5676cf2605e95fa81eca6190c04af252e",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 24008,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x11f215144b698e6f4156dbf87b8ccd07ac035be82a9c268d7b10447dea0fa118",
+            "0x37320fdb9d224d6026db315259adae9e37a03d1eb435967dae13dbd73a90f295",
+            "0x4928a7920ec2f31cd7ff9e811d3567476ffdf3a7035253958fc679daea6be3c0",
+            "0x576fc59b26c7479940a6737f9ffa5fa7d6cfc46106088878656da8ce132545b7",
+            "0x5e196267623f27d21cfcca80fd8a8c4fea10980be99698a5067d51cf22710bd0",
+            "0x7c931ce3fa6507487e42067d30c24e7f84176840ce88cfdc170044e9854d481a",
+            "0x7c98a035234a1771f49c736e946a6798326bb7e1b13fe8dc800e0ac936109e4c",
+            "0xe8b84e5d30fd912c0cd2e1ccdb8759948fc30c101f087f9f2b8c04d57052d441",
+            "0xf11a386cfc68ba3f135313808c3b644712eb675dd20256b6458d05992c015b03",
+            "0xf1fddbf4472128e5ae498a3a673ba3ccf9ebd64e9fedd94c4b80d8e7fc551374",
+            "0xfff7b887132e9eeaa3ca6854f1e5844cda30d0951ab6a7eedee2a36fee4efbdb"
+          ],
+          "start": 1789567200,
+          "end": 1789570800,
+          "rows": 23328,
+          "event_counts": {
+            "price_change": 22556,
+            "best_bid_ask": 686,
+            "book": 86
+          },
+          "first_recv_ts": 1789567201.2357638,
+          "last_recv_ts": 1789570799.911415,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-16/14/2026-09-16T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-16/14/manifest.json",
+          "source_published_sha256": "423314b6cd6fbc0b5c1e0a56b481ac33c3677b7cf45b950c5b4254f00dfb9568",
+          "source_published_bytes": 1252260382,
+          "source_manifest_sha256": "4dbc81176c35920e53d8d020b9fd77fdb48637f9686883b9fc791dfd0bdf4ee6",
+          "subset_sha256": "01617dd413497dbabb927321e794f7125b73ad8918e65027f288721ce3685838",
+          "subset_bytes": 400423,
+          "subset_path": "data\\weather_full_books\\2026-09-16T14-48f79adb38eb.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x11f215144b698e6f4156dbf87b8ccd07ac035be82a9c268d7b10447dea0fa118",
+            "0x37320fdb9d224d6026db315259adae9e37a03d1eb435967dae13dbd73a90f295",
+            "0x4928a7920ec2f31cd7ff9e811d3567476ffdf3a7035253958fc679daea6be3c0",
+            "0x576fc59b26c7479940a6737f9ffa5fa7d6cfc46106088878656da8ce132545b7",
+            "0x5e196267623f27d21cfcca80fd8a8c4fea10980be99698a5067d51cf22710bd0",
+            "0x7c931ce3fa6507487e42067d30c24e7f84176840ce88cfdc170044e9854d481a",
+            "0x7c98a035234a1771f49c736e946a6798326bb7e1b13fe8dc800e0ac936109e4c",
+            "0xe8b84e5d30fd912c0cd2e1ccdb8759948fc30c101f087f9f2b8c04d57052d441",
+            "0xf11a386cfc68ba3f135313808c3b644712eb675dd20256b6458d05992c015b03",
+            "0xf1fddbf4472128e5ae498a3a673ba3ccf9ebd64e9fedd94c4b80d8e7fc551374",
+            "0xfff7b887132e9eeaa3ca6854f1e5844cda30d0951ab6a7eedee2a36fee4efbdb"
+          ],
+          "start": 1789570800,
+          "end": 1789570920,
+          "rows": 680,
+          "event_counts": {
+            "price_change": 660,
+            "best_bid_ask": 18,
+            "book": 2
+          },
+          "first_recv_ts": 1789570800.64489,
+          "last_recv_ts": 1789570919.318172,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-16/15/2026-09-16T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-16/15/manifest.json",
+          "source_published_sha256": "869c752dd1c94174a5457e17fa63b5e422190730d2df7e3bd740b2b96d2cea05",
+          "source_published_bytes": 1314822772,
+          "source_manifest_sha256": "37948e53cf740f314dc3b0a0ce904c36d0c777d8b2912a6a9952618462fbfbf2",
+          "subset_sha256": "4e89c01109c972ff93d6c19239f25e3407cdc11677501e0f474837c09dd56faf",
+          "subset_bytes": 17339,
+          "subset_path": "data\\weather_full_books\\2026-09-16T15-48f79adb38eb.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-17",
+      "metadata_sha256": "50d7da6869f069b9806d41e9db0a4659dee7080ad010119bcdf3af1b1f410ff7",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 23536,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x3890d51053be8d62de0224f0caf6bbb59c72bd00064727b3c2b14abe6b44f456",
+            "0x3a5eda9e8536b0e185416001fcbb6eecd805eb979368ab1a0811a6bd2935f5c3",
+            "0x40f109ccda1b8b9c57f6b05fa9d41776172eeaba3d4603d84c774ee9cb046e89",
+            "0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38",
+            "0x5f0b409b6af8900c1c2634733ad1065df4639c23e68aac52a7bd281578c208dd",
+            "0x5fac89cd0cd65c8f36f71521821b7c400017bb6074be66eae98dbef9b6f1027c",
+            "0x69828b104ac37063f62e0d76949cb0a3a27267ec542abb8a5bf57ae31406cb18",
+            "0x7e5ec772eaf32ef78c61f4c26292ab2304f9f817349134e190b13bf970a9bdc3",
+            "0xc9159bbc25b68a36a9512163e9fa7fe2113b3b10d70940562f7d44f0793e5a87",
+            "0xd7f2aca9f54cf46bab5c893325ae8bba69948737662bf4a650c374906ee54d8e",
+            "0xeadf42d3f9c25420727f6d6c1472f92170978164a28343d2aba0b82edcfcc742"
+          ],
+          "start": 1789653600,
+          "end": 1789657200,
+          "rows": 20848,
+          "event_counts": {
+            "book": 190,
+            "best_bid_ask": 552,
+            "price_change": 20106
+          },
+          "first_recv_ts": 1789653605.0704389,
+          "last_recv_ts": 1789657199.342323,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-17/14/2026-09-17T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-17/14/manifest.json",
+          "source_published_sha256": "a6719851fdeb9447d90803e4d3d2e6dee4bf8ab5420070e4809722a3054bc53e",
+          "source_published_bytes": 1373093673,
+          "source_manifest_sha256": "6b1cc425122abc6c2cddb803fefbbd231bf5ccdd87b167ffc43e9f7feb2ec3db",
+          "subset_sha256": "9e4e99be3d9b9a50c2318eef7e443c9cca3285ad1519497825e95fb291d7a4c9",
+          "subset_bytes": 342765,
+          "subset_path": "data\\weather_full_books\\2026-09-17T14-4e1cfed86138.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x3890d51053be8d62de0224f0caf6bbb59c72bd00064727b3c2b14abe6b44f456",
+            "0x3a5eda9e8536b0e185416001fcbb6eecd805eb979368ab1a0811a6bd2935f5c3",
+            "0x40f109ccda1b8b9c57f6b05fa9d41776172eeaba3d4603d84c774ee9cb046e89",
+            "0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38",
+            "0x5f0b409b6af8900c1c2634733ad1065df4639c23e68aac52a7bd281578c208dd",
+            "0x5fac89cd0cd65c8f36f71521821b7c400017bb6074be66eae98dbef9b6f1027c",
+            "0x69828b104ac37063f62e0d76949cb0a3a27267ec542abb8a5bf57ae31406cb18",
+            "0x7e5ec772eaf32ef78c61f4c26292ab2304f9f817349134e190b13bf970a9bdc3",
+            "0xc9159bbc25b68a36a9512163e9fa7fe2113b3b10d70940562f7d44f0793e5a87",
+            "0xd7f2aca9f54cf46bab5c893325ae8bba69948737662bf4a650c374906ee54d8e",
+            "0xeadf42d3f9c25420727f6d6c1472f92170978164a28343d2aba0b82edcfcc742"
+          ],
+          "start": 1789657200,
+          "end": 1789657320,
+          "rows": 2688,
+          "event_counts": {
+            "price_change": 2512,
+            "book": 10,
+            "best_bid_ask": 166
+          },
+          "first_recv_ts": 1789657200.360993,
+          "last_recv_ts": 1789657319.669252,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-17/15/2026-09-17T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-17/15/manifest.json",
+          "source_published_sha256": "6ff289d5e6f99a5e1b2a497dccbe557509f069b7df3f398cddd3cee123a4e60f",
+          "source_published_bytes": 1189172222,
+          "source_manifest_sha256": "5410a42752399ef9a9c21ac7fc726310d48f6e8cbddafa61841b27f6a0210c05",
+          "subset_sha256": "6a57e69873b7334c41efd95fa2d0d5bdeac6518e9c91e1a01d2e026b4c514358",
+          "subset_bytes": 47579,
+          "subset_path": "data\\weather_full_books\\2026-09-17T15-4e1cfed86138.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-18",
+      "metadata_sha256": "61339d41293fcbbd94c573f3449614df1ac1851e5c89caca9457e327333c1819",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 21434,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x051a70dea254386a7e6d7b0c2919eec2f42b7f0cfa43de14815aff8f1a020228",
+            "0x0c3454c6dab057a6edb253ccd3e3d7d060d59590140bb15d856051b1d02c049f",
+            "0x0eea8db2f424192fd241fbe28dcf2321b90356e60d40eb2bb56bfcc74c21f4d9",
+            "0x21088978609d2ad76a49c1a98fe5af7daf7c15e8b5c44bd6f194c57993e34c66",
+            "0x49617860c9ef4a1264b70d41c944cbe53a894429af69e34f9082076650e4622d",
+            "0x76bde05a3e27007d3b146f5c601139b2efd27736cf982a9bcb61b238d97556cf",
+            "0x838f9636ff8c468a6218ca39922a5747386bfe52b55a58485307453108755967",
+            "0xbb794c6555b28d77e10a0abddea7ced5f8667c2f2542eb1dbe01c0a6ab05ef3a",
+            "0xc26ae2ceefa049b379dc3d2cc21b7719cfe4d94bc1049056b0fe7f46b766031b",
+            "0xe6525113a53233b61ca2c3061dc15ea095c48cf6e7a3ffe427ba5ce9e56e762b",
+            "0xf96a60335cd5cc71425d58dac552d40fa3f7c6c7640b50149634d870fff5cfe9"
+          ],
+          "start": 1789740000,
+          "end": 1789743600,
+          "rows": 20674,
+          "event_counts": {
+            "book": 312,
+            "price_change": 19616,
+            "best_bid_ask": 746
+          },
+          "first_recv_ts": 1789740001.9001782,
+          "last_recv_ts": 1789743595.5746279,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-18/14/2026-09-18T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-18/14/manifest.json",
+          "source_published_sha256": "f5062428b6b39d0594e36a4ceecb90ed8a87a1e08072beac239555e7c8bfdfab",
+          "source_published_bytes": 1578412607,
+          "source_manifest_sha256": "876be54465a5c05071285a54bc331168561592960d733980152c5a2a18b306d4",
+          "subset_sha256": "7e9b59659cc8e2b9b3948eb9f5c2054ee288dc621f97855889f022f1d36bf01f",
+          "subset_bytes": 387212,
+          "subset_path": "data\\weather_full_books\\2026-09-18T14-416a3a233407.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x051a70dea254386a7e6d7b0c2919eec2f42b7f0cfa43de14815aff8f1a020228",
+            "0x0c3454c6dab057a6edb253ccd3e3d7d060d59590140bb15d856051b1d02c049f",
+            "0x0eea8db2f424192fd241fbe28dcf2321b90356e60d40eb2bb56bfcc74c21f4d9",
+            "0x21088978609d2ad76a49c1a98fe5af7daf7c15e8b5c44bd6f194c57993e34c66",
+            "0x49617860c9ef4a1264b70d41c944cbe53a894429af69e34f9082076650e4622d",
+            "0x76bde05a3e27007d3b146f5c601139b2efd27736cf982a9bcb61b238d97556cf",
+            "0x838f9636ff8c468a6218ca39922a5747386bfe52b55a58485307453108755967",
+            "0xbb794c6555b28d77e10a0abddea7ced5f8667c2f2542eb1dbe01c0a6ab05ef3a",
+            "0xc26ae2ceefa049b379dc3d2cc21b7719cfe4d94bc1049056b0fe7f46b766031b",
+            "0xe6525113a53233b61ca2c3061dc15ea095c48cf6e7a3ffe427ba5ce9e56e762b",
+            "0xf96a60335cd5cc71425d58dac552d40fa3f7c6c7640b50149634d870fff5cfe9"
+          ],
+          "start": 1789743600,
+          "end": 1789743720,
+          "rows": 760,
+          "event_counts": {
+            "best_bid_ask": 18,
+            "book": 4,
+            "price_change": 738
+          },
+          "first_recv_ts": 1789743600.62413,
+          "last_recv_ts": 1789743719.960479,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-18/15/2026-09-18T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-18/15/manifest.json",
+          "source_published_sha256": "38ef1b14bbb5dab430505e6480540c77b31a426d1b5a82a66287f369ad5baf2d",
+          "source_published_bytes": 1506837009,
+          "source_manifest_sha256": "22d6c41e74c2892ba18bdb4e4caab07b665028807ad6886035cc1e8a00c16000",
+          "subset_sha256": "587c57908bb162b245ca8abf2823e3904c011bfa50f06a3c7bf34f52a97f34ab",
+          "subset_bytes": 18359,
+          "subset_path": "data\\weather_full_books\\2026-09-18T15-416a3a233407.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "metadata_sha256": "b0bc01370848b59138ee33ff55308f8f5457d91146c769571837fbd0fbe0a01f",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 25922,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x2b40153b608a4bb00563c0077c8712d7ba75e8472842e99411f2ebb7e27974f2",
+            "0x3199267ed99cb923216030a2ea3f155b8eb5a1be0451e76002c346ab18681652",
+            "0x6bf9efe52b4ea9f83a476bba920b0d0ff6f0c28ca93ce383be504d3fa886648b",
+            "0x88f2b5aa1928fcfca824b4a679e0ed3822b0257c202a1e6b2e5d4c4c5f8a093f",
+            "0xa8ab03ea82787b2e42627e970f3e595679c198e0cf0ef79f2214d619a3031752",
+            "0xb0d17eef5dcaeb2fc1e6f9c7df9e6299254988660787a7382c03a2300f433914",
+            "0xc5a29aa5cc19c7c895ecbc3c05ed114fa16a03a419fa393a0ed402336fa0c398",
+            "0xc8cf7baef74bf6af080fcc4b94949aeb9bb55061be6ec65a1327e49024c37594",
+            "0xddbc44931d6ed49298945ed4f37e0f5ab5707b0b474a32852e1039f06b76af52",
+            "0xededd68697c8b5102d6719d2dc6555d12c9f4aca5c20bcd9581a76d23ebdc0d7",
+            "0xf704de187ab67ab6685e2e5f5054dccfa9bccf319dee64c13a1fdfd4e8b418b7"
+          ],
+          "start": 1789826400,
+          "end": 1789830000,
+          "rows": 25208,
+          "event_counts": {
+            "price_change": 23416,
+            "best_bid_ask": 1348,
+            "book": 444
+          },
+          "first_recv_ts": 1789826401.7063682,
+          "last_recv_ts": 1789829999.342629,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-19/14/2026-09-19T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-19/14/manifest.json",
+          "source_published_sha256": "df8e2cd5e687bd0589c9247330c5468b764e89536d9568cedf39868d90cc0bc1",
+          "source_published_bytes": 1783948462,
+          "source_manifest_sha256": "7c7b929fa761c68a2d4488b72ee0ad9f0add36fc900e447a3447ee67564767ee",
+          "subset_sha256": "d453af1684ce058bf55b460864952713aab3c1efe76f0faf448dd031beef90f2",
+          "subset_bytes": 412102,
+          "subset_path": "data\\weather_full_books\\2026-09-19T14-1650748cf217.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x2b40153b608a4bb00563c0077c8712d7ba75e8472842e99411f2ebb7e27974f2",
+            "0x3199267ed99cb923216030a2ea3f155b8eb5a1be0451e76002c346ab18681652",
+            "0x6bf9efe52b4ea9f83a476bba920b0d0ff6f0c28ca93ce383be504d3fa886648b",
+            "0x88f2b5aa1928fcfca824b4a679e0ed3822b0257c202a1e6b2e5d4c4c5f8a093f",
+            "0xa8ab03ea82787b2e42627e970f3e595679c198e0cf0ef79f2214d619a3031752",
+            "0xb0d17eef5dcaeb2fc1e6f9c7df9e6299254988660787a7382c03a2300f433914",
+            "0xc5a29aa5cc19c7c895ecbc3c05ed114fa16a03a419fa393a0ed402336fa0c398",
+            "0xc8cf7baef74bf6af080fcc4b94949aeb9bb55061be6ec65a1327e49024c37594",
+            "0xddbc44931d6ed49298945ed4f37e0f5ab5707b0b474a32852e1039f06b76af52",
+            "0xededd68697c8b5102d6719d2dc6555d12c9f4aca5c20bcd9581a76d23ebdc0d7",
+            "0xf704de187ab67ab6685e2e5f5054dccfa9bccf319dee64c13a1fdfd4e8b418b7"
+          ],
+          "start": 1789830000,
+          "end": 1789830120,
+          "rows": 714,
+          "event_counts": {
+            "price_change": 696,
+            "best_bid_ask": 18
+          },
+          "first_recv_ts": 1789830000.763215,
+          "last_recv_ts": 1789830117.13916,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-19/15/2026-09-19T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-19/15/manifest.json",
+          "source_published_sha256": "427cef27f3d95813b5b0c3783d526837edfb5a20b00213196f15f14204f6e38f",
+          "source_published_bytes": 1762729630,
+          "source_manifest_sha256": "9e645ac7ab84e7346de612fac5b3668ae6a04b677c75bda852dbad8a76afed45",
+          "subset_sha256": "4c0b4305b3a38a8b71a80e6bc1491868a98a54e169a9aee1f1362511afc9158b",
+          "subset_bytes": 14936,
+          "subset_path": "data\\weather_full_books\\2026-09-19T15-1650748cf217.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "metadata_sha256": "58d064049a0a4a1a853cd285b1eab75c8b3f5e9f330734744b17732332c073cd",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 10658,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x48694395c7293d80b302d4955aa6cb5f32c6774a1f2a210473b51f061b533f4a",
+            "0x5b44b3b7cf0d6417509b885e9aa97223f76fb760204a3fc693c7d283bcf5282e",
+            "0x6d2fda0963826801bcf9cb405e9284454e737cbb95af28d09234488612d8509f",
+            "0x6ee8f71c4997df2b456f35782dbd376c9f8463b4bd1ae0ad767ee3d01b608857",
+            "0x78a4958683d3cdd59040eb8c74095b61b3bf77763f3fc8d1323f433a4dacfadb",
+            "0x8957936f486759e30e4aca2f0f10f319fd0014716ce741b3bb64a8c15e7239b3",
+            "0xa582eea7ed88f5c962d537fd6a45d67b8613705d6e91a9e89db70a86c2f495e7",
+            "0xbedfc180b4c9b633f127ad0a874439ab9ffe44c9301f078c6db463cf73fba80e",
+            "0xd68398593a652711703c631909315545208e618455719d196d24652abe9c686b",
+            "0xdacbbeb8e0ccc3b3b96b808a0b599036a54e7b8c4084c4bc9f6107038c4464db",
+            "0xf7d78ae5ea194fc582f2d9e44492d4b0c301468b97fd1c42bfefa31de7961a58"
+          ],
+          "start": 1789912800,
+          "end": 1789916400,
+          "rows": 10450,
+          "event_counts": {
+            "book": 296,
+            "price_change": 9656,
+            "best_bid_ask": 498
+          },
+          "first_recv_ts": 1789912800.016619,
+          "last_recv_ts": 1789916387.756179,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-20/14/2026-09-20T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-20/14/manifest.json",
+          "source_published_sha256": "3cf22d3bab52c670d983c0762589c40b259c9a5dcd096b451038eccf51ba95d8",
+          "source_published_bytes": 1514966664,
+          "source_manifest_sha256": "87d34a353d5fe5e7e496d88c74c439145e9cd6896007237a382734d66d0a6e24",
+          "subset_sha256": "489c1385c1c4adbdfdb2c0a00ddbe715a6553533c1263fc53b5a0d224fb3a941",
+          "subset_bytes": 184324,
+          "subset_path": "data\\weather_full_books\\2026-09-20T14-341a4ce31513.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x48694395c7293d80b302d4955aa6cb5f32c6774a1f2a210473b51f061b533f4a",
+            "0x5b44b3b7cf0d6417509b885e9aa97223f76fb760204a3fc693c7d283bcf5282e",
+            "0x6d2fda0963826801bcf9cb405e9284454e737cbb95af28d09234488612d8509f",
+            "0x6ee8f71c4997df2b456f35782dbd376c9f8463b4bd1ae0ad767ee3d01b608857",
+            "0x78a4958683d3cdd59040eb8c74095b61b3bf77763f3fc8d1323f433a4dacfadb",
+            "0x8957936f486759e30e4aca2f0f10f319fd0014716ce741b3bb64a8c15e7239b3",
+            "0xa582eea7ed88f5c962d537fd6a45d67b8613705d6e91a9e89db70a86c2f495e7",
+            "0xbedfc180b4c9b633f127ad0a874439ab9ffe44c9301f078c6db463cf73fba80e",
+            "0xd68398593a652711703c631909315545208e618455719d196d24652abe9c686b",
+            "0xdacbbeb8e0ccc3b3b96b808a0b599036a54e7b8c4084c4bc9f6107038c4464db",
+            "0xf7d78ae5ea194fc582f2d9e44492d4b0c301468b97fd1c42bfefa31de7961a58"
+          ],
+          "start": 1789916400,
+          "end": 1789916520,
+          "rows": 208,
+          "event_counts": {
+            "best_bid_ask": 4,
+            "price_change": 204
+          },
+          "first_recv_ts": 1789916400.498082,
+          "last_recv_ts": 1789916519.678128,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-20/15/2026-09-20T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-20/15/manifest.json",
+          "source_published_sha256": "959caa008f162477222db05eeb3bbc9fdaaf1c0c013be2b708feb3cd52633ada",
+          "source_published_bytes": 1537586873,
+          "source_manifest_sha256": "54d6a5308322a5649de650f5de8dde8897a98cff265cbe8ac2f617a3633032c3",
+          "subset_sha256": "128a3cbcbfbbc9a6684a94980b64a905fa8e6e70ed1cd5bb954b9ae1044cf818",
+          "subset_bytes": 7716,
+          "subset_path": "data\\weather_full_books\\2026-09-20T15-341a4ce31513.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-21",
+      "metadata_sha256": "8af07e4a0a8b235314ff73eb4e4746b7e7fceab724715c77adb21637ecd220c8",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 10948,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x01d3df59a7ace261a46dd9aad20c771a989137d70893a7b1692eebd878d6f2b9",
+            "0x073a6682226768424164df60245f40325c2dbc7409a4b3d78412f8081889dca4",
+            "0x0a35b4e72d09279b670535c6fba444a10d104fb3d87a410ca2fcbfeb1e065a96",
+            "0x0e9b87dc84254bb7eb2dc9ed0efa6df910ce4b9a221ba62895357634a684841e",
+            "0x380c1540609a982bab73eb30e106f52ec4625fa994e617b6dca9d2753af0eced",
+            "0x56c6d1bedb60ddbf6a9621bc1823d107049fb44c2d5bebe0a774e582611d4914",
+            "0x619cb08301f8fa9f46b6042d5d4e14270cb1f6da1df4719951047522435a87bc",
+            "0x71d23cbf0c29a1c4c51d61801e685f89f16c3e70f318ad91da4b564036ad9bec",
+            "0x80475437b24fcb28c4d66ded5c5b9efa2e587f51e0cc11005af98d745c892fd3",
+            "0xb72125b60ae5d90880ce746d09814033e8337cadcee0991eeb44cb571535db5e",
+            "0xbe48c5433e590d2547d919837b21dd164735bc84cf1647e94b6e644cbf1ba3e1"
+          ],
+          "start": 1789999200,
+          "end": 1790002800,
+          "rows": 10456,
+          "event_counts": {
+            "best_bid_ask": 450,
+            "book": 156,
+            "price_change": 9850
+          },
+          "first_recv_ts": 1789999203.488314,
+          "last_recv_ts": 1790002793.49011,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-21/14/2026-09-21T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-21/14/manifest.json",
+          "source_published_sha256": "456825a84b0f3d47812736b433b134bcff21d1d84de2dd0e95acc61d5fa5c6dc",
+          "source_published_bytes": 1350600649,
+          "source_manifest_sha256": "3a19ad0edc8a234025a7c95ae588db279b42de48bce855e22e3f5c9a9868b92d",
+          "subset_sha256": "b39e5d58eefb600dca8432c2c986f8f107a1818e4fea3e17291e6129b69a454e",
+          "subset_bytes": 189902,
+          "subset_path": "data\\weather_full_books\\2026-09-21T14-207e3e5d2e33.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x01d3df59a7ace261a46dd9aad20c771a989137d70893a7b1692eebd878d6f2b9",
+            "0x073a6682226768424164df60245f40325c2dbc7409a4b3d78412f8081889dca4",
+            "0x0a35b4e72d09279b670535c6fba444a10d104fb3d87a410ca2fcbfeb1e065a96",
+            "0x0e9b87dc84254bb7eb2dc9ed0efa6df910ce4b9a221ba62895357634a684841e",
+            "0x380c1540609a982bab73eb30e106f52ec4625fa994e617b6dca9d2753af0eced",
+            "0x56c6d1bedb60ddbf6a9621bc1823d107049fb44c2d5bebe0a774e582611d4914",
+            "0x619cb08301f8fa9f46b6042d5d4e14270cb1f6da1df4719951047522435a87bc",
+            "0x71d23cbf0c29a1c4c51d61801e685f89f16c3e70f318ad91da4b564036ad9bec",
+            "0x80475437b24fcb28c4d66ded5c5b9efa2e587f51e0cc11005af98d745c892fd3",
+            "0xb72125b60ae5d90880ce746d09814033e8337cadcee0991eeb44cb571535db5e",
+            "0xbe48c5433e590d2547d919837b21dd164735bc84cf1647e94b6e644cbf1ba3e1"
+          ],
+          "start": 1790002800,
+          "end": 1790002920,
+          "rows": 492,
+          "event_counts": {
+            "best_bid_ask": 6,
+            "price_change": 484,
+            "book": 2
+          },
+          "first_recv_ts": 1790002801.399008,
+          "last_recv_ts": 1790002891.6767402,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-21/15/2026-09-21T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-21/15/manifest.json",
+          "source_published_sha256": "0cc58e3e7f29e0d4bdb6425c8c43adead310ee0afb0bd16cced791c686f88c0b",
+          "source_published_bytes": 1285075384,
+          "source_manifest_sha256": "5635955b8c5f92f0b03cca6dad31431a7a6850784aa28721515569f35fd2709a",
+          "subset_sha256": "81526a6ad047efeef4fafa796fbd82cd6cee60eec3d848ef6aecc7f9223d6328",
+          "subset_bytes": 13211,
+          "subset_path": "data\\weather_full_books\\2026-09-21T15-207e3e5d2e33.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "metadata_sha256": "fe3c6b2baf0a4d8b3e9fd25661a31ab33d362a5aff69e66df37e7858b708aa63",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 61054,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x01a30ff75c7a596caaf69cf6c6779326dc4a484343a0a77199f6ca392fc39dde",
+            "0x3d978bdbe86998225484281feaa337ab000da2e18dafb8322521cb6c0a4bcf52",
+            "0x53f691bce9fd9f6bd95798dfcbd7f593bfcc91343196400abbdc44a76f2c161a",
+            "0x7354a1c23dd25e3224697ed63812ee400abafd967063e60d4d936ceace674bf7",
+            "0x7aaf9f6ba485452071441d4406468411e96f2c3e765fb8b5466d437028eb69f5",
+            "0x9367a7ed2997f1dbd2dd45d027a463c248420e6fd1774c7d1b4b9c84c8ff4087",
+            "0x9c68d9c585b614fd4f01a7a5cf655c7f664e2b42e5d122261de54656244a6aac",
+            "0xac268e8455a788743bb00204e106fed9687c59250a5c1788c3c78263a1b4451c",
+            "0xb3540669a4a16fcdd638f7102a8ed37dff45a6bc1d905fa8f17687f300ea78d4",
+            "0xd01fbf87895cf3f644c1f33a10647756eefe05cd6c807b3dcb39e24360a932ff",
+            "0xdde8e924b68c112bc382d855df792f4742e857300a063b74cfc5135a7e7f70f5"
+          ],
+          "start": 1790085600,
+          "end": 1790089200,
+          "rows": 60346,
+          "event_counts": {
+            "best_bid_ask": 2736,
+            "price_change": 57224,
+            "book": 386
+          },
+          "first_recv_ts": 1790085600.927686,
+          "last_recv_ts": 1790089199.977658,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-22/14/2026-09-22T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-22/14/manifest.json",
+          "source_published_sha256": "4fe9ed9aaa516f4b9695e1d35476f6c6080372a8465f8e4f9529582246f67c20",
+          "source_published_bytes": 1429723130,
+          "source_manifest_sha256": "8d0ade7786439014886abc7f4953d01de9d8b4908cce6ecba30c4944923c4b7d",
+          "subset_sha256": "12adf97a01655dc96368e7a21d51ed01a07bef005022e6f33026335da59525cd",
+          "subset_bytes": 1052419,
+          "subset_path": "data\\weather_full_books\\2026-09-22T14-0dd77d2b946c.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x01a30ff75c7a596caaf69cf6c6779326dc4a484343a0a77199f6ca392fc39dde",
+            "0x3d978bdbe86998225484281feaa337ab000da2e18dafb8322521cb6c0a4bcf52",
+            "0x53f691bce9fd9f6bd95798dfcbd7f593bfcc91343196400abbdc44a76f2c161a",
+            "0x7354a1c23dd25e3224697ed63812ee400abafd967063e60d4d936ceace674bf7",
+            "0x7aaf9f6ba485452071441d4406468411e96f2c3e765fb8b5466d437028eb69f5",
+            "0x9367a7ed2997f1dbd2dd45d027a463c248420e6fd1774c7d1b4b9c84c8ff4087",
+            "0x9c68d9c585b614fd4f01a7a5cf655c7f664e2b42e5d122261de54656244a6aac",
+            "0xac268e8455a788743bb00204e106fed9687c59250a5c1788c3c78263a1b4451c",
+            "0xb3540669a4a16fcdd638f7102a8ed37dff45a6bc1d905fa8f17687f300ea78d4",
+            "0xd01fbf87895cf3f644c1f33a10647756eefe05cd6c807b3dcb39e24360a932ff",
+            "0xdde8e924b68c112bc382d855df792f4742e857300a063b74cfc5135a7e7f70f5"
+          ],
+          "start": 1790089200,
+          "end": 1790089320,
+          "rows": 708,
+          "event_counts": {
+            "price_change": 676,
+            "book": 6,
+            "best_bid_ask": 26
+          },
+          "first_recv_ts": 1790089200.458982,
+          "last_recv_ts": 1790089319.209918,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-22/15/2026-09-22T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-22/15/manifest.json",
+          "source_published_sha256": "9237d3768589c0801286256d0b29b0bb8f229854f2da71857675d5c905c850a6",
+          "source_published_bytes": 1300156176,
+          "source_manifest_sha256": "5ba7c5e0cf9d4358c81ad44b46ebb7056b4f002ea7435c979e6d0765a00d62ee",
+          "subset_sha256": "8086205f7a9e767e6fc29392e0d27fa7528c9d9dfd5bb634977b8f4086317f86",
+          "subset_bytes": 18466,
+          "subset_path": "data\\weather_full_books\\2026-09-22T15-0dd77d2b946c.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "metadata_sha256": "224e261a7ab62eeca34621d36bb18c2788ba841e1e75aa6783534a102fce506c",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 33812,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x024b70f26217f6738b3d2b277d374d09e5fcc9f7a7f309124339e7a42b831e0d",
+            "0x1452f7c949bf2bccdcb18b8490670554c992b96f77e9771a8d2fe51c5fd0eea0",
+            "0x1bf3b07e579dfa852276d52dfd9296ebf1f95ed646b6358f5b3cdd56856aa2d0",
+            "0x7676d65ae94ede7a224ec694f1d8abe2a68bd78d51da14c13f8f67facfec1214",
+            "0x822dd344c9b9a0045c4ac871462baaa60ff9e65761e3dffc745213946039cf22",
+            "0x8b75d418b0b4375ba07e5bb8f6a494efd0156ea9e5c9c813f26fed7279089685",
+            "0x97c774b3b284e8ad0818af484372a14026baf23ba482ee4c6adaf3d63b82c64d",
+            "0xb300285d7f1bda54156e200d246b2ba5a1daf206166402a9a6d217fba6eb1f69",
+            "0xe4afbfe46e1c0f4075d96a59ec90a02bea0fe4d85ea7009408b22277d7766232",
+            "0xea2a99afa05f4c2daa68221bb899b6de6bd32d540d53508a4bb4d2a6acaf2b67",
+            "0xf7e45869e0e480525695b1557030bf26a121f3f27345b6f78bf49655ef852eba"
+          ],
+          "start": 1790172000,
+          "end": 1790175600,
+          "rows": 32992,
+          "event_counts": {
+            "price_change": 31194,
+            "book": 462,
+            "best_bid_ask": 1336
+          },
+          "first_recv_ts": 1790172000.959018,
+          "last_recv_ts": 1790175599.498077,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-23/14/2026-09-23T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-23/14/manifest.json",
+          "source_published_sha256": "843d861f5d2244879136626185932cede9106582cb4d3afa15e2e5c0c7e8b9bb",
+          "source_published_bytes": 1671956547,
+          "source_manifest_sha256": "c894180480a3fa5b6129d562c7822e1f446dcd56f9153376501a61b64e0fdff1",
+          "subset_sha256": "417269953a80e478de65eb618ed0bae7bbe368352211f06a7c5e1fcd184964e4",
+          "subset_bytes": 537153,
+          "subset_path": "data\\weather_full_books\\2026-09-23T14-bc65166c67fe.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x024b70f26217f6738b3d2b277d374d09e5fcc9f7a7f309124339e7a42b831e0d",
+            "0x1452f7c949bf2bccdcb18b8490670554c992b96f77e9771a8d2fe51c5fd0eea0",
+            "0x1bf3b07e579dfa852276d52dfd9296ebf1f95ed646b6358f5b3cdd56856aa2d0",
+            "0x7676d65ae94ede7a224ec694f1d8abe2a68bd78d51da14c13f8f67facfec1214",
+            "0x822dd344c9b9a0045c4ac871462baaa60ff9e65761e3dffc745213946039cf22",
+            "0x8b75d418b0b4375ba07e5bb8f6a494efd0156ea9e5c9c813f26fed7279089685",
+            "0x97c774b3b284e8ad0818af484372a14026baf23ba482ee4c6adaf3d63b82c64d",
+            "0xb300285d7f1bda54156e200d246b2ba5a1daf206166402a9a6d217fba6eb1f69",
+            "0xe4afbfe46e1c0f4075d96a59ec90a02bea0fe4d85ea7009408b22277d7766232",
+            "0xea2a99afa05f4c2daa68221bb899b6de6bd32d540d53508a4bb4d2a6acaf2b67",
+            "0xf7e45869e0e480525695b1557030bf26a121f3f27345b6f78bf49655ef852eba"
+          ],
+          "start": 1790175600,
+          "end": 1790175720,
+          "rows": 820,
+          "event_counts": {
+            "book": 12,
+            "best_bid_ask": 36,
+            "price_change": 772
+          },
+          "first_recv_ts": 1790175600.434174,
+          "last_recv_ts": 1790175718.816331,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-23/15/2026-09-23T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-23/15/manifest.json",
+          "source_published_sha256": "a12aa8ec5ee7aabd9f67063bfd539e0b2662858ba895369784f04610b34fbfd1",
+          "source_published_bytes": 1372424658,
+          "source_manifest_sha256": "2bc6c221f671f9f1ca789b3063dd7a3639bf3e1ba5221820e6ac71e6abc116dd",
+          "subset_sha256": "585b3fd04915a9546cf12e43d46acb99c110aeb1dfaf8d424b44957ca93c9ee6",
+          "subset_bytes": 21742,
+          "subset_path": "data\\weather_full_books\\2026-09-23T15-bc65166c67fe.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "metadata_sha256": "140c46f48aa7dba94055da641f14cdaef5bbb0291fe06802687536d62583c0f0",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 29048,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x0723dea0bab1479b49a03c1e9d592436727fd61b2dfec032c9aac849696f2962",
+            "0x11d0635f9e41ecfb2d02662a370a4e0c37d9f6bb98621082464afe7cc54179c8",
+            "0x297869edc0f08742d3c8ac47f1229ccd01133e0b46c67aa0d72db47046d1d32a",
+            "0x32b9f644029072cba561178519a8a1c3b6e66123fb953dc6bb97356fe891da14",
+            "0x42a10d95dd46fe029314109c252af0049d334eea46aa99d1c722098e306a1054",
+            "0x59c708fa7b2b9873a8fb5b74a23d224dda59b8079c74f991ddbdce33bbe00724",
+            "0x83495099821086b99e4549e9f5ac01ee829bfb17af6febc4a9ec290a7caf906a",
+            "0x918d323bcbfbeb66a3574b07f5df7bc0796aecef74cc09abedf62a6adb3b7e40",
+            "0xd552d52f4bad98b3b61fb7d5ec96a808c75ddf60bea9e67586cead4b8be56034",
+            "0xde0747008b1f096608e61015ecc2214c124b6ed5324ac4f9e8d80395ba3aa2c9",
+            "0xea2cc80ec527881dd02365f1911d430afd6015bb241dd591346ec80554710d2e"
+          ],
+          "start": 1790258400,
+          "end": 1790262000,
+          "rows": 28458,
+          "event_counts": {
+            "best_bid_ask": 940,
+            "price_change": 27332,
+            "book": 186
+          },
+          "first_recv_ts": 1790258400.5942192,
+          "last_recv_ts": 1790261999.782737,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-24/14/2026-09-24T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-24/14/manifest.json",
+          "source_published_sha256": "dc6ea96a333510b693aa1c7e6f364f45a9792dd8afe088a7e0b8c2c0dcbfff21",
+          "source_published_bytes": 1477281124,
+          "source_manifest_sha256": "484035f885c8deb14ff1fb0e5eb927f71cf1906d60f4dc9ce7fcbb4cdd119172",
+          "subset_sha256": "f1f164deea862b2901eee337ccad25ad4151570c3dc37dfa508e49355a53fe2b",
+          "subset_bytes": 477955,
+          "subset_path": "data\\weather_full_books\\2026-09-24T14-85fbfc835cc7.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x0723dea0bab1479b49a03c1e9d592436727fd61b2dfec032c9aac849696f2962",
+            "0x11d0635f9e41ecfb2d02662a370a4e0c37d9f6bb98621082464afe7cc54179c8",
+            "0x297869edc0f08742d3c8ac47f1229ccd01133e0b46c67aa0d72db47046d1d32a",
+            "0x32b9f644029072cba561178519a8a1c3b6e66123fb953dc6bb97356fe891da14",
+            "0x42a10d95dd46fe029314109c252af0049d334eea46aa99d1c722098e306a1054",
+            "0x59c708fa7b2b9873a8fb5b74a23d224dda59b8079c74f991ddbdce33bbe00724",
+            "0x83495099821086b99e4549e9f5ac01ee829bfb17af6febc4a9ec290a7caf906a",
+            "0x918d323bcbfbeb66a3574b07f5df7bc0796aecef74cc09abedf62a6adb3b7e40",
+            "0xd552d52f4bad98b3b61fb7d5ec96a808c75ddf60bea9e67586cead4b8be56034",
+            "0xde0747008b1f096608e61015ecc2214c124b6ed5324ac4f9e8d80395ba3aa2c9",
+            "0xea2cc80ec527881dd02365f1911d430afd6015bb241dd591346ec80554710d2e"
+          ],
+          "start": 1790262000,
+          "end": 1790262120,
+          "rows": 590,
+          "event_counts": {
+            "price_change": 576,
+            "best_bid_ask": 14
+          },
+          "first_recv_ts": 1790262000.357455,
+          "last_recv_ts": 1790262118.792443,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-24/15/2026-09-24T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-24/15/manifest.json",
+          "source_published_sha256": "8ca7f374563b1688ebd4245a2139152913313d299fe50dc43ba9d883465a38fb",
+          "source_published_bytes": 1393771360,
+          "source_manifest_sha256": "ea2f50f92c21c2ae12b6527dbadaa384a8675e078098defc8ca8cb8e86bf9dae",
+          "subset_sha256": "d6e68ebfca0edf0fcbfd1bda1258367012abced7f5b8e3d0d4cef480be603666",
+          "subset_bytes": 13688,
+          "subset_path": "data\\weather_full_books\\2026-09-24T15-85fbfc835cc7.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "metadata_sha256": "197dce3013c752cf814d6ae53c1a7d17a506565a5f5344fffb86daf3d99540b5",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 17964,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x142a97f39f611a0a0cff5909089ecbcfe0a6585b5e5060bf518fec4cf6e925d2",
+            "0x333075a04b5fb09d7439a4d7212dbc062b2ed3cc7ac8ee86c0fdfefe0b8ad198",
+            "0x382abd4a2f3fe1fd455377564a75fe346a7f0584bee006b02e8638c952910314",
+            "0x5024cc8fc76c6c9b6fd086909d6ff22ee000dad538b3e1f590db8fb787f4d831",
+            "0x507819b0364719c31000e9b63ef7d3da8aa05e68afaae17546fb3d1783fe7cb0",
+            "0x733e5ef1b8b5fdc6e8a93eecf92a720c30ee239aefd0bcbc50623c4c378c623d",
+            "0xa6a4685ff5ea5a42a853053e653663429a39eb3e13adca37938096e2782790e4",
+            "0xbb2b6cbf65eac7e3a27a396a638a9257cbffdb22c9d10c0e9d661a1170742e4b",
+            "0xc3c0d0a2624bc836f62f7479329f6cadba07427bd3906410d249c229d82186e0",
+            "0xcab38d9c74579d04fa492bd19e78c1e91c91cdfba1281102f2675a28f7774547",
+            "0xfbc3839f1d46714dffe6ae3903568e7994a2a0a86bc89916de74b5d1c7f3e055"
+          ],
+          "start": 1790344800,
+          "end": 1790348400,
+          "rows": 15902,
+          "event_counts": {
+            "price_change": 15066,
+            "best_bid_ask": 670,
+            "book": 166
+          },
+          "first_recv_ts": 1790344802.293075,
+          "last_recv_ts": 1790348396.84829,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-25/14/2026-09-25T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-25/14/manifest.json",
+          "source_published_sha256": "a974bb6b266d50928041afd5f9eaae059fa66cd0b5882b6955196d9f5ebdb1c8",
+          "source_published_bytes": 1409900712,
+          "source_manifest_sha256": "a4766164cccf821619917fd4b502df9ba102c947bf5f6a8b162d1e411ee1b819",
+          "subset_sha256": "5cbf2a6e150d29ea0e9dcece05b67e1e8b9d610cd7dd1ce9d8eac1ab3d610daf",
+          "subset_bytes": 248460,
+          "subset_path": "data\\weather_full_books\\2026-09-25T14-644835470ef6.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x142a97f39f611a0a0cff5909089ecbcfe0a6585b5e5060bf518fec4cf6e925d2",
+            "0x333075a04b5fb09d7439a4d7212dbc062b2ed3cc7ac8ee86c0fdfefe0b8ad198",
+            "0x382abd4a2f3fe1fd455377564a75fe346a7f0584bee006b02e8638c952910314",
+            "0x5024cc8fc76c6c9b6fd086909d6ff22ee000dad538b3e1f590db8fb787f4d831",
+            "0x507819b0364719c31000e9b63ef7d3da8aa05e68afaae17546fb3d1783fe7cb0",
+            "0x733e5ef1b8b5fdc6e8a93eecf92a720c30ee239aefd0bcbc50623c4c378c623d",
+            "0xa6a4685ff5ea5a42a853053e653663429a39eb3e13adca37938096e2782790e4",
+            "0xbb2b6cbf65eac7e3a27a396a638a9257cbffdb22c9d10c0e9d661a1170742e4b",
+            "0xc3c0d0a2624bc836f62f7479329f6cadba07427bd3906410d249c229d82186e0",
+            "0xcab38d9c74579d04fa492bd19e78c1e91c91cdfba1281102f2675a28f7774547",
+            "0xfbc3839f1d46714dffe6ae3903568e7994a2a0a86bc89916de74b5d1c7f3e055"
+          ],
+          "start": 1790348400,
+          "end": 1790348520,
+          "rows": 2062,
+          "event_counts": {
+            "best_bid_ask": 110,
+            "price_change": 1952
+          },
+          "first_recv_ts": 1790348400.368639,
+          "last_recv_ts": 1790348515.572413,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-25/15/2026-09-25T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-25/15/manifest.json",
+          "source_published_sha256": "b87bb5170f8c43d1855862217b5a82677d66bb6b72d20a6426c849724bbd93a5",
+          "source_published_bytes": 1385771574,
+          "source_manifest_sha256": "57f7dbea5533ac0d184ed502b04fccc3be44b31c20025e22e49bf3acc09efad7",
+          "subset_sha256": "7c7a47b95f5fc4976b3c21b0433d1f69c4b6089c03e58079b313ae9638aa6d7e",
+          "subset_bytes": 34910,
+          "subset_path": "data\\weather_full_books\\2026-09-25T15-644835470ef6.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-26",
+      "metadata_sha256": "4e92f2793add292fab6a00610e7d8dc18dbfab2d72ad6fa89b92e6b9df2d9b4d",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 44276,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x26eb0afd7a2267a1aa24c1d34312fc922a99ab0a3ccc963f720b563c863bf876",
+            "0x4620bc4cbd5f43da7779dae0ca72c099cd05163f45bc02c80965c2e3240f90bd",
+            "0x4d13d4a1b6536c2474ff3d2bd9cefbd12ac707f574307e9bae0d3a70a67c5b4d",
+            "0x53fa09f177e52113de1e807f0da06c217189bf3fb238da84549bccba0612d4a7",
+            "0x5b20eb5bb9b681df4d2d860e79d143c3dbf4cfef5648b974b7aa8b992cacd1ba",
+            "0x62ad784c8d7259642a4faa66f1c4706b8248e36b77dde640f305bdfa1b5685b7",
+            "0x66b7986fa8a8886e97ebfe924adab7f7478b9cc63fafc881fa854ef291282263",
+            "0xa70a49aea90bd0929645a70d85ab4e11b39208da2754d42ec6721fcbe0136710",
+            "0xc23dccbbdbf53370670f7612dcac8e2a34126e40e5698a4ecb9bc29d77590c81",
+            "0xf1e9612986ca88ddbbe2d1aa84cdbbc604ecf66aa64c4d9ac5d5c677e9cf8abe",
+            "0xf69fd697d914922d7502288ec67016a0504e848d78a932afc735509fc411f839"
+          ],
+          "start": 1790431200,
+          "end": 1790434800,
+          "rows": 35898,
+          "event_counts": {
+            "book": 150,
+            "best_bid_ask": 2576,
+            "price_change": 33172
+          },
+          "first_recv_ts": 1790431200.4212,
+          "last_recv_ts": 1790434799.261286,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-26/14/2026-09-26T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-26/14/manifest.json",
+          "source_published_sha256": "404d1e7ef2cbb935d0f5af30052163af5762ddc1703e23ade62146bd603f96cc",
+          "source_published_bytes": 1245924354,
+          "source_manifest_sha256": "cac6ee3a8016e9ea07db346a06c19f49f544fc70cced7f9319609b7013063aeb",
+          "subset_sha256": "606fc862958349c420be0006d73b7b40985c3f36eff6b616c43a0177ecec339e",
+          "subset_bytes": 557385,
+          "subset_path": "data\\weather_full_books\\2026-09-26T14-3642a6bba47a.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x26eb0afd7a2267a1aa24c1d34312fc922a99ab0a3ccc963f720b563c863bf876",
+            "0x4620bc4cbd5f43da7779dae0ca72c099cd05163f45bc02c80965c2e3240f90bd",
+            "0x4d13d4a1b6536c2474ff3d2bd9cefbd12ac707f574307e9bae0d3a70a67c5b4d",
+            "0x53fa09f177e52113de1e807f0da06c217189bf3fb238da84549bccba0612d4a7",
+            "0x5b20eb5bb9b681df4d2d860e79d143c3dbf4cfef5648b974b7aa8b992cacd1ba",
+            "0x62ad784c8d7259642a4faa66f1c4706b8248e36b77dde640f305bdfa1b5685b7",
+            "0x66b7986fa8a8886e97ebfe924adab7f7478b9cc63fafc881fa854ef291282263",
+            "0xa70a49aea90bd0929645a70d85ab4e11b39208da2754d42ec6721fcbe0136710",
+            "0xc23dccbbdbf53370670f7612dcac8e2a34126e40e5698a4ecb9bc29d77590c81",
+            "0xf1e9612986ca88ddbbe2d1aa84cdbbc604ecf66aa64c4d9ac5d5c677e9cf8abe",
+            "0xf69fd697d914922d7502288ec67016a0504e848d78a932afc735509fc411f839"
+          ],
+          "start": 1790434800,
+          "end": 1790434920,
+          "rows": 8378,
+          "event_counts": {
+            "price_change": 7494,
+            "book": 2,
+            "best_bid_ask": 882
+          },
+          "first_recv_ts": 1790434800.596778,
+          "last_recv_ts": 1790434919.974282,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-26/15/2026-09-26T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-26/15/manifest.json",
+          "source_published_sha256": "5c5c4bb0c721956283590e65395b5e6e6a44f70fb4b7d0a1230f3edc43e26778",
+          "source_published_bytes": 1191038632,
+          "source_manifest_sha256": "c788bb86d62c568ffd030dd954457415aafcd8dc4b5e637699d50cdaff025a88",
+          "subset_sha256": "f8a58f33c962a552f6db3d89d4af7ff7ced19a7175d9fc68b8a932cf44f045dc",
+          "subset_bytes": 125594,
+          "subset_path": "data\\weather_full_books\\2026-09-26T15-3642a6bba47a.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-27",
+      "metadata_sha256": "01744b1d4a4423ed0677abca12b1ad4ab754b3429ca0ee03d03a91033ae98835",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 49880,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x2607ff7cef29d822cc9774ff2026a40895b4945a5f2506baa96a7cb4accf456d",
+            "0x27a5f387a8f73b961ac9121050043c6148ec3378df16f953adb1fcacd61f4c18",
+            "0x40480de56db431aa1e911683732c75c5c5b144840700c7f1b012eb5876562ec3",
+            "0x48708357e3e68a77a989faa8662a133637f922b9c40ae7655044b48c9c2aa315",
+            "0x5f35ef7baae1abc160a247ead2ae988b0093027c76395c6c9d61c2fb8bbd213d",
+            "0x96b8378771d1a60c3940937a6517c70d5ed3f0bdab517cb4e88a6febc4bba450",
+            "0x9a79a2f309251e077014f21abbd67bf06bab9cfe80f222194f8ee0e584af8f57",
+            "0xa2529ad155df3e2065731dc2097963a677ee5128847f05d122d37db92ebf1d03",
+            "0xa284727694cbcddf1bb6dfe9cb6b3c0a4bb9241ef48e6684f0bc109cb2486728",
+            "0xb17f6cb7debc27a906425ad42442b340618a045d164214790bc6cb5f445d11f8",
+            "0xeccf3c55f37dfe23fbbac3093f6d779dc0aa2c58134455ea96ce60a408c9c0f6"
+          ],
+          "start": 1790517600,
+          "end": 1790521200,
+          "rows": 48930,
+          "event_counts": {
+            "best_bid_ask": 1428,
+            "price_change": 47356,
+            "tick_size_change": 4,
+            "book": 142
+          },
+          "first_recv_ts": 1790517602.0162241,
+          "last_recv_ts": 1790521199.363958,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-27/14/2026-09-27T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-27/14/manifest.json",
+          "source_published_sha256": "08f45bc3e543a1b5b42d77df162c041c099bd47af8994f8b787ee5da3e32143e",
+          "source_published_bytes": 1189361153,
+          "source_manifest_sha256": "78ace5b8d0ddee8ba25a686cda91429fab190d06302e43e50a31123509f5e3ac",
+          "subset_sha256": "0473301696f277620c63e8b14c1a5dc7c4ebc03d52bc10229e40644b204f751e",
+          "subset_bytes": 802797,
+          "subset_path": "data\\weather_full_books\\2026-09-27T14-28751ff85531.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x2607ff7cef29d822cc9774ff2026a40895b4945a5f2506baa96a7cb4accf456d",
+            "0x27a5f387a8f73b961ac9121050043c6148ec3378df16f953adb1fcacd61f4c18",
+            "0x40480de56db431aa1e911683732c75c5c5b144840700c7f1b012eb5876562ec3",
+            "0x48708357e3e68a77a989faa8662a133637f922b9c40ae7655044b48c9c2aa315",
+            "0x5f35ef7baae1abc160a247ead2ae988b0093027c76395c6c9d61c2fb8bbd213d",
+            "0x96b8378771d1a60c3940937a6517c70d5ed3f0bdab517cb4e88a6febc4bba450",
+            "0x9a79a2f309251e077014f21abbd67bf06bab9cfe80f222194f8ee0e584af8f57",
+            "0xa2529ad155df3e2065731dc2097963a677ee5128847f05d122d37db92ebf1d03",
+            "0xa284727694cbcddf1bb6dfe9cb6b3c0a4bb9241ef48e6684f0bc109cb2486728",
+            "0xb17f6cb7debc27a906425ad42442b340618a045d164214790bc6cb5f445d11f8",
+            "0xeccf3c55f37dfe23fbbac3093f6d779dc0aa2c58134455ea96ce60a408c9c0f6"
+          ],
+          "start": 1790521200,
+          "end": 1790521320,
+          "rows": 950,
+          "event_counts": {
+            "best_bid_ask": 20,
+            "book": 2,
+            "price_change": 928
+          },
+          "first_recv_ts": 1790521200.386241,
+          "last_recv_ts": 1790521319.246309,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-27/15/2026-09-27T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-27/15/manifest.json",
+          "source_published_sha256": "29f98f4498e905e2a1c88324446bca0cf47b425df41a1802bc448ab80f2c9105",
+          "source_published_bytes": 1250732619,
+          "source_manifest_sha256": "0917f745c6c626ecdac247709d5cb2757bdf555c13d37d89bbe89e024f4e0a9b",
+          "subset_sha256": "5ff54f53041929e7cd795bc788757f4ffcdcfd439edda4f059f6845517fb4d35",
+          "subset_bytes": 18317,
+          "subset_path": "data\\weather_full_books\\2026-09-27T15-28751ff85531.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-28",
+      "metadata_sha256": "167c08f5667d830f0c686557f24cf400f787f41cd02820dce49d1dcd53dca384",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 17608,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x052056a52cd06389552516ca9b6153d63a319820754e96e4a446bbd4119284b6",
+            "0x17c097139cc69d0e5b37088327af5d8fb325897c93b74fdfb25f568504d25c88",
+            "0x1b4aaaabd67d05acc848c4691fe1a64e53638905d1ce71896438ff97ecd215a6",
+            "0x38c3f4eefc432606ccdf0bb92ebd6aca815dca7cd8ff71d6fb412cd27259a718",
+            "0x3be5e0ccdb24ed4dcc55267058d167b8b97fe7c66c366707d430d46fd36b6dfe",
+            "0x6783c926e911776f9cb056a7d59eac7d8f37e590b04b05944375fa730a080acb",
+            "0x6b03c92651abd93d9c3db3c14fc6e87ae664195a86bda6c96fb36be7a3b523dc",
+            "0x8e096f6f4c1f5946e39de89f2b1a7c6196c3453fc43089646b08165583265a9d",
+            "0xab15bbb4105734af2f98efc5b62e5e33da494d1fd81b7c491e07648b68dcaef0",
+            "0xe1febb51260a5bfc92ba1fd8f67829f88504ce226b4dcd8e5153166a4a1b39e9",
+            "0xecae2fc48652dbce5dcce1e140225cac45e17c18396b22d710812d7d3fb027a4"
+          ],
+          "start": 1790604000,
+          "end": 1790607600,
+          "rows": 14004,
+          "event_counts": {
+            "price_change": 13450,
+            "best_bid_ask": 504,
+            "book": 50
+          },
+          "first_recv_ts": 1790604000.385456,
+          "last_recv_ts": 1790607598.590703,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-28/14/2026-09-28T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-28/14/manifest.json",
+          "source_published_sha256": "2a84ba994450ea88daeb1f8ddfd2242b3bb8386bfc019a3742f4bb8677e9aab4",
+          "source_published_bytes": 1167290035,
+          "source_manifest_sha256": "acabfdfdeb42749ce692aff5286f4c0bde45ec9c22e9460e2fac7fd60dd33729",
+          "subset_sha256": "a7857439e2eeda2c24b160108648b09f0f0d01e6110d6ca9259fc10eab4d8498",
+          "subset_bytes": 230403,
+          "subset_path": "data\\weather_full_books\\2026-09-28T14-3dae251285e1.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x052056a52cd06389552516ca9b6153d63a319820754e96e4a446bbd4119284b6",
+            "0x17c097139cc69d0e5b37088327af5d8fb325897c93b74fdfb25f568504d25c88",
+            "0x1b4aaaabd67d05acc848c4691fe1a64e53638905d1ce71896438ff97ecd215a6",
+            "0x38c3f4eefc432606ccdf0bb92ebd6aca815dca7cd8ff71d6fb412cd27259a718",
+            "0x3be5e0ccdb24ed4dcc55267058d167b8b97fe7c66c366707d430d46fd36b6dfe",
+            "0x6783c926e911776f9cb056a7d59eac7d8f37e590b04b05944375fa730a080acb",
+            "0x6b03c92651abd93d9c3db3c14fc6e87ae664195a86bda6c96fb36be7a3b523dc",
+            "0x8e096f6f4c1f5946e39de89f2b1a7c6196c3453fc43089646b08165583265a9d",
+            "0xab15bbb4105734af2f98efc5b62e5e33da494d1fd81b7c491e07648b68dcaef0",
+            "0xe1febb51260a5bfc92ba1fd8f67829f88504ce226b4dcd8e5153166a4a1b39e9",
+            "0xecae2fc48652dbce5dcce1e140225cac45e17c18396b22d710812d7d3fb027a4"
+          ],
+          "start": 1790607600,
+          "end": 1790607720,
+          "rows": 3604,
+          "event_counts": {
+            "best_bid_ask": 88,
+            "book": 2,
+            "price_change": 3514
+          },
+          "first_recv_ts": 1790607600.9707901,
+          "last_recv_ts": 1790607718.739293,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-28/15/2026-09-28T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-28/15/manifest.json",
+          "source_published_sha256": "c7e86118e26fc054cdd5ceb417f92725a44911b12fe17f1da3edab6cde5a9cd5",
+          "source_published_bytes": 1161023982,
+          "source_manifest_sha256": "718bca1ba80ae0687d32b0ae11aa5cc9fe39cbc3c1547c910c27e9d2904b6f2c",
+          "subset_sha256": "9c5e0018cbd0b6314c88fe07848585deef4559f2fcb64bc979f42e685bf893ef",
+          "subset_bytes": 57108,
+          "subset_path": "data\\weather_full_books\\2026-09-28T15-3dae251285e1.parquet"
+        }
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "metadata_sha256": "dbca5612b7fc8ddcdcd55bfdc24ae37ff697e95d6a46118531f0e11dff1ce2dc",
+      "market_count": 11,
+      "outcome_count": 22,
+      "rows": 16874,
+      "partitions": [
+        {
+          "condition_ids": [
+            "0x0c7891faf066651498197341da8db6a4a95000b18eb7f4db4d08b64ea5e56ec4",
+            "0x264fec3faa36b92da38161470734d9aa9ba941a42ed52b166944e83d507bff34",
+            "0x381c0a8f33bcce99f1c867127b308bda0a57853b0374e02f07b1c23db985166c",
+            "0x4a3d773320314a36c4531b5fe8b99359c9e0e86642b94573f84697d8accbe03f",
+            "0x5065d266e8853f4d89be269b6f7cbf64c9c2222cf6f0a58b339df6c2856689fb",
+            "0x50d462e8ddbd37d4acc92b457b4ce4847506994b7b6d5bf74316db40b1ebedfa",
+            "0x557037fa9073d4825bc7fd97768c977adc2d9f7a4c820d13e6456bce3fc9026a",
+            "0x5878925eec4f6159a472c33604295a592361ea81e26607823302646ea22b52e8",
+            "0xd7355e5393c7448a1e59bb1314fa8a7bde00f1eaafda39c5715a8440be78978a",
+            "0xdf18d55ff5eed0a38c7daae4e2252c9e938e6ff0e09416ccd0caf36a0b6c3bec",
+            "0xeb1a338b1d7030bf477eedcd5f6f1a54a16dbf956b4e1a113e03006a17610321"
+          ],
+          "start": 1790690400,
+          "end": 1790694000,
+          "rows": 15432,
+          "event_counts": {
+            "best_bid_ask": 948,
+            "book": 90,
+            "price_change": 14394
+          },
+          "first_recv_ts": 1790690403.175204,
+          "last_recv_ts": 1790693994.673079,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-29/14/2026-09-29T14.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-29/14/manifest.json",
+          "source_published_sha256": "1482ff7a72bb905f65d43d151fc309b3258aba49b0a69ab8dc53c482f04f6b62",
+          "source_published_bytes": 1353130886,
+          "source_manifest_sha256": "daed72d0d8f499641b1ed81a705d21abea935bd397a9372e83ce15b16cef3735",
+          "subset_sha256": "6cfcaee6b4c23edf6ea6261c6e93d181837e063f9425c26217c65f77b02066f1",
+          "subset_bytes": 258178,
+          "subset_path": "data\\weather_full_books\\2026-09-29T14-9f91db167e0f.parquet"
+        },
+        {
+          "condition_ids": [
+            "0x0c7891faf066651498197341da8db6a4a95000b18eb7f4db4d08b64ea5e56ec4",
+            "0x264fec3faa36b92da38161470734d9aa9ba941a42ed52b166944e83d507bff34",
+            "0x381c0a8f33bcce99f1c867127b308bda0a57853b0374e02f07b1c23db985166c",
+            "0x4a3d773320314a36c4531b5fe8b99359c9e0e86642b94573f84697d8accbe03f",
+            "0x5065d266e8853f4d89be269b6f7cbf64c9c2222cf6f0a58b339df6c2856689fb",
+            "0x50d462e8ddbd37d4acc92b457b4ce4847506994b7b6d5bf74316db40b1ebedfa",
+            "0x557037fa9073d4825bc7fd97768c977adc2d9f7a4c820d13e6456bce3fc9026a",
+            "0x5878925eec4f6159a472c33604295a592361ea81e26607823302646ea22b52e8",
+            "0xd7355e5393c7448a1e59bb1314fa8a7bde00f1eaafda39c5715a8440be78978a",
+            "0xdf18d55ff5eed0a38c7daae4e2252c9e938e6ff0e09416ccd0caf36a0b6c3bec",
+            "0xeb1a338b1d7030bf477eedcd5f6f1a54a16dbf956b4e1a113e03006a17610321"
+          ],
+          "start": 1790694000,
+          "end": 1790694120,
+          "rows": 1442,
+          "event_counts": {
+            "price_change": 1310,
+            "best_bid_ask": 132
+          },
+          "first_recv_ts": 1790694000.9694922,
+          "last_recv_ts": 1790694119.684635,
+          "source_url": "https://dl.pendulumflow.com/v3/2026-09-29/15/2026-09-29T15.parquet",
+          "source_manifest_url": "https://archive.pendulumflow.com/v3/2026-09-29/15/manifest.json",
+          "source_published_sha256": "a12612facf7cb44faeb95c2aebedde51327553bb5ffbdb71333307ddb2692b15",
+          "source_published_bytes": 1166253673,
+          "source_manifest_sha256": "cb855b3d9f09b9f7a6590832d105944b4d3d6c70a006efbc4f4920c8e20e1809",
+          "subset_sha256": "2f85874531ab6a117ed7c33240a34b56737f89af244157d6fe77f55c04de980b",
+          "subset_bytes": 26917,
+          "subset_path": "data\\weather_full_books\\2026-09-29T15-9f91db167e0f.parquet"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Exploratory follow-up using all 30 original OOS days, not a fresh holdout",
+    "Acquisition completeness does not imply every quote is fresh or valid",
+    "Archive collector receipt differs from a hypothetical trader's receipt",
+    "Archive continuity and complete delivery of depth deltas are assumed, not independently proven",
+    "Quote and size observations do not prove a hypothetical live fill",
+    "Historical minimum order notional and initial tick may be unknown; current metadata is reference only",
+    "Published full-archive hashes retained but full remote files not independently downloaded and hashed"
+  ]
+}

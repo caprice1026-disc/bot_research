@@ -1,0 +1,32 @@
+[
+  {
+    "strategy": "forecast_probability_edge",
+    "date": "2026-09-17",
+    "period": "out_of_sample",
+    "condition_id": "0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38",
+    "bucket": "80-81°F",
+    "outcome": "Yes",
+    "decision_timestamp": 1789657200.0,
+    "signal_timestamp": 1789656553,
+    "signal_price": 0.02,
+    "model_probability": 0.2399637338980436,
+    "estimated_net_edge": 0.20850873389804359,
+    "forecast_mu_f": 78.48412866737362,
+    "released_max_f": null,
+    "reason": "proxy_fill",
+    "fill_timestamp": 1789657297,
+    "source_print_price": 0.03,
+    "source_print_size": 70.52,
+    "entry_price": 0.04,
+    "shares": 5.0,
+    "fees": 0.0096,
+    "cost": 0.2096,
+    "fill_transaction_hash": "0x849b9287849290477cc244b8421c1b74337479b61df2529574d8472a88041878",
+    "settlement": 0.0,
+    "pnl": -0.2096,
+    "resolution_timestamp": 1789711960,
+    "close_timestamp": 1789711993.0,
+    "settlement_source": "NOAA_KORD_hourly",
+    "resolution_transaction_hash": "0x01ea9a7d01b52bcbb77f0caa6e9056469dfe6a2dcf545e8a89aece07718267cb"
+  }
+]

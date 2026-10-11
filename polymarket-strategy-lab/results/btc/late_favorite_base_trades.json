@@ -1,0 +1,122 @@
+[
+  {
+    "strategy": "late_favorite",
+    "slug": "btc-updown-5m-1788803100",
+    "signal_ts": 1788803340.0,
+    "fill_ts": 1788803341.0,
+    "legs": [
+      {
+        "side": "down",
+        "token": "69091467656549865112383219170833899781003762782567639625288967688538980804969",
+        "price": 0.86,
+        "shares": 10.0,
+        "fee": 0.08428,
+        "fill_ts": 1788803341.0
+      }
+    ],
+    "cost": 8.68428,
+    "payout": 0,
+    "pnl": -8.68428,
+    "fees": 0.08428,
+    "partial_pair": false,
+    "cash_release_ts": 1788807051.0,
+    "cash_after_entry": 991.31572,
+    "signal_value": 0.41
+  },
+  {
+    "strategy": "late_favorite",
+    "slug": "btc-updown-5m-1788804000",
+    "signal_ts": 1788804240.0,
+    "fill_ts": 1788804241.0,
+    "legs": [
+      {
+        "side": "down",
+        "token": "42293114690089545520560347399505050372098092034190696368060255905924830827066",
+        "price": 0.93,
+        "shares": 10.0,
+        "fee": 0.04557,
+        "fill_ts": 1788804241.0
+      }
+    ],
+    "cost": 9.34557,
+    "payout": 10.0,
+    "pnl": 0.6544299999999996,
+    "fees": 0.04557,
+    "partial_pair": false,
+    "cash_release_ts": 1788807952.0,
+    "cash_after_entry": 981.9701500000001,
+    "signal_value": 0.14
+  },
+  {
+    "strategy": "late_favorite",
+    "slug": "btc-updown-5m-1788805500",
+    "signal_ts": 1788805749.0,
+    "fill_ts": 1788805750.0,
+    "legs": [
+      {
+        "side": "down",
+        "token": "14803530704878135391592150657827711148936614230825950198556440268622027939901",
+        "price": 0.8200000000000001,
+        "shares": 10.0,
+        "fee": 0.10332,
+        "fill_ts": 1788805750.0
+      }
+    ],
+    "cost": 8.303320000000001,
+    "payout": 10.0,
+    "pnl": 1.6966799999999989,
+    "fees": 0.10332,
+    "partial_pair": false,
+    "cash_release_ts": 1788809485.0,
+    "cash_after_entry": 973.6668300000001,
+    "signal_value": 0.04999999999999993
+  },
+  {
+    "strategy": "late_favorite",
+    "slug": "btc-updown-5m-1788806100",
+    "signal_ts": 1788806345.0,
+    "fill_ts": 1788806346.0,
+    "legs": [
+      {
+        "side": "up",
+        "token": "72381517499170559690495375852881675620519578420772514965050969501968085698451",
+        "price": 0.8200000000000001,
+        "shares": 10.0,
+        "fee": 0.10332,
+        "fill_ts": 1788806346.0
+      }
+    ],
+    "cost": 8.303320000000001,
+    "payout": 10.0,
+    "pnl": 1.6966799999999989,
+    "fees": 0.10332,
+    "partial_pair": false,
+    "cash_release_ts": 1788810085.0,
+    "cash_after_entry": 965.3635100000001,
+    "signal_value": 0.16000000000000003
+  },
+  {
+    "strategy": "late_favorite",
+    "slug": "btc-updown-5m-1788806700",
+    "signal_ts": 1788806944.0,
+    "fill_ts": 1788806945.0,
+    "legs": [
+      {
+        "side": "up",
+        "token": "100064850121887935468604739674131027332608823199381461563788850987753466581772",
+        "price": 0.92,
+        "shares": 10.0,
+        "fee": 0.05152,
+        "fill_ts": 1788806945.0
+      }
+    ],
+    "cost": 9.251520000000001,
+    "payout": 10.0,
+    "pnl": 0.7484799999999989,
+    "fees": 0.05152,
+    "partial_pair": false,
+    "cash_release_ts": 1788810685.0,
+    "cash_after_entry": 956.1119900000001,
+    "signal_value": 0.64
+  }
+]

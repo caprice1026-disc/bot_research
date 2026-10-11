@@ -1,0 +1,4 @@
+pandas==2.3.3
+pyarrow==21.0.0
+certifi==2026.7.22
+duckdb==1.5.6

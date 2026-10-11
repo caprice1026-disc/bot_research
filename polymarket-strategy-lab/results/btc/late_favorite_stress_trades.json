@@ -1,0 +1,26 @@
+[
+  {
+    "strategy": "late_favorite",
+    "slug": "btc-updown-5m-1788804000",
+    "signal_ts": 1788804240.0,
+    "fill_ts": 1788804242.0,
+    "legs": [
+      {
+        "side": "down",
+        "token": "42293114690089545520560347399505050372098092034190696368060255905924830827066",
+        "price": 0.9400000000000001,
+        "shares": 10.0,
+        "fee": 0.03948,
+        "fill_ts": 1788804242.0
+      }
+    ],
+    "cost": 9.43948,
+    "payout": 10.0,
+    "pnl": 0.5605200000000004,
+    "fees": 0.03948,
+    "partial_pair": false,
+    "cash_release_ts": 1788807952.0,
+    "cash_after_entry": 990.56052,
+    "signal_value": 0.14
+  }
+]

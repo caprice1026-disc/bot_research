@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "start_date": "2026-08-31",
+  "end_date": "2026-09-29",
+  "expected_days": 30,
+  "expected_markets_per_day": 11,
+  "selection": "Every Yes and No token for all 11 Chicago daily temperature conditions; no signal or outcome selection",
+  "decision_utc_hour": 15,
+  "primary_book_age_seconds": 60,
+  "secondary_book_age_seconds": [
+    5,
+    300
+  ],
+  "execution_latency_seconds": 60,
+  "initial_lookback_seconds": 3600,
+  "end_after_decision_seconds": 120,
+  "missing_snapshot_max_lookback_hours": 24,
+  "missing_snapshot_policy": "Extend earlier hourly partitions only for conditions missing an initial snapshot, up to 24 hours before decision; retain missing data explicitly",
+  "event_types": [
+    "book",
+    "best_bid_ask",
+    "price_change",
+    "tick_size_change"
+  ],
+  "causality": "Use only timestamp_received strictly less than each decision boundary; depth state follows received sequence",
+  "continuity": "Archive collector continuity assumed across quiet intervals and hourly partitions, not independently proven",
+  "reconciliation": "Initial full snapshot required; BBO mismatch invalid until actual depth deltas restore both top prices or another full snapshot",
+  "current_market_metadata_usage": "Condition and token identity and bucket label only; orderMinSize retained as reference-only, never historical evidence",
+  "weather_strategy_config_sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e",
+  "unchanged_strategy": {
+    "forecast_min_net_edge": 0.08,
+    "order_shares": 5,
+    "base_price_markup": 0.01,
+    "stress_price_markups": [
+      0.025,
+      0.05
+    ],
+    "forecast_mu_sigma": "Reuse original 30-day calibration; do not refit on these days"
+  },
+  "study_status": "Exploratory follow-up after trade-print study and conditional 20-signal L2 audit; not a new untouched holdout",
+  "frozen_at_utc": "2026-10-04T14:29:47.897595+00:00"
+}

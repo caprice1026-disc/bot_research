@@ -1,0 +1,277 @@
+{
+  "groupings": {
+    "outcome": {
+      "Yes": {
+        "fills": 5,
+        "net_pnl": 7.54176,
+        "wins": 2
+      },
+      "No": {
+        "fills": 22,
+        "net_pnl": 10.41386,
+        "wins": 13
+      }
+    },
+    "week": {
+      "2026-08-w5": {
+        "fills": 1,
+        "net_pnl": 4.21812,
+        "wins": 1
+      },
+      "2026-09-w1": {
+        "fills": 6,
+        "net_pnl": 0.63098,
+        "wins": 3
+      },
+      "2026-09-w2": {
+        "fills": 7,
+        "net_pnl": 1.9112,
+        "wins": 3
+      },
+      "2026-09-w3": {
+        "fills": 7,
+        "net_pnl": 6.2303,
+        "wins": 5
+      },
+      "2026-09-w4": {
+        "fills": 5,
+        "net_pnl": 2.22662,
+        "wins": 2
+      },
+      "2026-09-w5": {
+        "fills": 1,
+        "net_pnl": 2.7384,
+        "wins": 1
+      }
+    },
+    "entry_price_band": {
+      "0-.2": {
+        "fills": 6,
+        "net_pnl": 7.07128,
+        "wins": 2
+      },
+      ".2-.5": {
+        "fills": 11,
+        "net_pnl": 11.59574,
+        "wins": 7
+      },
+      ".5-.8": {
+        "fills": 9,
+        "net_pnl": -1.33312,
+        "wins": 5
+      },
+      ".8-1": {
+        "fills": 1,
+        "net_pnl": 0.62172,
+        "wins": 1
+      }
+    }
+  },
+  "positive_days": 15,
+  "negative_days": 12,
+  "net_pnl_without_largest_winning_day": 13.4261,
+  "net_pnl_without_top_three_days": 5.60726,
+  "leave_one_day_out_pnl_range": [
+    13.4261,
+    21.89852
+  ],
+  "daily_ranked": [
+    {
+      "date": "2026-09-10",
+      "pnl": 4.52952,
+      "attempted": true
+    },
+    {
+      "date": "2026-08-31",
+      "pnl": 4.21812,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-21",
+      "pnl": 3.60072,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-11",
+      "pnl": 3.3965199999999998,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-27",
+      "pnl": 3.0411,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-29",
+      "pnl": 2.7384,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-07",
+      "pnl": 2.68812,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-16",
+      "pnl": 2.68812,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-23",
+      "pnl": 2.5376000000000003,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-04",
+      "pnl": 2.4375,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-05",
+      "pnl": 2.3376,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-14",
+      "pnl": 2.3376,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-18",
+      "pnl": 2.1384000000000003,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-17",
+      "pnl": 1.5947199999999997,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-15",
+      "pnl": 0.6217200000000007,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-03",
+      "pnl": 0.0,
+      "attempted": false
+    },
+    {
+      "date": "2026-09-25",
+      "pnl": 0.0,
+      "attempted": false
+    },
+    {
+      "date": "2026-09-26",
+      "pnl": 0.0,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-22",
+      "pnl": -0.05772,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-12",
+      "pnl": -0.36628,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-20",
+      "pnl": -0.47048,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-24",
+      "pnl": -0.78188,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-06",
+      "pnl": -2.00948,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-01",
+      "pnl": -2.11048,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-08",
+      "pnl": -2.4623999999999997,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-28",
+      "pnl": -2.51248,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-13",
+      "pnl": -2.6124799999999997,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-02",
+      "pnl": -2.71228,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-09",
+      "pnl": -2.91128,
+      "attempted": true
+    },
+    {
+      "date": "2026-09-19",
+      "pnl": -3.9429,
+      "attempted": true
+    }
+  ],
+  "fixed_fills_cost_stress": {
+    "0.025": 15.91463,
+    "0.05": 12.51927
+  },
+  "selected_sample_reliability": {
+    "0.1": {
+      "n": 1,
+      "mean_forecast_probability": 0.1687354470206806,
+      "observed_win_fraction": 0.0
+    },
+    "0.2": {
+      "n": 1,
+      "mean_forecast_probability": 0.23914108494953534,
+      "observed_win_fraction": 0.0
+    },
+    "0.3": {
+      "n": 3,
+      "mean_forecast_probability": 0.323955453489305,
+      "observed_win_fraction": 0.6666666666666666
+    },
+    "0.6": {
+      "n": 10,
+      "mean_forecast_probability": 0.6542235386113207,
+      "observed_win_fraction": 0.7
+    },
+    "0.7": {
+      "n": 6,
+      "mean_forecast_probability": 0.7459751864653705,
+      "observed_win_fraction": 0.5
+    },
+    "0.8": {
+      "n": 2,
+      "mean_forecast_probability": 0.8750048598089901,
+      "observed_win_fraction": 0.5
+    },
+    "0.9": {
+      "n": 4,
+      "mean_forecast_probability": 0.9448846030498376,
+      "observed_win_fraction": 0.5
+    }
+  },
+  "selected_trade_brier_matched_midquotes": {
+    "n": 26,
+    "model": 0.2864869667823711,
+    "raw_market_mid": 0.29212788461538464,
+    "scope": "Matched selected binary trades; model-selected sample, not unconditional probability calibration"
+  }
+}

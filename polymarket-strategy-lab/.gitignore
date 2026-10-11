@@ -1,0 +1,12 @@
+data/*
+!data/weather_deep/
+data/weather_deep/*
+!data/weather_deep/metadata-manifest.json
+!data/weather_deep/books-manifest.json
+references/sources/
+references/archives/
+research/probes/
+__pycache__/
+.pytest_cache/
+.probe-deps/
+.plot-deps/

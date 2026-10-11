@@ -1,0 +1,115 @@
+{
+  "created_at_utc": "2026-10-05T13:40:14.671461+00:00",
+  "scope": "Additional analysis code, saved results and report; primary inputs separately pinned by input_manifest.json",
+  "tests_passed": 52,
+  "original_artifact_verification_passed": true,
+  "document_links_checked": 18,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "570ef61a8d31a100857a5f329f7f256778c4e10bbe5bf145119ac053732e42bf"
+    },
+    {
+      "path": "research\\weather_deep\\plot_results.py",
+      "sha256": "2d04a7510216390609dcb32e5971eb870bcce26aac89338d7af71197945c1902"
+    },
+    {
+      "path": "research\\weather_deep\\setup_plots.py",
+      "sha256": "c3fe84596fd1252bb67caee442e49fc7ea48a7279000faac193f6a193b9fcbb9"
+    },
+    {
+      "path": "research\\weather_deep\\statistical_checks.py",
+      "sha256": "983c74fe2a9cec894a502d41b83c32df4c7ab20c4e16116f595f097453f832a9"
+    },
+    {
+      "path": "research\\weather_deep\\validate_control.py",
+      "sha256": "4de546ab3a7743cd09fe78263b0cb47e4cf81e449a0c932aebeb402d8dcd54ae"
+    },
+    {
+      "path": "research\\WEATHER_DEEP_REPORT.md",
+      "sha256": "ad1829ea4ef26c0b4c8fdd7e7996eb797ff106580f69ee3c2a70b78675e2df95"
+    },
+    {
+      "path": "results\\weather_deep\\control_validation.json",
+      "sha256": "7943b8adac2710924c436c0fb1bdf9b4e53b9fdf5c795347d306ea0d15616746"
+    },
+    {
+      "path": "results\\weather_deep\\data_inventory.json",
+      "sha256": "a382b25b10fa21de42fd1a8e8a1206ef3671891e08d3626202b1339ba89ec807"
+    },
+    {
+      "path": "results\\weather_deep\\figures\\capacity_and_probability.png",
+      "sha256": "ac35b2075ae6df5fd426802718ff536938126a33db58fc162670a9d254efe68d"
+    },
+    {
+      "path": "results\\weather_deep\\figures\\capacity_and_probability.svg",
+      "sha256": "bb19ddf9a5b787441a9c5ace15c80a453c92465d3324114347e2706ba0bca3c6"
+    },
+    {
+      "path": "results\\weather_deep\\figures\\cumulative_pnl.png",
+      "sha256": "63b1ca949b7e02dcd6f0056cfc32d7bec55132664675959815378f3bd4ae0628"
+    },
+    {
+      "path": "results\\weather_deep\\figures\\cumulative_pnl.svg",
+      "sha256": "78808a7d38d9de0dd3f4d15271186ed88ed3730ec29e02dcae656803b4dc44ee"
+    },
+    {
+      "path": "results\\weather_deep\\figures\\execution_sensitivity.png",
+      "sha256": "4f779ca18b457caa90c90f41bdffe335f9424f900dfc92d9075bc1bda24d1096"
+    },
+    {
+      "path": "results\\weather_deep\\figures\\execution_sensitivity.svg",
+      "sha256": "df3e8405e8d67e2ed5f889594eb8dd0cbfa5178d5300bee48dd6a81248980718"
+    },
+    {
+      "path": "results\\weather_deep\\paired_control_daily.csv",
+      "sha256": "b4a60125e18082c0119959472e84814483c183af4b68cc18e7bed7a7d273e35a"
+    },
+    {
+      "path": "results\\weather_deep\\persistence_control.json",
+      "sha256": "0d60952fba9940900ad5715d07b179458483d2dc7e52843778296e0184989edd"
+    },
+    {
+      "path": "results\\weather_deep\\primary_fills.csv",
+      "sha256": "7d60617e2175a052e9c62ce01a8fe0d368175666bd5cc9843bdd3e3d09936ceb"
+    },
+    {
+      "path": "results\\weather_deep\\statistical_robustness.json",
+      "sha256": "ec140c2cc2add9661c578a3afd2b41fdf4f9889d67d9b7514ee463e15f897484"
+    },
+    {
+      "path": "results\\weather_deep\\summary.json",
+      "sha256": "f333011389322e3eaeda40447f928ed0a1313089bd21eb9ccfee7ec74c8324f2"
+    },
+    {
+      "path": "results\\weather_deep\\validation.json",
+      "sha256": "a593c611ac4344f41054c8ca0df165ffb11f9c98841a3b5cb0d6899fe3da1553"
+    },
+    {
+      "path": "tests\\test_weather_deep.py",
+      "sha256": "1f4ee2ac69a3d8d869c2118ea33b3be21212bcb3727bdece85475a5d3668fd94"
+    },
+    {
+      "path": "weather_deep_benchmark.py",
+      "sha256": "5ab8fc946c895b392cac6ee6c4fe3d217933688b8f9f3c2c7b1235fc37e72ba3"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "1cb1a424848712810449511293521aebe9b1da05c123d36250aa0ef69a3f8425"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "071e29887c9d41ea4ff9e2d7435eb3125bf91a46dc41674060b3120536a77552"
+    },
+    {
+      "path": "data/weather_deep/metadata-manifest.json",
+      "sha256": "f5bd92789d05ffcb560c936ac2dcab5aa73a00699519b6ecf4a8be5f0b062df3"
+    },
+    {
+      "path": "data/weather_deep/books-manifest.json",
+      "sha256": "74704bdfec90c94c84b53cb2394eb0bb5a525a4915f879349f12d4fc5ea7215b"
+    }
+  ],
+  "publication_update_date": "2026-10-11",
+  "publication_note": "README documents raw-data exclusion and exact-byte Git storage; two acquisition manifests are included for report references. Primary research inputs and outcomes unchanged."
+}

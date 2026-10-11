@@ -1,0 +1,3184 @@
+{
+  "files": [
+    {
+      "path": "research/weather_full_book_config.json",
+      "sha256": "8a9e1949f5c797c784e9cd964b880ff2dd7e7e57f99bcf68c54a9108d12cab79"
+    },
+    {
+      "path": "research/weather_config.json",
+      "sha256": "1cfd09796a36de866a7745ae5af74f3a2451704212c2eb722d58b1affbd93f0e"
+    },
+    {
+      "path": "research/weather_full_book_data/manifest.json",
+      "sha256": "17b69c7a9aa9da308e324bcc5fbcc04ad0764e1aef6ed376de566a4de53daa60"
+    },
+    {
+      "path": "data/weather_full_books/snapshots.jsonl",
+      "sha256": "d0ef6cd5333d8520da2762ff00c019ba213635fa99343e314d5b55cd6ee2262e"
+    },
+    {
+      "path": "data/weather/manifest.json",
+      "sha256": "afce368d3b929f18e52ab8d959cc7b848ce723296dc993f932c21292e2631962"
+    },
+    {
+      "path": "data/weather/observations_hourly.json",
+      "sha256": "41321b0498caf731636a235c2b2ea7ef5af70a9c47d2be39e63d6c0c274265ca"
+    },
+    {
+      "path": "weather_full_book_backtest.py",
+      "sha256": "3c1c00c0c410e9a8ff6da2f2db5163ba72de3b28cefb0625a9ccc09238e5c3d0"
+    },
+    {
+      "path": "weather_backtest.py",
+      "sha256": "4ce3d3ac712255e572a45b8b96da7e1e86515075ef5c743ecdd47031a2ac62b2"
+    },
+    {
+      "path": "weather_data.py",
+      "sha256": "06b68ef163c1ef4290ad387a9fe8552f03affd7bef41da4893a1c39b4cd3e43f"
+    },
+    {
+      "path": "weather_full_book_data.py",
+      "sha256": "9025228b7bff2a5e82334b80740ab1abc064f03a405e1ee5d2655e2751b8d6fa"
+    },
+    {
+      "path": "weather_book_check.py",
+      "sha256": "ff4f5c16e5611facb21882a3732be446f371d7b01ca88735bf8ffa68b3c57a39"
+    },
+    {
+      "path": "btc_data.py",
+      "sha256": "638e239f7afb520d1bd19155cd6e058ffdf86a71667158cc02e991c1c2fc19c1"
+    },
+    {
+      "path": "research/weather_full_book_acquisition_config.json",
+      "sha256": "2620d2e0ab644ef3f869bb45ca9465100ed27c198ab4e5f18c1ec902f64bd1e1"
+    },
+    {
+      "path": "research/weather_full_book_acquisition_config_v2.json",
+      "sha256": "c47a1f43c4d12e71a2f9f66363a6e4f170dcd02d50afb52db1ad797918e242f4"
+    },
+    {
+      "path": "research/weather_results/report.json",
+      "sha256": "0d64e8b82e6cb0c4f35cfb1a7333b90772d87d18e8d8f4e8a6535ac296666441"
+    },
+    {
+      "path": "data/weather/events/2026-08-01.json",
+      "sha256": "5e4a5fe704db0dfbcf711be9ad1a6a67c1b1c019d2a6c3624654b2fed89b3edc"
+    },
+    {
+      "path": "data/weather/events/2026-08-02.json",
+      "sha256": "f28d1130bf0fe3202609480f290c55f20c1ef7e41bb337dc93e9f27dc625b419"
+    },
+    {
+      "path": "data/weather/events/2026-08-03.json",
+      "sha256": "637aa1fc962edf5ae1451bc6cbb6f2cd7ff987c0f1566cf41bcfcf9fda035ef1"
+    },
+    {
+      "path": "data/weather/events/2026-08-04.json",
+      "sha256": "94ff33302c2ba1c111dcac1954e037db6d93cd35157ff3d5951a2e884170fb5d"
+    },
+    {
+      "path": "data/weather/events/2026-08-05.json",
+      "sha256": "2221350a67f36d4cff72e8eb89cb5639af77844b6b225a777183b7e7249069c3"
+    },
+    {
+      "path": "data/weather/events/2026-08-06.json",
+      "sha256": "17be1650d5ea00d8aa075fec0f72eba2ed6061b7066a18e8d2ce5d04f0404eba"
+    },
+    {
+      "path": "data/weather/events/2026-08-07.json",
+      "sha256": "83001878c58703796fd3e8c31116fc6b39e56b440d5a0e563b8e602c06d926fc"
+    },
+    {
+      "path": "data/weather/events/2026-08-08.json",
+      "sha256": "5cf0a6d3d950053601dcba9a4bb5484ba1b72315cb0a0d6fccbad9bd82ad3041"
+    },
+    {
+      "path": "data/weather/events/2026-08-09.json",
+      "sha256": "d3cd05125a33d49ff20a9b44e58c9264a09af22d0cd3a45836aba22aee97af0a"
+    },
+    {
+      "path": "data/weather/events/2026-08-10.json",
+      "sha256": "1b3cb782b627d7e291546053192c392b70a93e323e80b97746abc505bc63770d"
+    },
+    {
+      "path": "data/weather/events/2026-08-11.json",
+      "sha256": "b69e40c2dfe00e06b338ee023974c1bebad2f4035f39ee3cdaba0e72fef7546b"
+    },
+    {
+      "path": "data/weather/events/2026-08-12.json",
+      "sha256": "09bcee4b4b725719dbe24bb05d42b54d98732063371e313aab407d142a4ec4c6"
+    },
+    {
+      "path": "data/weather/events/2026-08-13.json",
+      "sha256": "8cca2010b9a5e674a0275ea7260b58e2e4364d09c967f4b25003645f3007b6a0"
+    },
+    {
+      "path": "data/weather/events/2026-08-14.json",
+      "sha256": "84ef7f85bb6e8a806f12443505a984b2726109bfe0ff491dc177ed94899a549a"
+    },
+    {
+      "path": "data/weather/events/2026-08-15.json",
+      "sha256": "149707a259abcf2edb63069480fd240c14c7793a3482382023726b3595ec5d00"
+    },
+    {
+      "path": "data/weather/events/2026-08-16.json",
+      "sha256": "73965ea159f3b2e67427acbd402893916caa79157ac4afe69a1a7247766ce1e7"
+    },
+    {
+      "path": "data/weather/events/2026-08-17.json",
+      "sha256": "1348fe2da4cae3b793ccccccd84503b169eb842e89385ff03654003dedf7ca6f"
+    },
+    {
+      "path": "data/weather/events/2026-08-18.json",
+      "sha256": "91c658198e9ea5e9b325501814041faea0ac64f26201cb7c2ffeabdcbd420773"
+    },
+    {
+      "path": "data/weather/events/2026-08-19.json",
+      "sha256": "d579c0cbbddbecda35f51511a7dbe5cf1ac9f4b16b1865bb811dd3c1fe702379"
+    },
+    {
+      "path": "data/weather/events/2026-08-20.json",
+      "sha256": "ac136ed36902a800b84255f03308aa9bfb113b66ac105c93f1a4656aa13b456c"
+    },
+    {
+      "path": "data/weather/events/2026-08-21.json",
+      "sha256": "d55475096f0806197db645411105f2d9c04748d8b0b150952e0f30a416bfb9bc"
+    },
+    {
+      "path": "data/weather/events/2026-08-22.json",
+      "sha256": "571a8a7ff32994ae7b47e099c21ac050b39ccee399f501dc7a2f168c4b8b1c61"
+    },
+    {
+      "path": "data/weather/events/2026-08-23.json",
+      "sha256": "4491852a671c50335c1b7e2191f66d21bd510752122161291727db1060a48b4e"
+    },
+    {
+      "path": "data/weather/events/2026-08-24.json",
+      "sha256": "24a3ddb4dbb7e80a23bd42d16e9d14970cb28e5c3aa001362942c29a7532bf6d"
+    },
+    {
+      "path": "data/weather/events/2026-08-25.json",
+      "sha256": "85528ab82cd7984cfb4312a3c2ab511600a4139d1916c409982f4a9327d07a3c"
+    },
+    {
+      "path": "data/weather/events/2026-08-26.json",
+      "sha256": "0956777e45b1abb15e2f7360de5c4e62c74fa8f876054436ba9c745c8a8bc415"
+    },
+    {
+      "path": "data/weather/events/2026-08-27.json",
+      "sha256": "a35257ebb8042b04fa825c1e10e68c935cbc1c52df5326595c2c020db4c57a1f"
+    },
+    {
+      "path": "data/weather/events/2026-08-28.json",
+      "sha256": "b81236e9926519f80fcb0cd88d7baed2e76fb5efba6c31b869287c96b927924c"
+    },
+    {
+      "path": "data/weather/events/2026-08-29.json",
+      "sha256": "a568b495014f74ff795564f96ef2cb2279ac10c8ae7999ca0e050899597c58e5"
+    },
+    {
+      "path": "data/weather/events/2026-08-30.json",
+      "sha256": "6bf54b33eba1b896201047e8b348e88002d85ab29f7df9affbb5eed7e2614da7"
+    },
+    {
+      "path": "data/weather/events/2026-08-31.json",
+      "sha256": "71486d56dc83ea285fd63706f6fb52774904be288cc9a808b83cbb555e4ab960"
+    },
+    {
+      "path": "data/weather/events/2026-09-01.json",
+      "sha256": "596ea845149b6db34e058832736ff5d176f1a9c95dd0c99a77926f9862c714fe"
+    },
+    {
+      "path": "data/weather/events/2026-09-02.json",
+      "sha256": "7e449bdbb3770e76a76932ab600bad77c3fbd96e31114b51bcaa2c434d6fca1e"
+    },
+    {
+      "path": "data/weather/events/2026-09-03.json",
+      "sha256": "5e7271208426548762fa61a6ef5d3965b29453453ff0b05a766a0f4dded06e6d"
+    },
+    {
+      "path": "data/weather/events/2026-09-04.json",
+      "sha256": "c5bdb37c4504132b9f8f5a78c204a4c50059de9882fb00ce5bc62cd26674326e"
+    },
+    {
+      "path": "data/weather/events/2026-09-05.json",
+      "sha256": "5af4450b7d6c78eadbb90d255e06050206b94f01da4c3162e1bbb953c4af91b2"
+    },
+    {
+      "path": "data/weather/events/2026-09-06.json",
+      "sha256": "2765d164405b843eacd37f69f1988ae93aa74919903fa84e9a2d2ef0d7259d8d"
+    },
+    {
+      "path": "data/weather/events/2026-09-07.json",
+      "sha256": "570187bf1dad9a8a709161e891ea20852c6aa4601a9db0a41b9114d04e7fb84f"
+    },
+    {
+      "path": "data/weather/events/2026-09-08.json",
+      "sha256": "c59d8439e9e2a70f057607430cf64d14774b07139e276e81748e79b5f49201af"
+    },
+    {
+      "path": "data/weather/events/2026-09-09.json",
+      "sha256": "0d6e45bba655f65a151e86da466af23b69ca33cb2110137371cd2d8331b82755"
+    },
+    {
+      "path": "data/weather/events/2026-09-10.json",
+      "sha256": "35bd7efdaac2123b7aad44dd1244211b1a655be4dec9f5af6e37e9efd941af00"
+    },
+    {
+      "path": "data/weather/events/2026-09-11.json",
+      "sha256": "02762dd3f2d72ea59d5ebd2bfb657d7d2898058300302044710c08b80eb364ef"
+    },
+    {
+      "path": "data/weather/events/2026-09-12.json",
+      "sha256": "9ff95667aaa6ef732eec2b2baeb6893054611ef80b79d43650788be51c19c74d"
+    },
+    {
+      "path": "data/weather/events/2026-09-13.json",
+      "sha256": "6de70b5b6b4bb9936c9f336d689c4cac75476058840a5a900e4b75add523dad6"
+    },
+    {
+      "path": "data/weather/events/2026-09-14.json",
+      "sha256": "e424b3a719fd9d9a7ef38d022bfd755e3a8ffb820e62593817599a8d1604cafd"
+    },
+    {
+      "path": "data/weather/events/2026-09-15.json",
+      "sha256": "ae7966b51a2c6c2ce85e9b263646a09a9236e959f908cf547ce20f39845de1d7"
+    },
+    {
+      "path": "data/weather/events/2026-09-16.json",
+      "sha256": "a36ad3e861164ac6092fb675c0d7edb5676cf2605e95fa81eca6190c04af252e"
+    },
+    {
+      "path": "data/weather/events/2026-09-17.json",
+      "sha256": "50d7da6869f069b9806d41e9db0a4659dee7080ad010119bcdf3af1b1f410ff7"
+    },
+    {
+      "path": "data/weather/events/2026-09-18.json",
+      "sha256": "61339d41293fcbbd94c573f3449614df1ac1851e5c89caca9457e327333c1819"
+    },
+    {
+      "path": "data/weather/events/2026-09-19.json",
+      "sha256": "b0bc01370848b59138ee33ff55308f8f5457d91146c769571837fbd0fbe0a01f"
+    },
+    {
+      "path": "data/weather/events/2026-09-20.json",
+      "sha256": "58d064049a0a4a1a853cd285b1eab75c8b3f5e9f330734744b17732332c073cd"
+    },
+    {
+      "path": "data/weather/events/2026-09-21.json",
+      "sha256": "8af07e4a0a8b235314ff73eb4e4746b7e7fceab724715c77adb21637ecd220c8"
+    },
+    {
+      "path": "data/weather/events/2026-09-22.json",
+      "sha256": "fe3c6b2baf0a4d8b3e9fd25661a31ab33d362a5aff69e66df37e7858b708aa63"
+    },
+    {
+      "path": "data/weather/events/2026-09-23.json",
+      "sha256": "224e261a7ab62eeca34621d36bb18c2788ba841e1e75aa6783534a102fce506c"
+    },
+    {
+      "path": "data/weather/events/2026-09-24.json",
+      "sha256": "140c46f48aa7dba94055da641f14cdaef5bbb0291fe06802687536d62583c0f0"
+    },
+    {
+      "path": "data/weather/events/2026-09-25.json",
+      "sha256": "197dce3013c752cf814d6ae53c1a7d17a506565a5f5344fffb86daf3d99540b5"
+    },
+    {
+      "path": "data/weather/events/2026-09-26.json",
+      "sha256": "4e92f2793add292fab6a00610e7d8dc18dbfab2d72ad6fa89b92e6b9df2d9b4d"
+    },
+    {
+      "path": "data/weather/events/2026-09-27.json",
+      "sha256": "01744b1d4a4423ed0677abca12b1ad4ab754b3429ca0ee03d03a91033ae98835"
+    },
+    {
+      "path": "data/weather/events/2026-09-28.json",
+      "sha256": "167c08f5667d830f0c686557f24cf400f787f41cd02820dce49d1dcd53dca384"
+    },
+    {
+      "path": "data/weather/events/2026-09-29.json",
+      "sha256": "dbca5612b7fc8ddcdcd55bfdc24ae37ff697e95d6a46118531f0e11dff1ce2dc"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-01.json",
+      "sha256": "82b3aa4f47c2cfbb832382ea864612139de3814f891483526c2a5a1806f0b58f"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-02.json",
+      "sha256": "906dd45086a999bb4d9295e5d7ecbbc6d090eb2b60d0b32205ddf47abb290109"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-03.json",
+      "sha256": "e1df31ac0fd27325b18d7cd6cfe100751ede6a3032ed7f4d1bbf04bd18e9fc70"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-04.json",
+      "sha256": "1d15e39f085c2b61dae3430d571907f83cf5d98d99a8d6cd1c448703d4c90e5e"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-05.json",
+      "sha256": "417ddda0b8cfcfc15726878c219b7f1091b49b513bce865d8ef7c692555ccd81"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-06.json",
+      "sha256": "1a31e9e9b6c22599b326b051db0ea58927af204d4502937f33e92ca101908cec"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-07.json",
+      "sha256": "b648032f8122403b851c2b93d5bba416bebf9ed294b2f21d0ea940df7578248d"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-08.json",
+      "sha256": "56526a775a455342a105e9a2034b0b80d44e478005fa40e6206e888a6a2964de"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-09.json",
+      "sha256": "134d3f1104046f6f87da5b1817eb3f131c39e8c9918797ed3b9bff845143ae07"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-10.json",
+      "sha256": "b3856141df14a8b243994e9f88235cfc1f9b38205ff54ef7c349ccbae7a3301e"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-11.json",
+      "sha256": "760e3b9d593dbc2123ad728daaa9a5bb0b34b061545056f0d39f8d918a7366cd"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-12.json",
+      "sha256": "d525dbea15385fc72e5430e898c899d3789b1c4abd8ad1f1463bf39f2c18f400"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-13.json",
+      "sha256": "2d58c3790c21283c8356925eb14e456a905b09fcb8c52f18fb8ce2eb137b8a1f"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-14.json",
+      "sha256": "b23c19721f12798c4d48cf635ef56166e9c81eea0ad250a0f9e78c1b737949bc"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-15.json",
+      "sha256": "1382a375998feaa95bc055feee19f71eeef1f94df0e222e9579b7f8be580256c"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-16.json",
+      "sha256": "b16a41e94fd93b8b0adb7903505b6fb75bb5286902ceb1c649ba22de995c6af7"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-17.json",
+      "sha256": "3e66e10d7d6463e9ec1576516a6127807db26512e05e34173f91b7a0d23642a2"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-18.json",
+      "sha256": "a4115ffaf06da11b718c0c19e820d20a540cf9518ac2802d8d33b67a02c2a6be"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-19.json",
+      "sha256": "3e71891ea79be0d2739ef47ae89c4464ac10ed9caa01e1704a5979b52398cbe5"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-20.json",
+      "sha256": "a197b49218d7862ae93f94ed6597551dcdaef903bd4232c66e35494047449a85"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-21.json",
+      "sha256": "b89a2cd61c06bcab5ef4a777c0462e9daa72bc32f466045c341bc4d133eb2cfd"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-22.json",
+      "sha256": "98bb22e63c48e31f001c8eb912b856d161eb2c0bb9f04347e693c8e86c9e4105"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-23.json",
+      "sha256": "0d50dc42e39f069ec1c3ddfaedc6806a38663f418f92a81875ec4421baf7bd51"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-24.json",
+      "sha256": "5deb1dbcf8a4fe6e0fd2e8b16c17a33dc9e9017575755adf8d84baec638f877d"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-25.json",
+      "sha256": "5aa88bdd53b8a9d1576a02754fb0413bca66d95baf1c63f121595d62dea43bb3"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-26.json",
+      "sha256": "d15ba6540ce41b5b6f9c3f3ee393c574a326dba3e69960494ac5fbb3e5e2b90c"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-27.json",
+      "sha256": "d2df6f85d8b4fc323a767e4168b2bde7ed45467e4e614fc973d758a2ff90f025"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-28.json",
+      "sha256": "47d56d4beda97ac172204c704656942f9537bbca3d0162c26a96382c598bba71"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-29.json",
+      "sha256": "2eabd08e15ba854895f4b26d6c0700f28f0f87e236ed3c8c2db5f277f541577a"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-30.json",
+      "sha256": "2670d7538e0a7f82cee3351d98e89ff408e8b516f96bb234003387d1940e772f"
+    },
+    {
+      "path": "data/weather/forecasts/2026-08-31.json",
+      "sha256": "477a07cd0d99fa2d0b5ef771400998aaa8e962997d82c40d1148414b2097f61f"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-01.json",
+      "sha256": "d47a9f7fa536406c05c67200e6df985caac061dcafb671a8dbbc23b7d0ba5e68"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-02.json",
+      "sha256": "c4da4c8a530a8abb2fa60d674810eda75dcf3d03a794c9cd4fb7cbaa25f3cf81"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-03.json",
+      "sha256": "770c75489a5ed7703043fac68aa80c76d2e73d149829730c30cd35ea3c8c2e7a"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-04.json",
+      "sha256": "5abb24d54ba84c46ae3492bad33323c205cb1766cb16b62836035d1efb35a3d8"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-05.json",
+      "sha256": "5fd82c621df1e70d23ff0a7fbfa5974b0a57fa22eeabfe5085078ab3068d5a2e"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-06.json",
+      "sha256": "a016ed0530379545224f7c2c9d786988048bac15af7a6b929529d03e9ac4b9b4"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-07.json",
+      "sha256": "25464aea47380bf3a46b6115d216b5c264770409e620f261b5a8a788ce7ac3af"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-08.json",
+      "sha256": "2ff2f84a55592f09ae3a927e0c61c0d2f33ae6bb71a5f39f4ab8a6a05c965136"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-09.json",
+      "sha256": "0521f8b6fc8bde9e8d51ecce61fb185d947d90d42ae9ab7e366071c3cb17cc48"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-10.json",
+      "sha256": "08f6fd70d293b513c936ce74b933aedcfc09a8fa93153b0ca24ea07fc2fbef7b"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-11.json",
+      "sha256": "56d2c0a84eaf116b42d768dea06873e2b49fe002a619c538c94ff8d7bc109eeb"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-12.json",
+      "sha256": "20cd91b6e794a342be6992ecf3e2561e1040cddff1effe7df36190c871e08bcb"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-13.json",
+      "sha256": "ce906fd3f581e1fafb36074c47b0f6adcdabd8689af2d31eb9c2cd8b478d2031"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-14.json",
+      "sha256": "be069a063cd1bc693fa51424b7e34e5554874dbfc5b8204c83956a65017c3f96"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-15.json",
+      "sha256": "cbf9fd6dc7dbfab3c0fd2957a4f8f475b97e8e54fc9beb9b79e2dcb0bd0abd16"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-16.json",
+      "sha256": "5476cbd48d252858d302fb4b03abba37da14071bb555253e550f7893922c1664"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-17.json",
+      "sha256": "7b8597d543869d275c301e0c11aefbdd73306973242c112690aae85d2cc67313"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-18.json",
+      "sha256": "0b529bbd38fd9d79d9533ad1a2c4c81c8108af7c33ad3c1ceeee449e13dda2b9"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-19.json",
+      "sha256": "9847768e5c04dd6d9913432f44ba3c0c50f5f35ecb6c140b65205773c53650f0"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-20.json",
+      "sha256": "8e98d78b39c8409331360bc5b847f398488ee8326329702742c1d37916addb42"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-21.json",
+      "sha256": "967198b727f5e822d50ab382700ce56e84d0951493ab7cc54ed21853b9f91304"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-22.json",
+      "sha256": "a5fe19eb90df2978393ef4dbc5582a8861810d08c5907f053f618f1ad82203ab"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-23.json",
+      "sha256": "97ffad8c70f1973c40670fce351a84b2f8cd4837b0a5f697deaf241db731d648"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-24.json",
+      "sha256": "109dfb0c967df8857f1813869da9ff63db839d51a58006fdc78961903b4402b7"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-25.json",
+      "sha256": "3b1e6e9b72a488c2e1ce865407b1faac5600eddbbec8dc460bc4b0ee07ff37c2"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-26.json",
+      "sha256": "4b26c3044420f53f3dabe9ca9e2ff3e74a1447710325a92dbaaec5708c3e8f89"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-27.json",
+      "sha256": "5e53a6bff027adadd901cd619cd414df49212e2afe5d1ecbd11bb7d7ad752265"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-28.json",
+      "sha256": "d540e73af7385813d3d9b6d67a9a6ff64de93d42baef6c1d62602ecc47e344ed"
+    },
+    {
+      "path": "data/weather/forecasts/2026-09-29.json",
+      "sha256": "47b26cf1d6e5de38c85e7d32ce10e54cdaa0251b463f71cf1969ff9990c6e443"
+    },
+    {
+      "path": "data/weather/resolutions/0x002c1e072727d7e6d2be82b40dfb7802f5f40d1b571a9e3bc82f496a92377039.json",
+      "sha256": "96e3d798eacf8d84137e8b865197cf79318f137a19911db60786bc2ac41fee8f"
+    },
+    {
+      "path": "data/weather/resolutions/0x006c3b1e44c63f089defe4cfa8030101c84607b9eb6165b553e521d265b54760.json",
+      "sha256": "336692decec67ab42bf5616eff64d462f43f6cfd17f862768197d2a642251be3"
+    },
+    {
+      "path": "data/weather/resolutions/0x00d7ecb805312d6772c5b2213d07542670f2639bc14f23b7fa143a694230abff.json",
+      "sha256": "879b770cfc1899e41810572108c88c657d27a0acbf0531d6ab6ad37ec38d8326"
+    },
+    {
+      "path": "data/weather/resolutions/0x0137a77924db095749eb70850cc98bcf090e99f9e569d025f4782dc72f145651.json",
+      "sha256": "6bc85497fd3d7344beefa4795f70901ec30b15e5e8f224e6605d4a136cb1a219"
+    },
+    {
+      "path": "data/weather/resolutions/0x01a30ff75c7a596caaf69cf6c6779326dc4a484343a0a77199f6ca392fc39dde.json",
+      "sha256": "0bb722b3d3281e749cae4822445f5f6071d5540d7034a0dd5b48242320c71a65"
+    },
+    {
+      "path": "data/weather/resolutions/0x01b064ccc45b22f3269efd372abd94a8a5e8cd05a004b7adcb34c77a0b801041.json",
+      "sha256": "ca11606b661ca88dd6b63ac789baf23962e0e3830041c7d803bb08a2424031d7"
+    },
+    {
+      "path": "data/weather/resolutions/0x01d3df59a7ace261a46dd9aad20c771a989137d70893a7b1692eebd878d6f2b9.json",
+      "sha256": "8249d89ead6cd5c873b2315a68f981076ccee124c98e0dd1412af62bb4150003"
+    },
+    {
+      "path": "data/weather/resolutions/0x0219f1038284c62ee411e0e0e74f45b9549803e74cecfa30edbe2b34226a5163.json",
+      "sha256": "3c71f7db3c490e365e36f67dc34cedab578e956c421198ac2baa01a797405de8"
+    },
+    {
+      "path": "data/weather/resolutions/0x022ebde775a74d24f28bef7b3f4db6ba606182085a52a7b7bdf78d9b6385ea31.json",
+      "sha256": "1afac78260bd6e4851fecb24e6a4d7678e7530022a8f5be125fce6d25ab27bed"
+    },
+    {
+      "path": "data/weather/resolutions/0x024b70f26217f6738b3d2b277d374d09e5fcc9f7a7f309124339e7a42b831e0d.json",
+      "sha256": "153f134507ebbf93dd0a1d47086b77b0cfe47dac71ce88e4b617392ae18c154e"
+    },
+    {
+      "path": "data/weather/resolutions/0x04186837b5b44755ddc8f1661b7fd823ee7a8648ddaa39890a4babf5f504f05b.json",
+      "sha256": "486913ce272a06be2abe4f8612177abb4ab5ab7b237def6a84f090252eea9b3b"
+    },
+    {
+      "path": "data/weather/resolutions/0x045cc007230965b2a1ab8ff9230281cb684adcb8d11f8feb5b424526b5b806ad.json",
+      "sha256": "74d8a745584d835bf1c701af9307f36b12fca21c259228edac3eb77a6c54a5b5"
+    },
+    {
+      "path": "data/weather/resolutions/0x0473bd447450352f19cf88b04ec53dce532a499cfa365151586142f8ef48ab4d.json",
+      "sha256": "24a935a5b8cc9a2304efc22f76292f3c4d1df6050c91cde15bcf1ed9d3e11e9b"
+    },
+    {
+      "path": "data/weather/resolutions/0x04d83bb79f9b063b4de318a7b29697b0e59b5bb7c5d97e9fe6f52cd1041d3430.json",
+      "sha256": "1b05943c675b94948676c98a8a1cab3e9167179b4ab8a8286730b34966a3df76"
+    },
+    {
+      "path": "data/weather/resolutions/0x051a70dea254386a7e6d7b0c2919eec2f42b7f0cfa43de14815aff8f1a020228.json",
+      "sha256": "b9f658621dd6e66ef77dd647a078fc497281068c082122852a95cebef3353870"
+    },
+    {
+      "path": "data/weather/resolutions/0x052056a52cd06389552516ca9b6153d63a319820754e96e4a446bbd4119284b6.json",
+      "sha256": "9f1e3bbc7022ac47d76ecdfe5deb91c491d9cdfdbec35901a528f348ca89efed"
+    },
+    {
+      "path": "data/weather/resolutions/0x052ea512f41e6e9cb477e3eb6c0cc7e186efaf448f9fbbad389c7383c70c75d8.json",
+      "sha256": "94a4cc36d9f43a85bcb7556a1babb724b960ea9661b3de7ebd68ae8f6e0a2221"
+    },
+    {
+      "path": "data/weather/resolutions/0x05b84dfd97320cb9b0c75f847525b7afee373160b669d116ddf8cd9cb5bf8ace.json",
+      "sha256": "cd220ee69539792f6ca7d4ac609216c0a2246335f393bc14d0498e3be4fa0de3"
+    },
+    {
+      "path": "data/weather/resolutions/0x06a0cf79cc3c6107e1ae9195c7873109db3a4c115f984147b47c3cf1c1d29c7c.json",
+      "sha256": "f715bad5ec1244476e69c1e0438fddde4c49b7111b9d1aaf2b13783dbc76c815"
+    },
+    {
+      "path": "data/weather/resolutions/0x06d41c3a27fea0f6558df7b7d0ee98d1a75fc81a4766b8b116174b89b32d47df.json",
+      "sha256": "9f2285424a942842ade99e5e5ad5bc23940fccd1dc94e97229b95815e37daab7"
+    },
+    {
+      "path": "data/weather/resolutions/0x06d9aee295bd25e78a67f6e2f125978e5da6dd92144d3c3f4fe884f7f43ab915.json",
+      "sha256": "4682502a9dad57644c05e1cad2f59f856a936032e3104b5ee866a24a7d1e2a53"
+    },
+    {
+      "path": "data/weather/resolutions/0x0723dea0bab1479b49a03c1e9d592436727fd61b2dfec032c9aac849696f2962.json",
+      "sha256": "ee790b341ce1af77c96f9984e799dc25220e33a0ec53edd07b71479c3b0d5c34"
+    },
+    {
+      "path": "data/weather/resolutions/0x073a6682226768424164df60245f40325c2dbc7409a4b3d78412f8081889dca4.json",
+      "sha256": "1acb8b2374e14fc6789c229f38f4896db275a3e9df406fa6142606183a94a640"
+    },
+    {
+      "path": "data/weather/resolutions/0x07e9bdac586a614ff4bba260ad4581a355d1dd8910606447f922bbc108befef5.json",
+      "sha256": "6d73d7f103ccb8d862980fe1a66b628870ca56c6801ecbc56de1454c2cf5739c"
+    },
+    {
+      "path": "data/weather/resolutions/0x0831bfe94c04543bdc4dce80c5ebd1b24c6687f9eaebd25a14b07d11e1442d75.json",
+      "sha256": "35592c495c9c168e36ddba3bb99737a83c5ea08229edd5fd00abe2725b7ed2fa"
+    },
+    {
+      "path": "data/weather/resolutions/0x08578eb5e44d551802cc73255250cefe0b076586dd43f6996e04d9879ef1b5d6.json",
+      "sha256": "629a9ced944c543c2b7384cbd3811c53e732069c31d5176481e2d6bf4cb9cb24"
+    },
+    {
+      "path": "data/weather/resolutions/0x0884f171a6c32ff2d5cce6e5a9d3cb66c55d495a3656e6ff990159575e26c072.json",
+      "sha256": "5fe17fa7e27264be8954751c3d2920353aca4dc47cc03eefaf46fda9e07c31e0"
+    },
+    {
+      "path": "data/weather/resolutions/0x08e79cc5223e98d7ddaa6cc1368a73f759f614105396da83e460f9783ed2ec48.json",
+      "sha256": "62e16925ccc07d7f63d64ae9df1fdd42cab38a51f97df58e416398d46887f0d2"
+    },
+    {
+      "path": "data/weather/resolutions/0x08ebd9f82e91ad678d1308d419de3e0677b7ea5d79fb33fddd361e9c374e40d5.json",
+      "sha256": "d7723f6018272e4815bf65cb38fb3008127a26c01ef456a7dd5b7bbf28da7fb1"
+    },
+    {
+      "path": "data/weather/resolutions/0x09306e9a2e797cbf2c7f0ac83b1bf4fea29df9ca40d617a002a7df2a68244d5a.json",
+      "sha256": "2ab2d02752f4c34e260c3a29c15e7593482128ad9903377599838731ef6297c1"
+    },
+    {
+      "path": "data/weather/resolutions/0x0a07862f7a613e06f48569c95695726129e44f7d808ec9ed81e19ed69fe70496.json",
+      "sha256": "fed7813b8301321a5c41ed0df3518381c56d658bf1ba6c5733ed3eba6282dd75"
+    },
+    {
+      "path": "data/weather/resolutions/0x0a35b4e72d09279b670535c6fba444a10d104fb3d87a410ca2fcbfeb1e065a96.json",
+      "sha256": "1000a0ea6b14b13d2e5b314a3aa6258de599fe6546e579ccf3d67f1c86720bbf"
+    },
+    {
+      "path": "data/weather/resolutions/0x0a9ef8ee1d84d71b7a2e241558cf7ca6c2f84d1dffbd5a6ad98745a7596e5d78.json",
+      "sha256": "2150abfe5e16cd15c6034082ce5576322b7472f601ac7ffeba0260d996285159"
+    },
+    {
+      "path": "data/weather/resolutions/0x0ba4b3770ee276b82beae239f6b61238947c00074aaa934632c9b957feea4ffb.json",
+      "sha256": "375956cb2c6641f9786bb3f96453bb3c4c99bf8f30f862050ff836efbf022c67"
+    },
+    {
+      "path": "data/weather/resolutions/0x0bb15676f2897f7d8217b06a09c44db65d5df312ddfd3f05cea7e830d766605f.json",
+      "sha256": "86ef2dd29488050784836efe16104e44c99505d12ca1c6bafde14001527aa4aa"
+    },
+    {
+      "path": "data/weather/resolutions/0x0bea1dc01787ba87ac80023933ad81408fa6f5769d763476f7fae200974f6407.json",
+      "sha256": "6c2c9fe798e6dfa25fcb268422a7ce2402a4fdb2d6a62d62ba47546c452e4452"
+    },
+    {
+      "path": "data/weather/resolutions/0x0c3454c6dab057a6edb253ccd3e3d7d060d59590140bb15d856051b1d02c049f.json",
+      "sha256": "b5f03a50d31361ff8582867eb4cb108be0a27ff5fcc286e41bd96ef02a3949b0"
+    },
+    {
+      "path": "data/weather/resolutions/0x0c7891faf066651498197341da8db6a4a95000b18eb7f4db4d08b64ea5e56ec4.json",
+      "sha256": "1eccf80fb3eab9be2d726348d5f1c061bf17765ee19307e63530ef9e1a6a840b"
+    },
+    {
+      "path": "data/weather/resolutions/0x0c94509ebdcec14e5d013f1ebb0f44821a11ad7dc04698e52936bc98f087bdb8.json",
+      "sha256": "e024defc9756402a67d462e861306f785cc71ecf03d418880d37a9a76c3b5b4c"
+    },
+    {
+      "path": "data/weather/resolutions/0x0ca2ee23b57f53a187e857753df3bcdbcb219f6283c3f4b537a9ecd720171c79.json",
+      "sha256": "91f0189c336947ece6e4cd1d0bb700b4afe968f408546d646bfa485e1071ff6e"
+    },
+    {
+      "path": "data/weather/resolutions/0x0ca6634bddc64656fe9655117d0918947147001618170b983f81556b9f4739f4.json",
+      "sha256": "269fa457698edf6f723120bfaaa5cb03b1162767fa70721d834149e22ddfd84e"
+    },
+    {
+      "path": "data/weather/resolutions/0x0cce6e53967fa2e894f0798aef3c2ad449fea199b3cf18cb5d7629eb42956e95.json",
+      "sha256": "0204bd94cf36a509fe225bd052bfbc6440770e4fdd86be39c269e4743ef779d4"
+    },
+    {
+      "path": "data/weather/resolutions/0x0d4ed9413ec0059c714ccc9dda7a5549de278594411829a06a3bf1391ae91f00.json",
+      "sha256": "9bac4b8ab3b2138937dcf064f4e614de86d922fb5ccf5a8e22637e19e0212d99"
+    },
+    {
+      "path": "data/weather/resolutions/0x0e373bdd4fce79f85c7dcab55bbad322b9f2b1822ac10e1ef07ad17ca3773db5.json",
+      "sha256": "b07fb9e782551d9d2cf6bb9e759026bceccb914c4e7017dfd0ba3389b447cb8f"
+    },
+    {
+      "path": "data/weather/resolutions/0x0e7b1cc0a2fae5c03478a2bbafd3d33756b27d94164b4fbe4caf8ad3fa288783.json",
+      "sha256": "5311b829af02e85e9bab046aa1cf10de51a26287e2ac3d28ef94ad960b82197b"
+    },
+    {
+      "path": "data/weather/resolutions/0x0e9b87dc84254bb7eb2dc9ed0efa6df910ce4b9a221ba62895357634a684841e.json",
+      "sha256": "0974fa607269ab8b02447db4d92014a1d80a6869ab63d767580e0758ad3a424c"
+    },
+    {
+      "path": "data/weather/resolutions/0x0eea8db2f424192fd241fbe28dcf2321b90356e60d40eb2bb56bfcc74c21f4d9.json",
+      "sha256": "2cdbaef0d25c3be7e055392d7c1508bd603c5ded1b81ff883f6ccf8d7a686060"
+    },
+    {
+      "path": "data/weather/resolutions/0x0f1408a1084289080ea0337879849fc4327cb9be6acacd8db2ad1a5e0c10bfde.json",
+      "sha256": "a47913acb99fdc3c769fb40f749c0fa9d8f6a8f510e88fc5b248bf31f0d80c70"
+    },
+    {
+      "path": "data/weather/resolutions/0x0f6d8e984603d5c9400d12e806d7a932e54a74d50618100689eb9fa5c19d6be1.json",
+      "sha256": "3f39baea5007ce2d2bbb1894d88f32517d6bc1b3ccfe317f3befd9c87ef19809"
+    },
+    {
+      "path": "data/weather/resolutions/0x0fb0d690cc98f671d8b29e0fc8dfe126a10d6418f735e43eb01213738ff4b5e6.json",
+      "sha256": "882e2c89835cc579af51cff8278c84d33a9fedff60ad6b9ee2a5824422a73303"
+    },
+    {
+      "path": "data/weather/resolutions/0x115ea6d28f7ddcef060918b320a9bcbedb743e72ab2aeda80167632f40b63b59.json",
+      "sha256": "115047f4dbe23e0bfb16c1405243b92f49074b9c58e7c7a570b85becff03d42f"
+    },
+    {
+      "path": "data/weather/resolutions/0x11d0635f9e41ecfb2d02662a370a4e0c37d9f6bb98621082464afe7cc54179c8.json",
+      "sha256": "654b065c89b9512e05ba6aff62a958dbc5af19a8544bddf9357f9de3e8bda41e"
+    },
+    {
+      "path": "data/weather/resolutions/0x11f215144b698e6f4156dbf87b8ccd07ac035be82a9c268d7b10447dea0fa118.json",
+      "sha256": "a54b36147c65d534f2948ffb77c629d1a9f9c80feb627c36dd810291d075d2bb"
+    },
+    {
+      "path": "data/weather/resolutions/0x122285015c6d8ba05e1f24b03114095c80edc509712ecce4d43ffdeef9a9ef33.json",
+      "sha256": "cf5bf144e9d4d648eb3d2d25e33f046d87d03255c3fe005f317089a2faa1c54f"
+    },
+    {
+      "path": "data/weather/resolutions/0x1289ed7afbcd7a9de002b0bbed967664893940f20105d50a3c4ead324be592cc.json",
+      "sha256": "264ace96145b49d87f35a063b6b03c1677ede62b2a091eaeaef0e86ca7c66be7"
+    },
+    {
+      "path": "data/weather/resolutions/0x1295228999e3965ee333b48450e2bd530e4e8a0e3d818b5032ae07377c1aa807.json",
+      "sha256": "849a0a0f42ff74b55bf6c0eaa549460d75ce4d54e27ba296da8f02196532b8a5"
+    },
+    {
+      "path": "data/weather/resolutions/0x130f32cea8d0bd0f2aa9c8d86b212d6b5d6f11b287afe2c5232a7805dc3d2302.json",
+      "sha256": "276ad051bff24c7afc3121166ad1e9015398b81d136faff702eaafa3cf2e14c2"
+    },
+    {
+      "path": "data/weather/resolutions/0x13835780e1fd0dfd95da0dce330fc5134dd0444639dd88f30d2efa4c8911f56e.json",
+      "sha256": "ad4653539436599b325572e393c83938b4955d5c1c2ee5572195dba27a85bd26"
+    },
+    {
+      "path": "data/weather/resolutions/0x13b3d2509639a4677f1e2fe1b3c92395037a67dd11d083a9676dfcdbc0d9b5e9.json",
+      "sha256": "e4976d7c84ec720c0fb0c0434cd0fc3c36eff3d68b1e35195897859cd3d2f032"
+    },
+    {
+      "path": "data/weather/resolutions/0x14095bc36bd00fb34ee7b9d8b9791086f0473edca30416d969aeabb572c007d5.json",
+      "sha256": "f2d167e31aece3e114f83b21987bdb345946e44d1e8b3bdd23fe4d12fffe2a2e"
+    },
+    {
+      "path": "data/weather/resolutions/0x14131279fb1bf928bf580cbb025341d3f89a4fade40b4cc0684b4a07d81077e3.json",
+      "sha256": "f8512e35ea92fb3debdf40c6984a54dabd7665538cd9445c2a3bf31b92050d54"
+    },
+    {
+      "path": "data/weather/resolutions/0x142a97f39f611a0a0cff5909089ecbcfe0a6585b5e5060bf518fec4cf6e925d2.json",
+      "sha256": "b2f433720d9262a301f910b583654d31742471e4308952d026fcbae6929e44f9"
+    },
+    {
+      "path": "data/weather/resolutions/0x1431772e8bcd135a6e3cf8653756ce04af3665cd0e0cff1facd5b0b72232e6b5.json",
+      "sha256": "dd641ad30564753bda7320b0782e979f27cf4ab5f00f625985ac78cbfdc5e25b"
+    },
+    {
+      "path": "data/weather/resolutions/0x1452f7c949bf2bccdcb18b8490670554c992b96f77e9771a8d2fe51c5fd0eea0.json",
+      "sha256": "6763cc7fda6d55974144aaa489cf0c65139fe3b960dfac8a2278c03cfdb3da40"
+    },
+    {
+      "path": "data/weather/resolutions/0x156c7b5325fda583a9b4b4a3a165bde8c82449aec34b65e61e9d9c50b10c29e4.json",
+      "sha256": "16590d25344f07e7089d02185d0d21bf75e5de5003829d83910da57730481fac"
+    },
+    {
+      "path": "data/weather/resolutions/0x1594b835761ce2658ca987cfaa1d981e78c454f20299edfb12694b26a7e20c06.json",
+      "sha256": "91695e7bd9790a10703a7e92cb5f9259ad467d40bf33c1b52750798f96324095"
+    },
+    {
+      "path": "data/weather/resolutions/0x17436a8e743cb6c101fe09578c3acce233b28558d7d18eec7d83336bbdb5c899.json",
+      "sha256": "4ee50c168b4953a41afa3f9d30f9d32f7d099998670a407e0c60d897f189c435"
+    },
+    {
+      "path": "data/weather/resolutions/0x179284381c8ec98de1d001735353c1f02c47b9a33a69c92faf42085611849bc8.json",
+      "sha256": "fde3af717fb8f3015495c55f310baddf801a5f693d4fb7c3bb74c8582efc25de"
+    },
+    {
+      "path": "data/weather/resolutions/0x17c097139cc69d0e5b37088327af5d8fb325897c93b74fdfb25f568504d25c88.json",
+      "sha256": "f7de86db6972d97e447b9b49656f1cfcec4019030e8cac80a4e261ce9bc67d9c"
+    },
+    {
+      "path": "data/weather/resolutions/0x19402c6855a4199ededbf0cdaba29c395c1371249b36171d6a49567b30930e6c.json",
+      "sha256": "53b3fea1dfc02922ec50405094a9d4c31181fc5fbf9d8ca92f6b91483c123a3f"
+    },
+    {
+      "path": "data/weather/resolutions/0x197b330d084f9a29a3a1803b44b4212fe0bcdd0b9491ee6fd61e9730b8050263.json",
+      "sha256": "5f622e0a9eef0d336074bcf4cadaadf6ab63f4f18bb9cbd65db4653f4308a8df"
+    },
+    {
+      "path": "data/weather/resolutions/0x1b4aaaabd67d05acc848c4691fe1a64e53638905d1ce71896438ff97ecd215a6.json",
+      "sha256": "e998381a5b9288bd3903c9c2bd505b84fb79df6c0aff7fa582f8cdfd4780bd7f"
+    },
+    {
+      "path": "data/weather/resolutions/0x1bf3b07e579dfa852276d52dfd9296ebf1f95ed646b6358f5b3cdd56856aa2d0.json",
+      "sha256": "915d75c6b98db3de3133f1a33ae2680e7cfeb9ed59198e8a3a25bfb211ef5017"
+    },
+    {
+      "path": "data/weather/resolutions/0x1c0bdf6f429af9ee84a4f0bbad324403e1971b6ca264e48b19d11c608fb362e8.json",
+      "sha256": "f8a494b3ae380c41ac3f80997d5379a5b69176ef7a2b6181a21992ae5d403929"
+    },
+    {
+      "path": "data/weather/resolutions/0x1c690bb3b0d5b242698fe729f414ec57b1369dc5af6737c1e50460c5cbcb8f61.json",
+      "sha256": "64e7d3d726814d1924c2a026d67fecaffdc7103b35a13842c2160e80359498c5"
+    },
+    {
+      "path": "data/weather/resolutions/0x1cc76f6c229adc4de6a8a6368251be758a0e03fa48c3bdcaa6577358ff9ee787.json",
+      "sha256": "4545ee9f4ef899d80dd30739cf75a0bea890bc8eae96f52dcaf3f5a4777ba07b"
+    },
+    {
+      "path": "data/weather/resolutions/0x1dd058aa84a37de4a3f699a55d3d46798c888b73fa835a50812c2b3e45ca53de.json",
+      "sha256": "c5a4052a30090ab05d2cae6f6ffc2f4faa9af3a9cc9088331eeed143e999b337"
+    },
+    {
+      "path": "data/weather/resolutions/0x1de675d046e0a21447bc6a40ba48eca68dabd4a15482c7007d41dd3401419b73.json",
+      "sha256": "88f5e7b2a019077bb17b66a98aa633767b79248128f63b5e6d2c29a95bceed93"
+    },
+    {
+      "path": "data/weather/resolutions/0x1e453432a26b7ad143f82fb78ffe09f217e9a5338d7c3df00e55bf3238cd73dc.json",
+      "sha256": "cfe49f13218ad09bffc9f51d65386aee298511a4adc9396a842479604173ddb3"
+    },
+    {
+      "path": "data/weather/resolutions/0x1e4c505402626a31970423b6b61d740792a39d5985cc10b5aa66c8c78ddf1c3a.json",
+      "sha256": "ccc9b3dd22a62d18ff3bac58958a8fdf4b9281761adbf7a210d42eccdc7c2e21"
+    },
+    {
+      "path": "data/weather/resolutions/0x1f850385d0c39b2b5d9df537a1dc7ef8e0d13543db5ddbbcd6cef69fd71cba89.json",
+      "sha256": "c83b84f2640a11f9eaee5c5e2633bf6d622d36cedd875549f3cf5e8edc67d2e6"
+    },
+    {
+      "path": "data/weather/resolutions/0x1fee9c818c026d069e688eb19244c84ad886fc6bd5053269f734484c3075ea7b.json",
+      "sha256": "bedd239b34db14f2108691d4a572f94cb52efc362568d8f186f542bb380359ad"
+    },
+    {
+      "path": "data/weather/resolutions/0x21088978609d2ad76a49c1a98fe5af7daf7c15e8b5c44bd6f194c57993e34c66.json",
+      "sha256": "0a8f7704a904504931f124fe429b174a203d8d4e2ab3bd6009f25e33fa3e86d7"
+    },
+    {
+      "path": "data/weather/resolutions/0x229427b146d2d74ae1662887df8baa166112e9bb513e0a32869a09c363e782bc.json",
+      "sha256": "00d5729b1f36a4f9e3a247c4c2a74349f6affd6c10ccd64717516cd7474c4f74"
+    },
+    {
+      "path": "data/weather/resolutions/0x23ccbd9020217e6f157bdae802d0464ace0cfad47b55f17b00b632a0b628222c.json",
+      "sha256": "625c8853553f0d3804e3deba64d531007dc7fe02f218fe736b992cd433339f3c"
+    },
+    {
+      "path": "data/weather/resolutions/0x23d5fe4215be7635c55c8b1761f54816be4b998e63012e10fbf1b75345ceceef.json",
+      "sha256": "1fded103796223339e570d9c283f8ca2bf353cfb16c538e8eed2c2d5c32b23e0"
+    },
+    {
+      "path": "data/weather/resolutions/0x23d8c206a6eff2e47d24978c7a7f3b70e16237982d1afc93fe0385f48035aae6.json",
+      "sha256": "1fe3aa85592964c3b5ee47197be2862d211fc7dfa0816d7141704675dd2728fb"
+    },
+    {
+      "path": "data/weather/resolutions/0x2420cf106f056c5a465e9b7feeae54cef25a434381756ca1ff80febab886cd0f.json",
+      "sha256": "285d67277097d9bb148651d132671ad8d5f356d397144f040d493d156fe5c98b"
+    },
+    {
+      "path": "data/weather/resolutions/0x24a9a3529ab46248eb41d3d41addb43fe6f0af6171178ba88ab41535162a58a3.json",
+      "sha256": "48a6fa3bee74df089bedfb487e0a0ab931b7ae367f1a200a3be685f2448be01c"
+    },
+    {
+      "path": "data/weather/resolutions/0x2607ff7cef29d822cc9774ff2026a40895b4945a5f2506baa96a7cb4accf456d.json",
+      "sha256": "67b90bcf4a899150401b1b16d195c58c90793c44ff3068dc9a68d6c4c15f45d3"
+    },
+    {
+      "path": "data/weather/resolutions/0x264fec3faa36b92da38161470734d9aa9ba941a42ed52b166944e83d507bff34.json",
+      "sha256": "4c4231a10d715a8298d5e2cc21234c0abe19baee545a06f46ece50744a646a2e"
+    },
+    {
+      "path": "data/weather/resolutions/0x266dd096907bf80be23bfb85d0bf638b27bbca869dfdbe56acf9194a705d1485.json",
+      "sha256": "abf338b087633d183d0391dd3fe3568ed7f0f5287c62758fa66861b9536dea6a"
+    },
+    {
+      "path": "data/weather/resolutions/0x26c04a7ade180db38d449e0650a237a58aab96f07557d7f718a9278cfddd37a1.json",
+      "sha256": "65ae47931501dce8ea331ff4d52439c578e455f8d31e2271dabbbcfef0a8498e"
+    },
+    {
+      "path": "data/weather/resolutions/0x26eb0afd7a2267a1aa24c1d34312fc922a99ab0a3ccc963f720b563c863bf876.json",
+      "sha256": "5accfa24901bfcf5b04ebc4671d98b0c6025cb3fffaf4f849f928affddc33343"
+    },
+    {
+      "path": "data/weather/resolutions/0x27a5f387a8f73b961ac9121050043c6148ec3378df16f953adb1fcacd61f4c18.json",
+      "sha256": "990fbec8b22fb9b4ece6a0fa5e35974b4b3b4b04aed2006bdb495aaea2837402"
+    },
+    {
+      "path": "data/weather/resolutions/0x27c2f38c891ec4245b23139ae8098df63356da0ea4b6547a622ec00c5f242f84.json",
+      "sha256": "8aae45ed5f0b50593d5049c86ff04ca1aa4d879d1af85cb29d1eca578d387f17"
+    },
+    {
+      "path": "data/weather/resolutions/0x28e0c391782d9a916c2e68c93e76ef67f662472b0c2f04ff583ec76806d89a43.json",
+      "sha256": "804a6e4e36b9332dd6466b476cc76ea0be84e04246f4caaa527129e19b98b7d2"
+    },
+    {
+      "path": "data/weather/resolutions/0x28e32f744928c3d266c08e37f4b28461afaec6cc864dc22573465d172c47960b.json",
+      "sha256": "f62bed4a09b30d721f119e7d462874e14e8c4eb8355378da241a2f50e7e0616f"
+    },
+    {
+      "path": "data/weather/resolutions/0x28f6641146b1e727dcd020ea31ffd9dc621319fd11d873119cdf7cfe58dd3be5.json",
+      "sha256": "97a045cba6aec7bd126e3a474ea493c8dc07c50f01c570af089b1aa45d9262f4"
+    },
+    {
+      "path": "data/weather/resolutions/0x297869edc0f08742d3c8ac47f1229ccd01133e0b46c67aa0d72db47046d1d32a.json",
+      "sha256": "505a6398d5d1c37d43b50876403ed2c2484ccf00cda8591a266645d4cb88eb07"
+    },
+    {
+      "path": "data/weather/resolutions/0x2a13dc6860c4df3737a950cf368824a6bf444f832e888e322dee0d286d23371e.json",
+      "sha256": "814e6d06e173c07a52a5ca4502007f8073fb72054004e0dabbdc5e69f7be569b"
+    },
+    {
+      "path": "data/weather/resolutions/0x2a5563104a8ea03f7596b63b005ddbddedb2771b5b0cde96158043b20c100f91.json",
+      "sha256": "6dc627f6857a189001ba1c785567b26f658081fbc0320aa12bdf6bbd11f3b29b"
+    },
+    {
+      "path": "data/weather/resolutions/0x2a982e9a455c9fc70825129e66bce11b5d010c155ed48f31325c43e245090e9a.json",
+      "sha256": "13913b9b1fc925a7a31af458657c6d2689fe32da19d7697f0be63e343fab1011"
+    },
+    {
+      "path": "data/weather/resolutions/0x2aa9ee450da9e7d873aa3e6e3a6489d11146b235131cce7c73ce51bea719fbb8.json",
+      "sha256": "1f9e15ff6497ac583647dddd496a5427b571b3893fe95672309bc92748e478d9"
+    },
+    {
+      "path": "data/weather/resolutions/0x2ab62b86cbabfc2940190cb16359dfb6f395d24e65bcb1d1b583c00e3ac54bda.json",
+      "sha256": "6643d184a7bb9f86cbadb887b4e4e50a0a6ac97e5cb3aa3be6eaa3520b649503"
+    },
+    {
+      "path": "data/weather/resolutions/0x2ae3a7867574568f96c70d338e018270bf47221d28ef5e74f01859882994a136.json",
+      "sha256": "842812f3a50f1077265eb0133f3071f9d87b721c16426ffcd603221337c152d9"
+    },
+    {
+      "path": "data/weather/resolutions/0x2b40153b608a4bb00563c0077c8712d7ba75e8472842e99411f2ebb7e27974f2.json",
+      "sha256": "01be9bf1fd0d582347523c6d73d4ada0456eeb04f65c6ff68e21dc4228acaffd"
+    },
+    {
+      "path": "data/weather/resolutions/0x2b70978602736869200ef2b4fbd606454fa390321fd2f2123905856c492edcc7.json",
+      "sha256": "cabeb9babf5901a772e02f3a41106f2f2acf6d2153f0d03a14b6660fef41383f"
+    },
+    {
+      "path": "data/weather/resolutions/0x2c887509358df800089cf49b1f90832b8f130b65366d9ca8ebe2c5ae592bb14c.json",
+      "sha256": "a98fedbad1e022f82f8debb458b10528239bac43763954004eaab36ca06fb403"
+    },
+    {
+      "path": "data/weather/resolutions/0x2ca59bbb212352ec14f64f1a9f59e68fe8d7cc54232dcf7b9d48dde281e9791a.json",
+      "sha256": "031a510079eb69c117df715ee4681a3c53bae40fa687fac9e3baed3b14ae2c79"
+    },
+    {
+      "path": "data/weather/resolutions/0x2cbb4d11669155228eff1fd0c0b58a679aff812a0ddb1fcb2b0215e0743df62d.json",
+      "sha256": "cae935fd8b5964b80dc21a383635df8681626029bba480649422eb623b9db8d7"
+    },
+    {
+      "path": "data/weather/resolutions/0x2d1b7ba29e8f278ce978f883fd1d4918d023fa11fdaa861f8ccc87d95443473c.json",
+      "sha256": "4c0d26374a53e3905f8cd88fd3ee443cb7d6f0f8e7d80f811f944e4f4730259b"
+    },
+    {
+      "path": "data/weather/resolutions/0x2d3c367f4e2769b4d374835db9aa4f94e9eb1aa82f6120f1db34d98c6531b58b.json",
+      "sha256": "b28c004e1936c3bcc60f2f180ad724436af09dc1c722b3ae7bd13fcaa8564bb4"
+    },
+    {
+      "path": "data/weather/resolutions/0x2db691b3877a0573e4fb7ec2d963d335f01910896cfceb4fe63623c2a15d4ca8.json",
+      "sha256": "bc644c83d11e483b8f4f132125ec0248953ca57b52c8b6bdc9aad141f84aa6d6"
+    },
+    {
+      "path": "data/weather/resolutions/0x2dd1a52793353c2265c78251307ea7d8bbfb314fe8cba543b9255578e80edc53.json",
+      "sha256": "dc50364ebf9f72fc5841db2982377f9f48077b892f8dc5a12726ee71bf0ece3c"
+    },
+    {
+      "path": "data/weather/resolutions/0x2e804304fb7b83beb63e93cf2b94ff9b42ade7082f09cc3ae4849a7ae15d1778.json",
+      "sha256": "cbb240c8537628575621f775f24adcb25367bbdceef936e0967be9c97d772ef1"
+    },
+    {
+      "path": "data/weather/resolutions/0x2eb133a3622f31001be90890d7d8b0a5aa0d1262b003639b5f8382a68c43d97e.json",
+      "sha256": "f26a1b36b1f50a14fac24d596aaa7833ee83122284229022998c42de0929c3c2"
+    },
+    {
+      "path": "data/weather/resolutions/0x2f3121a9b0eea9f1cc22429d4dd2463e7f0bb07e8f16c080c2b5cfe5bb3e8a77.json",
+      "sha256": "004989456a5dd44db21e2fde9b4c19836c51c0a8fd6af52f5cf922c5bf980712"
+    },
+    {
+      "path": "data/weather/resolutions/0x2fdcaa3abfecaaa24541311626fa747aaa59c3aa4957a6f5614034d55bfe716b.json",
+      "sha256": "ced027affcc01e114eb841da9d49a81845622edadd66d6ce662a9aab1bee9a43"
+    },
+    {
+      "path": "data/weather/resolutions/0x3058708fe9f9658075fb853e98283558ab6b51e6ae8a847214adb370a3f5eb33.json",
+      "sha256": "330960ea62e70442368aaa84f7f47404e1a106642b964503053a6dc7ae864a4c"
+    },
+    {
+      "path": "data/weather/resolutions/0x30cc8da6f8531cc0155232a26b54289520b29cffa94345a1c3db011ee2d454cf.json",
+      "sha256": "db111fdcc480302cdcebe73b27f59c7bf85f659f8b8235d4e561e51ff8a12ad3"
+    },
+    {
+      "path": "data/weather/resolutions/0x30e872c6d5d154fbd3af676be5f5f0a54964ddbce28a25d5214be38bff8a96c4.json",
+      "sha256": "94ce3d626f2c148562f492c19ab1ee3a0e41eb0cdf0496c84c7d07cec27358e0"
+    },
+    {
+      "path": "data/weather/resolutions/0x30ee2bfdb2ff1cca33cf373c28db61db10f96ca5f8be25e12c6801c48fff91f7.json",
+      "sha256": "45cb7fa79f96f560b1e474d66d797ab5c5bdabbf54c1a7446eed66aef34e0273"
+    },
+    {
+      "path": "data/weather/resolutions/0x3199267ed99cb923216030a2ea3f155b8eb5a1be0451e76002c346ab18681652.json",
+      "sha256": "88c2d8380b180b3239584dcb27573a25860ded2dfcfa1ebd31bd0024a194b612"
+    },
+    {
+      "path": "data/weather/resolutions/0x31a02cdacafdbc944493ba99aec6de1d86ab8b50d2a4341869e7f381d5a921ba.json",
+      "sha256": "23b90cd12628beb77214ee1e35b21af2f6a8b9a38c4f752ffd147f7002874f40"
+    },
+    {
+      "path": "data/weather/resolutions/0x31ce03482d6709ea3d6ca5d35dc2b5eae96293e99832ede37864654fad3b51dd.json",
+      "sha256": "cede7009fbcca021b124d6bd32bee907b8ac644659207c3749cbb4c93e15279c"
+    },
+    {
+      "path": "data/weather/resolutions/0x32457283a1f77525556b43bcbf302ab0d7d90d898fd4fa74a070e420598aa83e.json",
+      "sha256": "c2390e5646d65743cc69bbae72eff18bdb79c325650e8e16a2af2ba1fee6c304"
+    },
+    {
+      "path": "data/weather/resolutions/0x32b9f644029072cba561178519a8a1c3b6e66123fb953dc6bb97356fe891da14.json",
+      "sha256": "e4f64363b1284eb3cb8e3723eb5a4df0e92b4f4d0ba749e9eb51b53a327bf485"
+    },
+    {
+      "path": "data/weather/resolutions/0x331d0e6cd7d7343df7b24064970ba5565d38eaf9d7857558fc498ada064a7767.json",
+      "sha256": "750e42c86b2f71b3b2bf5c6614065aa14207f28ea7d7732ccf88d483815a8178"
+    },
+    {
+      "path": "data/weather/resolutions/0x333075a04b5fb09d7439a4d7212dbc062b2ed3cc7ac8ee86c0fdfefe0b8ad198.json",
+      "sha256": "fe186da1da6e929ed8a836aa7786c7f8bf8416764f1adf8588badaaab53dac5b"
+    },
+    {
+      "path": "data/weather/resolutions/0x33edc6d63be889ad60f9d0533a2f6d58945eb1a9fbb7aaec18b271aa2ddd6572.json",
+      "sha256": "29c0349ce1b6344cf0c895fe9b334e18c6026bfd9a12c203a4e5cfac0c70046a"
+    },
+    {
+      "path": "data/weather/resolutions/0x34b7f2fa69cec1c8ba9b083f669bd1fbcb6802c7cdf11e7a7f8a955af6beabfc.json",
+      "sha256": "ee52caef3eb9977971a86cd8611602af15f135363de72e6dd06707d3d7310da0"
+    },
+    {
+      "path": "data/weather/resolutions/0x361811689c745934ced873f39c943fda2c1c279127b94db5ebc3745d75923121.json",
+      "sha256": "b6f116f5554a2d99785f48d4deb8a83c35a3964cd1fe425b84fd83dd9549e8c9"
+    },
+    {
+      "path": "data/weather/resolutions/0x361c502573b8d06b780224424a47df5486849ada7ede946b89eebbbdae5e2b65.json",
+      "sha256": "bdd83eb432d1331409c58d478999bc368eaca9571bd334c6f9068b2cf0c004d9"
+    },
+    {
+      "path": "data/weather/resolutions/0x369f0c083da1ad39619ebac48603015a25793f8495eee9705a708835c6e62065.json",
+      "sha256": "529ed8b76410c3d11dac2ae47aac27e817d6a83edf1bf7447950ffa237335a18"
+    },
+    {
+      "path": "data/weather/resolutions/0x36ad635817e6c41b406cb7467110b71b3fa1fabe6ac66bfcce5d08b1dcb58741.json",
+      "sha256": "18f849725fa4bb168b466da36eebc5d4753a64a8faa1a9ffef0059b515c3a459"
+    },
+    {
+      "path": "data/weather/resolutions/0x36ae8168089a98283562b884f927a0b5a28b6d19fe3b025e20959d60afe45730.json",
+      "sha256": "d4c385fa27ac6c4dbb700b679bd260adc6f3a1ff9c2acf4d15be2ef779d0a509"
+    },
+    {
+      "path": "data/weather/resolutions/0x36db788bdff98f90b735bfaa931ac522e925e7f7fa3c67ff564dc70e6ea7c2bf.json",
+      "sha256": "76ed86d45ee49c1686c6d10230ea3d32ea4ff5106c799ad17cef6ace52918940"
+    },
+    {
+      "path": "data/weather/resolutions/0x37215455f229707cf1b3a994b388070968830d236d16e324cfda03eec23ce40e.json",
+      "sha256": "127846742129d50d452e84c3e413778336809692a442ac144e385e8e2ee3f63c"
+    },
+    {
+      "path": "data/weather/resolutions/0x37320fdb9d224d6026db315259adae9e37a03d1eb435967dae13dbd73a90f295.json",
+      "sha256": "9866ed66c2f6c34b8687efe88522c78edd80f260dd6de67fcc8e3aa85d7cf76e"
+    },
+    {
+      "path": "data/weather/resolutions/0x3772135fdf5cac2ad653f884cc7933c32d04bcc8faefe45f7a26907ef58bfd06.json",
+      "sha256": "738feead0c8b9f9ab137e081022b69943564792a2028806238497185915f76c3"
+    },
+    {
+      "path": "data/weather/resolutions/0x37d41e89a15478d3dd0c7315305749c5fe6d84af22f6530afbdaa8a559e9a982.json",
+      "sha256": "db04cef14cca1656e4554d8e9f9b860a991e494389af9a466f73a2424cbd0e34"
+    },
+    {
+      "path": "data/weather/resolutions/0x380c1540609a982bab73eb30e106f52ec4625fa994e617b6dca9d2753af0eced.json",
+      "sha256": "00fcfb94d5257d5c5e27d5ee7e54e3c88b41194f2d3ce7380d90205de432a99b"
+    },
+    {
+      "path": "data/weather/resolutions/0x381c0a8f33bcce99f1c867127b308bda0a57853b0374e02f07b1c23db985166c.json",
+      "sha256": "a48e90eb53aebe2bd148d14c87045fc7569321149ec04a34f265672470ff0c3e"
+    },
+    {
+      "path": "data/weather/resolutions/0x382abd4a2f3fe1fd455377564a75fe346a7f0584bee006b02e8638c952910314.json",
+      "sha256": "64184d2b879ce2d24c16f27116c9024a3939c680888e1323002528858d4f1391"
+    },
+    {
+      "path": "data/weather/resolutions/0x3830d3e0dc9e268df5f7631221fcc895b217187d7d73840b2df799296995ab8e.json",
+      "sha256": "0f057f4d7d6e78a746412d255bf59bc4805bd02e4026a62a6a27136e3e481110"
+    },
+    {
+      "path": "data/weather/resolutions/0x3890d51053be8d62de0224f0caf6bbb59c72bd00064727b3c2b14abe6b44f456.json",
+      "sha256": "b44f78d1c86f45aafac1feb950d5ffe96b5454d136868fd9828a864a34683f8a"
+    },
+    {
+      "path": "data/weather/resolutions/0x38c3f4eefc432606ccdf0bb92ebd6aca815dca7cd8ff71d6fb412cd27259a718.json",
+      "sha256": "317cccf361a1a4917ca9cbd0f387fe533bea6c400ba56d4bd7371c788837b08b"
+    },
+    {
+      "path": "data/weather/resolutions/0x3962af6893b4cdaa26365f6c33263c6734dd14023fe28e1f5d8413421423d810.json",
+      "sha256": "3893aa2df06adfa4325ff0d8c69e30afabfed4442d1f412665d00fbcd39041e5"
+    },
+    {
+      "path": "data/weather/resolutions/0x39886acab1cb582844b88de952faaa6b77e65e116fc677d71973b1a8514c8aac.json",
+      "sha256": "60907f92747ccfb2db06e789bb113ed0e71ee3e8321c5b32a3a3cdb3497578ac"
+    },
+    {
+      "path": "data/weather/resolutions/0x39c784dd9a6a436eaba624fb4e5758e5985ebba2cb9ba6230f89d2d0e49857da.json",
+      "sha256": "3f7b0084d01fdc619315cb8ba5c211310e56aabf96259ae06d75d1a50fdbf469"
+    },
+    {
+      "path": "data/weather/resolutions/0x3a5eda9e8536b0e185416001fcbb6eecd805eb979368ab1a0811a6bd2935f5c3.json",
+      "sha256": "9926fcda65553ee940c99cffabd318bf87652f368fadc0d4524f9a4e9d9cca03"
+    },
+    {
+      "path": "data/weather/resolutions/0x3a77a8d42c5b31bd6c55bfeab88b566acef8b4117a6bc78fdd3ba69ba827c92e.json",
+      "sha256": "d1cc450c6fcb6b6f5677b03b1452b18200c2c828077c1d9c4c065755867fca3b"
+    },
+    {
+      "path": "data/weather/resolutions/0x3aafc0fb84406b9b503c15b0c4b40217fde857210b8cf16e5a5285f76dbc593d.json",
+      "sha256": "236459b1d320dbd1c95cf2759e5df7540a68c7c82e3bdc86995728704f6d19f8"
+    },
+    {
+      "path": "data/weather/resolutions/0x3be5e0ccdb24ed4dcc55267058d167b8b97fe7c66c366707d430d46fd36b6dfe.json",
+      "sha256": "3586bcfbefef7355b0b5553235dbecd49285b182d7c1afd0a4e9ef189734e074"
+    },
+    {
+      "path": "data/weather/resolutions/0x3ca6a28ec6136d94068a761d7ee9ab8dd9540114b6a0f8cf39c4e943be2d61bc.json",
+      "sha256": "debc411e77b850ed80001aaa724f66d70ad7f5c31cf0d336e27cdef30bf638ef"
+    },
+    {
+      "path": "data/weather/resolutions/0x3cb8732d74377d73d504a1c9ba3483874c976763faf35dcc02b35fb82b3032a1.json",
+      "sha256": "4fcea16ced3f6b661b58a8b034c88a6296f0e4bdcc99d12ef141cc3f3f1d5cf9"
+    },
+    {
+      "path": "data/weather/resolutions/0x3cba903c0b9a9e7a7b3a021df3951f3f19cf1b78420976255180de92509b1efc.json",
+      "sha256": "088a25eddd90f25f8bd033bf4e4b224b2fcf7803ba70d46ce66517211f09469e"
+    },
+    {
+      "path": "data/weather/resolutions/0x3cf82cd649e0f153ba3d226e44c96c529f774c9c2ea869d2853060417883ac19.json",
+      "sha256": "478ea9bf7ec5290a8b4b9b127d02c74fc26178005c35c0ef85f19e7761bb4db4"
+    },
+    {
+      "path": "data/weather/resolutions/0x3d57685f29439c007ace0bd9c77a2ae019c8bbe975c40c59fb7bbc54a7beb73e.json",
+      "sha256": "aa7ba75e490be6e121e3de88a78a2341f72dc3401bbf0006c49629ccf486e6b7"
+    },
+    {
+      "path": "data/weather/resolutions/0x3d978bdbe86998225484281feaa337ab000da2e18dafb8322521cb6c0a4bcf52.json",
+      "sha256": "ffbc2b5d46f573e4396feb9abd7cfa67570622fc3a5575a8296e35309a317697"
+    },
+    {
+      "path": "data/weather/resolutions/0x3e86bac7cd7ea006ebbd6bcbcbf3986bcd2e8ec8d725226669f974bc4f9e9f31.json",
+      "sha256": "6cbcfdc1b959ed5ab2e93d7a34f64af922c91b0f02802b39a40432f969b20c04"
+    },
+    {
+      "path": "data/weather/resolutions/0x3ebdfcb13a22af52ac5ae2eaecb677823cef9b0995288e065e598d2f26ec4db5.json",
+      "sha256": "e62480338fd9d4504a481c09039b39fe3f0ab1a6a67f5e0d8bcf8002972d8ce0"
+    },
+    {
+      "path": "data/weather/resolutions/0x3f4f76d23bd75a29b260516442198f2ff676da1c9e1311b9dcfb2be068b31c38.json",
+      "sha256": "23c6a4ee5e09267601996f5445f4f138f7317b08e95d6f11ee0ec308306c6cb0"
+    },
+    {
+      "path": "data/weather/resolutions/0x3fe82c7776b53ea357e502eaaa33e341ba88e7087b32fa8a011fc465eed4c8cd.json",
+      "sha256": "f63486c0b50e47390124ae88bf9d32ed7d2fbe61bfd33de55ccaf83a3ff5a9c8"
+    },
+    {
+      "path": "data/weather/resolutions/0x3ff7190ab18e00b87ce5614ad12ac30ece5ba70660b95ad753426b62b5f40e34.json",
+      "sha256": "614f1dc5312d029a0284ba5bc20daa6205e4e1e61d0c4a229acbd6583c7e3802"
+    },
+    {
+      "path": "data/weather/resolutions/0x401cd1ebf69b8f4e3d89a91128ec51f1a5d742fc8969d9bf0c8726117cdc54ac.json",
+      "sha256": "ecb899dfb0efdb88069392060a15e36de8e2eec84c799dbc64058dc8f20a7763"
+    },
+    {
+      "path": "data/weather/resolutions/0x4047d20ac8a0c13c7543db14a08dd74a17f29baf2ecc05a04984559db553d00d.json",
+      "sha256": "4396e939454cb85813e289438fa3978b0af7d2424e3e2ff121d8c89b6372f31b"
+    },
+    {
+      "path": "data/weather/resolutions/0x40480de56db431aa1e911683732c75c5c5b144840700c7f1b012eb5876562ec3.json",
+      "sha256": "5f8b276d5a3a391771a07b65362388685a13c64c31cb2f24c1cda50bfa01ef72"
+    },
+    {
+      "path": "data/weather/resolutions/0x4089466d411ccb48c5d958237b488722251208f4d236c51f2c52c1d1541d4414.json",
+      "sha256": "0621c30efc072bf36167117d73935c22578affe46d9b270e2599f77817cecc10"
+    },
+    {
+      "path": "data/weather/resolutions/0x40f109ccda1b8b9c57f6b05fa9d41776172eeaba3d4603d84c774ee9cb046e89.json",
+      "sha256": "4d337eb04a24fab05f098d741505dc4b54152ab9f0d93cb92a5b9c33d714a22a"
+    },
+    {
+      "path": "data/weather/resolutions/0x42591e7ec2f1dddc33c4603e60f2b7c4f64524dbde86fb9faf52be384529950a.json",
+      "sha256": "ac1ff7ebb0813d182d0161560577ea696f85186149c7491f998403f20661a109"
+    },
+    {
+      "path": "data/weather/resolutions/0x4295824d90449cc2e1b9f75a8af5f186b92abc3139c0d373e39a40165404bd3e.json",
+      "sha256": "39e826669f6327c053ffb5607cce8045e9f28b3d4908a46a9e11f1852b1f5de7"
+    },
+    {
+      "path": "data/weather/resolutions/0x42a10d95dd46fe029314109c252af0049d334eea46aa99d1c722098e306a1054.json",
+      "sha256": "d76478d8c56a984a1f2470f036f9eed62caa22c6352340675a60ea58e536cdc1"
+    },
+    {
+      "path": "data/weather/resolutions/0x42ab9ed057c08352a42889c6d2504d251716f138e47a1be531d968e79c6703ec.json",
+      "sha256": "d6fbd8c7cbe3aa7039327deac570bb9aa47e8a52b42ec5f7d85b8f68da6eae7a"
+    },
+    {
+      "path": "data/weather/resolutions/0x42b5c916e77ff99e21e905c5abf779fad0b7bce4f3ffa6bba704bfd6befef69e.json",
+      "sha256": "df184c0c86515d7f459c395b2d60edb4bd23d64d18df47bdf2eaa922347a2da1"
+    },
+    {
+      "path": "data/weather/resolutions/0x435448053727943e6f9c4a7f71f232cba9b19da84d1ef8e63903ae601d85b64e.json",
+      "sha256": "78987ebbf875be6c2c2608b2731235408833e44d10b64a96039943f14ef47fe9"
+    },
+    {
+      "path": "data/weather/resolutions/0x43e62e2170c3b4817038230b85e0348ae9e7c2ebce62f7cbe3975831e45844b4.json",
+      "sha256": "b76ac851ad192868d40222bccf28cb8d3e3f6b7a82bde37eb1bcb8185db24538"
+    },
+    {
+      "path": "data/weather/resolutions/0x43f4286f6cf3735b6069c00ef71b4c3c641d0f53c0518d19814987df4df3b877.json",
+      "sha256": "df926c5332b51c92d4eeaf1553ff31198a46b4fee709ec1e76361f5505cc3ba4"
+    },
+    {
+      "path": "data/weather/resolutions/0x4460d3e58a272a552e164b21be5dc1d50a1fe890188a549372714a7a3a896724.json",
+      "sha256": "60c52779da4e048e317b61350a316fdd42e014366af9d6f5d440874344a2b689"
+    },
+    {
+      "path": "data/weather/resolutions/0x44979cef5498fc2712127a680bbb6d9171e17b6632314469efd0e0a86cabf0fe.json",
+      "sha256": "b62712d6cdaba491bcf24ef1c3cd99e4893755afc7ff56c6cdc9b3a7d30619f3"
+    },
+    {
+      "path": "data/weather/resolutions/0x4515e0efed0d455c17c1b4eab876a8ce5d9343aa7c34382ca8906efcdd970959.json",
+      "sha256": "1dfb456ff4a2ffeb18f7e6ee5125e269c8425f5eb1eb34dd1d981a9c41a3a68b"
+    },
+    {
+      "path": "data/weather/resolutions/0x4528e454e831ad0b76cbf9884d7b731b702426f90ef24da2c738ee0c81d33c38.json",
+      "sha256": "bf8124b4b717060073d60654374282cce12f35759c665ce3b74ce203b28c7a61"
+    },
+    {
+      "path": "data/weather/resolutions/0x4589689533a30c19919cafcdd48a2d776ec08813373eef6cc9dddfd4ef75f539.json",
+      "sha256": "44f49c8645fcb0d8e2c71b218a9d16e3161899b36bf25100978ea1b10eaf2dcd"
+    },
+    {
+      "path": "data/weather/resolutions/0x45f2e924455d73999b55c8eb99f3509f49ba678ae1e15ad4ad22a373a1f92577.json",
+      "sha256": "01fc2771e729223ff8a0b550379e3d8817b58b8465eb69ad791df057add38d8c"
+    },
+    {
+      "path": "data/weather/resolutions/0x4620bc4cbd5f43da7779dae0ca72c099cd05163f45bc02c80965c2e3240f90bd.json",
+      "sha256": "91b2d317cefeed66b437603f89c86ab3f6c94edde45a267df0f0b886eaec0cf6"
+    },
+    {
+      "path": "data/weather/resolutions/0x4634d93ed1169af9841d39d5d3e8942e3e9e40092db8141ab40ac5ec63cf0b85.json",
+      "sha256": "10027dd43f2fc8d5ee8da9a8336036eee9283ab5832c261867e58eab715af2c6"
+    },
+    {
+      "path": "data/weather/resolutions/0x4645cb8198dc5c69d6b3b60e0166b4e747538f6548f98b9bd3cb30ef8f6d7040.json",
+      "sha256": "7c4a46e004ad4f65fad72cea45339830b163ad69eeb5a0d9081cba01c9dbc181"
+    },
+    {
+      "path": "data/weather/resolutions/0x4653dd8d53de2ffbff6709e6d03d18196c0726e7c48bba37baee1f3415f8a0c4.json",
+      "sha256": "7d63994baf577c4a7d44801903f6e7b5b7305ea152e626e4700e969ce6c831ea"
+    },
+    {
+      "path": "data/weather/resolutions/0x46a0ca57c8b944ff1f498d510129c913f0533af7d1a79715d6eb444b60d9cf09.json",
+      "sha256": "de4695fbc3d289ed293b83bdb992dcb892d35f26d3b0e9577a550bbcd8f5c25f"
+    },
+    {
+      "path": "data/weather/resolutions/0x475c11ff1081dd174304ebdac43fef18844f1cc671c5c231028a5fe267b7a650.json",
+      "sha256": "bd368941e21bfe5cb5269fcf836a344f5e45c005b7feb4b6efd24bcefec6f68f"
+    },
+    {
+      "path": "data/weather/resolutions/0x47741400df6eb5a54901d63af7d40c3e34c262c7421b1f89eaf24014d8ba8b29.json",
+      "sha256": "a80d5f1e881c969e5f31a6951c3d30388c39bfbb3979d7a14d38d2876b3dbf80"
+    },
+    {
+      "path": "data/weather/resolutions/0x479a025c65cb710077a7aebc08b15b315308a30807c30f921ed5498022342670.json",
+      "sha256": "feb81ecfd0a006bcddc2857bd6b4979fca352cc0b66b77cdbccb8d142b072e47"
+    },
+    {
+      "path": "data/weather/resolutions/0x4813ca60e78f2d2075cf3dbbe7ee9385224fad8c21c9da81788f3ece3b2ac9bb.json",
+      "sha256": "c48dd56d02da957fa13bcab822f610b86d4f56fa56aeccee9be488275abc0f80"
+    },
+    {
+      "path": "data/weather/resolutions/0x48694395c7293d80b302d4955aa6cb5f32c6774a1f2a210473b51f061b533f4a.json",
+      "sha256": "de8ff46df6fdad167283a5a94a0ef829c3c5248a80f6e558d2abbcb24af6e85e"
+    },
+    {
+      "path": "data/weather/resolutions/0x48708357e3e68a77a989faa8662a133637f922b9c40ae7655044b48c9c2aa315.json",
+      "sha256": "0a37f493d2bc91c2627965cfa484af012e04735750cb984ac56a016b582ecc11"
+    },
+    {
+      "path": "data/weather/resolutions/0x4928a7920ec2f31cd7ff9e811d3567476ffdf3a7035253958fc679daea6be3c0.json",
+      "sha256": "fbaf3a0b7d7847f0cffdca6c3155d4fe14353fb77097d370f65458cb4ee78b74"
+    },
+    {
+      "path": "data/weather/resolutions/0x49617860c9ef4a1264b70d41c944cbe53a894429af69e34f9082076650e4622d.json",
+      "sha256": "9adb8773d9c39bfee3a6d281a623a1a51fc3f4c67b04bdb0bf292327999b22fb"
+    },
+    {
+      "path": "data/weather/resolutions/0x497200289c7029ebeab21449564cc3085adb0113a6f3b1265462807a3d4e9e8c.json",
+      "sha256": "f90f1447be6d76f5940a8e73b5fe1a46bcf28623a3e199c55f92d4efcb0243d7"
+    },
+    {
+      "path": "data/weather/resolutions/0x4a3d773320314a36c4531b5fe8b99359c9e0e86642b94573f84697d8accbe03f.json",
+      "sha256": "b8f6929da19aedb8990a43f32a99b8fe8505262470779c5d2dcf978986637821"
+    },
+    {
+      "path": "data/weather/resolutions/0x4a45615e5f4998b0c7b3fe9a905ed26d7746bdd486ee20f74ebf59bd84f0d881.json",
+      "sha256": "a9a18e6143fbdf27dec14d08b2bea796e30f011ec2109f33dc69ea459ea4d577"
+    },
+    {
+      "path": "data/weather/resolutions/0x4af270334eea54053115c558fbe0a31a04e500b2dad7103519d13110e3863eea.json",
+      "sha256": "6b52b0ff540c955ed21e7c7c8517cccd27e3a484791d69a1a752a002e3243427"
+    },
+    {
+      "path": "data/weather/resolutions/0x4b16e40b8bd4dda5cef3b1c6be5a40c95149e7285bacbc96a2b45984ad4b74c2.json",
+      "sha256": "2740b366eaf460614ad705c875f26dceb11960f12026098dd6a1692d3879cf5a"
+    },
+    {
+      "path": "data/weather/resolutions/0x4b1d1e9a15b857de747678106937e78edfa81ebbcf5eaffdc2154d06e14d9304.json",
+      "sha256": "d129c7ee44ec2335525e4bb1c44fd0a101929f8df02fa75e693604ee98724a48"
+    },
+    {
+      "path": "data/weather/resolutions/0x4c01c06d01bfed3687838bb7cfb7de79f4cac17617e0f32eea1de5b52fbde048.json",
+      "sha256": "c34b41270550a477cb1056ca7127bb6c4de6a40efead1b5f1848c5290b6e84a8"
+    },
+    {
+      "path": "data/weather/resolutions/0x4c8aa70564255b3b1f30ee39600944abf5fd8096fca1981dd87b30fc62a465bb.json",
+      "sha256": "3c292caf4217bf585c270e835830cd6d3a7a02d21a628688a980451d42c2f32c"
+    },
+    {
+      "path": "data/weather/resolutions/0x4d017f92fffb1ddf40b504afbf2d87a8f068eb6a38faab4b916c1f82ef539308.json",
+      "sha256": "3d193a6450ae8fe1af912476b2b8ed2b8cd47706076ffd51581c8ec4903a5033"
+    },
+    {
+      "path": "data/weather/resolutions/0x4d0f4d7e646fa6f065bb1acb3a37305f3bce4436ccb53ad4a91071155107c64e.json",
+      "sha256": "48840b2d3f6695d2c9caebfb3d82f09b6edfdd388f067100f62966af000221e6"
+    },
+    {
+      "path": "data/weather/resolutions/0x4d13d4a1b6536c2474ff3d2bd9cefbd12ac707f574307e9bae0d3a70a67c5b4d.json",
+      "sha256": "c6d904cf7025d42935bebbd8adaaee57fcc560172af8a7137be6173ec67fabab"
+    },
+    {
+      "path": "data/weather/resolutions/0x4d967e2c38a05c06328d93e70ca113a3ddb41e8c151f93a30d8e89e22c6df033.json",
+      "sha256": "ec5b309cba3e06ab9a0fd87b16849ab35e73924ececbc23ba443f4754840a1b7"
+    },
+    {
+      "path": "data/weather/resolutions/0x4ec0149c0ffb7c04d6fb16aa58c4b2fb768cf9a4feb2b94cee76464d0fc390f7.json",
+      "sha256": "0e02be9ecee9ccb999be6befcef4e617af958bf1471de1560ffcde6b25672a3b"
+    },
+    {
+      "path": "data/weather/resolutions/0x4f043e1c378cfe592aa347b5d061404573372693b8599539475a62885a6cfaa7.json",
+      "sha256": "df4d0f4487263a92441ed148d42c13f2184ccb28c497b6c2af4c76782537400a"
+    },
+    {
+      "path": "data/weather/resolutions/0x4f56f88f2ac7711ae44007df5acc820220e2f379872b215b88d30610d2b6d753.json",
+      "sha256": "8c1c318d6ef75f33fe1a4646413dd18502078a22b82ce028bc2076d2cd151e09"
+    },
+    {
+      "path": "data/weather/resolutions/0x4f698d92512d022a08dbe74aeba30c320a9371f4d82f4865c562a8f03185d267.json",
+      "sha256": "61c5951f9e36d866f133c4d9178d4d9acbb71a3f68f026779b108cf8b8940421"
+    },
+    {
+      "path": "data/weather/resolutions/0x5024cc8fc76c6c9b6fd086909d6ff22ee000dad538b3e1f590db8fb787f4d831.json",
+      "sha256": "063a2b2282ce899bc868ec72f0abe6f028ef722ad9dd29ebc58f9cf6745b9700"
+    },
+    {
+      "path": "data/weather/resolutions/0x5065d266e8853f4d89be269b6f7cbf64c9c2222cf6f0a58b339df6c2856689fb.json",
+      "sha256": "09c65993b0a960c5d32ab8b88f9a5e69478224ad281b15528f70378f9d5b7caf"
+    },
+    {
+      "path": "data/weather/resolutions/0x50706408c15de51d741d92c5422872ed2b55b8c4dc27897f000c8b2d6e6fa7d0.json",
+      "sha256": "8baf1285547eb562847b49214f26ef845fca53ebe1a7ee2b655f4a5ac3a6d10c"
+    },
+    {
+      "path": "data/weather/resolutions/0x507819b0364719c31000e9b63ef7d3da8aa05e68afaae17546fb3d1783fe7cb0.json",
+      "sha256": "08e91783477c8d99cab3ebc70eb2f705e668a258ed52a120ae1cf4c5a90adde8"
+    },
+    {
+      "path": "data/weather/resolutions/0x50d462e8ddbd37d4acc92b457b4ce4847506994b7b6d5bf74316db40b1ebedfa.json",
+      "sha256": "87e34183fdba4f2c4b00ff93a6ff129780cb353177af687847bf89a9beda9be4"
+    },
+    {
+      "path": "data/weather/resolutions/0x529f963178bef4343152d1663ac99d98e96baf05c8feacec8f0193b4714483d4.json",
+      "sha256": "bef74fefbf4a0bb7e38a590a4883c94da2a053b78fa59d26945885c8b65f0afc"
+    },
+    {
+      "path": "data/weather/resolutions/0x52d57baef71323265a375ec46d303a54f56e9894b7fc32e92478ab4a4c66ea67.json",
+      "sha256": "6e3b7764454fd6f731324cc72e647e5a3489631c836fde08795f8396e7fd306d"
+    },
+    {
+      "path": "data/weather/resolutions/0x53104dccacf55075955afc45a002ae6a442a7d90cdcc209897a0b044e6f22607.json",
+      "sha256": "29a213746dbf7f5661b35a89e1187b16cb1aa81a9e04ecb909bc40e4c67c5abb"
+    },
+    {
+      "path": "data/weather/resolutions/0x536da431eaf00abcff84dca6db6a92b3143d3ba6b39ca6f9b973c9ae0cc29148.json",
+      "sha256": "5068a2fb7d97128305438189acb57d465744eb84fecbdee7bfe9a5c8a2046558"
+    },
+    {
+      "path": "data/weather/resolutions/0x53f35a108aaded1cf5014cc2b9be3a06d3c5baa4e2f1efe6a797cfbe4e66be38.json",
+      "sha256": "9526b3e609db79c18b9b2a28c7cc016e32215fac4b34154162a5d336e0026041"
+    },
+    {
+      "path": "data/weather/resolutions/0x53f691bce9fd9f6bd95798dfcbd7f593bfcc91343196400abbdc44a76f2c161a.json",
+      "sha256": "e193ce9e8b3325811c11e0867097611448f63fecefa0fcb357addaf0f19fbf0d"
+    },
+    {
+      "path": "data/weather/resolutions/0x53fa09f177e52113de1e807f0da06c217189bf3fb238da84549bccba0612d4a7.json",
+      "sha256": "19ab505ed0b5f3d6c3119bf9b85d85d7a6b49fe989d4f2db66507f39429b2d4e"
+    },
+    {
+      "path": "data/weather/resolutions/0x5429364b92a029f22159730cb7f925c6029b281171587569e6eb01a9f5fa4f1b.json",
+      "sha256": "630c0887b75a953c8f4a663412c658a72347ac1722cbb9781079059e297b74c7"
+    },
+    {
+      "path": "data/weather/resolutions/0x54b6086b086074a608b232e27b00fcf170be733ab47bbe9e9b85507a55dcc0c1.json",
+      "sha256": "4061f5535b8abfa1bdb6360e1088e68746a0a6ae54ce93c32632c4b2869f8e34"
+    },
+    {
+      "path": "data/weather/resolutions/0x54d60cc5d9e4aa0785b2ba758d4f85ee036f7713a15ea9f21cf156096170896f.json",
+      "sha256": "aa8ad0c54027521d880339eef767d250e536fbe88848ec610d09cf92cf4dc1db"
+    },
+    {
+      "path": "data/weather/resolutions/0x54f98023c12c618b1b1727a9ee3e5dceda5a21d4adaad1a44015f3a3d880b373.json",
+      "sha256": "64d33ac98e620f3cfe1675d5def2fd29feffdebdbaaf96026abb0746458f366f"
+    },
+    {
+      "path": "data/weather/resolutions/0x557037fa9073d4825bc7fd97768c977adc2d9f7a4c820d13e6456bce3fc9026a.json",
+      "sha256": "60bf2f2a78c6d65def83c953aa1c5ff0ebaba876c83c38b42cde2fe887022074"
+    },
+    {
+      "path": "data/weather/resolutions/0x55798120707ac585363586d9c6c96d559531cb4ab2e31f6616d8e5911721fe14.json",
+      "sha256": "137881f868b83a59ee78e3202608d8011a4b9d98cdcb50115500bd67b51c7c62"
+    },
+    {
+      "path": "data/weather/resolutions/0x55c4fd1707b4e681a74db1941eb1906d48c8963d89650b7b46aa9ba702479bc3.json",
+      "sha256": "bb2c93b27946126017ef29c6b0ba387acbcd1fe5e7082879834ab113a652e981"
+    },
+    {
+      "path": "data/weather/resolutions/0x564cb121a262924434a1ca36c854c7e918daf0a26b4a6e0557c1a8d2742700e9.json",
+      "sha256": "1b334631d52f9222abbbf791c634c0191b46907331dbd72db79b8a4ce0a67189"
+    },
+    {
+      "path": "data/weather/resolutions/0x5692644cb7b4106229fdeb07c7a06150f247e7d5825b727fd5c90c8ab14edbcd.json",
+      "sha256": "61e4c18178f984e7440e1a5a4498ea78be82ca43a5ce55aa1b150f2b723a6e4c"
+    },
+    {
+      "path": "data/weather/resolutions/0x56c6d1bedb60ddbf6a9621bc1823d107049fb44c2d5bebe0a774e582611d4914.json",
+      "sha256": "ca048f7b4f1031c6017d1ef25f225169f7d7a9b0b0718b658cbfa6296cf6a6c8"
+    },
+    {
+      "path": "data/weather/resolutions/0x56daa10ad2659170b8692f616377fd4c0c171f1944dce215078171aae4401011.json",
+      "sha256": "17565af6325cd08acdc766ed51b3b5916a403ad0caa2234dfa0af7ec064e39f5"
+    },
+    {
+      "path": "data/weather/resolutions/0x576fc59b26c7479940a6737f9ffa5fa7d6cfc46106088878656da8ce132545b7.json",
+      "sha256": "cc9b6e57498b4d8e6d31b3142755934289506eaca45cd0d22f91629d1d2c16d7"
+    },
+    {
+      "path": "data/weather/resolutions/0x578b2f0ffa6e917664450410d5ee1992ecd851d838139d398ce23a7d6381ce59.json",
+      "sha256": "fc09f94e4e0873ca630f3f873a71ca5aab3b8b42473fade5b2923d4f96d5ad22"
+    },
+    {
+      "path": "data/weather/resolutions/0x57a5a853a4b5a60006a68981685bb06a35aa5ea8990b925f0bd4b7d3136736f4.json",
+      "sha256": "9b3c27165ed6d01ef691530c46b20e53f27dae927064fdb45c2d35a504373252"
+    },
+    {
+      "path": "data/weather/resolutions/0x583f8f8b6072b082eca87bdfd85cb242057226dbf8372571a8a44b86d8e093ca.json",
+      "sha256": "cc43c7139fd5e9ba26cbcb529ff0ed86fcb1500456d67d530e21feed91f1ac52"
+    },
+    {
+      "path": "data/weather/resolutions/0x58414c59dc122904a11d3352d1f542378a08f8cdb90773ac09beeec3d6b2786b.json",
+      "sha256": "4b9cd21c3346ecfe752f8ce575b821826685b02755eb4c980d781f2ed7fd5b61"
+    },
+    {
+      "path": "data/weather/resolutions/0x585ea76d5df8bfe4b86ec03c6952e904292d3d187cb88254eb51281e37d92a30.json",
+      "sha256": "831aa33d03865f34f03c35961461f3b36333447eccd7303a1bb6524f2845b932"
+    },
+    {
+      "path": "data/weather/resolutions/0x5878925eec4f6159a472c33604295a592361ea81e26607823302646ea22b52e8.json",
+      "sha256": "3cf3bca911a46ff5a387584154d0d77f3b699028db1159083b6df2f400ec6a9a"
+    },
+    {
+      "path": "data/weather/resolutions/0x5890569495091cec84ffa42fc6a6f8ab0ab9cb3ae00324b6075d4685c6dd3644.json",
+      "sha256": "bc7d129d6c3d50593864e395b97c683664da87034ae37ab2a07105b639d4ce92"
+    },
+    {
+      "path": "data/weather/resolutions/0x59c708fa7b2b9873a8fb5b74a23d224dda59b8079c74f991ddbdce33bbe00724.json",
+      "sha256": "433094a2f776c03176da3aa54b2ebdcc75e3de142b43a994fdd9c146c433f8e1"
+    },
+    {
+      "path": "data/weather/resolutions/0x5ae49fb89923bb50af499e810b3bb66ae0652c897b0b394c7876269d14e7fc83.json",
+      "sha256": "dc87a2d243b1fbdf431fc3037b4c7d9c742c9a89511698621db747d13f61387d"
+    },
+    {
+      "path": "data/weather/resolutions/0x5b20eb5bb9b681df4d2d860e79d143c3dbf4cfef5648b974b7aa8b992cacd1ba.json",
+      "sha256": "586b18e47b15bf1be87fc1dcd63db7fc3c6f936a150ebb453b32d204139039ab"
+    },
+    {
+      "path": "data/weather/resolutions/0x5b44b3b7cf0d6417509b885e9aa97223f76fb760204a3fc693c7d283bcf5282e.json",
+      "sha256": "93b4290cda5df800fd7483a4f754d4d17196142085687b4fb89082b2ab605dc2"
+    },
+    {
+      "path": "data/weather/resolutions/0x5ba518722fd48f5d790498f82989cc5ed21ab7e8cfa38e839fc2c45d10991348.json",
+      "sha256": "17886c781b4b42884a2a165d623411691ead826a4c293b87352d0b786d7c2dc4"
+    },
+    {
+      "path": "data/weather/resolutions/0x5c183a83d57781bf07657fdb3402bf18f0014a372e3fcc4f79cded52bc25b65c.json",
+      "sha256": "1baf9c0bba24e6fad73fe9e5588a4e56c9342a1960345ee50497dd43ba4309f3"
+    },
+    {
+      "path": "data/weather/resolutions/0x5c4d4375e103a022a41d37c2296bf6509e46ceb3aa9ca788c1c328016b364f6d.json",
+      "sha256": "a2f919a5a9a4fa87efef50ef91a5e601ed3c00e36d7c2db5664c30ac83bef3fb"
+    },
+    {
+      "path": "data/weather/resolutions/0x5c8d566d995d3fdb4dbea00f5d34c402ebe02c519c81b91082177ba9f13bb0e1.json",
+      "sha256": "adb97c33d9960974e5f8fc2bdb9520731b480eee427c89b9d417c6c6ca420846"
+    },
+    {
+      "path": "data/weather/resolutions/0x5cf6ce63143e18ca5ad00a1164176da1faaa11a9b98e96edf7f3f6a1f70024f3.json",
+      "sha256": "746773742cb707b1bbb452bf27f5fdbc84b6338283dc714847c660a4d293a3f2"
+    },
+    {
+      "path": "data/weather/resolutions/0x5d34a942a0fa2c3a83791d19e636a81aac213a8843eb3f177c93bf945e421fc0.json",
+      "sha256": "faba1b2e43870558888fb0d38176bb4a73f17bcd56bb7da3943f634a055e8eee"
+    },
+    {
+      "path": "data/weather/resolutions/0x5e196267623f27d21cfcca80fd8a8c4fea10980be99698a5067d51cf22710bd0.json",
+      "sha256": "d253e19405653d494bcb7b25b499c20d8eb726d0b42d3a02a249bcbb875c250e"
+    },
+    {
+      "path": "data/weather/resolutions/0x5e3a8c5d0e84146061aaf6b497c3cedbb631e75e5548cfd8bf83aaf5d5b74e2c.json",
+      "sha256": "c1c60e7668e83d254f1f6f2b50bf0dd1e4fbfd3dbf2c344c26c6b9ba30a4c12f"
+    },
+    {
+      "path": "data/weather/resolutions/0x5f0b409b6af8900c1c2634733ad1065df4639c23e68aac52a7bd281578c208dd.json",
+      "sha256": "3f0f617c1f7b2c00632c0096c37473fa837bf9b9fabf8a2925c82a7817da56a6"
+    },
+    {
+      "path": "data/weather/resolutions/0x5f35ef7baae1abc160a247ead2ae988b0093027c76395c6c9d61c2fb8bbd213d.json",
+      "sha256": "cb2903c21dfc68761bedfb78afa60a09d8df06a1e59c8f6f19f4723b9bdefa15"
+    },
+    {
+      "path": "data/weather/resolutions/0x5fac89cd0cd65c8f36f71521821b7c400017bb6074be66eae98dbef9b6f1027c.json",
+      "sha256": "a84c5340cb1342267778d88f9d60d6d797a155482cecc210268fced5f9f939d3"
+    },
+    {
+      "path": "data/weather/resolutions/0x5fc7b85862e3a684cb40770bf1ddae7bc020f69e1361ee0475c9bb2800c71a23.json",
+      "sha256": "231cda7237fea62ac49f52678e3df403953cdb0dcadca66dd10751b78cf675ca"
+    },
+    {
+      "path": "data/weather/resolutions/0x601b8c563e5c5fc7bcde3942f8a18b6111209e8539c135dc414f7b09cac73bdb.json",
+      "sha256": "0102c3123360cc3c0fae624f72efbfab6115fddf879d910323227a6f28b76c51"
+    },
+    {
+      "path": "data/weather/resolutions/0x61672acaec9663c4e0c4982b54a92d020e4771af8b9561dcaa004767ba7c83fb.json",
+      "sha256": "e6cdedeba8aa355fd19f768b68200bde9488cf95b714cf0b9e032732cf8ad62f"
+    },
+    {
+      "path": "data/weather/resolutions/0x619cb08301f8fa9f46b6042d5d4e14270cb1f6da1df4719951047522435a87bc.json",
+      "sha256": "ecdf816f044015534626595a998e8b0442a7e7d920df76a137d00f32d5cdda0a"
+    },
+    {
+      "path": "data/weather/resolutions/0x6200ca753b93d7e4771a8f0cd54809848eb22b44fbb7b15b10cd7d7c165a0003.json",
+      "sha256": "02f31a37a31f81ba3bcf76a0187dfdfdb987fdf18572c2a2cc5b39a8cb388fc3"
+    },
+    {
+      "path": "data/weather/resolutions/0x6236beea3fca192483c81be2766553f88674cbe9052ab117728be0051d71c922.json",
+      "sha256": "bf65c7ee8dfc8c317407bca5c76d1dcd3a7536c77ecadb0528ac12d3f8fdeef5"
+    },
+    {
+      "path": "data/weather/resolutions/0x62ad784c8d7259642a4faa66f1c4706b8248e36b77dde640f305bdfa1b5685b7.json",
+      "sha256": "6642f95dda4503161803238fc2fb69410924d7dca1dc3062ed1f59fa030d8db1"
+    },
+    {
+      "path": "data/weather/resolutions/0x6347a2a959ec21f46e6721972624342a1cad4eb842d28629e3348cd43801300d.json",
+      "sha256": "a3c66cc1e17a2344a07bb1e27fedb2dc0c985af94c90ef385214fc55524cac27"
+    },
+    {
+      "path": "data/weather/resolutions/0x63853fd1e744a955ccbb9d987cdf127dd1a0f00dea9f34c13c1228a1cd6adca7.json",
+      "sha256": "de1420b3772292b5b7a196a8154e41dd2c7d836260b1bb325bf7756f12d3ecbc"
+    },
+    {
+      "path": "data/weather/resolutions/0x6507070b232e9ce397ca1a59695d8facacd009ac5c26edc53d1efc00d623321d.json",
+      "sha256": "5f8e897558bf0ff77d6acc86e3dee9d0097b9c66ad0a9ec46afc319b3227776a"
+    },
+    {
+      "path": "data/weather/resolutions/0x6513928d397c737dcd2352b625cbc5a6187b191eed0e55b872489e8e8eb416dd.json",
+      "sha256": "c8221d151f2962c5210b17ab75e0e42d2d5147a20657c109154ea437e9d69087"
+    },
+    {
+      "path": "data/weather/resolutions/0x65282c7b3e21987c1ec8f5bd94285c31a0ad656f4c28ee63f2bebcce2ae29447.json",
+      "sha256": "097c94a4a399f11a47dcd05f16baf0c1bf12edd48ad2046f1494feed8c4d77a5"
+    },
+    {
+      "path": "data/weather/resolutions/0x6534997d91756df954bc266fc6176bee820fd8d95d2ed310ac3cafab818cd404.json",
+      "sha256": "664e589379634f0aa0c965b19e1a300ace59d2c6dfdf45db473faf1ac0daeda2"
+    },
+    {
+      "path": "data/weather/resolutions/0x658753b367f34c8f89ee13f34d1c3e03163fb3b0f692884e3a761ba09ea9c619.json",
+      "sha256": "6e85022f6fd9c0df7d7af22be1f579827728439a45e14a2d4ddee2dc06eb2a52"
+    },
+    {
+      "path": "data/weather/resolutions/0x66864661202d5df0e31c4bd5a93f46a0b41ccf34f9750fbae6ee40363c7ecede.json",
+      "sha256": "2bdfb900d10aa39ef5cb141047b5a6ba883a8027b73cf7ff4f1df348bd926ea1"
+    },
+    {
+      "path": "data/weather/resolutions/0x66b7986fa8a8886e97ebfe924adab7f7478b9cc63fafc881fa854ef291282263.json",
+      "sha256": "1ab95ceaf20ef0b096de7e6fb3f9fdaec2ee9d9eddbbc84475e8f3f4dad0a73a"
+    },
+    {
+      "path": "data/weather/resolutions/0x6783c926e911776f9cb056a7d59eac7d8f37e590b04b05944375fa730a080acb.json",
+      "sha256": "538815ef436f1f0c49a7e1d81411edceab8f9da57f8208ed0552e2c221e6e521"
+    },
+    {
+      "path": "data/weather/resolutions/0x678a99d7ec83825e1cbc460c545f82ee651965d024905dd58e203e14a56c3090.json",
+      "sha256": "7f08a29707de7ca15a28f8cec9126e280d37b0e59c525ee7de29da60855a1308"
+    },
+    {
+      "path": "data/weather/resolutions/0x67bd8703483b9dbc2f7bfdbaf5ad2a942c3607f1c7abdb5650d4b0d5fa2ccd4e.json",
+      "sha256": "66efeaeeb2e531073c228f8305680dba40f380dfa3bd1c1df2940ae24f286b61"
+    },
+    {
+      "path": "data/weather/resolutions/0x67d893e8a52d15cc687a01f1cb403ce0b2d3a78fddbf1e277199b79a5c924bfc.json",
+      "sha256": "f2d99af861f2ba586e5db2f3aa4b7dc3c547b73b6ae00b4b7a73ea694f630c26"
+    },
+    {
+      "path": "data/weather/resolutions/0x6909f0b462d2ab38ff444e72fade7170f4d5a50acddbd506a78bd944186b614b.json",
+      "sha256": "2000ebb34238638aa96564ed44a009040802ccbe3a123543ca481758c31f7128"
+    },
+    {
+      "path": "data/weather/resolutions/0x694457afd895e0807b931372f2056b735e3f1acbde1edfc26bf749731d6c68d8.json",
+      "sha256": "238770a8bcc98d4f1d721c54d3e7563933893176535e1e904f1ea073b87482fb"
+    },
+    {
+      "path": "data/weather/resolutions/0x69828b104ac37063f62e0d76949cb0a3a27267ec542abb8a5bf57ae31406cb18.json",
+      "sha256": "35beced82660877df94e3d991cd34cd1848ba14486346d746dee613e4e2b1704"
+    },
+    {
+      "path": "data/weather/resolutions/0x6a940ecb5831b031c95c777f50578d756a127e1f7ffb32caf25dfb2b06c945bc.json",
+      "sha256": "6ad3e95fdf87330ba1389fd2a0ea71a2fdcc9046a90c8cf8367df0e4720cc844"
+    },
+    {
+      "path": "data/weather/resolutions/0x6b03c92651abd93d9c3db3c14fc6e87ae664195a86bda6c96fb36be7a3b523dc.json",
+      "sha256": "45ff4356b77cf35f966f9889aae7b35f61dad82675813519fb8da09ab09a79d4"
+    },
+    {
+      "path": "data/weather/resolutions/0x6b52e8e94a34d29010a3bcf8ad75bf5f6e1f3babcf98e19469ad21ac0fee3b0a.json",
+      "sha256": "334e59aedfc5cfe6041809573c0bc2b72d20007535ce8dcacc5318648f7cd6a0"
+    },
+    {
+      "path": "data/weather/resolutions/0x6b75c523c8c4863698d60dc5bb8ed16334f46727d300b9396fc8e735526b90f9.json",
+      "sha256": "70b8bb344f4d98f2fab835e97fc3b305510ee8ea6454441d0d2025329c282162"
+    },
+    {
+      "path": "data/weather/resolutions/0x6be4587cf65d1bfe5bb0ad23395a21eb8166ccf2e535b9483a73c49fe5877db8.json",
+      "sha256": "257cff86727899b1ea533428a319703422673cfc063e6e28b40b78aa36f1bf93"
+    },
+    {
+      "path": "data/weather/resolutions/0x6bf9efe52b4ea9f83a476bba920b0d0ff6f0c28ca93ce383be504d3fa886648b.json",
+      "sha256": "bafe395e3c245c4f26530fa49f8db555e6646d46813f96a836ca84103afd17bb"
+    },
+    {
+      "path": "data/weather/resolutions/0x6d2fda0963826801bcf9cb405e9284454e737cbb95af28d09234488612d8509f.json",
+      "sha256": "31766eeff9ff4c67efbf9bc4cf7e040912d313c79839a7a4ec4d0528bca85987"
+    },
+    {
+      "path": "data/weather/resolutions/0x6d64db7a7bdddbe0a6bad8aa1404393197c70392ea9ca93660bea2582f0192b3.json",
+      "sha256": "28b9187181ba42632e0aea9f93cbdbf824d6d60fae9cbb8b015ede4ea4d6bb5a"
+    },
+    {
+      "path": "data/weather/resolutions/0x6d9cbd00230ea618c0a12b64ef51054022f30cbb035072cd961e881085602f72.json",
+      "sha256": "fb0c83e18d6507c6c1b7a4a7566284b56f97b05bf4fff86048579922fc36939a"
+    },
+    {
+      "path": "data/weather/resolutions/0x6e3bbef309024e523ec56aab708d757d084c48166ca681478f5bce280cf2a042.json",
+      "sha256": "7598cb9c41f474e4acbe855f62e5ecf33dccb69f12b063505c12ac4858dd26dc"
+    },
+    {
+      "path": "data/weather/resolutions/0x6e6d9600e72af7e7c222c3b3440dff7a5ae5849c1099e4afb9f963deab694256.json",
+      "sha256": "be3a53971a1fddaebcbae22b2858f03257bb1060a89d590e180408de8efdeb82"
+    },
+    {
+      "path": "data/weather/resolutions/0x6ee1a8d11e64162c33b1c1c69d208249a946ef5aa9b6c51609ec4a1296ff64cb.json",
+      "sha256": "16e89c9865ea559e1bb7b09a13c88a38d2833660849c13587aa8440f87fcf9f2"
+    },
+    {
+      "path": "data/weather/resolutions/0x6ee8f71c4997df2b456f35782dbd376c9f8463b4bd1ae0ad767ee3d01b608857.json",
+      "sha256": "8b3d9152c50fab33e037e08de4a7262ddf8d1e6b64574d794da6da9b67d63a17"
+    },
+    {
+      "path": "data/weather/resolutions/0x6f7b9fb52123f2ccfaa966bbb7bb37df09ee11407e0fd928f47285ba16385432.json",
+      "sha256": "b3b43071e63c1bfe3f3645440e50814592cab3044daec1df7b8f5060917ed375"
+    },
+    {
+      "path": "data/weather/resolutions/0x70d52ba25e520d57335fd3565e7910d58553c24a159cde9c17bea3866997f6c1.json",
+      "sha256": "ad7cd0d2b1a038d3c8f5f53995239930a494e2bac7daa1717a121fb5414f71ff"
+    },
+    {
+      "path": "data/weather/resolutions/0x71d23cbf0c29a1c4c51d61801e685f89f16c3e70f318ad91da4b564036ad9bec.json",
+      "sha256": "d5e9f9307caf4f2831dd0b3c70601ddb073cdb6b2eace4c02d5dbe3cf9f70b2a"
+    },
+    {
+      "path": "data/weather/resolutions/0x72678cf2522eff88bd56bf1d9d7bf70b731280958e97887365a5d0590872a92d.json",
+      "sha256": "e1e1d760e4f38eb7fcbba6039d1cfe3f72b51459b0f1c15505e3f638a8acd3d0"
+    },
+    {
+      "path": "data/weather/resolutions/0x7270dcc22cb68fad957d2cc661ba668222d2c6c8f878d26eb1f83b4ca116c951.json",
+      "sha256": "14f545ae31bdcc16515f11629fdf7f365a613a7c00b345c55839de6a5c142ffc"
+    },
+    {
+      "path": "data/weather/resolutions/0x72aebcc42c67019b186f5576f845dd3960cbcd09033b5bb48b9d0d82f431ffb6.json",
+      "sha256": "f1c055db6b308b1f2443dd61eacef003a137c50a4c0063f92a21dd58a4a10e49"
+    },
+    {
+      "path": "data/weather/resolutions/0x7308d8834e3ceb6c031138aff86710cbd64f000ef61cfc242ce1896b4315bb76.json",
+      "sha256": "9a2bd6ab8bdf5d0ca501e37c77586f6c2f53673194198ea78b496ac9d000aa1a"
+    },
+    {
+      "path": "data/weather/resolutions/0x733e5ef1b8b5fdc6e8a93eecf92a720c30ee239aefd0bcbc50623c4c378c623d.json",
+      "sha256": "a3861eba4c45da2b65e9d3a5b3676ae940494b5ff91156ba7596a6d5e9901a8f"
+    },
+    {
+      "path": "data/weather/resolutions/0x7354a1c23dd25e3224697ed63812ee400abafd967063e60d4d936ceace674bf7.json",
+      "sha256": "658e33f66dbb0fad51ee4361e13e6793e9267d78eaaad1ba38cbc2b6ee1ab3b5"
+    },
+    {
+      "path": "data/weather/resolutions/0x738a1a9b38c310cbcf4f133ec3e1a4a781feb9bdef39ede4f810c14bb9e11db6.json",
+      "sha256": "184fd4780137d75e5044324e9c279c5497eb8cb19c41514f414a6e0bb983759e"
+    },
+    {
+      "path": "data/weather/resolutions/0x743168ac77a28b1d63036f5c8591bcd0711899227bb9b362f79dacfdc439e762.json",
+      "sha256": "e5192dee75f3dbfa22a1a2ea15b3bd73c2b84c7f4b52c241e736c19af61c9bb6"
+    },
+    {
+      "path": "data/weather/resolutions/0x74e1ccc42394790508a0547677e3f811af814c13f1da174f85063ccb7e2c959a.json",
+      "sha256": "c67e14e76646eeb03c785329d338d8cd3567e0257080c1c4ce291e74ad2a647d"
+    },
+    {
+      "path": "data/weather/resolutions/0x74ef2e3f0c3dac98d8d97f562123bdaf5473b047864c34e8a84599e892b56b7b.json",
+      "sha256": "7270ff723bafcfdc00b80db1e47ad91bd4021e2f573c7949d389dc55eba15699"
+    },
+    {
+      "path": "data/weather/resolutions/0x75208401e0287d4b163cd0c5a9f7fc9c9e02c61972be313a79038bd8f87f4f6c.json",
+      "sha256": "366b11a50381a28dc6b667df6c9882d31c0033ad6861c9e92e09d95fc20d4b9b"
+    },
+    {
+      "path": "data/weather/resolutions/0x75980518eea7d0ebb15ae9135f0fde8e13866c8a3ef54ca74e45e302d7a58b84.json",
+      "sha256": "b731f7787d78596791f181e50e1be4a30f7c5f20d129a11e9df12f11d1dfb942"
+    },
+    {
+      "path": "data/weather/resolutions/0x7628d9e824fbd0980ccf52d414df672ab052d93a88b2d44a7af3a8120df44f53.json",
+      "sha256": "1b1bd743c31effa6b4489d90e3dfc2d7425f870885c198b9acd8aa8a2a13983b"
+    },
+    {
+      "path": "data/weather/resolutions/0x7676d65ae94ede7a224ec694f1d8abe2a68bd78d51da14c13f8f67facfec1214.json",
+      "sha256": "6364e923132f5bd348f226b29be91c0180e1ebfc749227e7be44703d0db074c5"
+    },
+    {
+      "path": "data/weather/resolutions/0x76bde05a3e27007d3b146f5c601139b2efd27736cf982a9bcb61b238d97556cf.json",
+      "sha256": "2d3c0032391986722dd1dedc764050717ba9c24435de6caede2e909c179c8366"
+    },
+    {
+      "path": "data/weather/resolutions/0x76c8c096426419f3667439c7c53dc000f8706bf27d5848a7823778d81561aa51.json",
+      "sha256": "86359b71a056b5f6a797ec34951697b4839134dda590290ec5890739e91f70a1"
+    },
+    {
+      "path": "data/weather/resolutions/0x76de36907ebf58b47e586e622a512097db016c615c91646142cd5246bb478493.json",
+      "sha256": "b98f211a25c1bb493295e7287aaa717e1ee56cbccd841211bddfc69a24686459"
+    },
+    {
+      "path": "data/weather/resolutions/0x76f9869bde79ff3143d59a6b64c8fa3c480bde8f91ff5081459b321f6acba285.json",
+      "sha256": "820f235b5e9b7833e9ed85ed628c01bdf02f8676959fd2f6edb773550f4d69be"
+    },
+    {
+      "path": "data/weather/resolutions/0x770310c42d842fc5b22264c53ec5b067aea372198d08745324e1c52b06629d45.json",
+      "sha256": "2518fc3fdc25cbd9159603adb2f334b244a125ade41d7dcbb4b00222bb462f13"
+    },
+    {
+      "path": "data/weather/resolutions/0x782f86a0d95c0398efafb5342c5c82d495103a9ac8193db5ed78644b6812bca9.json",
+      "sha256": "bf7788540ab5f71fdc2f2d430e16c3cd201bb8ce9cf19fde04ce68a311d7d880"
+    },
+    {
+      "path": "data/weather/resolutions/0x78656fe713baf0d6abdebb2bac3423b573feefe4e5730e875fa956ad43de5d3a.json",
+      "sha256": "2ee253dc1fba76c8f4f2a2364f93511bd689140f15c251d8e923f6eea9d56000"
+    },
+    {
+      "path": "data/weather/resolutions/0x787ab60f21ee9bf84e933b41808aee42e2b6ffb4bb4b41efd7acd60e440fa1c3.json",
+      "sha256": "daa1e68b56579bda9288cccc9ed66629476730c85cfca686b2cd9f6d3683b59d"
+    },
+    {
+      "path": "data/weather/resolutions/0x78a4958683d3cdd59040eb8c74095b61b3bf77763f3fc8d1323f433a4dacfadb.json",
+      "sha256": "54a65018f599d12ba949f10ba282fec37d632543b442a9f33a4b561b854bc1e1"
+    },
+    {
+      "path": "data/weather/resolutions/0x78a7f3687ad15f39d6f877981f01cef2a1237c9f30604184e23d6b5c2904fbae.json",
+      "sha256": "61732b07c4525d5d1bc21671c6a586ee39a11413c57bf51e19345b3f7accecc9"
+    },
+    {
+      "path": "data/weather/resolutions/0x79e9f98ebcbafd2e31befaacbf9c28d7493eac92ce73da7877c9e214f1b831dd.json",
+      "sha256": "81681530bdf861b093cf09ddd2ad6c56d7218bc0c3d5ace428694848407ba425"
+    },
+    {
+      "path": "data/weather/resolutions/0x7aaf9f6ba485452071441d4406468411e96f2c3e765fb8b5466d437028eb69f5.json",
+      "sha256": "d96979961cb11b8987b2d88f96368dc8b40c7406ae532cbb70c107d8743d29db"
+    },
+    {
+      "path": "data/weather/resolutions/0x7ae308e9b8f610438af501ec255e974e90314abd9b3d1c26510a544eca50d93e.json",
+      "sha256": "21c80edc1ab4a396ed145d28d9aa4a184d27227bda849d57cabf12a5a7aac825"
+    },
+    {
+      "path": "data/weather/resolutions/0x7bacc20e70cbbe388fb2675d6c7e59a4a045b148a01e5d2e32858b25b50c95f2.json",
+      "sha256": "9da6783456426678617e7431fb3d2b3bbd2ec47c1f490e5c6b71936b33354317"
+    },
+    {
+      "path": "data/weather/resolutions/0x7c5c95e085dacb5b27100ecb3550421b2fccd89fb0ee90b15311091065493141.json",
+      "sha256": "9b03374d84424e9e37faf68db82f575632b5ba3d9e005e4000555a2cc8671a59"
+    },
+    {
+      "path": "data/weather/resolutions/0x7c72f70285552e70ff66c949d5775dfa3443a1962931ef30912fd849aaace58a.json",
+      "sha256": "c632fc962dfc70ad788fdd035e5ceafef1008d8bf4cac2aaaecf197851e812ac"
+    },
+    {
+      "path": "data/weather/resolutions/0x7c931ce3fa6507487e42067d30c24e7f84176840ce88cfdc170044e9854d481a.json",
+      "sha256": "dc9b655f48f78493aff9009a2d5341deb3cc0b45a439c7beebb729184c3862e1"
+    },
+    {
+      "path": "data/weather/resolutions/0x7c98a035234a1771f49c736e946a6798326bb7e1b13fe8dc800e0ac936109e4c.json",
+      "sha256": "c898a89704a81090dcc6caf07356dcbb2abbe3be5193a0b9df5b475505cd7960"
+    },
+    {
+      "path": "data/weather/resolutions/0x7d331bd6470cd33defff00d762dab1a2ec80ea94f92f81f33f5e2c6ed021e11e.json",
+      "sha256": "fcba436964efc898f0fee225492f77c970fa39ccedb7f1374ac76ae32f144121"
+    },
+    {
+      "path": "data/weather/resolutions/0x7d89f19d9104b1709620b83bbb2a245b3f711f657e399e5d4f65c33e391deceb.json",
+      "sha256": "dd020f0b47a14ca57a327e0242c6aefbeb3a3a6eb7de020f64037c5310fa1e4a"
+    },
+    {
+      "path": "data/weather/resolutions/0x7d9bdc2576ebd7ef98e958cc91489d36645f5462c149a1fda60c243b270f3a8a.json",
+      "sha256": "7ae768d14c50c016e8ce5e1515c9924c25f8e6e63a6b295e02d7790715a06100"
+    },
+    {
+      "path": "data/weather/resolutions/0x7dab6b3151a755be44e48766b9bf7156b7fd7ae7944feb30dd0a5e74b6c18044.json",
+      "sha256": "a010ee3a71d52fb21b1dbf570d53ff39d1ddd01645dd3d60e5dcc0b271872b67"
+    },
+    {
+      "path": "data/weather/resolutions/0x7e5387e4843eeefa9984b440b7986b4e86b3ea6e3ce3a78d3edee32763ab2740.json",
+      "sha256": "f7d1b310c1d1a0e5304346c0e93af02808f5ae3fedf0adb53aafba0270451546"
+    },
+    {
+      "path": "data/weather/resolutions/0x7e5ec772eaf32ef78c61f4c26292ab2304f9f817349134e190b13bf970a9bdc3.json",
+      "sha256": "e67400b07e17c38d53825b2946c0dfc7b12e94607f1a09b707dc816cad7ba813"
+    },
+    {
+      "path": "data/weather/resolutions/0x7f06e48b6c99511d21b3ff133bf99146f80dbae2ad60fc7150ed147774e482b2.json",
+      "sha256": "df07b1a43bf51017990a2ab30e906de6920575769b918ecbbc85dce411d76a7a"
+    },
+    {
+      "path": "data/weather/resolutions/0x80475437b24fcb28c4d66ded5c5b9efa2e587f51e0cc11005af98d745c892fd3.json",
+      "sha256": "f6c9db83e3afefe2d8c563ebcb12e9fa05812366836b50d99f952f17403d446b"
+    },
+    {
+      "path": "data/weather/resolutions/0x808ba49958237711197cbd9f163c05841e2b93d080887bda8f7873608e391a83.json",
+      "sha256": "8a88da854ecf4ea1390f688a508736627160507bed5b64cca754db5fbc6334a0"
+    },
+    {
+      "path": "data/weather/resolutions/0x822dd344c9b9a0045c4ac871462baaa60ff9e65761e3dffc745213946039cf22.json",
+      "sha256": "ad770a58b7475550d847462cdb1798430980a0e80b96a58b0b1df3b14b3af0ef"
+    },
+    {
+      "path": "data/weather/resolutions/0x833dd0ff6c3d6db3fc62246a4ede74435dcadee306717b608a9191d88a33b5b1.json",
+      "sha256": "3e57f9a8e30d0992ce1c2cc0eb702c916033ead471573f6afa90ffcf22c80e7f"
+    },
+    {
+      "path": "data/weather/resolutions/0x83495099821086b99e4549e9f5ac01ee829bfb17af6febc4a9ec290a7caf906a.json",
+      "sha256": "c4e3266b557d2e65cbb11d75dd6d3acc4f3f5e13fdb7a43020b147aaa8daac9d"
+    },
+    {
+      "path": "data/weather/resolutions/0x838f9636ff8c468a6218ca39922a5747386bfe52b55a58485307453108755967.json",
+      "sha256": "da0932dd7af8c7485206cf0ed384e78b4a363174dc2af74b65b41a33e3a0e745"
+    },
+    {
+      "path": "data/weather/resolutions/0x83bb01de6d91070c2e4f0c9b40f208d6a7351020cd0d25809c503bb1e3c89f53.json",
+      "sha256": "46418c66d0d27a34183fceccea5e21c110d88bb9745a89b0754014b966836096"
+    },
+    {
+      "path": "data/weather/resolutions/0x83bf51ef2dc73cf4f9a4b3eb7b2c560f19c748490acc5d880bb14d7840730de8.json",
+      "sha256": "98519834c8b5b7e5a1303ed06831441f1094368c351fd8b5cbbeaab406478e4d"
+    },
+    {
+      "path": "data/weather/resolutions/0x84889024f4cd729d9182ac7c4071aef0d043bc4984efc3e627503441a93d4434.json",
+      "sha256": "5d466ce0d28eea6121ac1fedbb6ad3e58fc1f1bd778e3ad6b879ddd9a6cec63b"
+    },
+    {
+      "path": "data/weather/resolutions/0x84cb750aa6ce0b01788d7e360ea87559ca3a548281646eddaa87213a49ead807.json",
+      "sha256": "7e6b0883852f9e69cf1bf5de6fb745465d3c2b0eb907b5d6d1cc1c74be689b2d"
+    },
+    {
+      "path": "data/weather/resolutions/0x84f0f88aac6dec097e149256bcee7653f407978ac65f2869f9c0b0d5e4dc7775.json",
+      "sha256": "b2b6075fc60b87b8c1b4afc7949aa8083d6010b6055e8b0bbecef1f8dda6f31a"
+    },
+    {
+      "path": "data/weather/resolutions/0x85217bb7fb9aaa5659f79bdabd64f812d27b9d53f2d0abbab10c9478239abafc.json",
+      "sha256": "0370646f503e41c573711f3c5dccf20dfe949e4875e565b121f94e18c169a82c"
+    },
+    {
+      "path": "data/weather/resolutions/0x8578c86c8a5f4c45fb208b65a803651dfff4921ec1a1c44f8ab21958975df0a0.json",
+      "sha256": "21bc46dffc547f0206767d4485165f5f258a261e3599f27819e4217a5cfbb13d"
+    },
+    {
+      "path": "data/weather/resolutions/0x85e0c0fac3bd40b84b9e9488eef4721005535235e5551e89c93f0803fcb90352.json",
+      "sha256": "3bfe3cbe96baa8449164d92bc728c3b8298d04debf6bac242058c6bc146ad1d8"
+    },
+    {
+      "path": "data/weather/resolutions/0x8625d02f8921bce37686da529e3f45b8d771577a1648a48d16f7075474cd8b71.json",
+      "sha256": "b87a6044ea08b81f33d6b5db7caf472d0165ff8b99cec3234d6c01361c1d8e38"
+    },
+    {
+      "path": "data/weather/resolutions/0x8662d82bee9eefaade1e873895918bdb47c7528fd2e1f30936b8b656c3367106.json",
+      "sha256": "a1baf996b6c0d98c2d33e1c189fa8b456d94a6d48aff3ff8b983b690f747a567"
+    },
+    {
+      "path": "data/weather/resolutions/0x874ff77e8e62de26995973c4605390d394f4cc1bc811a03de50759d099909a8f.json",
+      "sha256": "46c9a49447d77322fad60298eca7ea9d4994ebd2d267e048066090a2323cca79"
+    },
+    {
+      "path": "data/weather/resolutions/0x876798173f648061bf156c3241b7e3d04f2a9b342b01ac1f71857ad9f94395d7.json",
+      "sha256": "f760191e8dcee660db9e7d2e6822f7a29b940994a0ae59ffaaac5c3510e83553"
+    },
+    {
+      "path": "data/weather/resolutions/0x87fc120d3598e261f1e939f76cb3cee0b744ee0e16eb5727acd3dc9be242e8c9.json",
+      "sha256": "a90e7f7fd35e083ad07392c21a8fb98e377c58d5f7d8354ea26f8db3efaa41fb"
+    },
+    {
+      "path": "data/weather/resolutions/0x88bac726ef83abc4fa6f869489e385cafc9a1cf5728a3f813aa49fff2a44b84e.json",
+      "sha256": "7f2f00c0ee780033e6cc55027c7bc0d1201574ca3e3bd2d51bfc2bf5aaea96e9"
+    },
+    {
+      "path": "data/weather/resolutions/0x88f2b5aa1928fcfca824b4a679e0ed3822b0257c202a1e6b2e5d4c4c5f8a093f.json",
+      "sha256": "265fbd3e45de78312cbd6d750686a870f37a9bb5257a0a57e3cbea6a3a045196"
+    },
+    {
+      "path": "data/weather/resolutions/0x8957936f486759e30e4aca2f0f10f319fd0014716ce741b3bb64a8c15e7239b3.json",
+      "sha256": "e78acab793fb6c7446961edb0e7de4638e63ced45a084d160e323883166ac2d5"
+    },
+    {
+      "path": "data/weather/resolutions/0x89950548de8440c9426fc4906be29d458ac6340627bdd6cd0bb0b84ee7397b4a.json",
+      "sha256": "3eec5471a0a662b20635893e9f9eeddbf9037c121ac06f6c885b0d951d90486b"
+    },
+    {
+      "path": "data/weather/resolutions/0x89e8cffb7fe7e77d0621f23e96ce5a39e7a3c7947d54fe35d3ed46e167b4d889.json",
+      "sha256": "616b2c22b7f742ad16c1ba3b112b37e8dc1492824cac2886d030ccf8f2c322d3"
+    },
+    {
+      "path": "data/weather/resolutions/0x8a4cd96dc7caf3f06b9831b44cfae668ba70fcf11d729d29f4266b5006cb085d.json",
+      "sha256": "d812623005e72525136d949f9aa1f785d00b063b8d87ba37348e775b2d4c7f94"
+    },
+    {
+      "path": "data/weather/resolutions/0x8a80aa9552381db553d75d413fd2969bbfb0034d5e54411cbddacbcba30ec5e8.json",
+      "sha256": "a92b17c5aedcc516a34f9e77ea08ba651461bb703c2b4faeb0cb061927443af9"
+    },
+    {
+      "path": "data/weather/resolutions/0x8b0c451ee379c9757ddd6da679e6c8062fd31687e500aa9019090e83d58c73ae.json",
+      "sha256": "3f2e8738ea51d0b7e8514b29ef96a466083a0b910ccf8c218b0383107c2d9192"
+    },
+    {
+      "path": "data/weather/resolutions/0x8b14dd53d22a05603e67432f860de45633abe26a5ef8e55ce42ce9ab4bf13a95.json",
+      "sha256": "66d72c0009da7de70e09f5ebe315b446315ccf2abc23f13f7a53715cac3af403"
+    },
+    {
+      "path": "data/weather/resolutions/0x8b75d418b0b4375ba07e5bb8f6a494efd0156ea9e5c9c813f26fed7279089685.json",
+      "sha256": "7a0f16dd860b59c78f60236bd4a67afa31ba5f62ab954fab28e1c123cd51661f"
+    },
+    {
+      "path": "data/weather/resolutions/0x8c4dc1ac59bd3c20c356ddea9e8e2e638dde6b2fca39282e2feee1ce2fccd8d5.json",
+      "sha256": "10d2d91b6bae22d2d8df71ec617cff44dbf117890ad843871ff649920adc9e32"
+    },
+    {
+      "path": "data/weather/resolutions/0x8c69a35a938a0a02bc1d05ed81b7e333e6cd574fce1cd06380003a891be95d80.json",
+      "sha256": "9d273228ba100cf6eee9f8ae1909c0976303648cab5e4db8a4c1576504449b80"
+    },
+    {
+      "path": "data/weather/resolutions/0x8c9531865826998f3c216aa6d9a169cc190c869567be293bcc91978be06e1651.json",
+      "sha256": "1ab967941ca6c33993498be4ab37c516b3ddb093d1872c167767bc8d9797c94a"
+    },
+    {
+      "path": "data/weather/resolutions/0x8ce62e978843e2d8460fb49bb87454c34ec993f7b12f8a05be7e7171f0a38c8c.json",
+      "sha256": "d5337bd4779b19d2434378814b16a320292981bca2b643b7734c694170efe7a3"
+    },
+    {
+      "path": "data/weather/resolutions/0x8de3bd5da11c6939448778a317ec2fe686f7673f4a95c0661c241787ff114cda.json",
+      "sha256": "93f091148f884e3439af1af253fd4ad27e6385e497805b18f144902f015c9cee"
+    },
+    {
+      "path": "data/weather/resolutions/0x8e096f6f4c1f5946e39de89f2b1a7c6196c3453fc43089646b08165583265a9d.json",
+      "sha256": "80d2f6306f3ed4dc72aa91aefccbb7c0ec4b1aae4e71d01c317e8daaf0c8a8ba"
+    },
+    {
+      "path": "data/weather/resolutions/0x9060e544277d3b1aa6d35140861e8a9e13392125f29e8f7bce711ce22c9deeae.json",
+      "sha256": "e7a66bd0e4c4e210dbbf798477979258fd9f3b281f6f117c1a4494e88490e206"
+    },
+    {
+      "path": "data/weather/resolutions/0x90b013697e0090b344f21600134e3c9fef2c9485a5ad8d6b8b28715bb408f0d7.json",
+      "sha256": "10ddc550e567de575c23f8a06e1150e4fe5da89b990343a24e5b2bebf498c0bd"
+    },
+    {
+      "path": "data/weather/resolutions/0x90f2525cccc60382fa5d1031639e5264460fbe08781c6b05ec819254ba96f536.json",
+      "sha256": "2f667b2e418fc7cc0bcded203e70b78c032e5ee9991d1322d131a7d106972d0b"
+    },
+    {
+      "path": "data/weather/resolutions/0x918d323bcbfbeb66a3574b07f5df7bc0796aecef74cc09abedf62a6adb3b7e40.json",
+      "sha256": "1683e5323b50822c2f553ba4c82e4dae71d768bb28dcf23864f317ff6505558b"
+    },
+    {
+      "path": "data/weather/resolutions/0x925330e3b259f0bd0b12a0a127911bb8bf4f164e1186b61e4972827f284a9035.json",
+      "sha256": "5c8e23b5a83227a15c9291520760addfe66a1cd1311208e92d87ac302004f560"
+    },
+    {
+      "path": "data/weather/resolutions/0x92ada4f084cf03090a240da55b42bdc4de3b75d78ad5a67639596823fa540f65.json",
+      "sha256": "706b3f95733a6ac3010267acfc89196c91ef9f66bb50766b25cc0d799b6603ee"
+    },
+    {
+      "path": "data/weather/resolutions/0x92de6f19ffa026f7ff0c9b97f7270c8c3c22f98c396c5af1df19c44ba6871ef5.json",
+      "sha256": "7ea3a83570a8650b5b8caa327b53a4b17e96fa8e5672b10e8d34af4f6c423f1c"
+    },
+    {
+      "path": "data/weather/resolutions/0x9358beedfb03bcf99314e13ab01a5cbe47b1f4a3ccf900d7d9b321bdd41c549b.json",
+      "sha256": "baacfb64bfa5a766cfd6368faf64edfbc56327c3d77fc4b2f7ee08a1bda5a600"
+    },
+    {
+      "path": "data/weather/resolutions/0x9367a7ed2997f1dbd2dd45d027a463c248420e6fd1774c7d1b4b9c84c8ff4087.json",
+      "sha256": "69fe84b0f9c962958cc174339f71849b521ca5672f5431ba553afb51b8490511"
+    },
+    {
+      "path": "data/weather/resolutions/0x93aebd2993b6333356945e7952a3b1a6bb2a858b0e98b79ad77855d0030af6a3.json",
+      "sha256": "c1d48c1a5f590d93418594af10df33b2427750e04b47b47eab6de0f8a555ed5a"
+    },
+    {
+      "path": "data/weather/resolutions/0x93e9f65463b5cf5131e8ebba83de109ec15a40ba107663cc45512b220b5a9165.json",
+      "sha256": "b14b37313e166dc5c82a066df1316494786b16693c070b82837fd39f5fa0da15"
+    },
+    {
+      "path": "data/weather/resolutions/0x941b674f227a480d450b5522a7f34472980f2ff32b3110551dbe8f9370a11f35.json",
+      "sha256": "fb1454ae20c44e1c4b48807372a0d61bb277c19f77ac30f06e72dbf78961d16c"
+    },
+    {
+      "path": "data/weather/resolutions/0x9499f1b84d44387909a8accb0a811e49c383c3cc2f0b86d0d7991dcbfefc34f9.json",
+      "sha256": "773a8d09e5f51c0cfabc1feaf5bd704f45be5a237106286d5e9807cb642e7923"
+    },
+    {
+      "path": "data/weather/resolutions/0x962fa2bf8671a4568dbb64a99c1114ae05ab1f217b049fc8856addb426ea1c34.json",
+      "sha256": "006fd78f8dba57b03db30cf9c36bc941f56d5d0786647bfe7e6433fc5b5989ea"
+    },
+    {
+      "path": "data/weather/resolutions/0x964348de887479ade342df4413a20341198dfa820098c7c2bfac488b0cbd0d64.json",
+      "sha256": "3dc46aa3b4f033bea02565fde08592b00f5f0b1612997b822e620c8592c7fbba"
+    },
+    {
+      "path": "data/weather/resolutions/0x96b8378771d1a60c3940937a6517c70d5ed3f0bdab517cb4e88a6febc4bba450.json",
+      "sha256": "94633bc00c3dd651a34630bd9ef5169440162d4f89784168a44433658f20f181"
+    },
+    {
+      "path": "data/weather/resolutions/0x979d5cd5f1cb5f5fcfd42b784c5a802c5e663a129e97c8f2596e8be76c4bcee6.json",
+      "sha256": "b45a80f10aba1132141119d98a03bb524a339542b40a5cfc2d7d3f417b860b5d"
+    },
+    {
+      "path": "data/weather/resolutions/0x97c774b3b284e8ad0818af484372a14026baf23ba482ee4c6adaf3d63b82c64d.json",
+      "sha256": "ffdd7d8ce69eecc137e34d3293317d7a1d89182587585cd8a57587ee28bfeee9"
+    },
+    {
+      "path": "data/weather/resolutions/0x982af87eb4e56c601b26a30fa1b7e29be869c67572f38d92f04ea130e466b186.json",
+      "sha256": "bde6139a0ce32c12a5498c2670896f54b9d89a1f9317e5cf2dffa1d8e2762777"
+    },
+    {
+      "path": "data/weather/resolutions/0x98a8a6dac1f0364d307e52a2464f6e1ffbc5b555206aee8fcf03debedd7d0277.json",
+      "sha256": "f749719d976e1a0cbaf4f7301654427cd7965b73d67ca576b56a306265b8ac90"
+    },
+    {
+      "path": "data/weather/resolutions/0x98a9c7cdfcf62ac866a353d7431ffc50faffb00e2610f8434d71904a747dc552.json",
+      "sha256": "5a200f860e1cddfce645002f262e6aa80698d8bcdbc505be6427244386f67468"
+    },
+    {
+      "path": "data/weather/resolutions/0x98be64bfe3d00d1099841661c208d622e865b18f55d530a49414097330de58e4.json",
+      "sha256": "9c9ae40f577ced706fb3067c017885b041746938ca3b22e4f4148c7dfaa3cf64"
+    },
+    {
+      "path": "data/weather/resolutions/0x9975e65d75ad6a5166efe87cd899d123c310addb6d5d550c86d45fd7f50ab78a.json",
+      "sha256": "94c69ab5e1cc2b8976e6954b4a5fad0d809395051fb6f79e8edd4e99c6831f05"
+    },
+    {
+      "path": "data/weather/resolutions/0x9a4a127331573f274820e28d2f787c86a99d895c168c3b0fb324fb215e98de25.json",
+      "sha256": "159ab1a03dea45658e633be9ef10c784ca8e901f5bd79bbe1126f268c209c6bb"
+    },
+    {
+      "path": "data/weather/resolutions/0x9a6fa94bd5c02f60e6178fe0405172c0999516606f1c9acdc8648735900ff06a.json",
+      "sha256": "197115945e891494f16deb9c760d53e7105cbb031649b030887f279d46d843b3"
+    },
+    {
+      "path": "data/weather/resolutions/0x9a79a2f309251e077014f21abbd67bf06bab9cfe80f222194f8ee0e584af8f57.json",
+      "sha256": "1db0c7ad3fcf13855c9051d3597441a2ee4f85f044f533c31887b61deb49eebc"
+    },
+    {
+      "path": "data/weather/resolutions/0x9b39ba0174d28a14f657182dc9f72fb68c727bbdacf2d2b2a11b6fdef53904ff.json",
+      "sha256": "572a531e05b7d0203965e933eb83536559396b06201bcc8596e889271c367131"
+    },
+    {
+      "path": "data/weather/resolutions/0x9b9b4bbae83dc6608a8641303a307c78f45f5009a27111aaba89fe687617cdd4.json",
+      "sha256": "715107f42b2cfcd335c6e1db6ba71521ab7b3c9432e19a6adb8f7bcf0e07c1b8"
+    },
+    {
+      "path": "data/weather/resolutions/0x9c68d9c585b614fd4f01a7a5cf655c7f664e2b42e5d122261de54656244a6aac.json",
+      "sha256": "e866be3bede91310682888e00d0c59959b03e607d7f4026a9cbef4121808f23a"
+    },
+    {
+      "path": "data/weather/resolutions/0x9d8dbac9b7dcd0cfa2d2bc8462fa5c23136b1eb75b1d09f631e8ca28366865a4.json",
+      "sha256": "b0146c4c10f45513434b3d8c8898cdf478881bf840b1402612211daa2ad775d4"
+    },
+    {
+      "path": "data/weather/resolutions/0x9d9e66fc0ffe1bbd679537f0573e008cd430f3f0c54b509d373e1ee7a64628c1.json",
+      "sha256": "2c3e3d9f54b3d7c47251ee14867aa7f3c523c144575f14be7f7d79926fd10655"
+    },
+    {
+      "path": "data/weather/resolutions/0x9dac558510fd103983315e8764dce71eea67bc25ca3d86f4b27a1e3d0d511894.json",
+      "sha256": "470e5a5056ea572e56ba0d03b8db0c7814604aefb2429167a7b2409afd06c930"
+    },
+    {
+      "path": "data/weather/resolutions/0x9ea28825d05850242de49cc9d04bef7ec91a3cee3bde1632212787f1312cdd8e.json",
+      "sha256": "0cc446243f27814100b0279382191866990757eae43dd30449728203d9aa2057"
+    },
+    {
+      "path": "data/weather/resolutions/0x9f3d763552aa23df1a7959bfca0e8b92e964709b24f8616a607170b961db3d17.json",
+      "sha256": "057e2388cd7b6c1e3ab90edc6cae8e105cf48de7b358f613d5323e23cf148f8f"
+    },
+    {
+      "path": "data/weather/resolutions/0x9f6e9e6c305714c87d71ef856b1c183d3e8b846c6f6c70f28242fd289bfa60dd.json",
+      "sha256": "facdc5407f810fd5cfad952e56d518df1c31907ba320708b9448b2c9d9e5c344"
+    },
+    {
+      "path": "data/weather/resolutions/0x9fa3f02a46b0e902aa9a6317da5067229f17a79398d9ec78f6861c8f2536be4f.json",
+      "sha256": "47a14f42efd33db61881d91eff1ed36a35856c594489bfdb399302ebcc0adc78"
+    },
+    {
+      "path": "data/weather/resolutions/0xa007a7377af6f02477d5333bea0b9a50e3c66f370fa7f47a9dac391dc2015f89.json",
+      "sha256": "5adc8cb3bbb8f889b435982dfdfb03b243a163beab085a09482a26e58a747f91"
+    },
+    {
+      "path": "data/weather/resolutions/0xa059be46a173a42e09378605c338e8e249cdb9a83846c43063740fd3f16cdd61.json",
+      "sha256": "5134f42867409cce5f235ef3b3fe65d92716e20725bf7c31763d5e224dbb0755"
+    },
+    {
+      "path": "data/weather/resolutions/0xa0b562b02e86f1f389daa79bd0a09086c0b50833819cbe465a3273d301d3757b.json",
+      "sha256": "0d76325eebea4d19c39e248d2c05c6c563afb668a75c28d58e21c69424727d81"
+    },
+    {
+      "path": "data/weather/resolutions/0xa0f6b626ff3464b591bd091ab80bd77bbbd4f2c51145b0633e160bff9d643767.json",
+      "sha256": "f90fe1c608919a92ca8f093a66cbeaab037f5f4d2f7998a2a9ceaa890b3b6eac"
+    },
+    {
+      "path": "data/weather/resolutions/0xa102d06ac49e1843ca20b3c34b66e2cf81079f8f0f78ccf4f94f650ef1def710.json",
+      "sha256": "dbf606aa4acda1417aed20a40dc1ac2e6da38a3243eeb92c740c285eaea1a170"
+    },
+    {
+      "path": "data/weather/resolutions/0xa1f1d1e41096fee718135cffc6ed5c4dea0b68d7b479701382fc46e403a87a8c.json",
+      "sha256": "d89def23d1b5a164b8b0067e6ec182b33f060f4ad2c69c24c2107ab61bf8bb40"
+    },
+    {
+      "path": "data/weather/resolutions/0xa237b193c692cf6ed3dd0a4183862b828fdda8a2753e61dcad059f50b6f4cf7f.json",
+      "sha256": "576205a9637566d7a7168fbd29156f042eb14dc8e707b3be4d0f8592555f39eb"
+    },
+    {
+      "path": "data/weather/resolutions/0xa2529ad155df3e2065731dc2097963a677ee5128847f05d122d37db92ebf1d03.json",
+      "sha256": "a317e3f4077f301ff141eeda3618020c2d1f82686a693ada6ccd3e9f89caf92b"
+    },
+    {
+      "path": "data/weather/resolutions/0xa284727694cbcddf1bb6dfe9cb6b3c0a4bb9241ef48e6684f0bc109cb2486728.json",
+      "sha256": "f6d6ba9b3e2ba1186b04ef07764c5ecc2dca55508d99f2c66603bf4c910d5711"
+    },
+    {
+      "path": "data/weather/resolutions/0xa32b4101ad2a700e8c6493af2814eed323642d347824d9cd9351bfe26e8d8c4b.json",
+      "sha256": "6f68439f3d9fa04d5558d0898fe754a707e1d80a46e612626c7172ed32a2fa0b"
+    },
+    {
+      "path": "data/weather/resolutions/0xa32ee1538ef09f5f8a69f9f50c816bbed659662f2b90f9471dd581c201f4906b.json",
+      "sha256": "f06e86989f290612ef0abea942abceedf2891081ceef28262a3a8d092296f20c"
+    },
+    {
+      "path": "data/weather/resolutions/0xa3b4a78546722f14ee88a1adb701918c3f12b3f563e21148e18b36c8e1c76b0f.json",
+      "sha256": "8772e995cfb3528e9d2e41d9f672906eead9dc8b1ae3c2116b146c1847da66f2"
+    },
+    {
+      "path": "data/weather/resolutions/0xa44892a9f07acb96e511c76d1e8b8a118d3b3ec6b4c6f02586da57acad7f3954.json",
+      "sha256": "738f54635ff7174959fdab80b20cca0d5a1ba20f388bbf1cf5ab18c500482a1b"
+    },
+    {
+      "path": "data/weather/resolutions/0xa45417fc0fc913e2f9170f61ceef96acd7b6b85ca21561c142f6361048146d67.json",
+      "sha256": "979f090342a7b3f4528af952fbf4b1fd4b64aec53d2c4247db44098a840cf415"
+    },
+    {
+      "path": "data/weather/resolutions/0xa48496f3f81d03fa95aa686f3da44f112ea160b33a1065b721ae0104edfc2ecd.json",
+      "sha256": "0068b94f9367258e4e3102b08836df49b6383f0ad616310925216274257a591c"
+    },
+    {
+      "path": "data/weather/resolutions/0xa4e14cb7f71d24510a4fb520076212c887ec50101f5e443cde31ef6a337ada15.json",
+      "sha256": "4f580ff787ade0ab8d93bd8284b890d578963f109133ae59415da41c6f1cc2f9"
+    },
+    {
+      "path": "data/weather/resolutions/0xa5167448393862291ec7666675c74f9d2133c75f81e63c5640ad0c7515e8f9b7.json",
+      "sha256": "2260c4cb4bc35facac5daf6df8a3f6f07525fc8667ddd261f61a4eee7eab1729"
+    },
+    {
+      "path": "data/weather/resolutions/0xa534b48c9183a72f6c85af4199ce3180c171efb66ad9d372e15952f3bf1302f4.json",
+      "sha256": "58b09890d3eb1728eefa3ab4bea0d91cd557c93f7e8a7a35f666977f33ba8c7e"
+    },
+    {
+      "path": "data/weather/resolutions/0xa582eea7ed88f5c962d537fd6a45d67b8613705d6e91a9e89db70a86c2f495e7.json",
+      "sha256": "9c12288bf838726610448e55a537adf4c8cf8136af41718deeffb6dbc53f5443"
+    },
+    {
+      "path": "data/weather/resolutions/0xa5da03fee95e529b8f5fd6fc5a507c8e08ceb798da3c19a2dae742c4940928e7.json",
+      "sha256": "e4f99ecef05f6533d5eac2f609da57f916bd52b36601f1e69658a711a8e2aa95"
+    },
+    {
+      "path": "data/weather/resolutions/0xa6a4685ff5ea5a42a853053e653663429a39eb3e13adca37938096e2782790e4.json",
+      "sha256": "a89a5f956f0b24dc72d7806f4afc26d56d8bc8637a79ceb6a64b8884d58165c4"
+    },
+    {
+      "path": "data/weather/resolutions/0xa70a49aea90bd0929645a70d85ab4e11b39208da2754d42ec6721fcbe0136710.json",
+      "sha256": "ddc812ec6469c34d3344011e486882770757ea8fbb7936d417a91e8de96a7445"
+    },
+    {
+      "path": "data/weather/resolutions/0xa72ba556af848811da3d7f3a28453f2db89f10e7a62db9dfa166fc099a4b0971.json",
+      "sha256": "fe3ee5cc771d397efef31356ddb5e5ee68e17a7a69736776f671a9c3cfd9c56e"
+    },
+    {
+      "path": "data/weather/resolutions/0xa84c5e7214a04e6e3f073066c9ae39d3f7212937a40999e97a3b44d76fa8f94b.json",
+      "sha256": "94615b5f03a292aca3507ec20cdd852a01b4308f1822c17102b8d93ef361001d"
+    },
+    {
+      "path": "data/weather/resolutions/0xa8ab03ea82787b2e42627e970f3e595679c198e0cf0ef79f2214d619a3031752.json",
+      "sha256": "ee17e01bc98b0b525d08e924dc283b5d2bcd2986a337c3d1bd525cc14bc057f8"
+    },
+    {
+      "path": "data/weather/resolutions/0xa8d273c48b5505e8af362af7cfe7374968a35cf785641328e83e8ff13dcd743d.json",
+      "sha256": "55a3ed49c52953a494944a04fd2ed8b8170fa5da1f6bf68d4571b9a501652c52"
+    },
+    {
+      "path": "data/weather/resolutions/0xa96fc8435321894e2c9dc0ebc47e687be0312512bbb1c9be2b4e817ac36d2416.json",
+      "sha256": "17886794d50c9bf73a3374ccc82501174892b8a57f89c3ab366ebf2bd5eefcd3"
+    },
+    {
+      "path": "data/weather/resolutions/0xaafe76b8e11bdd6773ef1132226402cb35148e3aea70bb7b97448b541d4cb238.json",
+      "sha256": "1a75cf1890c8d0832fb5f336fe78265b818b0d7d37d8ed11d9d471f1fd366d7a"
+    },
+    {
+      "path": "data/weather/resolutions/0xab1275f89066137e73eace990c379deb954297dce3077588935b03ad80b825d0.json",
+      "sha256": "aed6e379f1a339e451c29b805cd1849e912226379c423ba821f39d6931eaf975"
+    },
+    {
+      "path": "data/weather/resolutions/0xab15bbb4105734af2f98efc5b62e5e33da494d1fd81b7c491e07648b68dcaef0.json",
+      "sha256": "322c7b1c6244e9cb00a66b000afefa26de39555430f153595c4be166a6160344"
+    },
+    {
+      "path": "data/weather/resolutions/0xaba397aaa15ccdf78e45895510faed740a026fbad217e3fa75dfaa092ef9abb0.json",
+      "sha256": "ce660ed46e9c9d75af24bae0ee71546d0086e350a3752e48a78de579015bc40e"
+    },
+    {
+      "path": "data/weather/resolutions/0xabf718f11e3d2526ee4378649624ee7d6568c7126f16ce649f587131c48470cd.json",
+      "sha256": "703fe16c31e963c277f62fe89bf1d58484449cc2afd7739ac71cfdb93c982954"
+    },
+    {
+      "path": "data/weather/resolutions/0xac268e8455a788743bb00204e106fed9687c59250a5c1788c3c78263a1b4451c.json",
+      "sha256": "d263138581322b37dcb53d545edfc1665e0d3690e4e7da3527e23f2b64052d3f"
+    },
+    {
+      "path": "data/weather/resolutions/0xaccf9c6ff498ccdd64092ae9e2b1ee9aaf533895adc8ab240808181382038a1f.json",
+      "sha256": "7d5612cc04371069d1505feb9c74cc8dc26b282b23083c4c536d4c796a16d521"
+    },
+    {
+      "path": "data/weather/resolutions/0xaf18f66fe3c19d5aabdd4ee41e43f671b09352c86feb5cbbb473ace4390167a8.json",
+      "sha256": "70636695e5953adc183d66b63eef9d0cd3dd4e2be0e2ec35ec6844854acd56a4"
+    },
+    {
+      "path": "data/weather/resolutions/0xaf2fb7f1bc1269cd3cdaca1909964d7724e5645fb26092961864e089471a332e.json",
+      "sha256": "c44cec7edb2d68a37d1ab0552b06398dbb6ee2d62517eb15910713a5e816f765"
+    },
+    {
+      "path": "data/weather/resolutions/0xaf6284b544fda35368d927d67e22e451c32c1d24c4a1aec4b4fb944ac9665195.json",
+      "sha256": "ae13afd7092619ffb8266c2fab94e89697464c062474e9d1e8935ef8cb97aaf9"
+    },
+    {
+      "path": "data/weather/resolutions/0xaff6feb6c8a6b613ed6a121e5961686390fc09f625ac1127a20837e1d0f91c91.json",
+      "sha256": "fa00c06421ba03b2b5a4f67c1cf9434b955f60667970d04b7fd475660a89de0c"
+    },
+    {
+      "path": "data/weather/resolutions/0xb0d17eef5dcaeb2fc1e6f9c7df9e6299254988660787a7382c03a2300f433914.json",
+      "sha256": "fce1edcf87358237c37a5949803f8e4aee88822066583c12b016e5900efd777d"
+    },
+    {
+      "path": "data/weather/resolutions/0xb159eeb34da4a894007ad274c131b7279f3a951655f33f2c968edaf8d1bd56d5.json",
+      "sha256": "4966b3b132af296a47016c64a90f0db4c31bc119be6d8d86621b682a9f5c1f4c"
+    },
+    {
+      "path": "data/weather/resolutions/0xb1722121a66ca9088c3dc6f0f38b17481bd5bb2b8a9fafe1de8e4da4ce5742ea.json",
+      "sha256": "aebe4091320e2152f6233811c5c8245ab041f949b9abd8281755536aa9edc0be"
+    },
+    {
+      "path": "data/weather/resolutions/0xb17f6cb7debc27a906425ad42442b340618a045d164214790bc6cb5f445d11f8.json",
+      "sha256": "ef225e3c4e94c25fa236ecb46d4e98f9a9bf6f2e7ca148c906db9aec1985ddbb"
+    },
+    {
+      "path": "data/weather/resolutions/0xb2335db336943d27e8f8585c171586b059ccbd61f28344b2e76bf588fdd208a0.json",
+      "sha256": "193b88e1b557d577dbd669719eb25f51f08d5b7dc8ab928d1d28332cb223c150"
+    },
+    {
+      "path": "data/weather/resolutions/0xb285cb63d6ceeef2fccdc019d619fd8347747192d8a61a95f082419c3e2a8e34.json",
+      "sha256": "ddeb90368fcea42c11223a043b2fee8f347d9aaf1b1749739f9a67cc69434b84"
+    },
+    {
+      "path": "data/weather/resolutions/0xb2bc0e197a0793e4b235c7d1895a2b8a6a7003525df035a11b1a7d4e7cf74929.json",
+      "sha256": "1d8995885917d17fecee81a559ddf5e19f3edb78dd4776b658fe3fc3eebd816c"
+    },
+    {
+      "path": "data/weather/resolutions/0xb300285d7f1bda54156e200d246b2ba5a1daf206166402a9a6d217fba6eb1f69.json",
+      "sha256": "26749e569197bca88554dac7c7411ed84b336403f7b058cd4b5455bef4a1911c"
+    },
+    {
+      "path": "data/weather/resolutions/0xb3540669a4a16fcdd638f7102a8ed37dff45a6bc1d905fa8f17687f300ea78d4.json",
+      "sha256": "f3482f3c2d7de54d4d4cc5b5c8004438558950a263003494360a1b8243c00512"
+    },
+    {
+      "path": "data/weather/resolutions/0xb35725e19bfaea57542714d0c4273cc2803ecb3876297e354cc88174b1d31c17.json",
+      "sha256": "297ed37b7f18e1ae1f3588cbaf01bb70db5d96344a4ea364f3e74c248c0b14c6"
+    },
+    {
+      "path": "data/weather/resolutions/0xb3d61e6a2f136c87cc2698f47b1f978a83f6573cb1b8da1c0e4af42ac39a3162.json",
+      "sha256": "b15174363c125b0f71e37ce36390dd12f9126175a9fc7e241e9ecfa8437a9404"
+    },
+    {
+      "path": "data/weather/resolutions/0xb6ba0716a43c9f09966d1b510c6cfd9925e3b180ec7e8bfbf6a65b816e07647c.json",
+      "sha256": "c4e01591c355d527ae7c130b345afcdb07ad2bd140fac461c20e53f7655baa53"
+    },
+    {
+      "path": "data/weather/resolutions/0xb6f45e8c1220a26ca24dad1fb6b5c204432cd462274fee351a0d05ccc1283c85.json",
+      "sha256": "585d85a7513828d0a03db17587744b1587ef154a2d891d2aadad7265f0a68e77"
+    },
+    {
+      "path": "data/weather/resolutions/0xb72125b60ae5d90880ce746d09814033e8337cadcee0991eeb44cb571535db5e.json",
+      "sha256": "cfa5d0beeaa86979821006f4a2113d010199a5dabca42759e486c7e533bfbd93"
+    },
+    {
+      "path": "data/weather/resolutions/0xb7b1a20d0fedb4f1525060ba278a55da598a4ff620329cd85db4e1ad1e90471d.json",
+      "sha256": "778ed7a11e4f7e5e3fcd2abe6f8c65aace7a2f066479df187d59da08e3e7faaa"
+    },
+    {
+      "path": "data/weather/resolutions/0xb85c91d462453b93be3def7d370326b9d7bfeae6ff5ccd0d1ed67108936ee7cf.json",
+      "sha256": "9ef5902f4a1466e2878be8dd732f63788def416c567b5dc3fed9ddc6acade894"
+    },
+    {
+      "path": "data/weather/resolutions/0xba1785ac4792f71f794855fc074ff3056605796ea217b70170b7d2bf4c308fb3.json",
+      "sha256": "95a855bc5779ae1721acd2bfc0aaf92ad8d820950fee3155ed2d64fb8483fcba"
+    },
+    {
+      "path": "data/weather/resolutions/0xba188548a0791b0925e6f182f0e24df983d81db555f8f4c0386ad50e0b27e9ec.json",
+      "sha256": "ba388221dc271911f2db42ae17ce4677c6f5990fa22dbaecf8ac59ab189e947e"
+    },
+    {
+      "path": "data/weather/resolutions/0xba994c153d5b4692e95d60afdd17ebc13f128307b8675b1e75fdadc602013e68.json",
+      "sha256": "b463a3b1a8cdfcf5c574549ec464a3f4a7b59aed01de7b19abbdf68bb32f6216"
+    },
+    {
+      "path": "data/weather/resolutions/0xbab9f8db57af9ef9f00c6ee15fe872552f2a8723fae355127537333d0e94297f.json",
+      "sha256": "8024e3b37e3f3a458db9cb7575879ec8b0e2b91ddc5e1c5413b93b5fa1552cbc"
+    },
+    {
+      "path": "data/weather/resolutions/0xbb2b6cbf65eac7e3a27a396a638a9257cbffdb22c9d10c0e9d661a1170742e4b.json",
+      "sha256": "c0a357da0ea4477590335c303da3e04b59eb65d054b4fb29829121048af6f4a7"
+    },
+    {
+      "path": "data/weather/resolutions/0xbb794c6555b28d77e10a0abddea7ced5f8667c2f2542eb1dbe01c0a6ab05ef3a.json",
+      "sha256": "5d5595791a9a06c98e77a80f8572d0554c6f71748fcc6ee3debfabd565b15804"
+    },
+    {
+      "path": "data/weather/resolutions/0xbbb0e64d0cf9ac92cb226ea6bb04e68c1af2560f69218e166091cf873ae82138.json",
+      "sha256": "e6b3e17dd52d3ba02adb5ca9fc0b344ac0c832e039fad3ecf7f7e024746c8d79"
+    },
+    {
+      "path": "data/weather/resolutions/0xbd7703860588b98059542740ca7b27324ced4645194e35a2f7f40472a105cbd8.json",
+      "sha256": "03e36d86517d8a7819471b9c937c2a7a8af495a0c719380d73b2ebe89c9e147c"
+    },
+    {
+      "path": "data/weather/resolutions/0xbdf37616533117036ecb843fb9ff61fb8ed19f7b82760d63977fad18779a917a.json",
+      "sha256": "ce2ee147eb7916a6add0a637090695c37737b2a678ed545fcd1dec89d33311fa"
+    },
+    {
+      "path": "data/weather/resolutions/0xbe48c5433e590d2547d919837b21dd164735bc84cf1647e94b6e644cbf1ba3e1.json",
+      "sha256": "ee3b43bd816e14f83be9eccda1c93634bfaacf34b68bd3135b55ed0bf8c47ee3"
+    },
+    {
+      "path": "data/weather/resolutions/0xbe9782746b72b37e9b9602b75a6faa432a474a618f29215af36e076b22205670.json",
+      "sha256": "b3a4811563148a90d1d8d18776296f261f2edd92c28e79c02c2b0fa466a7dcb5"
+    },
+    {
+      "path": "data/weather/resolutions/0xbecf144dd39ed629bb27a942cb1ba8f4181c6c3a03b8a216a0df524b83b34581.json",
+      "sha256": "3619a73ee53b3f52deaaf3b3325fe8d85c5f14fdd6f4790ac5ffb6615c3e398a"
+    },
+    {
+      "path": "data/weather/resolutions/0xbed98c8f2cbd5a0a5c54a22d4df2d30f99f2a4dcb0d0d924aa93a13bc6d5aba5.json",
+      "sha256": "ad0068682f4b28b6f82452618ce698ba5ef0d910310122ab7ce6eb3cfec8d2b0"
+    },
+    {
+      "path": "data/weather/resolutions/0xbedfc180b4c9b633f127ad0a874439ab9ffe44c9301f078c6db463cf73fba80e.json",
+      "sha256": "68a541343ff11e548eb3ff9bca185f336a1d04d052c6696ed3a3c832aec5396d"
+    },
+    {
+      "path": "data/weather/resolutions/0xbff881cffd53df518479fbb4a8b1863a9a7edfb5081817f503dc2a221032a02d.json",
+      "sha256": "e7d026bf43fdf4d0168ae926764c960181a46dd539eaf2399c1c6990c3cf76a4"
+    },
+    {
+      "path": "data/weather/resolutions/0xc08c3da2387d61ba29c8c19dc0b65d56c15e4d91ec64b42217082a552c57177e.json",
+      "sha256": "7a6dfce11fe6aae14cdf288ba05498348a0bb8f8c190dbec73f0ae5e5046a0a3"
+    },
+    {
+      "path": "data/weather/resolutions/0xc113a930e75fefc28479bf21ec34278b078999f4c8709a57b892472bafab6086.json",
+      "sha256": "74c89ec3e138ef8c993066a71374d1282294ff7c749d5ff16a1e3166bf0279fc"
+    },
+    {
+      "path": "data/weather/resolutions/0xc12e0f83fc5046e3f8b037f50fe5a86f23da4244025d84bb4354749280036b13.json",
+      "sha256": "9a7fc3fd3983ba91cdd7539488472a63ca8a179d0774489bb9e2db22b0c2b33b"
+    },
+    {
+      "path": "data/weather/resolutions/0xc16d535bd25d08686bcec2585ab5e143098a76be836a330ddcfac9fac9c4b8e9.json",
+      "sha256": "cce632b836a7007b5d8269a40f073d9251c8ac4eb8d217e4dd59e5811a671db7"
+    },
+    {
+      "path": "data/weather/resolutions/0xc188dbaca7a9c042851bf677f1ee449a68893e51f06f9cf0ce3d437ece171a6c.json",
+      "sha256": "f793f80d7c84eba6a8c3c36c39a0b6fc9443edf77ecaf5ad680c1fb1e1c1120e"
+    },
+    {
+      "path": "data/weather/resolutions/0xc210501fcad0515b0cb64c90f6185d0fa906a3da432d2eb153387db28d2f9db7.json",
+      "sha256": "c9a163404f204005e864f048bf5460f648110c72d833217f15942a01a6cb79a5"
+    },
+    {
+      "path": "data/weather/resolutions/0xc23dccbbdbf53370670f7612dcac8e2a34126e40e5698a4ecb9bc29d77590c81.json",
+      "sha256": "847684683da1b23a5f37f10d2b2da5913540a6bf9a77451e899d702abe5edd95"
+    },
+    {
+      "path": "data/weather/resolutions/0xc26ae2ceefa049b379dc3d2cc21b7719cfe4d94bc1049056b0fe7f46b766031b.json",
+      "sha256": "7b02a88e17bf183440b508baab84229fb9c878bd2b83abb621b49f4f5af26ee0"
+    },
+    {
+      "path": "data/weather/resolutions/0xc27bd05a4e7d2633491cd8d9d762324bf25ed5bcaa0f98736c333c18aca46a75.json",
+      "sha256": "e34e132c7aad77966bab79699ace2cb41ab04c4b4e9f1a8a12b11996493ecce7"
+    },
+    {
+      "path": "data/weather/resolutions/0xc27c779f73e0d59db6e3644051b1bfd6c9366f7801188037525315219db38ef8.json",
+      "sha256": "6dbb7f5d1b4f1d7ac04d3ced123506b71e3b1cd64baafe8985c087db18e29d91"
+    },
+    {
+      "path": "data/weather/resolutions/0xc31a7f74c5fa94add3160304d45936d6c2a888b54f06e6e686ba61b3cea8d4cc.json",
+      "sha256": "5c25b63a4d91c709eb241991fd45abdcef27537210e010de7890f1ed2f8c8b4d"
+    },
+    {
+      "path": "data/weather/resolutions/0xc33c4f66bb9c6d41a127b54edd97616070691684b43c8dc9aa8d4bea0825dca0.json",
+      "sha256": "eff61f14a6d3da7cd4c7417042f9db18d9b970b6a3a39bbe0818765a1074f6cc"
+    },
+    {
+      "path": "data/weather/resolutions/0xc3c0d0a2624bc836f62f7479329f6cadba07427bd3906410d249c229d82186e0.json",
+      "sha256": "add35898694895ce399de4a68e1d84fc1917db699735c152e7209b0326960b83"
+    },
+    {
+      "path": "data/weather/resolutions/0xc42cd7028b1abe98b86e8519f5f9cb209af8c8760541d22ecdcd5705c353a878.json",
+      "sha256": "90f5409ed0d10362ddc4d0bf3e3788d6d2667461adc59626368cb887aab1ec8a"
+    },
+    {
+      "path": "data/weather/resolutions/0xc4459ebd07eb38d102aa9870c56bc30aa90338af1c306d9ae0ba3babadade6ec.json",
+      "sha256": "3170ea72d5698dc81c3436055c29abcbf93cc8a86c78dd01de697c00e22a3835"
+    },
+    {
+      "path": "data/weather/resolutions/0xc45c9185f9d32be83fc2a8f9eb4ead2ce327257a41074ab5364562e65ff5b158.json",
+      "sha256": "32d91f65ac20093a1d726fdbdd94ec9da8d8eb1a87a4d6b1ffb440ff65b6e74c"
+    },
+    {
+      "path": "data/weather/resolutions/0xc58adac87b5dbf04ae0d73ee11bc547e92f4243f08b58789721c961ca9aacf74.json",
+      "sha256": "f50d4de0dd47092fb0a9b4dc9e2d030ba5845f9114d3a78c67206fe693774e2f"
+    },
+    {
+      "path": "data/weather/resolutions/0xc59271de2752fcdfb4d7d2e82d57a0e08981ad5cea17af7f739a22fbd356fb3e.json",
+      "sha256": "d2e32f29d26be0367e094b9e4f6fe4f7096f4b3b5e45e4e3adcec4211373d78e"
+    },
+    {
+      "path": "data/weather/resolutions/0xc5a29aa5cc19c7c895ecbc3c05ed114fa16a03a419fa393a0ed402336fa0c398.json",
+      "sha256": "fc3f2b4b55ecb6b69282b835484fd9b9ae33aec65de2ff57d582cdac4ceddd59"
+    },
+    {
+      "path": "data/weather/resolutions/0xc5d673700c29d7fbc0707444316e5dc6b78f836106de968ddbe9559fcea612bc.json",
+      "sha256": "94aa3aa2724425fa67466485453546cefe88406fbf2061e3a88dc34f18868a04"
+    },
+    {
+      "path": "data/weather/resolutions/0xc5e37b1a40cf1d0095be3dd132d0c7300b4fcd2a9dd211aa26d798fe8fa94d62.json",
+      "sha256": "d733af933564e24752817c7de008c5b4a3349bff85418a7465f90c530a1e1a9b"
+    },
+    {
+      "path": "data/weather/resolutions/0xc664d1fc5b47adf21a9d4d021d75aa9ab415552ea5625161b59d0e134c8cf9c8.json",
+      "sha256": "155e9ba6a952033d865bc49aae5eed419c95fc141353628d092432e6460b4b63"
+    },
+    {
+      "path": "data/weather/resolutions/0xc6700c223765d16b03924bde8abd95dda436052ecee797ecde6a570c4cae5ab8.json",
+      "sha256": "6802cdaad06d3ec3fc02e2a6c217382cbd05ee014173f539636c53c71584b197"
+    },
+    {
+      "path": "data/weather/resolutions/0xc6dbbd5679e498271243ba4ea47c33887fd7bf97d3b7c22e0ff3d32137b78fad.json",
+      "sha256": "16250e86e2a077da66144a45548ce767e42a4ab794294679b47d4054236bd2e4"
+    },
+    {
+      "path": "data/weather/resolutions/0xc6eca553745711440d0ab22e567976fc27b4c527cccd0bcab4fe0d0007f9765b.json",
+      "sha256": "f1d144f159924cfb609404a97e6d706a5c6f59dd79b70bc28096bb35a2c8a868"
+    },
+    {
+      "path": "data/weather/resolutions/0xc825cfcaaf00a23307c175b580c41dfa522be848641e49736f17a7376efcb2c5.json",
+      "sha256": "24400323d99a1daa3037bbc67c1fe0421a3043dda1564fc5d8dfcf9186e92bd3"
+    },
+    {
+      "path": "data/weather/resolutions/0xc82dccaf2b339dce7b1b021c8028f8d43bfa8bd57867e182587bfc0804ab4e53.json",
+      "sha256": "99489bc684cb2b03f0d6add0f4afd082deb357b91219aa790545cc44da6046af"
+    },
+    {
+      "path": "data/weather/resolutions/0xc8ad9add8579443703fd52726647457fb50eb39f4f8c77df0d6dba459f885e9f.json",
+      "sha256": "23164c65bccb5b9c40e0df60dd67e55b180b03c79934ca6ced29484f71746133"
+    },
+    {
+      "path": "data/weather/resolutions/0xc8cf7baef74bf6af080fcc4b94949aeb9bb55061be6ec65a1327e49024c37594.json",
+      "sha256": "7c69a9bfe095728d7be860b887976bfc0535361603dc361aec6fd59c40b841c4"
+    },
+    {
+      "path": "data/weather/resolutions/0xc9159bbc25b68a36a9512163e9fa7fe2113b3b10d70940562f7d44f0793e5a87.json",
+      "sha256": "f0d1c329a1fd4290e430c186feeba2ae92017c790cf27a97ba69852ed1f42f9f"
+    },
+    {
+      "path": "data/weather/resolutions/0xc955676f2b84cdcc5dfdf08febbacc8a5441aaa3b953e2d1eec8b70ee0c08f47.json",
+      "sha256": "a9cdd05b3b93a8a658a983c341b53b0d6c6a2c5a6b948a35f6715363f3dc0e24"
+    },
+    {
+      "path": "data/weather/resolutions/0xc98a42a96eda36f069dea1bfa755d7a948ebcc008af66b871e8d49fecb5be807.json",
+      "sha256": "e29c382460f3573043d650f5f22508852e3d46bc614ce33b77effac7f331c70f"
+    },
+    {
+      "path": "data/weather/resolutions/0xca1372c3fb002045e9a34d5f76a97b2fc771f9d5457800fdc1d2485682b6e6b7.json",
+      "sha256": "b759f400ef236c88222f295706ba490e9fb4de7fa4ab6491632857ca03f53e8e"
+    },
+    {
+      "path": "data/weather/resolutions/0xcab38d9c74579d04fa492bd19e78c1e91c91cdfba1281102f2675a28f7774547.json",
+      "sha256": "01d02782aaa5727bfc68a93064fbe1da21fc81d0ef96be210bca2992ff7854ef"
+    },
+    {
+      "path": "data/weather/resolutions/0xcaf2b343df6f15c456ccf8c641328246a4e89fe30d4a18a99f6ac2e1b70d9814.json",
+      "sha256": "f299bf12511b3ed84da0123d0659873a09113aafc450a3a0388f56a19a1aa77c"
+    },
+    {
+      "path": "data/weather/resolutions/0xcb153f2beede669517fb4d8c3e388269b164a28ad1fc82616f10aedfa1e394ca.json",
+      "sha256": "1e837d287fd3c924da2e0a54c92386362e57deecb3f83e9b8ecadab4fcc6f4fc"
+    },
+    {
+      "path": "data/weather/resolutions/0xcb2d9b5aa6eeac692a2f064aa0748d37b21babf6d9b5168d79b4f0a9b2b9e0e7.json",
+      "sha256": "409cc3b5dccb3a3d759d04b400165a5a3654093fbfadaf43b47265a1dca34865"
+    },
+    {
+      "path": "data/weather/resolutions/0xcb8962f6854835249e0f250327019f5b5750b9a92b8c1a3b9a077902d4e3bc6d.json",
+      "sha256": "26b83de3d9953f6375f8a4a1d554f0371cef5aa8f01372e43f860d1faece70b9"
+    },
+    {
+      "path": "data/weather/resolutions/0xccaefe7d038913619e6c86d1a1d49b7170c5abbd3c9c748e3ba698fba7d45bd2.json",
+      "sha256": "e5ea1c8d9f86bd6b61b8b2991e98065123ca88c92886ae1f2a82399aa5edf2f5"
+    },
+    {
+      "path": "data/weather/resolutions/0xccdfdfdd7b98d8784174fe7749849625d82f341d862970fc155c07b3bb11eb88.json",
+      "sha256": "dd81f17781ef78625fab8ae3e2ab9bd872a644f3402fe9122ce2a9105bd23d8c"
+    },
+    {
+      "path": "data/weather/resolutions/0xcce7442ae017dee5cde1c3103387d296e9d7bb7413315cd702ed858e76fce423.json",
+      "sha256": "fffa3e43d20d8fc6166a4ac33eac864efd6c19100c6dfa86fcf07843509dd04a"
+    },
+    {
+      "path": "data/weather/resolutions/0xcd056214fb7f3b8859d8a33a5dc4c1958c6f858c0cd743669aeb2cd340f3c4fd.json",
+      "sha256": "aa18cc87fedc8c9eeca2a985dfdffa321458271c0e6594fcc4be392ecd8ec371"
+    },
+    {
+      "path": "data/weather/resolutions/0xcdcaa3ac2bdab44279db6e1fa1c7759546b15116864e411ec02a9bdebeca8228.json",
+      "sha256": "c0942300243b8a5ae01fc76dc03f709fbb46cf0729cc67baed0119622cc7636d"
+    },
+    {
+      "path": "data/weather/resolutions/0xce25d3ab2bc487929cab60e8505b0cfda9074a8afd1667a74ae85be775b2c58e.json",
+      "sha256": "340088a9dbd8db402cb9a73616f6f0ed81db5f23b3f0d6edebf0815024a3ca6f"
+    },
+    {
+      "path": "data/weather/resolutions/0xce576c6084803afb59196918217eb3988dad53898de65605916ebe5c9e1483ca.json",
+      "sha256": "77e67e882d8388fb0eefed4642bedee8f49186414f527cae040865ee67e5fe66"
+    },
+    {
+      "path": "data/weather/resolutions/0xce5bbdcbbe4591259aed441919ff3350a31b6be2a2db382f02b0fe37cc62e657.json",
+      "sha256": "a65aed1299a87d7fd52a9689974debfa1ee65ce648b86c77dd619236e76dd73b"
+    },
+    {
+      "path": "data/weather/resolutions/0xce963828a59fd1e1553074c8f2e0c6b81344ad44256fb44a2ce6f2339015a342.json",
+      "sha256": "4b92f7cb0a70a0a81446b673c58062e9771cb2ccab950198e17725fe74e58fa2"
+    },
+    {
+      "path": "data/weather/resolutions/0xcec074b7845da63a5685efe57b4eb5f318b3051d27f531c9b5e2034fd94e9a68.json",
+      "sha256": "359899589bb13110344c69b8fa8ef1a713c97c1d5bdf2b4fd5f0d71dab84b3d6"
+    },
+    {
+      "path": "data/weather/resolutions/0xcf6322422f2b9e184e1b454029c93b840406d648baa2984650a1780e164fb2c3.json",
+      "sha256": "049d5b95bb9790a991b169d6113d636b28d23a2f553f99fa05757482e3ec9ec0"
+    },
+    {
+      "path": "data/weather/resolutions/0xcf63b847b65548e5eced40c5ab9a34d16fdf924b3d13eee4a82520e9c6240efc.json",
+      "sha256": "d43052ab154b264b7b894b74f32a9fa1a5f12ad97a2c3557cf0a8e44aaa75a51"
+    },
+    {
+      "path": "data/weather/resolutions/0xd01fbf87895cf3f644c1f33a10647756eefe05cd6c807b3dcb39e24360a932ff.json",
+      "sha256": "bc1df9a573c2c40bde82dcc650657cb5e616b1d6b6cbc79f78d9748cb42e1f91"
+    },
+    {
+      "path": "data/weather/resolutions/0xd1b2af5684098b51d7b1108bdefa8c8007f0c20713179ece4daff4f1920ba2c6.json",
+      "sha256": "685c15cc7aaf10b775512f9dbe64cebadb624da3061b11a1a5142b6f1e0f1093"
+    },
+    {
+      "path": "data/weather/resolutions/0xd21ff5b4328a8e2e1064fed18cd616e9b15910313a0b79f9708e2adce1660bb8.json",
+      "sha256": "e09e4713eb77193c06b2ca215d2aeb86987cd0fc91e74a37e28a8971dceeaf6f"
+    },
+    {
+      "path": "data/weather/resolutions/0xd25627847fe96c7fa6eb0b8fec44e1cf607f8205856a7fee290c98340af5cabb.json",
+      "sha256": "9cb6399c0bc2d8152cf4271d95e18071aa2f2161a997a1fc0b6daa0d1ea79683"
+    },
+    {
+      "path": "data/weather/resolutions/0xd281714be41bd66d901a73e1bb1d2b15a97456cad94b1391800ad8a55da4eacc.json",
+      "sha256": "c6435b5d051a96771707902031e821d45b38a140a4660ebfa82b0f5a5a6936eb"
+    },
+    {
+      "path": "data/weather/resolutions/0xd2da85d10592e41b03cdeb2d85ceec5273f19b6ef1d24b3682560d13993da5a3.json",
+      "sha256": "816e82b9b6332126cb994c732e8a114ba1a80fdff67564b8f67a1a68e1286283"
+    },
+    {
+      "path": "data/weather/resolutions/0xd4b0c4d1473996162550431fc7e50a9100c49b7bd663ad36943e7d7112d2d28d.json",
+      "sha256": "28d631c754b94de782bd4146aa720394eccc0055a276340156b4bf3eb61499ea"
+    },
+    {
+      "path": "data/weather/resolutions/0xd5002b81137cd228497a7a33280f2790a13cf88d245bd70614fead2a1639e18f.json",
+      "sha256": "8caf50267a70fc91d9627599718458c8c60de8bbb853f51f1dcbc8324062001b"
+    },
+    {
+      "path": "data/weather/resolutions/0xd552d52f4bad98b3b61fb7d5ec96a808c75ddf60bea9e67586cead4b8be56034.json",
+      "sha256": "084cff45d5d5cfd03f4c0c602bbc7a97a21797d3325849382f6dca40a2419918"
+    },
+    {
+      "path": "data/weather/resolutions/0xd5555e55154c7c6d58ece3586abbc987af20115073757b732860269886e3abd6.json",
+      "sha256": "1b9b5581c6f0675dd6cc0a9d350a435bd3c49eed3d9bc6674371f6859d99cfea"
+    },
+    {
+      "path": "data/weather/resolutions/0xd63992dc50f9386e950508c65b99c954e777582dabe8578b380dfa35250b68e0.json",
+      "sha256": "00fe5feecf10b1d382f6d09d4ab376ab3069b307f868f2a3e1568d1183fe692e"
+    },
+    {
+      "path": "data/weather/resolutions/0xd68398593a652711703c631909315545208e618455719d196d24652abe9c686b.json",
+      "sha256": "3d681a6039748306124a16ccad4a73ae67871d9b1f77ab5cf89dff33e05aa2dd"
+    },
+    {
+      "path": "data/weather/resolutions/0xd6bc74733786bf9331b63ab1348442077ba9ae90feca261c31e498ea7bfc8204.json",
+      "sha256": "094d6ac3605143f73289c700fed8dd354dbf5025f24538387a8332516cbbc27b"
+    },
+    {
+      "path": "data/weather/resolutions/0xd72095b6360121ab9ba68c1130117a6d24a009396d557ec83e9ce0c292c2fd26.json",
+      "sha256": "89500ec69723ee38e5dc88af0b831065580aa415109b1b8339bac938d328c7eb"
+    },
+    {
+      "path": "data/weather/resolutions/0xd7355e5393c7448a1e59bb1314fa8a7bde00f1eaafda39c5715a8440be78978a.json",
+      "sha256": "d4847f9949486b1f441f9455c2bd09e470741b910fbda302947c2568246211b2"
+    },
+    {
+      "path": "data/weather/resolutions/0xd77e70a85e50ba9490eb0f6c55d6ee284df316114294a1a4ba26c8f0df0618b6.json",
+      "sha256": "4fa0978a91ad450ab3a66f14d592851470fc31bf90832a1d9aaf49eebe92bd9a"
+    },
+    {
+      "path": "data/weather/resolutions/0xd7b51ebbaf3b341ce7d064cf31586585c448a9077e12d4f5d88de6d8ac612015.json",
+      "sha256": "e7fc3fdb4ee3949f17f9b81277c026a886e4acad37fa165d82a2d0e75e5d2684"
+    },
+    {
+      "path": "data/weather/resolutions/0xd7cd60356369ab5035d2a891c31a1cda5bc0667c13a2c873adf235f5c04efeeb.json",
+      "sha256": "ea88016d3f23252eedc2eca1e9b5161e03c0810ad922663062f2e3a6e31d7e74"
+    },
+    {
+      "path": "data/weather/resolutions/0xd7f2aca9f54cf46bab5c893325ae8bba69948737662bf4a650c374906ee54d8e.json",
+      "sha256": "d2d238c843ee8c85a78075e64b1b7ef6c5be520b4cefc60dcfe1a273d240688b"
+    },
+    {
+      "path": "data/weather/resolutions/0xd875c1b0052312091c8d60fca0ca878cead0bfd319cb1da43a9510cd4ca4e5e9.json",
+      "sha256": "06b531bf32c544f7c30a9af4780dd64d58c55d6546fcdb00bf2641c5feb24f9a"
+    },
+    {
+      "path": "data/weather/resolutions/0xd8825d787b462565a4d4a46d6daf1ebae15a269b3b9f19a48b41c2ba5858bc2d.json",
+      "sha256": "677dcbe6c069cda9bf6c96d39750f770b4c28e42b7f3e055811e2b0047157dc5"
+    },
+    {
+      "path": "data/weather/resolutions/0xd892aef297d1598fc00641cf3888bbfebed6286a9851892bd9b57605adea6610.json",
+      "sha256": "5947f7be4668237fcf71d36bed248c2c20b2f5da568f9d395a4d48d493a8aeae"
+    },
+    {
+      "path": "data/weather/resolutions/0xd951d1b6f15ed5fd9e2d16d98d29f4f73165e6ffa4b95c6adfb7604de8ab6cfa.json",
+      "sha256": "0ec84752b29d5eb8db79328f388465cc6f5cdc24e18afa1373107c2324c1deed"
+    },
+    {
+      "path": "data/weather/resolutions/0xd9f4e4fcdb5bc3c87472e9d0c1984603a3202b79b8bb30f7d6aaacb201acd2a9.json",
+      "sha256": "fded59d27cf1a0e2d415d0cba62e9231ff99a4cbecf1d44675decf1299285088"
+    },
+    {
+      "path": "data/weather/resolutions/0xda176af80835c1e440b41ba2e7155253e7d65492c2fbbff2d91502f4473b8e38.json",
+      "sha256": "aa51cfb74641ebf0f656db3ad8c8824061b1f802059c7fd3e94b2d70c1609724"
+    },
+    {
+      "path": "data/weather/resolutions/0xda254b268984ac6f3c643c401137ec9d65281ad9350acab88db4278f4637571e.json",
+      "sha256": "2c7c4349c9b0b5a4fc520f7d5e373bd5887f574627ed2cf3bc26d796c5f997a3"
+    },
+    {
+      "path": "data/weather/resolutions/0xda90935039aee96258564578c5cc18ad141167b65cc79e92663370809156724b.json",
+      "sha256": "50c307491c43b4e3c3367cfbfa8e056f98148e340f00401c82b3dfcb02766a1f"
+    },
+    {
+      "path": "data/weather/resolutions/0xdacbbeb8e0ccc3b3b96b808a0b599036a54e7b8c4084c4bc9f6107038c4464db.json",
+      "sha256": "8b720b95222b9673af210a03460142d50d618d327ad9c88a6f5b5cc95fd1e933"
+    },
+    {
+      "path": "data/weather/resolutions/0xdb68a27177e8ecca33ce68e4c269ce295af236e8c5917578802101b5fa2734c8.json",
+      "sha256": "c3818d0161bbe595af3519b684c254f562d656153d9d58aaeff6d307d0db3de9"
+    },
+    {
+      "path": "data/weather/resolutions/0xdd9dc7abe372fa3c6c5cc96804a6b05ab0efe185fed52fce2bdf18112764baea.json",
+      "sha256": "91b6ba79a4f8a8e57812398a3816b923fb891321b6266670a81a076f8c17c6b0"
+    },
+    {
+      "path": "data/weather/resolutions/0xddab3f21e8333be94044498029b7cdc01da4b18742f71689604573766792111c.json",
+      "sha256": "6cb02dcd7f2abf58396d3331dbe9e14c69cd6aae14e26dc166490d728d3a6ed0"
+    },
+    {
+      "path": "data/weather/resolutions/0xddbc44931d6ed49298945ed4f37e0f5ab5707b0b474a32852e1039f06b76af52.json",
+      "sha256": "0b0430889e76ab9d33fe283fadad9aacacbb09802df0116ff99601f380bbe609"
+    },
+    {
+      "path": "data/weather/resolutions/0xdde8e924b68c112bc382d855df792f4742e857300a063b74cfc5135a7e7f70f5.json",
+      "sha256": "d4e5f447f1493afe3ab1ca9cb73e52904a4b927c472e0fd03908c10d9babac62"
+    },
+    {
+      "path": "data/weather/resolutions/0xde0747008b1f096608e61015ecc2214c124b6ed5324ac4f9e8d80395ba3aa2c9.json",
+      "sha256": "b96be24a908b21a5be4551c69e54f0935ead907e9e67be1119bdd16cd67ae322"
+    },
+    {
+      "path": "data/weather/resolutions/0xde4a70709678d753878e8acc274327848fbf511eb7b46a839b35ac692160688c.json",
+      "sha256": "560f5d5356a5355b92fdc0717651a77b6bac91ebe8c6289e37154884017baf51"
+    },
+    {
+      "path": "data/weather/resolutions/0xde6bdd8d377c70e7818a6fdbf849a8217f310cfeb1c015b68d1540415ac1b409.json",
+      "sha256": "ff526f6fe498647c770f83ac66d599bb97a4b90d016a9e108b412d370f942084"
+    },
+    {
+      "path": "data/weather/resolutions/0xdede8223fc923a7cd8d68c5a966ef013bec29c98b57d36acc99ee330f0d39479.json",
+      "sha256": "b73ecd3e54cef18337d52f3456c4b63130453a4824719b2c051a16690200fb05"
+    },
+    {
+      "path": "data/weather/resolutions/0xdf18d55ff5eed0a38c7daae4e2252c9e938e6ff0e09416ccd0caf36a0b6c3bec.json",
+      "sha256": "ce0a4b8bcd2a613028c356eba9fe1691159853389951aaa6369e140629351191"
+    },
+    {
+      "path": "data/weather/resolutions/0xdf2e1d76976d85f4be3e7329047a2257202802c54a8087c950d3c36a0af1c3c7.json",
+      "sha256": "53c18ba457ae35d511cdbf6832308a349c4f29d8f8033cc9aa6b9452fd6b48c4"
+    },
+    {
+      "path": "data/weather/resolutions/0xdfc80dc0f3b8ec0c8ca73b985602e2f89ab7395b799674023e96affc68411357.json",
+      "sha256": "b7008eed793a18bfca0c6650470fa4296b54698ef0f3651c96e8eb84929c82a6"
+    },
+    {
+      "path": "data/weather/resolutions/0xdfe36743607a74b5ed26fc30b5c44500de73f195277ee3780f18d712263b6091.json",
+      "sha256": "8bae5d1c341334ebc2d871bc8050b66f17568b8c1c4b48d3eb99c2ee0a1b554d"
+    },
+    {
+      "path": "data/weather/resolutions/0xdff99b853a5130fcf3c202e10086c33824f0f31dc64570a3b3654180d8291337.json",
+      "sha256": "e19ebbe3fe1a0336aec4a4afbcf72a103e4b8f1e52a1276d1d1cf918b1862a12"
+    },
+    {
+      "path": "data/weather/resolutions/0xe030b25b29c78f9797f7905f47a0f625e20cf092142562ca263f05690a22f68a.json",
+      "sha256": "20754e8fec8f2d71dd6b0aa2335a73c92d443abea980fb0a89945c7079f04b01"
+    },
+    {
+      "path": "data/weather/resolutions/0xe0c665d9b818f9c57e5fb96bdcd121522e7c9b1b3094904f2e4c18d0b88fb0f8.json",
+      "sha256": "27596a6daad83080d88e8f4c9774b5bc2152e261128769b9f7f73781fc3c0429"
+    },
+    {
+      "path": "data/weather/resolutions/0xe0ee971e949c5b903070f031e3f2b1fcc36caf4256e869687f47c0ceef051ddb.json",
+      "sha256": "96fec9159b3e1ef54da7a18b7254d0dc3f730672b0dc0c4911f7450aa852ed8a"
+    },
+    {
+      "path": "data/weather/resolutions/0xe11c80a6862312a13acc623178ef2737e67c83792a49b942fca686b9432d5203.json",
+      "sha256": "945fae2da4430fb24c8a69af4e46938792f8eed099cad4852fd1763bf57fd866"
+    },
+    {
+      "path": "data/weather/resolutions/0xe16c8c6a4063f8303580f86c0a339c9aeb4a161d0450cff4e6e4993c5597dfd1.json",
+      "sha256": "3b511d91d332dd9e89dbab335000e7f39503d3a635ccd7c037c234fbb498c946"
+    },
+    {
+      "path": "data/weather/resolutions/0xe1df906b6b1cdfbe7cce805096e1b0a5712dc52567481789cc4cffbd3d8180eb.json",
+      "sha256": "fa2a0fbcee37fb9e5e051e4213515e6909fe1dd79f3b7953c4cb1943cae3951c"
+    },
+    {
+      "path": "data/weather/resolutions/0xe1f7c7ad4b920864e8c559a0afbb999caeb8c4f82b93d312d04ffa5a0c9e852b.json",
+      "sha256": "0259dde8e46346778e97ecc7a035e57dbbf4cdd83a1a9acda05dd80b98b8a58a"
+    },
+    {
+      "path": "data/weather/resolutions/0xe1febb51260a5bfc92ba1fd8f67829f88504ce226b4dcd8e5153166a4a1b39e9.json",
+      "sha256": "9fc4539cc062cfa99512d13a6b683054deae7dfcb704f436245ffb490fddc5e7"
+    },
+    {
+      "path": "data/weather/resolutions/0xe24b423a26fe4f26bff8f12057754b3d517b31ed1af70dcf5404948ded475007.json",
+      "sha256": "7d2f3fca1748cfcb1e798d7bc84e096ff3de97dd1a18242371195f17a04bca87"
+    },
+    {
+      "path": "data/weather/resolutions/0xe2841ce78b45b6332495ea6e5bb888939c2e2498d445694ff7d959b2a0fedfcd.json",
+      "sha256": "e3d19df4a0289fb749f66278d4114d6334393086d861846043666324a7fe5c16"
+    },
+    {
+      "path": "data/weather/resolutions/0xe44cbed25f3c6390a6931644967245280a974f83d2243a31cae8b59650fc8115.json",
+      "sha256": "8d463b1184f9bcca9027f6705adbe7ca2e96a51d8a0935b694abbef96e8366d0"
+    },
+    {
+      "path": "data/weather/resolutions/0xe4afbfe46e1c0f4075d96a59ec90a02bea0fe4d85ea7009408b22277d7766232.json",
+      "sha256": "235d9c435db10830bf723109f70a7d8a15dd84d12fac0c013198e7edc86d573d"
+    },
+    {
+      "path": "data/weather/resolutions/0xe50642e1a4899ac3d16c22f954ce40d8381de66ea4f82d2c2a394c14632a108b.json",
+      "sha256": "436ab9e92647c14470f972bec41516dbb745b96c0df89940f68ff00bb7e0d523"
+    },
+    {
+      "path": "data/weather/resolutions/0xe54325dd80249e3ed7941c9e338d6a8b5f88e97f3d07398f1e0e879cbf8c7cab.json",
+      "sha256": "3c6554b4ef0c0f0ccca0e30798818bec08a0ebe5f72d5fefb4a921a82b25b85a"
+    },
+    {
+      "path": "data/weather/resolutions/0xe6525113a53233b61ca2c3061dc15ea095c48cf6e7a3ffe427ba5ce9e56e762b.json",
+      "sha256": "b9c83dd7d6f921f6efe6e00f17695bf726cbdcff9b01ec991802a9f3531f4149"
+    },
+    {
+      "path": "data/weather/resolutions/0xe6535e3dad969c73b7c3c5b0858ea5d8861e796952a65eba2abae5003d427ca4.json",
+      "sha256": "d765e0d9b207e597fc56f138a02aa3514415e37be72e3668bcb16767228861f1"
+    },
+    {
+      "path": "data/weather/resolutions/0xe6fc2c9fd1ca272f743f9baa0e677028dab32962cc0e1a1eaca8a0a519f38e54.json",
+      "sha256": "a75241a2649043be70fd996a9797bf5e72d3d35d1e2f6d26c883f3f0c1976eb3"
+    },
+    {
+      "path": "data/weather/resolutions/0xe7707336a936ed0f36a9bc9c6fc70d6b1a8d7d779896a45a10f0cf130c4f1925.json",
+      "sha256": "938e98dd4997ddb1b044c15eead9a8af8077fb26c1eab01d8dc2317fdded52da"
+    },
+    {
+      "path": "data/weather/resolutions/0xe85096089bd200ff50901eb75999c70a36a7ad4cd99589006cb97091cd38ebc0.json",
+      "sha256": "ae417df43e1a87ef7ab7ea8c5b803f4e793a199c4b457f4139c2e335ebf4823a"
+    },
+    {
+      "path": "data/weather/resolutions/0xe8b84e5d30fd912c0cd2e1ccdb8759948fc30c101f087f9f2b8c04d57052d441.json",
+      "sha256": "5840cc6b2690febe7546bc32db7554bdb6468fee00329a6c705c7b3c347586f9"
+    },
+    {
+      "path": "data/weather/resolutions/0xe922114614bb0767877479adc28a45751812dc38cd52e303b2081b55992dcd52.json",
+      "sha256": "e03afe7ffbc701d2ba691842b1ca47400ebd39235f505729d5ac20c7b19fdeb6"
+    },
+    {
+      "path": "data/weather/resolutions/0xe93c1d130d7cadfd8415b302dc1b47fc4791a87925e27624e6f05ae97ce3a0ab.json",
+      "sha256": "7f395ade6221de5bf83148d6020b25db818740a2ca08e7912598ebf1e9b9248e"
+    },
+    {
+      "path": "data/weather/resolutions/0xea2a99afa05f4c2daa68221bb899b6de6bd32d540d53508a4bb4d2a6acaf2b67.json",
+      "sha256": "754b2bb4f13a8766d28afe6b72901356294cd37a0238456fc884595d36d3cddc"
+    },
+    {
+      "path": "data/weather/resolutions/0xea2cc80ec527881dd02365f1911d430afd6015bb241dd591346ec80554710d2e.json",
+      "sha256": "b9d5c12df654f0c93797a746f0bdbb0b334b93c6155ce52a892b7f2d07502602"
+    },
+    {
+      "path": "data/weather/resolutions/0xea686cc8a0c7d05890c8415c52e419b581beb249300f3afb4f81f0a3826c9277.json",
+      "sha256": "48719113801d5e350fba306a68e8bf528f112878d9d992e216b198d4971e72a2"
+    },
+    {
+      "path": "data/weather/resolutions/0xeadf42d3f9c25420727f6d6c1472f92170978164a28343d2aba0b82edcfcc742.json",
+      "sha256": "bbf33f0278ef0a3bb5d9e6ec558bc8f16a64e7b7d273c35e21cf9d8af7a483cf"
+    },
+    {
+      "path": "data/weather/resolutions/0xeb1a338b1d7030bf477eedcd5f6f1a54a16dbf956b4e1a113e03006a17610321.json",
+      "sha256": "bc02e811402f921a5db7cbf0d41c8b3da954830f76634f1265cfbade81453477"
+    },
+    {
+      "path": "data/weather/resolutions/0xeb3d7924921f7077d76e7bdc6c5ad117275a223f95770f683c5f389805e223c3.json",
+      "sha256": "2d84bc3f2232387e97e51e1ee9cd1d949276eafcadfad885b44146cbc3f548fa"
+    },
+    {
+      "path": "data/weather/resolutions/0xeb731dfd4dd94aba6acb5affbd284b7a8b32d7fa8a72dfa67eab584080c03893.json",
+      "sha256": "c1cbd800db8c1123b67f80a36ef6133e81087d39e84057014fd9d972de6e8643"
+    },
+    {
+      "path": "data/weather/resolutions/0xeb8d13f360b53b9a6f78be1df78d68d104c101a4cf9e58ea58d3ef9417f64371.json",
+      "sha256": "d02c5113fecedddf8361ed1669fa1018141497fa2e81e9f63d5d3a3628220b9c"
+    },
+    {
+      "path": "data/weather/resolutions/0xeb9d086faa8e5673c2f0b04a41f01cd519bd16afa4085859618c72aeecfaecbe.json",
+      "sha256": "0b91068981db417164ef9a5faf948c02fb63ea6019b449d69ab9e3f88dfd1a55"
+    },
+    {
+      "path": "data/weather/resolutions/0xecae2fc48652dbce5dcce1e140225cac45e17c18396b22d710812d7d3fb027a4.json",
+      "sha256": "2c382ff91f08aaf067f16876cc3627cbaa8da6ddb29a810fe765da493152251f"
+    },
+    {
+      "path": "data/weather/resolutions/0xecbfd50a4593a9418b4b6b97f420e3c0a077196df8afdeb3da52f2316fdeca25.json",
+      "sha256": "d8a2d2086b627f351e20e1dcda420010c0fd25489a8e6f3bbbdb0fc5f0e4447b"
+    },
+    {
+      "path": "data/weather/resolutions/0xeccf3c55f37dfe23fbbac3093f6d779dc0aa2c58134455ea96ce60a408c9c0f6.json",
+      "sha256": "92494c337ca8ac784e38a9344d989722249303fa3ff4e1bebcfa8d672492eab1"
+    },
+    {
+      "path": "data/weather/resolutions/0xecfb7b2fcfa5532f0774b0d89e55ad3e68e5b06845155d5105b78b5fa239fb42.json",
+      "sha256": "510d43019790d83b1ede6649c8d7c6b77ca17a6897cc600078ff950fb79b9641"
+    },
+    {
+      "path": "data/weather/resolutions/0xededd68697c8b5102d6719d2dc6555d12c9f4aca5c20bcd9581a76d23ebdc0d7.json",
+      "sha256": "3591f9284cc4ea3996e397355eb6e7c9e08db2472bd3f30a712c4aadbc52b801"
+    },
+    {
+      "path": "data/weather/resolutions/0xef60334d885e4aabf2547c728f960d5709240732cd464c9b1616b8b512338287.json",
+      "sha256": "d4a9e2a70ba0729524231a5bc85f9777e52a43832b347ae788354e85f2f7b35b"
+    },
+    {
+      "path": "data/weather/resolutions/0xefea3550c44db67df810c9d8ef4193aa5cb0d31f3b335b1a37511b99048e4eee.json",
+      "sha256": "eea4b83967db217fe9f60d075fa0022c53bf672db9b212b7524e372f4cd9022e"
+    },
+    {
+      "path": "data/weather/resolutions/0xf01d2f1c1085b3b595346497f6825e4aee5ce2193e05a428cd28b761324753b5.json",
+      "sha256": "c1c5e90e28544a38e05fd10f3990d139b02223b908edd81c499f23884a80f074"
+    },
+    {
+      "path": "data/weather/resolutions/0xf0a913dbb34fc84b96e95a527239fe5d68b92091fb34b0215db9c5c7518e977f.json",
+      "sha256": "ca9efb8395622def041849cc971aa63f3663943acf8b5e72fc10e0b099c946d2"
+    },
+    {
+      "path": "data/weather/resolutions/0xf11a386cfc68ba3f135313808c3b644712eb675dd20256b6458d05992c015b03.json",
+      "sha256": "4e987d3459101f1618764e7db79661b0bcea8747e82d485ee4dc78121dc8018c"
+    },
+    {
+      "path": "data/weather/resolutions/0xf143918e4e5cad923615b8021839188a89a3f49c59958e78e0d4c738d25bdb4e.json",
+      "sha256": "48b801ec71161798fdc9631f36ac7f0f46899ce6142accc2a2c1dea8edf9c88f"
+    },
+    {
+      "path": "data/weather/resolutions/0xf14f9c51d1cdf3cf661c552fea78fb0f1c1de9b5f0006a7a073277889a1466f6.json",
+      "sha256": "c78961eaa0289c92f4d7e69b3a23eea7920149da57c7b0378791de46106b59d9"
+    },
+    {
+      "path": "data/weather/resolutions/0xf1545f4603d48e37fb93c17949c6496b2a4a445c4b3197212f02c301d5c849e0.json",
+      "sha256": "2bd7e21b69c23e3e2d93c28994343908a993b964a32d78cbc2fc69588d40f9bd"
+    },
+    {
+      "path": "data/weather/resolutions/0xf1a6138cda50d9f69fd681000d97358d617f1ad2e83de14f4444ae682d49b1d2.json",
+      "sha256": "e855d97b57627b15538e9bcfbaef5008af4f3be4209181223ea28279245e1a9e"
+    },
+    {
+      "path": "data/weather/resolutions/0xf1c549eed3d1810f9dfd228c5bb1141428faff905ae99a37cf77294fe282bc03.json",
+      "sha256": "c9f3e85dc312fd82ae0f3984f6707d14b1c25053411088dde2785911a1dc5031"
+    },
+    {
+      "path": "data/weather/resolutions/0xf1df631849d60e947223c1552efd806b22679ef2e316a097bb21f5d47f48e969.json",
+      "sha256": "cf496049769712611a1494881ac0f14c12ee71f95955ca09b6a796125314fd23"
+    },
+    {
+      "path": "data/weather/resolutions/0xf1e9612986ca88ddbbe2d1aa84cdbbc604ecf66aa64c4d9ac5d5c677e9cf8abe.json",
+      "sha256": "beecb74c5ee68a11e458e0d801b394c80d6196651ef8321af55e884eb5a2b45a"
+    },
+    {
+      "path": "data/weather/resolutions/0xf1fddbf4472128e5ae498a3a673ba3ccf9ebd64e9fedd94c4b80d8e7fc551374.json",
+      "sha256": "265ea41b353e981550f633c96da58032acf2d0a0fab79a25f4a8d7d3bf568fbc"
+    },
+    {
+      "path": "data/weather/resolutions/0xf21998d57d614efa93512a98e3a8ec46425c06100fc57ec3bbcc56c22aef3985.json",
+      "sha256": "8b20210f278ccdf0133146bde427668e3c8f8d05c7a5596b84d1173f2e68a20f"
+    },
+    {
+      "path": "data/weather/resolutions/0xf237f9c982b4aea182b6222bae90063dcd5d1a49d73e53b84ee1ec85cb6d3233.json",
+      "sha256": "7a045ee34a17b776d39296a74459276dcc6b541fbf46f41694e9cf4c93f732c4"
+    },
+    {
+      "path": "data/weather/resolutions/0xf2bbecb797ce4175cd29919fc6e63f31f750926e442f8912458cff5408b693bd.json",
+      "sha256": "9fabb3a4c93a016f260a6734a048c5fe881c021242d46e9c297252d45eeff1b5"
+    },
+    {
+      "path": "data/weather/resolutions/0xf3b0c0355f6251772a260c76ce9451689822eda52df721cb849defda805d84ec.json",
+      "sha256": "1486adf52e7e4759f44372e51f2c64fb659d40a5a0c91e4110a4714b2095452d"
+    },
+    {
+      "path": "data/weather/resolutions/0xf3c3638a8bc041cca410e693f2ca7bb0006cc824e77595659dc960476c81f135.json",
+      "sha256": "83c8791a2c6b9d7f5b59693878eaadce7a3dea173607067668310ef06b99b732"
+    },
+    {
+      "path": "data/weather/resolutions/0xf52572dc52e8deeb8040d86f05f8648081c49fe62f06fa7f32eef84b994e5c01.json",
+      "sha256": "b552c34bd60b0eb28b6e73a827f280b906851cbb0c997c59b3850eee0b771a40"
+    },
+    {
+      "path": "data/weather/resolutions/0xf5990773b6a52b4139b9fa93097c5def8a12c9d56b32078918f2208a4ec24169.json",
+      "sha256": "63a547f5eef5fa77b9d4ab687cafee5126e070eecb4b47851101c128f2768196"
+    },
+    {
+      "path": "data/weather/resolutions/0xf643b4716cda031e4adb475135ff3785171d14db1f7a73e130366cb064296d80.json",
+      "sha256": "e38a33770c1e06eeaffeb2e68213a036ca58db5609bec54912234bec14c3d381"
+    },
+    {
+      "path": "data/weather/resolutions/0xf697310ef0208e908c472a6d325d00ed47293c57c5c809e03c8995b00eae80e4.json",
+      "sha256": "3cb1a87b294934b8dbe3996e979ea90864ec3e279980dc1a53e2216d78a7af83"
+    },
+    {
+      "path": "data/weather/resolutions/0xf69fd697d914922d7502288ec67016a0504e848d78a932afc735509fc411f839.json",
+      "sha256": "037ad149a6f57575f1e546fb556601ca3dcbcf4ac1b7e739786c8520af06c038"
+    },
+    {
+      "path": "data/weather/resolutions/0xf704de187ab67ab6685e2e5f5054dccfa9bccf319dee64c13a1fdfd4e8b418b7.json",
+      "sha256": "24e8882780f21de39d038bca1486ba4454dc6f33e7f7c9b03beb0a48afbc8f79"
+    },
+    {
+      "path": "data/weather/resolutions/0xf77a686e4a1b7515c50b1f204b67591dd6c38167e421258a4d6ebde14a6cbce7.json",
+      "sha256": "9ab2119dfb0e4946f59f3b9c577246e8dcd4f26db40da5558ce7c153ac083dde"
+    },
+    {
+      "path": "data/weather/resolutions/0xf796225d3a8f3e3c781699dc47bda70e8b6c63dc886a0827a13745d9540dce2b.json",
+      "sha256": "eea2ab320fe4629055183a4d69b664285f6f995d65b9f2862c16721992966270"
+    },
+    {
+      "path": "data/weather/resolutions/0xf796aaf84598f5490fb29047e5a8e11d463ab5409e11c08118b7607d53df0353.json",
+      "sha256": "8c674f27b99f8bc3f39403df034890f916eecdc1b84fa7dbfdc68a285ba879e2"
+    },
+    {
+      "path": "data/weather/resolutions/0xf7d78ae5ea194fc582f2d9e44492d4b0c301468b97fd1c42bfefa31de7961a58.json",
+      "sha256": "27e2fa676bb37a0a216c7c55addc1be303f5f65de845c2525b58a353005e7ed3"
+    },
+    {
+      "path": "data/weather/resolutions/0xf7e45869e0e480525695b1557030bf26a121f3f27345b6f78bf49655ef852eba.json",
+      "sha256": "8d40ad7dbcabdd3659813bedbc98a65f49bf0a95e20953bc04b7e25b3794b9a1"
+    },
+    {
+      "path": "data/weather/resolutions/0xf8d3d17379daf00db5caccbd6eb9979b34cb0a5981bf41d046827fa8b0d53572.json",
+      "sha256": "69fcd1b8de46aed2603e18d498369fa0a49c0d1c463b478b0f0878496b341402"
+    },
+    {
+      "path": "data/weather/resolutions/0xf8d8c21606f01c1b4387cefbb51853e3470c86b3d5053ea2fc1b2e4a273f98b7.json",
+      "sha256": "e2d27efecb1c20fa01cb09c84e6a4b48f7726781a6ed6760caf9650761a4c4bc"
+    },
+    {
+      "path": "data/weather/resolutions/0xf8e7c12bd6cfe7c32e1e9e11951feed7e2bd8fb80968bc7569734b0f4979fbc2.json",
+      "sha256": "b738fd5ecfe23855455f8f259eb65f23282650f36685f0bfac89bf444fa12e5a"
+    },
+    {
+      "path": "data/weather/resolutions/0xf8e9eabaecd8e5ea5fba33e2377f3dbf488a83e94a31f377976f9047f9f7b4c9.json",
+      "sha256": "8ad981c7b5eca8e0faae9522bd7c0ade6bad7bf10df340f0caac50b8c1beca87"
+    },
+    {
+      "path": "data/weather/resolutions/0xf8ee1f5254e74dfdee317688e028fea829278297d156c996f71851306ea27e81.json",
+      "sha256": "67ff7f4189d1737eb57fd07b60cccdecc11c94c80a19242b5756de086cfda8bb"
+    },
+    {
+      "path": "data/weather/resolutions/0xf96a60335cd5cc71425d58dac552d40fa3f7c6c7640b50149634d870fff5cfe9.json",
+      "sha256": "7a2b369818c80c3300f1529033969fa1834fe65e16216645856276b29f28e6a6"
+    },
+    {
+      "path": "data/weather/resolutions/0xf9839c086efaef940438e188532ac0c25022471aa247e37442b531fa1afd2f05.json",
+      "sha256": "56d87beb73ced7975460d2c22276b20c857dbe89c4a110aa5836f8a0aee76796"
+    },
+    {
+      "path": "data/weather/resolutions/0xf9d4b87d4b9900f089a1371c5db5ff5414104cb9c431c75281ad08360d0e1a57.json",
+      "sha256": "6e0f50d1557d0923c6ad2fd77f58571a1aaaa12011247464d74b9ba77efe834c"
+    },
+    {
+      "path": "data/weather/resolutions/0xf9dfc22d79ce22d6ed0dcdcc9b2f506a9a5a790c2af071bf04bf98b5d12a387c.json",
+      "sha256": "056364583d2d2727233e3ecfe021c81f514ae72de1b2ea7459a55e68fa1939e2"
+    },
+    {
+      "path": "data/weather/resolutions/0xfa70fc5287752850da8aada297b28f07ce8d52c83169990b657091914d98b405.json",
+      "sha256": "756754ba0a557eb91f43b4173f2b1c691f453ba7f1fa95b9670d09d3f7c842e5"
+    },
+    {
+      "path": "data/weather/resolutions/0xfa7bf02f1493d600f441c52f233403603c4fdcb7313417c3a6de9ce7734717dd.json",
+      "sha256": "61a0042124580eb0ef7848951d15ca4afdf44bb22bd2f162df790be60ce7dfa1"
+    },
+    {
+      "path": "data/weather/resolutions/0xfa83453c2040f0ed53fb8e4599acceaea30faa50586eb8f45c64dc30de45e7a1.json",
+      "sha256": "ea004a1a2b702e751b1661c72183ae535b48b38844622f5e10da1819555aeb58"
+    },
+    {
+      "path": "data/weather/resolutions/0xfb3fa30bfefe52b27757c43f11bcf5dee0f9cb8070f02433e20662124eb59be2.json",
+      "sha256": "2370f8e7e729886eeed06601211c092c4b7416bd5f1545f56b1a188153d5e281"
+    },
+    {
+      "path": "data/weather/resolutions/0xfba6df3f9927f57585f213f37ae743c328dade279a82fd0f74aefb826568589c.json",
+      "sha256": "a282aa57c5c400af52179632956f93013ca463203f43b5bdae20cb3c8c03e4f1"
+    },
+    {
+      "path": "data/weather/resolutions/0xfbaef8766b083ff0dacfddbfe49ad86fcc46606adf1f858b4ae45a1b366505b9.json",
+      "sha256": "392fae74330b5fff3bcadc8f44e4696da74305690b037b87710a911d9cbc6403"
+    },
+    {
+      "path": "data/weather/resolutions/0xfbb9804d129136f4d3abe365d5d1c5ff08dacabf1b952b04c1de6b895e4691de.json",
+      "sha256": "7a0558b70a1d25e9be0211af6359bc8cb405ad1aa8c4bf0aa43713c169bb2c22"
+    },
+    {
+      "path": "data/weather/resolutions/0xfbc3839f1d46714dffe6ae3903568e7994a2a0a86bc89916de74b5d1c7f3e055.json",
+      "sha256": "eae073168cf171b62a534f809e67f21c078296c5488088b0b076b9f86684773c"
+    },
+    {
+      "path": "data/weather/resolutions/0xfc2e3c3cb37b4a4afc7471e515a052209cab5e9fc5249a83383c6da41461b793.json",
+      "sha256": "51ea3ae4776777bc783274913a29be7b70857f9ce9b22b56074207a3cd54fb80"
+    },
+    {
+      "path": "data/weather/resolutions/0xfc2eaccee04bc95e1868e24d62d3eb361dc21490c3ff73d1c73238338eec2fa9.json",
+      "sha256": "ddc6de410cdac883d8466c64b99940ed67f90c9fcd5f30dbe34545575f86674e"
+    },
+    {
+      "path": "data/weather/resolutions/0xfc9047620cea42b3bd2764ac28184ab51d130a0112f041556728a5369180ae88.json",
+      "sha256": "7abb6099ab60ab87a157d0edc2aa529cb08c5e863f5fb6ff8ed0466e282a2ed9"
+    },
+    {
+      "path": "data/weather/resolutions/0xfd3bd65880840584227b21faf6a3bd94e969d898e282d7137fc6890e568383a4.json",
+      "sha256": "ab9a51373e0fe37a1d7d7c9e4b5abe135e58ed016c3325c551b5858de56c3aeb"
+    },
+    {
+      "path": "data/weather/resolutions/0xfdeeb1c345740b321f93afe93eb426df129db5f4c47a0e741fed57cf1c0d3554.json",
+      "sha256": "eb5b5b5ee8b152c13c479013f59421154a37c55b8dd8c3733bfb2688e4ac871b"
+    },
+    {
+      "path": "data/weather/resolutions/0xfe0acd32eed65081edb82a37ed696eea37d30b9e6723dd9505c1b0352b15d6f5.json",
+      "sha256": "1fc21d8a248f91a700bdbc416412e5e09581c28e1849e55a9d9d0d7ca4000a8b"
+    },
+    {
+      "path": "data/weather/resolutions/0xfedf6ca8b6b6eb29321783f8455c004d070b2056f924c35836bff7757f4286f3.json",
+      "sha256": "ed2facd6cd3d5a207186754644dad1b21bb2d1849584ee494ae4f6037b578d85"
+    },
+    {
+      "path": "data/weather/resolutions/0xfff7b887132e9eeaa3ca6854f1e5844cda30d0951ab6a7eedee2a36fee4efbdb.json",
+      "sha256": "30aba3f44161f9ac5ddcf9e9653c0dfe5bf8d0b10549cc6aa92aa031f31dab76"
+    }
+  ]
+}

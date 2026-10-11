@@ -1,0 +1,16 @@
+{
+  "metadata_days": 162,
+  "metadata_markets": 1782,
+  "book_city_days": 72,
+  "evaluation_markets": 792,
+  "outcomes": 1584,
+  "snapshot_states": 9504,
+  "parts": 155,
+  "event_rows": 3107330,
+  "subset_bytes": 52882804,
+  "distinct_source_urls": 80,
+  "missing_initial_snapshots": 0,
+  "metadata_errors": [],
+  "books_errors": [],
+  "input_files": 2810
+}

@@ -1,0 +1,4 @@
+# Preserve the exact bytes used by the research SHA256 manifests.
+* -text whitespace=trailing-space,space-before-tab,cr-at-eol
+# Matplotlib SVG paths retain the renderer's generated spacing.
+results/weather_deep/figures/*.svg -whitespace
