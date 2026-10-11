@@ -17,7 +17,7 @@ def _request():
         constitution="constitution",
         instruction="instruction",
         strategy={"version": 1, "active_rules": []},
-        requested_model="gemini-3.5-flash",
+        requested_model="gemini-3.6-flash",
         temperature=0,
         thinking="minimal",
         max_output_tokens=200,
@@ -49,7 +49,7 @@ class _FakeBatches:
             },
         )
         response = SimpleNamespace(
-            model_version="gemini-3.5-flash",
+            model_version="gemini-3.6-flash",
             candidates=[SimpleNamespace(content=SimpleNamespace(parts=[SimpleNamespace(function_call=call)]))],
             usage_metadata=SimpleNamespace(
                 prompt_token_count=10,
@@ -74,15 +74,27 @@ def test_gemini_function_schema_uses_the_supported_subset() -> None:
     assert schema["properties"]["abstain_reason"]["type"] == "string"
 
 
+def test_batch_records_actual_returned_model_instead_of_requested_alias() -> None:
+    batches = _FakeBatches()
+    original = batches.get
+    def redirected(*, name):
+        job = original(name=name)
+        job.dest.inlined_responses[0].response.model_version = "gemini-3.6-flash-actual"
+        return job
+    batches.get = redirected
+    provider = GeminiBatchProvider(client=SimpleNamespace(batches=batches), model="gemini-3.6-flash")
+    assert provider.sync("batches/pilot")[0]["returned_model"] == "gemini-3.6-flash-actual"
+
+
 def test_gemini_batch_preserves_request_identity_and_normalizes_function_call() -> None:
     client = SimpleNamespace(batches=_FakeBatches())
     request = _request()
-    provider = GeminiBatchProvider(client=client, model="gemini-3.5-flash")
+    provider = GeminiBatchProvider(client=client, model="gemini-3.6-flash")
 
     assert provider.submit([request]) == "batches/pilot"
 
     sent = client.batches.create_args
-    assert sent["model"] == "gemini-3.5-flash"
+    assert sent["model"] == "gemini-3.6-flash"
     assert sent["src"][0].metadata == {"request_id": request.request_id}
     assert sent["src"][0].config.max_output_tokens == 200
     assert sent["src"][0].config.thinking_config.thinking_level.value == "MINIMAL"
@@ -91,7 +103,7 @@ def test_gemini_batch_preserves_request_identity_and_normalizes_function_call() 
 
     assert len(result) == 1
     assert result[0]["request_id"] == request.request_id
-    assert result[0]["returned_model"] == "gemini-3.5-flash"
+    assert result[0]["returned_model"] == "gemini-3.6-flash"
     assert result[0]["received_at_ms"] >= 300000
     assert result[0]["input_tokens"] == 12
     assert result[0]["output_tokens"] == 7
@@ -119,7 +131,7 @@ def test_gemini_batch_accepts_canonical_decimal_temperature() -> None:
         constitution="constitution",
         instruction="instruction",
         strategy={"version": 1, "active_rules": []},
-        requested_model="gemini-3.5-flash",
+        requested_model="gemini-3.6-flash",
         temperature=Decimal("0"),
         thinking="minimal",
         max_output_tokens=200,
@@ -127,6 +139,6 @@ def test_gemini_batch_accepts_canonical_decimal_temperature() -> None:
         feature_set="common_candles_v1",
     )
 
-    GeminiBatchProvider(client=client, model="gemini-3.5-flash").submit([request])
+    GeminiBatchProvider(client=client, model="gemini-3.6-flash").submit([request])
 
     assert client.batches.create_args["src"][0].config.temperature == 0.0

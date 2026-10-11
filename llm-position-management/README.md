@@ -18,6 +18,8 @@ The fixture demonstrates open, hold, add, reduce, and close.  Any valid delayed 
 
 When resuming an older DB, three or more consecutive failures with an open position imply a pending safety close even if the stored flag is false or was absent before migration. Partial reductions validate the remaining position's stop against the execution-time market price; full closes remain available without a stop.
 
+[Gemini 3.6 Flash移行・料金・旧実験の扱い・検証範囲](../docs/gemini-36-migration-20261011.md)
+
 ## Real-data functional acceptance
 
 The shared `trading_core.market_data.replay_inputs` reader checks complete, ordered BTCUSDT Binance one-minute candles and eight-hour Funding. It rejects gaps, duplicates, wrong markets, and unavailable candle timestamps. Existing downloaded inputs can be reused without network calls:
