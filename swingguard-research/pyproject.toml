@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swingguard-price-only-research"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Offline long-only daily proposals and five-minute risk adaptation"
+dependencies = []
+
+[project.optional-dependencies]
+gemini = ["google-genai>=1,<2", "python-dotenv>=1,<2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

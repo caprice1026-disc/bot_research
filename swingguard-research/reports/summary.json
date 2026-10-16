@@ -1,0 +1,247 @@
+{
+  "api_requests_sent_this_run": 0,
+  "config_hash": "7c5d8421aa650913f39699823628df0fa6e7fa0485910d6c081417cf3c8f4151",
+  "data_validation": "complete",
+  "gemini_estimate": {
+    "account_model_availability": "unverified_no_key",
+    "assumed_input_usd_per_million": "0.75",
+    "assumed_output_usd_per_million": "3.75",
+    "candidate_model": "gemini-3.6-flash",
+    "days_by_period": {
+      "chronological_followup": 181,
+      "paper_period": 184
+    },
+    "distinct_model_inputs_per_day": [
+      "pre_risk",
+      "post_only"
+    ],
+    "free_tier_status": "listed_in_public_docs_account_quota_unverified_no_smoke_sent",
+    "hard_budget_limit_usd": "10",
+    "legacy_repo_model": "gemini-3.5-flash",
+    "max_input_byte_as_token_conservative_cost_usd": "6.87660",
+    "model_source": "https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash",
+    "notes": "Public Standard pricing checked 2026-10-16; discounted rates expire 2026-12-31. Not an account quote. Output includes thinking; account/model/quota require validation. Unknown requests retain reservation; no retries.",
+    "official_candidates": [
+      "gemini-3.6-flash",
+      "gemini-3.8-flash",
+      "gemini-3.5-flash-lite"
+    ],
+    "pricing_source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-3.6-flash",
+    "pricing_status": "official_standard_price_2026-10-16_valid_through_2026-12-31_account_unverified",
+    "proposal_requests_three_arms": 1095,
+    "reservation_envelope_usd": "36.50",
+    "reservation_note": "Sum of 730 hypothetical outstanding reservations, not prepaid fees. Sequential calls replace each 0.05 reservation with token-based settled cost. Settled plus unknown reservations plus next reservation must stay within the 10 USD budget.",
+    "symbols_in_each_joint_request": [
+      "BTCUSDT",
+      "ETHUSDT"
+    ],
+    "uncontrolled_request_reuses": "post_only (identical market features, no account/risk input)",
+    "unique_gemini_requests_with_post_and_uncontrolled_cache_sharing": 730
+  },
+  "label": "SwingGuard-inspired price-only adaptation",
+  "periods": {
+    "chronological_followup": {
+      "arms": {
+        "buy_hold": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 2,
+          "commission": 21.220384725952606,
+          "daily_sharpe_365_rf0": 0.6890068380671523,
+          "fill_count": 4,
+          "final_equity": 11219.144361206674,
+          "max_drawdown_pct": 42.700856300739446,
+          "mean_exposure_pct": 99.99808164518109,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": 1219.1443612066737,
+          "profit_after_modeled_api": 1219.1443612066737,
+          "return_minus_buy_hold_percentage_points": 0.0,
+          "return_pct": 12.191443612066736,
+          "slippage_cost": 10.610505106789063,
+          "turnover_notional": 21220.384725952605,
+          "turnover_over_initial": 2.1220384725952606
+        },
+        "post_only": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 30,
+          "commission": 349.38421555320815,
+          "daily_sharpe_365_rf0": 0.39194097684772483,
+          "fill_count": 278,
+          "final_equity": 10319.614637483619,
+          "max_drawdown_pct": 13.663607594859728,
+          "mean_exposure_pct": 30.27378672478578,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": 319.614637483618,
+          "profit_after_modeled_api": 319.614637483618,
+          "return_minus_buy_hold_percentage_points": -8.995297237230556,
+          "return_pct": 3.1961463748361805,
+          "slippage_cost": 174.69231869939702,
+          "turnover_notional": 349384.21555320814,
+          "turnover_over_initial": 34.938421555320815
+        },
+        "pre_risk": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 30,
+          "commission": 342.5845060846327,
+          "daily_sharpe_365_rf0": 1.5106989038220213,
+          "fill_count": 217,
+          "final_equity": 11405.75254865998,
+          "max_drawdown_pct": 12.32574022815205,
+          "mean_exposure_pct": 25.041266286217056,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": 1405.752548659981,
+          "profit_after_modeled_api": 1405.752548659981,
+          "return_minus_buy_hold_percentage_points": 1.866081874533073,
+          "return_pct": 14.05752548659981,
+          "slippage_cost": 171.2927329497633,
+          "turnover_notional": 342584.5060846327,
+          "turnover_over_initial": 34.25845060846327
+        },
+        "uncontrolled": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 29,
+          "commission": 297.883563431882,
+          "daily_sharpe_365_rf0": 1.209249710130322,
+          "fill_count": 186,
+          "final_equity": 11757.651824379343,
+          "max_drawdown_pct": 17.474983669928147,
+          "mean_exposure_pct": 42.794418061307496,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": 1757.651824379344,
+          "profit_after_modeled_api": 1757.651824379344,
+          "return_minus_buy_hold_percentage_points": 5.385074631726704,
+          "return_pct": 17.57651824379344,
+          "slippage_cost": 148.94233283537116,
+          "turnover_notional": 297883.563431882,
+          "turnover_over_initial": 29.788356343188198
+        }
+      },
+      "bounds": [
+        "2025-02-01",
+        "2025-08-01"
+      ],
+      "pre_post_weight_difference_days": 43,
+      "state_bars": {
+        "buy_hold": {
+          "BENCHMARK": 52128
+        },
+        "post_only": {
+          "ALERT": 33905,
+          "NORMAL": 12934,
+          "RECOVERY": 5001,
+          "SURVIVAL": 288
+        },
+        "pre_risk": {
+          "ALERT": 37982,
+          "NORMAL": 9819,
+          "RECOVERY": 4039,
+          "SURVIVAL": 288
+        },
+        "uncontrolled": {
+          "DISABLED": 52128
+        }
+      }
+    },
+    "paper_period": {
+      "arms": {
+        "buy_hold": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 2,
+          "commission": 22.99409164153702,
+          "daily_sharpe_365_rf0": 1.213491437368299,
+          "fill_count": 4,
+          "final_equity": 12991.0775698755,
+          "max_drawdown_pct": 28.48396564707939,
+          "mean_exposure_pct": 99.99811292270532,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": 2991.077569875501,
+          "profit_after_modeled_api": 2991.077569875501,
+          "return_minus_buy_hold_percentage_points": 0.0,
+          "return_pct": 29.91077569875501,
+          "slippage_cost": 11.497802213134442,
+          "turnover_notional": 22994.09164153702,
+          "turnover_over_initial": 2.299409164153702
+        },
+        "post_only": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 31,
+          "commission": 354.13168561241434,
+          "daily_sharpe_365_rf0": -0.3161239322028206,
+          "fill_count": 309,
+          "final_equity": 9489.85777505779,
+          "max_drawdown_pct": 15.89279463874773,
+          "mean_exposure_pct": 31.256680208841093,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": -510.1422249422096,
+          "profit_after_modeled_api": -510.1422249422096,
+          "return_minus_buy_hold_percentage_points": -35.0121979481771,
+          "return_pct": -5.101422249422096,
+          "slippage_cost": 177.06584807003435,
+          "turnover_notional": 354131.6856124144,
+          "turnover_over_initial": 35.413168561241434
+        },
+        "pre_risk": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 29,
+          "commission": 342.9623087301588,
+          "daily_sharpe_365_rf0": 0.38923475490981607,
+          "fill_count": 263,
+          "final_equity": 10315.77910882195,
+          "max_drawdown_pct": 10.423731598809372,
+          "mean_exposure_pct": 27.41794810775136,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": 315.7791088219499,
+          "profit_after_modeled_api": 315.7791088219499,
+          "return_minus_buy_hold_percentage_points": -26.752984610535513,
+          "return_pct": 3.157791088219499,
+          "slippage_cost": 171.48136192077425,
+          "turnover_notional": 342962.3087301588,
+          "turnover_over_initial": 34.29623087301588
+        },
+        "uncontrolled": {
+          "ambiguous_stop_target_bars": 0,
+          "closed_position_lifecycles": 27,
+          "commission": 288.11808253653396,
+          "daily_sharpe_365_rf0": 0.012024821395236671,
+          "fill_count": 191,
+          "final_equity": 9754.668734137647,
+          "max_drawdown_pct": 22.96878160863627,
+          "mean_exposure_pct": 44.04388497338593,
+          "modeled_standalone_api_cost": 0.0,
+          "profit": -245.3312658623533,
+          "profit_after_modeled_api": -245.3312658623533,
+          "return_minus_buy_hold_percentage_points": -32.36408835737854,
+          "return_pct": -2.453312658623533,
+          "slippage_cost": 144.05908797974314,
+          "turnover_notional": 288118.08253653394,
+          "turnover_over_initial": 28.811808253653393
+        }
+      },
+      "bounds": [
+        "2024-08-01",
+        "2025-02-01"
+      ],
+      "pre_post_weight_difference_days": 31,
+      "state_bars": {
+        "buy_hold": {
+          "BENCHMARK": 52992
+        },
+        "post_only": {
+          "ALERT": 36408,
+          "NORMAL": 8486,
+          "RECOVERY": 7624,
+          "SURVIVAL": 474
+        },
+        "pre_risk": {
+          "ALERT": 42177,
+          "NORMAL": 7220,
+          "RECOVERY": 3449,
+          "SURVIVAL": 146
+        },
+        "uncontrolled": {
+          "DISABLED": 52992
+        }
+      }
+    }
+  },
+  "provider": "rule"
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "label": "SwingGuard-inspired price-only adaptation",
+  "symbols": ["BTCUSDT", "ETHUSDT"],
+  "data_start": "2024-06-01",
+  "data_end_exclusive": "2025-08-01",
+  "periods": {
+    "paper_period": ["2024-08-01", "2025-02-01"],
+    "chronological_followup": ["2025-02-01", "2025-08-01"]
+  },
+  "initial_cash": "10000",
+  "commission_bps": "10",
+  "slippage_bps": "5",
+  "stop_loss_pct": "0.08",
+  "take_profit_pct": "0.16",
+  "proposal_ttl_ms": 86400000,
+  "proposal_renewal_grace_ms": 900000,
+  "max_proposal_latency_ms": 900000,
+  "lifecycle_version": "bounded-renewal-v2",
+  "risk": {
+    "alert_dd": 0.04,
+    "survival_dd": 0.12,
+    "alert_daily_loss": 0.02,
+    "survival_daily_loss": 0.06,
+    "alert_market_drop_1h": 0.03,
+    "survival_market_drop_1h": 0.08,
+    "alert_cap": "0.5",
+    "survival_min_ms": 43200000,
+    "recovery_step_ms": 86400000,
+    "recovery_caps": ["0.25", "0.5", "0.75", "1"],
+    "recovery_redrop": 0.03
+  },
+  "gemini": {
+    "model": "gemini-3.6-flash",
+    "legacy_repo_model": "gemini-3.5-flash",
+    "prompt_version": "swingguard-price-only-v1",
+    "temperature": 0,
+    "thinking_level": "minimal",
+    "max_output_tokens": 512,
+    "max_input_bytes": 10000,
+    "reservation_usd_per_request": "0.05",
+    "assumed_input_usd_per_million": "0.75",
+    "assumed_output_usd_per_million": "3.75",
+    "pricing_status": "official_standard_price_2026-10-16_valid_through_2026-12-31_account_unverified",
+    "pricing_source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-3.6-flash",
+    "model_source": "https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash"
+  },
+  "assumptions_fixed_before_run": "Price-only spot/cash, no leverage. Thresholds, stops, recovery and offline rule are transparent adaptation assumptions, not disclosed paper parameters. No tuning on either evaluation period. Followup is unused for this adaptation's tuning, not certified unused in older studies or model training."
+}

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.cache/
+/results/
+/.agent/
+.env
+.env.*
+/data/
+/.run-*/
+/PLAN*.md
+/DATA_HANDOFF_ja.md
+/compare_versions.py

@@ -1,0 +1,15 @@
+{
+  "actual_orders": 0,
+  "base_accounts": 21,
+  "fee_monotonicity": true,
+  "freeze_hash_valid": true,
+  "independent_saved_ledger": true,
+  "ledger_accounts": 21,
+  "llm_calls": 0,
+  "passed": true,
+  "reads_holdout_prices_for_saved_ledger": false,
+  "scope": "Price-only offline adaptation. Original serialization recovery used two technical batch attempts; no retuning.",
+  "search_evaluations": 7680,
+  "stress_metric_rows": 244,
+  "unit_tests": 22
+}

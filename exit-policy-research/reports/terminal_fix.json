@@ -1,0 +1,43 @@
+{
+  "all_current_tests": {
+    "errors": 0,
+    "failures": 0,
+    "run": 25
+  },
+  "all_equity_byte_identical": true,
+  "all_metrics_byte_identical": true,
+  "all_trades_byte_identical": true,
+  "audited_episode_paths": 1218,
+  "baseline_artifacts_preserved_and_verified": 336,
+  "change": "terminal-open gap SL/TP before max-hold; terminal high/low excluded",
+  "changed_candidate_outcomes": 0,
+  "changed_forced_exits": 0,
+  "changed_top_level_definitions": [
+    "make_episode"
+  ],
+  "changed_train_oracle_labels_episodes": 0,
+  "config_unchanged": true,
+  "equity_rows_reconciled": 2413475,
+  "existing_verifier": {
+    "accounting_and_common_entry_runs": 100,
+    "artifact_hashes_verified": 350,
+    "frozen_policy_re_evaluations": 50,
+    "retrained_seed": null,
+    "source_hash_matches": true,
+    "status": "passed"
+  },
+  "final_350_artifact_hashes_verified": true,
+  "metric_max_abs_delta": 0.0,
+  "old_boundary_tests": {
+    "expected_failures": 5,
+    "run": 8
+  },
+  "reevaluated_runs": 100,
+  "root_config_semantics_unchanged": true,
+  "source_after_sha256": "a01429fb402110678400dc3a4daff0ab876e9f0a1e2b5b76c4115cc05520b420",
+  "source_before_sha256": "ece788735d4d0296372d8399fc38f858f264875b8a4eb186a21a399e7e2e31be",
+  "status": "passed",
+  "trades_reconciled": 8000,
+  "training_reexecuted": false,
+  "unchanged_model_files": 15
+}

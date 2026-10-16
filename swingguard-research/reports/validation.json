@@ -1,0 +1,12 @@
+{
+  "api_calls": 0,
+  "independent_ledger_equity_rows": 420480,
+  "independent_ledger_fills": 1452,
+  "max_aggregate_rounding_difference": "1.6e-14",
+  "max_cash_equity_quantity_cost_difference": "0",
+  "mock_only": true,
+  "model_allowlist_replay_economic_files_identical": 32,
+  "scope": "Price-only rule adaptation; no LLM performance claim. Full ledgers are regenerated locally.",
+  "unit_tests": 69,
+  "v2_fresh_cache_deterministic_files_identical": 34
+}

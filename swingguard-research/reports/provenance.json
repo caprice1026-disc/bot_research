@@ -1,0 +1,21 @@
+{
+  "detailed_results_and_raw_data": "Generated locally; excluded from Git",
+  "gemini_llm_calls": 0,
+  "input_hashes": "See data_manifest.json",
+  "result_type": "BTC/ETH Binance spot price adaptation, not complete paper reproduction",
+  "source_hash_encoding": "UTF-8 with LF line endings; independent of checkout newline conversion",
+  "source_sha256": {
+    "configs/default.json": "80d2eb3ba2b7fc1eea3c22a994908b59ebf361133173319d7dac3166400d3560",
+    "src/swingguard/__init__.py": "3a43497278f0c003a02eca4c459d7842400c8f13901d1fbf141955a3ba84451c",
+    "src/swingguard/cli.py": "422aa9ebde6f42b9ea664ae52bbeb5449592f7e2d3597f4f7b2fd608a2ebe2cd",
+    "src/swingguard/data.py": "aefa57e0f9c5390ae878c88630d399f0ac494b9601d2fb951bdb1aaf1aafd003",
+    "src/swingguard/engine.py": "df895f7a9b6521280d2c9f0d9e365753714a09fc88e575d8e8624c6165ba0e06",
+    "src/swingguard/journal.py": "bb187fd84262b61e1a8da77c44d4ba71cf5c9914fda074075aa289eb375fcc1d",
+    "src/swingguard/providers.py": "f15c49637ab486d995034d9bf601edb872d740c3e16c802b98941730076e8a3d",
+    "src/swingguard/risk.py": "1fa1c7b0f57ecd6e6b512f069d0ea30e6b7aae6a6d81de10dca22191c90247b0",
+    "tests/test_research.py": "50cb277367d25f5ea4089732e14ce3599f56bef59735536b8ba24806311d57ec",
+    "tests/test_v2_journal.py": "47a27a367e59765046ae368eeffe5dd71d52adb3f2fb5be770b9dab17db0ca4d",
+    "tests/test_v2_lifecycle.py": "e57301ad9032f6e4afe3d61bee0ff0705e5dda80e3fa3c9587693cfa383a2a55",
+    "verify_results.py": "4172e6267289179642dd024262ecbd7702d8113ce915e9c95e4e7e93fdcf8b0b"
+  }
+}

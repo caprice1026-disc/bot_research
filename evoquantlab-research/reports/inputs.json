@@ -1,0 +1,19 @@
+{
+  "datasets": {
+    "BTCUSDT": {
+      "file": "BTCUSDT-5m.csv",
+      "rows": 122688,
+      "sha256": "1de41399bbd7a9021e2304a80692185c518ca6d5fe829307efc304fea2d7f719"
+    },
+    "ETHUSDT": {
+      "file": "ETHUSDT-5m.csv",
+      "rows": 122688,
+      "sha256": "486e857da44dc62ff041e35f4c433e2734864eaf8f324e1f71f9fe3c7c4ec31f"
+    }
+  },
+  "end_exclusive": "2025-08-01",
+  "interval": "5m",
+  "local_data_not_published": true,
+  "market": "Binance spot",
+  "start_inclusive": "2024-06-01"
+}

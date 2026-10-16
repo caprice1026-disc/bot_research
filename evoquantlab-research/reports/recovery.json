@@ -1,0 +1,43 @@
+{
+  "changed_scope": "save_account serialization only; include all nonzero movements in account_movements.csv for independent replay",
+  "completed_admission_hash": "56396a7615a80bacc0e00a9ab05fd1bfbe7867a9ec22ff986f39b8a7f25e4837",
+  "completed_at_utc": "2026-10-16T08:09:37.750312+00:00",
+  "configuration_identical": true,
+  "corrected_code_hashes": {
+    "engine.py": "06f9c33e5196dabd82c2890d4efcd2fdad59c8c982e7c1be406c050a7b059fb1",
+    "limits.py": "6f8e45c63a3f7a7b1ade2899189101a7c264d7ab8eefe85f2ec85f36ac09d341",
+    "run.py": "7419f6c3cbf29a6ab2fa29ab64ca8bef6e36862e3871ddd185411688c5a84c70"
+  },
+  "holdout_batch_attempts_total": 2,
+  "model_retuned": false,
+  "note": "Technical deterministic replay of the same frozen test grid; not a fresh independent OOS test",
+  "original_admission_hash": "107bab58283fbba21744c26f7037f8a0ebdef3a29f5e2fe6f59699d31cde8de6",
+  "original_code_hashes": {
+    "engine.py": "06f9c33e5196dabd82c2890d4efcd2fdad59c8c982e7c1be406c050a7b059fb1",
+    "limits.py": "6f8e45c63a3f7a7b1ade2899189101a7c264d7ab8eefe85f2ec85f36ac09d341",
+    "run.py": "3eda261beb27bda61aa9da519c8075a5bc691e96b060beb2b1db44b8e5d62a35"
+  },
+  "previous_outcome_hashes_identical": {
+    "fixed_gp_seed11/equity.csv": true,
+    "fixed_gp_seed11/metrics.json": true,
+    "fixed_gp_seed11/trades.csv": true,
+    "fixed_gp_seed23/equity.csv": true,
+    "fixed_gp_seed23/metrics.json": true,
+    "fixed_gp_seed23/trades.csv": true,
+    "fixed_gp_seed37/equity.csv": true,
+    "fixed_gp_seed37/metrics.json": true,
+    "fixed_gp_seed37/trades.csv": true,
+    "fixed_gp_seed53/equity.csv": true,
+    "fixed_gp_seed53/metrics.json": true,
+    "fixed_gp_seed53/trades.csv": true,
+    "fixed_gp_seed71/equity.csv": true,
+    "fixed_gp_seed71/metrics.json": true,
+    "fixed_gp_seed71/trades.csv": true
+  },
+  "reason": "Original serializer omitted movements <=1e-10 of equity; 0.000007943 USDT residual triggered strict export audit",
+  "search_reexecuted": false,
+  "selection_artifacts_identical": true,
+  "started_at_utc": "2026-10-16T08:09:31.402472+00:00",
+  "status": "completed",
+  "strategy_engine_identical": true
+}

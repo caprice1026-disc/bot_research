@@ -1,0 +1,15 @@
+{
+  "detailed_results_and_raw_data": "Generated locally; excluded from Git",
+  "gemini_llm_calls": 0,
+  "input_hashes": "See inputs.json",
+  "result_type": "BTC/ETH Binance spot price adaptation, not complete paper reproduction",
+  "source_hash_encoding": "UTF-8 with LF line endings; independent of checkout newline conversion",
+  "source_sha256": {
+    "build_report.py": "7e9ef449c74c1681f4caae72ce1c60a4c7a6d34b72dbd9a4e6206660f54b6de5",
+    "config.json": "851a554825011799cc452b7c35a8ce06d47c86daa28a1973a99f64a7bf6072ea",
+    "replay_terminal_fix.py": "715ef6fa54432e546b53edc3dce54d882bcef1b1aca46d3ced8a90931c35f308",
+    "research.py": "a01429fb402110678400dc3a4daff0ab876e9f0a1e2b5b76c4115cc05520b420",
+    "tests/test_research.py": "6e5c3b05edf7dbdff4f596bd410c4ecaf9baae026c1c7373fc9def5c338a6e68",
+    "verify_results.py": "c43f35beb5101a9792ede9e5bf87111fd6bd6b6ce76d28d3e0f6b43090c338e6"
+  }
+}

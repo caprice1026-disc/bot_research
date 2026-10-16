@@ -1,0 +1,13 @@
+{
+  "actual_orders": 0,
+  "all_metrics_byte_identical": true,
+  "equity_rows_reconciled": 2413475,
+  "frozen_re_evaluated_runs": 100,
+  "llm_calls": 0,
+  "passed": true,
+  "scope": "Price-only adaptation; boundary fix re-evaluated saved models without training. No statistical superiority established.",
+  "trades_reconciled": 8000,
+  "training_reexecuted_for_boundary_fix": false,
+  "unchanged_model_files": 15,
+  "unit_tests": 25
+}

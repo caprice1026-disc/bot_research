@@ -1,0 +1,41 @@
+{
+  "caveat": "Five complete adaptive block-permutation searches only; correlated seeds and few blocks make this exploratory, not calibrated inference",
+  "minimum_attainable_p": 0.16666666666666666,
+  "null_best_fitness": [
+    0.28833419884892936,
+    -0.03,
+    0.01106293184587178,
+    -0.03,
+    2.1768565741493826
+  ],
+  "null_searches": 5,
+  "selection_p_diagnostic": [
+    {
+      "p": 1.0,
+      "real_best": -0.03,
+      "seed": 11
+    },
+    {
+      "p": 1.0,
+      "real_best": -0.03,
+      "seed": 23
+    },
+    {
+      "p": 0.3333333333333333,
+      "real_best": 1.20636239783575,
+      "seed": 37
+    },
+    {
+      "p": 0.3333333333333333,
+      "real_best": 2.0447445359653367,
+      "seed": 53
+    },
+    {
+      "p": 0.3333333333333333,
+      "real_best": 0.8237201986918508,
+      "seed": 71
+    }
+  ],
+  "statistical_significance_claimed": false,
+  "trials_per_search": 384
+}

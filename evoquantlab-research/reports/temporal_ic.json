@@ -1,0 +1,202 @@
+[
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "fixed_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 11,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "fixed_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 23,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "fixed_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 37,
+    "temporal_ic_24h": {
+      "0": -0.013594833942327522,
+      "1": -0.016834962762084512
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "fixed_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 53,
+    "temporal_ic_24h": {
+      "0": 0.022879190086783924,
+      "1": -0.02540809200861807
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "fixed_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 71,
+    "temporal_ic_24h": {
+      "0": 0.02770829150110239,
+      "1": -0.026532240718522646
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "dual_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 11,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "dual_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 23,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "dual_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 37,
+    "temporal_ic_24h": {
+      "0": -0.17617640789241112,
+      "1": 0.043384285640658084
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "dual_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 53,
+    "temporal_ic_24h": {
+      "0": 0.007751924849048722,
+      "1": 0.03351805514859553
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "dual_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 71,
+    "temporal_ic_24h": {
+      "0": 0.02770829150110239,
+      "1": -0.026532240718522646
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "random",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 11,
+    "temporal_ic_24h": {
+      "0": -0.011945332196972224,
+      "1": -0.038098921923509124
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "random",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 23,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "random",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 37,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "random",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 53,
+    "temporal_ic_24h": {
+      "0": -0.15623189493575934,
+      "1": 0.06413215969755169
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "random",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 71,
+    "temporal_ic_24h": {
+      "0": -0.011879135219349725,
+      "1": -0.025963089146955252
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "noise_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 11,
+    "temporal_ic_24h": {
+      "0": -0.05176671086812131,
+      "1": 0.05575852201573554
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "noise_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 23,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "noise_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 37,
+    "temporal_ic_24h": {
+      "0": 0.05153901309052173,
+      "1": 0.11797643183166787
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "noise_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 53,
+    "temporal_ic_24h": {
+      "0": null,
+      "1": null
+    }
+  },
+  {
+    "cross_sectional_ic": "not used: two-asset degeneracy",
+    "method": "noise_gp",
+    "predictive_samples_per_symbol": 2156,
+    "seed": 71,
+    "temporal_ic_24h": {
+      "0": -0.0016791655586076992,
+      "1": 0.040158303542555375
+    }
+  }
+]

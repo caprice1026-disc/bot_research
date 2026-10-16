@@ -1,0 +1,47 @@
+[
+  {
+    "seed": 1,
+    "mean_trade_return_difference_pp": -0.013637430035388965,
+    "ci95_low": -0.054713298261934676,
+    "ci95_high": 0.012115463533952544,
+    "entry_blocks": 40,
+    "block_length": 7,
+    "bootstrap_samples": 2000
+  },
+  {
+    "seed": 3,
+    "mean_trade_return_difference_pp": -0.006876026758650036,
+    "ci95_low": -0.015756793817045964,
+    "ci95_high": 0.00013640335009187305,
+    "entry_blocks": 40,
+    "block_length": 7,
+    "bootstrap_samples": 2000
+  },
+  {
+    "seed": 5,
+    "mean_trade_return_difference_pp": 0.01120173585053022,
+    "ci95_low": -0.008964151830407774,
+    "ci95_high": 0.03179196952435585,
+    "entry_blocks": 40,
+    "block_length": 7,
+    "bootstrap_samples": 2000
+  },
+  {
+    "seed": 7,
+    "mean_trade_return_difference_pp": -0.004815887214945732,
+    "ci95_low": -0.015930166536364317,
+    "ci95_high": 0.002965009783052171,
+    "entry_blocks": 40,
+    "block_length": 7,
+    "bootstrap_samples": 2000
+  },
+  {
+    "seed": 11,
+    "mean_trade_return_difference_pp": -0.001602041401288054,
+    "ci95_low": -0.0048061242038654585,
+    "ci95_high": 1.4475962475165442e-15,
+    "entry_blocks": 40,
+    "block_length": 7,
+    "bootstrap_samples": 2000
+  }
+]

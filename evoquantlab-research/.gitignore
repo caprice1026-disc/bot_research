@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.cache/
+/results/
+/.agent/
+.env
+.env.*
+/artifact_manifest.json
