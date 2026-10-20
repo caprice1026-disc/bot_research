@@ -1,0 +1,1 @@
+PASS: 15 actual runs exactly match prior published runs; 30 NAV/settled/pending/cash checks; 15 paired attribution identities.

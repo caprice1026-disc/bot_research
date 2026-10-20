@@ -12,3 +12,6 @@ analysis/measured_results/measured_quote_audit.csv
 
 lp_strategies/results/*_observations.csv
 lp_strategies/results/*_actions.csv
+
+fx_impact/actual_fx/
+fx_impact/fixed_initial_fx/

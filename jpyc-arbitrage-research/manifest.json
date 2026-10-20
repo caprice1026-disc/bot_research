@@ -6,12 +6,12 @@
   ],
   "files": {
     ".gitignore": {
-      "sha256": "3803f8cdd32a2aa47dc69b0e642a77524a9057453e2f7fe46099ece5a6b14b12",
-      "bytes": 322
+      "sha256": "5933bd7bf082f707126f5d308477e6aef57acd867ef9d4fb73e673c2c6874231",
+      "bytes": 372
     },
     "README.md": {
-      "sha256": "891a4ad3da7601d15e0ec840c7110077a66a36dc6eb6ca063d4a9e7ad3d5c8cc",
-      "bytes": 7071
+      "sha256": "6ed1deeaf22053964a702c721657127ed23e48939ea2e77c02e3a06b48114a38",
+      "bytes": 7478
     },
     "analysis/METHODOLOGY.md": {
       "sha256": "ee88ed9a918bc002c00048dda30adcd69cac0112da95d168515d9b4c9ecef17a",
@@ -84,6 +84,46 @@
     "atomic_routes/rpc_getters.json": {
       "sha256": "13ed449840515e70bee0ac580b90b89bceb9de51231565a0a8ce24b0820c5888",
       "bytes": 97
+    },
+    "fx_impact/README_JA.md": {
+      "sha256": "3a607da7bea6b59035714572fbccdfc52f4b66cae15310e512dfab2d9adbfca7",
+      "bytes": 6421
+    },
+    "fx_impact/all_runs.csv": {
+      "sha256": "e78123aa9aa516a538f1dbba2c682aae57eb16f2675e6a3f81a0e3f3688ebe27",
+      "bytes": 15998
+    },
+    "fx_impact/analyze_fx.py": {
+      "sha256": "7556de1af9c349d087f131db0aa23988802d9ff7f6721ddd51ccd28ff2638814",
+      "bytes": 4143
+    },
+    "fx_impact/comparison.csv": {
+      "sha256": "8535c8eadaa8d81308e551b1f12ca9f7afc4cec711c453c7decbe367da039f61",
+      "bytes": 7160
+    },
+    "fx_impact/metadata.json": {
+      "sha256": "d249afe38528921aa340ed19a1cf81ba42a559876b8b0f01ec9aa7859d4eef25",
+      "bytes": 678
+    },
+    "fx_impact/same_trade_attribution.csv": {
+      "sha256": "47d36b89425c016e46b309f0bc0218dd7849a657aa99ffb2040b975fefa6edef",
+      "bytes": 589175
+    },
+    "fx_impact/summaries.json": {
+      "sha256": "ce5b0a5991c8d9a7fef33a79789db0fb596be5f7d1903f4031625a14aed641f6",
+      "bytes": 45833
+    },
+    "fx_impact/verification.txt": {
+      "sha256": "7e6b327973367c533b121bce2a4807d74bdb8689572dc7abbfe52ab0d03fb402",
+      "bytes": 127
+    },
+    "fx_impact/verify_fx.py": {
+      "sha256": "f070ceb3966bea34a7085f2533d5afd2116a4cc2805e61e2d9511fcb69031d54",
+      "bytes": 1496
+    },
+    "lp_hedge/BACKRUN_DESIGN.md": {
+      "sha256": "54588cdbd95cb3c34eaed763ec398a69ebfb9cf48e5c9a6ad4a390e03e0914e1",
+      "bytes": 4923
     },
     "lp_hedge/HOOK_ROUTING.md": {
       "sha256": "b868a27ec444e64cf15f393ffb85911a4c30cb50e7565408726aea0e3c6a461c",

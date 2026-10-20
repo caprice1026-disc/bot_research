@@ -1,0 +1,16 @@
+{
+  "start_utc": "2026-10-19T11:35:00+00:00",
+  "end_utc": "2026-10-20T11:13:20+00:00",
+  "observations": 285,
+  "fx_start": "158.1090078834232",
+  "fx_end": "158.13952812022882",
+  "fx_min": "158.06125997786614",
+  "fx_max": "158.58109126530428",
+  "fx_end_minus_start_pct": "0.0193032877849206132483301226362000262536323244818817961634383100",
+  "fx_min_time_utc": "2026-10-20T07:15:00+00:00",
+  "fx_max_time_utc": "2026-10-19T23:30:00+00:00",
+  "reference": "CoinGecko usd-coin / JPY, backward aligned; not a pure USDJPY oracle",
+  "POLJPY": "actual in both cases",
+  "funding_transfer_fx_spread_cost": 0,
+  "external_orders_and_liquidity_events": "unchanged in both cases"
+}
