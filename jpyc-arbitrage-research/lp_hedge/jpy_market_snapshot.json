@@ -1,0 +1,38 @@
+{
+  "source_url": "https://api.hyperliquid.xyz/info",
+  "request": {
+    "type": "metaAndAssetCtxs",
+    "dex": "xyz"
+  },
+  "observed_window_utc": [
+    "2026-10-20T15:54:00Z",
+    "2026-10-20T15:55:59Z"
+  ],
+  "selection": "Only xyz:JPY universe entry and corresponding context from original API response.",
+  "asset": {
+    "szDecimals": 2,
+    "name": "xyz:JPY",
+    "maxLeverage": 50,
+    "marginTableId": 50,
+    "onlyIsolated": true,
+    "marginMode": "noCross",
+    "growthMode": "enabled",
+    "lastFeeScaleChangeTime": "2025-12-19T16:55:24.230127845",
+    "deployerFeeScale": "1.0"
+  },
+  "context": {
+    "funding": "-0.0000160973",
+    "openInterest": "192158.9399999999",
+    "prevDayPx": "158.37",
+    "dayNtlVlm": "2364894.2314000004",
+    "premium": "-0.0005408395",
+    "oraclePx": "158.18",
+    "markPx": "158.1",
+    "midPx": "158.09",
+    "impactPxs": [
+      "158.079",
+      "158.1099"
+    ],
+    "dayBaseVlm": "14948.78"
+  }
+}

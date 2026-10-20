@@ -10,8 +10,8 @@
       "bytes": 244
     },
     "README.md": {
-      "sha256": "432126fcf7530f480336ed628ecfdbb2a91a7baf222b7ed91f32c322946f351c",
-      "bytes": 6263
+      "sha256": "a8ce04c1d1a4e6b73dea1b8ae4fbbc973e37c589830dbc9715be4b2b3ba3cdd2",
+      "bytes": 6533
     },
     "analysis/METHODOLOGY.md": {
       "sha256": "ee88ed9a918bc002c00048dda30adcd69cac0112da95d168515d9b4c9ecef17a",
@@ -56,6 +56,26 @@
     "analysis/test_paper_scan.py": {
       "sha256": "b4ad2f84e49c5d00bf7c453c442eafdb2acc4cccf4202eb1dce3a8d760e87523",
       "bytes": 3366
+    },
+    "lp_hedge/README_JA.md": {
+      "sha256": "b5870aedbc75cfa8e2cb9a43db584628e42426e8d9dd355ea126d7669f67ce57",
+      "bytes": 5242
+    },
+    "lp_hedge/jpy_book.json": {
+      "sha256": "e81e13057cde60b35d2073f0f81ab6e709d003e25bb3b6e30592ce3a7f0f8fb3",
+      "bytes": 1452
+    },
+    "lp_hedge/jpy_funding.json": {
+      "sha256": "ab186c6270446e5caf479c9a01d66045eb2ac92bdbd22d4bba75a795073f552c",
+      "bytes": 2300
+    },
+    "lp_hedge/jpy_funding_7d.json": {
+      "sha256": "76ddb8e95d2c43506541c7a855f01aa0e2d0b7095c82aa2ddfd2d97b86d6a5d5",
+      "bytes": 15614
+    },
+    "lp_hedge/jpy_market_snapshot.json": {
+      "sha256": "50b41d36333d326129b9bb9ac37ad9e6f0fea85b3e9e0e15631270779ed04b8c",
+      "bytes": 950
     },
     "profit_sources/README_JA.md": {
       "sha256": "9477ea7899eb33fe313ae1059b44f1201241e71458d424ac6711d8f410a8584f",
