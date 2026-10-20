@@ -1,0 +1,18 @@
+{
+  "status": "validated",
+  "snapshots": 285,
+  "quote_rows": 1140,
+  "target_start_utc": "2026-10-19T11:35:00+00:00",
+  "target_end_utc": "2026-10-20T11:13:20+00:00",
+  "unique_fees_protocol_packed_lp": [
+    [
+      512125,
+      500
+    ]
+  ],
+  "latest_quote_not_present": true,
+  "all_block_times_at_or_before_decision_and_next_block_after": true,
+  "amount_out_includes_price_impact_and_all_swap_fees": true,
+  "quoter_gas_is_not_full_router_gas": true,
+  "no_real_transactions": true
+}

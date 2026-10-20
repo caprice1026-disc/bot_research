@@ -1,0 +1,36 @@
+{
+  "usd-coin": {
+    "coin_id": "usd-coin",
+    "source_url": "https://api.coingecko.com/api/v3/coins/usd-coin/market_chart?vs_currency=jpy&days=1",
+    "retrieval_started_at_utc": "2026-10-20T11:32:06.764994+00:00",
+    "retrieved_at_utc": "2026-10-20T11:32:12.530480+00:00",
+    "quote_currency": "jpy",
+    "points": 289,
+    "first_utc": "2026-10-19T11:35:00+00:00",
+    "last_utc": "2026-10-20T11:30:40+00:00",
+    "interval_ms_counts": {
+      "300000": 287,
+      "40000": 1
+    },
+    "min_price_jpy": 158.06125997786614,
+    "max_price_jpy": 158.58109126530428,
+    "caveat": "CoinGecko aggregated reference price, not execution quote. Last point may be provisional. Use preceding sample only; no future interpolation."
+  },
+  "polygon-ecosystem-token": {
+    "coin_id": "polygon-ecosystem-token",
+    "source_url": "https://api.coingecko.com/api/v3/coins/polygon-ecosystem-token/market_chart?vs_currency=jpy&days=1",
+    "retrieval_started_at_utc": "2026-10-20T11:32:12.531510+00:00",
+    "retrieved_at_utc": "2026-10-20T11:32:15.078456+00:00",
+    "quote_currency": "jpy",
+    "points": 289,
+    "first_utc": "2026-10-19T11:35:00+00:00",
+    "last_utc": "2026-10-20T11:30:40+00:00",
+    "interval_ms_counts": {
+      "300000": 287,
+      "40000": 1
+    },
+    "min_price_jpy": 14.412833958502379,
+    "max_price_jpy": 14.75668995947452,
+    "caveat": "CoinGecko aggregated reference price, not execution quote. Last point may be provisional. Use preceding sample only; no future interpolation."
+  }
+}

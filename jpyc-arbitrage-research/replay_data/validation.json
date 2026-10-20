@@ -1,0 +1,26 @@
+{
+  "event_counts": {
+    "Swap": 120,
+    "ModifyLiquidity": 29
+  },
+  "total_events": 149,
+  "unique_event_blocks": 146,
+  "start_state_block": 95802902,
+  "first_scanned_block": 95802903,
+  "last_scanned_block": 95859621,
+  "initial_bitmap_words": [
+    126,
+    127,
+    128
+  ],
+  "initial_ticks": 108,
+  "known_tick_bounds_inclusive": [
+    322560,
+    330230
+  ],
+  "tick_coverage": "bounded_not_full_global_tick_space",
+  "no_duplicates": true,
+  "block_hashes_matched": true,
+  "unknown_events": 0,
+  "source": "https://tenderly.rpc.polygon.community"
+}

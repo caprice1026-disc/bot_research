@@ -1,0 +1,44 @@
+[
+  {
+    "amount_in_usdc": 2,
+    "amount_out_jpyc": "317.240132934936526914",
+    "quoter_gas_estimate": 57652,
+    "block_number": 95802902
+  },
+  {
+    "amount_in_usdc": 3,
+    "amount_out_jpyc": "475.860195227629426513",
+    "quoter_gas_estimate": 57652,
+    "block_number": 95802902
+  },
+  {
+    "amount_in_usdc": 5,
+    "amount_out_jpyc": "793.100311463464864252",
+    "quoter_gas_estimate": 57652,
+    "block_number": 95802902
+  },
+  {
+    "amount_in_usdc": 20,
+    "amount_out_jpyc": "3172.400828376396322729",
+    "quoter_gas_estimate": 57652,
+    "block_number": 95802902
+  },
+  {
+    "amount_in_usdc": 50,
+    "amount_out_jpyc": "7930.999983554499214896",
+    "quoter_gas_estimate": 57652,
+    "block_number": 95802902
+  },
+  {
+    "amount_in_usdc": 200,
+    "amount_out_jpyc": "31723.958186554091267347",
+    "quoter_gas_estimate": 57652,
+    "block_number": 95802902
+  },
+  {
+    "amount_in_usdc": 500,
+    "amount_out_jpyc": "79309.686728889774815398",
+    "quoter_gas_estimate": 56636,
+    "block_number": 95802902
+  }
+]

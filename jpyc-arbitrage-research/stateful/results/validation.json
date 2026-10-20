@@ -1,0 +1,7 @@
+{
+  "quotes_checked": 1140,
+  "observed_state_raw_exact_matches": 1140,
+  "max_baseline_price_error_bps": "8.835921167845333719775864218788740298624792669989840000E-11",
+  "max_baseline_quote_error_jpy": "1.403383863E-9",
+  "no_state_reset_in_baseline": true
+}

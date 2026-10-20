@@ -1,0 +1,7 @@
+﻿scenario,initial_capital_usdc,actual_snapshots,dataset_complete,positive_snapshots,candidate_episodes,conditional_selected_candidates,locked_input_usdc
+zero_gas_boundary,100,285,True,285,1,1,100
+zero_gas_boundary,1000,285,True,285,1,1,1000
+base_assumption,100,285,True,285,1,1,100
+base_assumption,1000,285,True,285,1,1,1000
+high_cost_assumption,100,285,True,285,1,1,100
+high_cost_assumption,1000,285,True,285,1,1,1000

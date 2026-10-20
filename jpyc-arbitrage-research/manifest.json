@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "dataset_window_utc": [
+    "2026-10-19T11:35:00Z",
+    "2026-10-20T11:13:20Z"
+  ],
+  "files": {
+    ".gitignore": {
+      "sha256": "9598cf23a22a63d52b78933642805c8f38fa6139bdf01fd1b6858cf2e59197eb",
+      "bytes": 244
+    },
+    "README.md": {
+      "sha256": "7ad3c26321c1c96b04eab5ca991e3fecf407b2b5df4db120a9dc3957ae56e1ab",
+      "bytes": 5865
+    },
+    "analysis/METHODOLOGY.md": {
+      "sha256": "ee88ed9a918bc002c00048dda30adcd69cac0112da95d168515d9b4c9ecef17a",
+      "bytes": 5078
+    },
+    "analysis/README.md": {
+      "sha256": "9acda0c5838146cd42578efcab601302d8ec53132e0283d32199d279e1fde185",
+      "bytes": 4188
+    },
+    "analysis/RESULTS_JA.md": {
+      "sha256": "b04739108139c6e33285780f98f05c4137a2ffc80a67803faa972961b022a756",
+      "bytes": 4583
+    },
+    "analysis/evaluate_first_snapshot.py": {
+      "sha256": "b7f9dd8eff492402e219475d011800add87a672aa8e1337ca8e021d52bd33bf5",
+      "bytes": 1939
+    },
+    "analysis/evaluate_measured.py": {
+      "sha256": "4a05ae8155819146b1b7f00745185b7bc7e6d2082d9c57e74d22168accff5c1d",
+      "bytes": 6107
+    },
+    "analysis/measured_results/first_snapshot_size_sensitivity.csv": {
+      "sha256": "2185c4dfdf4dbb4116eb76574ecf33c0a0684b0259ef749711cf71b094e61bfe",
+      "bytes": 8030
+    },
+    "analysis/measured_results/scenario_summaries.json": {
+      "sha256": "543cd3967c4321f605b88b0eaddae9dd462ac5a01e8c345465ba2f4e54b87078",
+      "bytes": 20105
+    },
+    "analysis/measured_results/scenario_summary.csv": {
+      "sha256": "d91ca4a43e35fccf20fcd3f5b3ca072183ab1d2b5fe953fba3c3c3ff6fc381ff",
+      "bytes": 421
+    },
+    "analysis/measured_results/size_sensitivity.csv": {
+      "sha256": "e05e3ffff508646fb8e0f87eab474b3fcd21134f495953cb6a98962ffa5eb773",
+      "bytes": 1992
+    },
+    "analysis/paper_scan.py": {
+      "sha256": "b266f885d5013b65b4e16cfbd1dfbb5c01219078ac0f6fe74f11b393e60923f6",
+      "bytes": 8356
+    },
+    "analysis/test_paper_scan.py": {
+      "sha256": "b4ad2f84e49c5d00bf7c453c442eafdb2acc4cccf4202eb1dce3a8d760e87523",
+      "bytes": 3366
+    },
+    "public_rpc/collect_grid.py": {
+      "sha256": "9511e8caf857a6965e9cd9ea33d5dd1070ab8338b294f33d6c4981667b519cf2",
+      "bytes": 4507
+    },
+    "public_rpc/fine_first_decoded.json": {
+      "sha256": "fb231df6c7f070d1826f54ea11d0ef589d7af486ab1a4bb9fe00e646ed2f6ec1",
+      "bytes": 1036
+    },
+    "public_rpc/grid/blocks.json": {
+      "sha256": "cc781c35c3a336bf84003ee0f175c3c115acf31d7b20285afb4d473124f44f58",
+      "bytes": 162433
+    },
+    "public_rpc/grid/historical_quotes_raw.csv": {
+      "sha256": "c7443a245e594b1aa427f935c44c33c91408a3b32279ea0de19879831e5525e8",
+      "bytes": 191575
+    },
+    "public_rpc/grid/quotes_raw.json": {
+      "sha256": "ad36df488fdc6419abcdfc6620d04ec82a86568dfc235f926fae47d206a690b1",
+      "bytes": 267308
+    },
+    "public_rpc/grid/target_blocks.json": {
+      "sha256": "2bfa7d63f4e15a10f54650bfbfab2d4be3667e1dcd59bc28cc6cb42769723be7",
+      "bytes": 7412
+    },
+    "public_rpc/grid/validation.json": {
+      "sha256": "a9103a8dcaf8f65b13949a33bc4606871fd0b925833fd909a7e9d974d496236b",
+      "bytes": 493
+    },
+    "public_rpc/validate_grid.py": {
+      "sha256": "ce0a30e8621919bfc6d1f59dae0800d760317d342be359b2fad682b5499d5534",
+      "bytes": 2354
+    },
+    "reference/polygon-ecosystem-token_jpy_24h_raw.json": {
+      "sha256": "72bd7fc286eefd82e618ce8f04888efebf7a387cc76e9efca31ca26083e311f6",
+      "bytes": 31673
+    },
+    "reference/seed_aligned_reference_prices.csv": {
+      "sha256": "3a83b21d4ed42604aa1e98e94b8d9cb1e75e5d9f31f0f58b1caf132e6a516fc9",
+      "bytes": 48067
+    },
+    "reference/summary.json": {
+      "sha256": "9f78395cd45aa2a6096cbf881d70e83d399c1f26bc57d42bb9a2652c591ecf5e",
+      "bytes": 1512
+    },
+    "reference/usd-coin_jpy_24h_raw.json": {
+      "sha256": "581c0562de16610057a9881fb03cb2608525bb36ef4efa277d72fdacea1772c8",
+      "bytes": 31832
+    },
+    "replay_data/README.md": {
+      "sha256": "824e5ca894505aa1c26bcc3fa17fbd9eccf4cc2c7f6cbf57af642c07bf0e0dbd",
+      "bytes": 3753
+    },
+    "replay_data/collect_replay.py": {
+      "sha256": "e7731339a03e81e8e9386cf88cb7db1c432a667b1371ace0417c048388a622af",
+      "bytes": 3008
+    },
+    "replay_data/decoded_events.json": {
+      "sha256": "8b45fe9b0361db85349bf4874cf806f3e69ed76fb4cd3290113c99de9736d31d",
+      "bytes": 67608
+    },
+    "replay_data/event_blocks.json": {
+      "sha256": "3540078d0b308b0cf67c837069aa0e242b72ab32462808a9cd5ea29bda27d88d",
+      "bytes": 41608
+    },
+    "replay_data/finish_dataset.py": {
+      "sha256": "f66ec5c97b9670ccea0ed308db25e8512e36306708c925b2ad1bd5bfc9806c0b",
+      "bytes": 4176
+    },
+    "replay_data/initial_ticks.json": {
+      "sha256": "8eaede4051a0d3b779adc01a825e071fb905afaf3d0c115c83fc091741de9664",
+      "bytes": 11119
+    },
+    "replay_data/pool_logs.json": {
+      "sha256": "f3b73dfa53e1158a4c7abbf87c645ac7b7339307d3f53c035705aa0a110cc4f4",
+      "bytes": 152372
+    },
+    "replay_data/probe_results.json": {
+      "sha256": "8ccbc7ebeab423706848e6b2bbbcb63e070e63f64ecfa2c62b9f56bf43539d89",
+      "bytes": 347
+    },
+    "replay_data/validation.json": {
+      "sha256": "b2eeb7043b188c87be26d0f9af438ca3bf2efd1772ab6028a730ff3b55613c42",
+      "bytes": 562
+    },
+    "rpc/build_quote_requests.py": {
+      "sha256": "0236ee4cd90fa5227540056f8c0c74f806a8c924544a3c492995e1bda99baa22",
+      "bytes": 1489
+    },
+    "rpc/pool_key.py": {
+      "sha256": "d7e6170003be9fdad6e272eaff84c0f5dfe8e23eff21a47b4f544c89d9415502",
+      "bytes": 1850
+    },
+    "stateful/README.md": {
+      "sha256": "8700e1396f586475469994d328fd3290ee83a5c8ef9b72a5cf9ac645e3506232",
+      "bytes": 7484
+    },
+    "stateful/REDEMPTION_RESULTS_JA.md": {
+      "sha256": "94c1fd1beee807b9694cc6d0b94311a035c9db0193e1479bb772a421eac036bb",
+      "bytes": 8797
+    },
+    "stateful/RESULTS_JA.md": {
+      "sha256": "f3a091deb9eb0c7a018d992d74c4f6575f11e702544ac250c458863d949494c6",
+      "bytes": 4864
+    },
+    "stateful/redemption_results/capital_1000_policy_1000_reinvest_delay_0h_gas_base_settlements.csv": {
+      "sha256": "b4f875c8941382a4c5719496d5cacd749dee56ca36506be2ca8141176e031975",
+      "bytes": 33757
+    },
+    "stateful/redemption_results/capital_1000_policy_1000_reinvest_delay_0h_gas_base_trades.csv": {
+      "sha256": "21f16a38c753555227290ae7846bb90ed7e1df19c3a7d3368db490b4b7b82587",
+      "bytes": 62097
+    },
+    "stateful/redemption_results/capital_1000_policy_1000_reinvest_delay_1h_gas_base_settlements.csv": {
+      "sha256": "0614beeb421e211675a286133bf1e3f2fe1f83429355997147f3be3f9e70a330",
+      "bytes": 3935
+    },
+    "stateful/redemption_results/capital_1000_policy_1000_reinvest_delay_1h_gas_base_trades.csv": {
+      "sha256": "9c66b45667748b4c6dffc22b35f656f129f05fcd6fd4626922b3d0dde610138c",
+      "bytes": 7547
+    },
+    "stateful/redemption_results/capital_1000_policy_1000_reinvest_delay_24h_gas_base_trades.csv": {
+      "sha256": "4a11bf3c9d50b52afe1722644a44d7906493b32caf785f8ffedfed8dc26ec9e1",
+      "bytes": 509
+    },
+    "stateful/redemption_results/summaries.json": {
+      "sha256": "0fb673f712072a46f2bd6c6fbf11c66cc3da77cfe1e15a95986dfddc85850af4",
+      "bytes": 114149
+    },
+    "stateful/redemption_results/summary.csv": {
+      "sha256": "7eebf02b06f568804c826d0605fd5ff11e88e88bab6a7d71a1bfc50ce5afee2e",
+      "bytes": 34822
+    },
+    "stateful/replay.py": {
+      "sha256": "6ab4abb22076819d2275f567c55e1df49ba720b2b66364ee54e54b2ee7032cad",
+      "bytes": 3329
+    },
+    "stateful/results/capital_1000_policy_100_gas_base_decisions.csv": {
+      "sha256": "0f7bcf7be844261c7ad4c0ef7881029ac4855868fbb9389ddad404c71d21e97f",
+      "bytes": 43854
+    },
+    "stateful/results/capital_1000_policy_100_gas_base_trades.csv": {
+      "sha256": "64b3958cc8a5b3ad7a6b6ad1ca64f0d35f7a9a683f6b4b376776957dcb016a81",
+      "bytes": 2996
+    },
+    "stateful/results/capital_1000_policy_100_gas_high_decisions.csv": {
+      "sha256": "0f7bcf7be844261c7ad4c0ef7881029ac4855868fbb9389ddad404c71d21e97f",
+      "bytes": 43854
+    },
+    "stateful/results/capital_1000_policy_100_gas_high_trades.csv": {
+      "sha256": "d61819c270e224a87a5b3d633406ee14336e02285d4cb1c44edac5dba02e603d",
+      "bytes": 2980
+    },
+    "stateful/results/capital_1000_policy_10_gas_base_decisions.csv": {
+      "sha256": "e0454607088da42e5c165513ee3ef4d429d85e5b892f7ecc17b9b4d50350f89c",
+      "bytes": 42665
+    },
+    "stateful/results/capital_1000_policy_10_gas_base_trades.csv": {
+      "sha256": "55a3f5632d4283297f90fb45f9d90037738a452f525942dfc4a5156210cb37fb",
+      "bytes": 27982
+    },
+    "stateful/results/capital_1000_policy_10_gas_high_decisions.csv": {
+      "sha256": "a7817625e074fb2f75c54b77c9910d941aca9404a4d9b5dc464a0501b39462a2",
+      "bytes": 42317
+    },
+    "stateful/results/capital_1000_policy_10_gas_high_trades.csv": {
+      "sha256": "ad53be00e2ca693a900475f02ad7a7812872ef6853ed6360d648f5cb9e9e3b94",
+      "bytes": 27782
+    },
+    "stateful/results/capital_1000_policy_1_gas_base_decisions.csv": {
+      "sha256": "41aeb6eb0adf756033f3bd1d6c6505ea6e4f5ec009c4aaccde7eb0d1623afd9c",
+      "bytes": 39180
+    },
+    "stateful/results/capital_1000_policy_1_gas_base_trades.csv": {
+      "sha256": "2e67af0110521400ed8b392a37100299c227306df568606c63f73772771b3a7d",
+      "bytes": 6223
+    },
+    "stateful/results/capital_1000_policy_1_gas_high_decisions.csv": {
+      "sha256": "bf26adb4d2b28b32324b28bdef229a0435caa4bd61752306a12386d03808cafb",
+      "bytes": 36002
+    },
+    "stateful/results/capital_1000_policy_greedy_grid_gas_base_decisions.csv": {
+      "sha256": "deeea1ad63c06f27b4a07e1ae756d88d4a55c8f4aebd581c62d4aa65af67d878",
+      "bytes": 43968
+    },
+    "stateful/results/capital_1000_policy_greedy_grid_gas_base_trades.csv": {
+      "sha256": "3501c77cad015b87d4555e3532c5441aaf4d0bbe5ced80dc36f199060c955891",
+      "bytes": 475
+    },
+    "stateful/results/capital_1000_policy_greedy_grid_gas_high_decisions.csv": {
+      "sha256": "deeea1ad63c06f27b4a07e1ae756d88d4a55c8f4aebd581c62d4aa65af67d878",
+      "bytes": 43968
+    },
+    "stateful/results/capital_1000_policy_greedy_grid_gas_high_trades.csv": {
+      "sha256": "4ada21caa38bfbac99e88b786016fcc6df3ea89036dd4ccaa7972db912a6043f",
+      "bytes": 473
+    },
+    "stateful/results/capital_100_policy_100_gas_base_decisions.csv": {
+      "sha256": "027cdaaefb246b976c9f92651068f99a88d3b7e726cd38900e192b086207874d",
+      "bytes": 43683
+    },
+    "stateful/results/capital_100_policy_100_gas_base_trades.csv": {
+      "sha256": "70c294270cc5fa5ca6f66791c48ec38c383d0fc1bfec49e5f05ae3bcf9511fcd",
+      "bytes": 471
+    },
+    "stateful/results/capital_100_policy_100_gas_high_decisions.csv": {
+      "sha256": "027cdaaefb246b976c9f92651068f99a88d3b7e726cd38900e192b086207874d",
+      "bytes": 43683
+    },
+    "stateful/results/capital_100_policy_100_gas_high_trades.csv": {
+      "sha256": "a55a0c3432810ae1380a6b2026c03af02133476344c144dc8bccd6f13d0d7a1e",
+      "bytes": 469
+    },
+    "stateful/results/capital_100_policy_10_gas_base_decisions.csv": {
+      "sha256": "5a25694d257f91de4c438d66a45481cde54a5331f9a2ad156948f8e0058abb87",
+      "bytes": 43560
+    },
+    "stateful/results/capital_100_policy_10_gas_base_trades.csv": {
+      "sha256": "d064e15890a0300b7bd28ca9f7dfc8e7496f73b250795f99d7acad2be2c7774f",
+      "bytes": 2946
+    },
+    "stateful/results/capital_100_policy_10_gas_high_decisions.csv": {
+      "sha256": "5a25694d257f91de4c438d66a45481cde54a5331f9a2ad156948f8e0058abb87",
+      "bytes": 43560
+    },
+    "stateful/results/capital_100_policy_10_gas_high_trades.csv": {
+      "sha256": "663d10d2e66925589412a5677494e6b3fb2c5cfad880218234fd0adac67cc4eb",
+      "bytes": 2930
+    },
+    "stateful/results/capital_100_policy_1_gas_base_decisions.csv": {
+      "sha256": "bf65d0892da1685e02a95b2c6793bd17414134ba13ad281ce758ee35c70997b3",
+      "bytes": 38895
+    },
+    "stateful/results/capital_100_policy_1_gas_base_trades.csv": {
+      "sha256": "0a6a845ed8db6af0f3f1fd419790c71fe77b25e522c414990adfc1a4a6a6352c",
+      "bytes": 6201
+    },
+    "stateful/results/capital_100_policy_1_gas_high_decisions.csv": {
+      "sha256": "926e9062a0b63f93ac9d43cc0e73ffbfad89eb01f15a0d9993223e671d6d33ac",
+      "bytes": 35717
+    },
+    "stateful/results/capital_100_policy_greedy_grid_gas_base_decisions.csv": {
+      "sha256": "027cdaaefb246b976c9f92651068f99a88d3b7e726cd38900e192b086207874d",
+      "bytes": 43683
+    },
+    "stateful/results/capital_100_policy_greedy_grid_gas_base_trades.csv": {
+      "sha256": "70c294270cc5fa5ca6f66791c48ec38c383d0fc1bfec49e5f05ae3bcf9511fcd",
+      "bytes": 471
+    },
+    "stateful/results/capital_100_policy_greedy_grid_gas_high_decisions.csv": {
+      "sha256": "027cdaaefb246b976c9f92651068f99a88d3b7e726cd38900e192b086207874d",
+      "bytes": 43683
+    },
+    "stateful/results/capital_100_policy_greedy_grid_gas_high_trades.csv": {
+      "sha256": "a55a0c3432810ae1380a6b2026c03af02133476344c144dc8bccd6f13d0d7a1e",
+      "bytes": 469
+    },
+    "stateful/results/quoter_validation.csv": {
+      "sha256": "4ea3e742dde1bc5e876bfc4277ba96d7677e4d3b67bc0d5c23af438961d7ef72",
+      "bytes": 61078
+    },
+    "stateful/results/summaries.json": {
+      "sha256": "2cf8517c207759d71084d342ff9291d22729e0ce7e7ef3b36bc5173912fc248b",
+      "bytes": 15377
+    },
+    "stateful/results/summary.csv": {
+      "sha256": "5c5073f9f3ff0da27cf71a85f3214013f99c3854063d32313ee4f98205fd7b7a",
+      "bytes": 5478
+    },
+    "stateful/results/validation.json": {
+      "sha256": "0559cc0c009142b83dadd9c677cc4bc79ab636ae6ce98cb66605163ba15c2573",
+      "bytes": 260
+    },
+    "stateful/run_redemption.py": {
+      "sha256": "6e88ae803410d80061e1fc97e156883ad5d1ad68db5266ddb39e0d2eee416aa9",
+      "bytes": 8025
+    },
+    "stateful/run_stateful.py": {
+      "sha256": "85c7c23c61fd88918bd5540a1c4a06f409abf4a2aaef592c0ff415822288db30",
+      "bytes": 6769
+    },
+    "stateful/test_redemption.py": {
+      "sha256": "d75752964b3fb11357071408797f544eedd9a95d3c0bae116df6b2f6abdff9a7",
+      "bytes": 3704
+    },
+    "stateful/test_stateful.py": {
+      "sha256": "b4e9fae2968dc0e4acc22d6edbc81e69ddc9ea1be8b315bea7f461a65262feea",
+      "bytes": 2929
+    },
+    "stateful/v4_math.py": {
+      "sha256": "2d6738db00c0bc6129a744313bffa864086ab3c56f3edfee6f81ade379af997f",
+      "bytes": 5700
+    }
+  }
+}
