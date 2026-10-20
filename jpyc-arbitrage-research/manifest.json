@@ -10,8 +10,8 @@
       "bytes": 244
     },
     "README.md": {
-      "sha256": "7ad3c26321c1c96b04eab5ca991e3fecf407b2b5df4db120a9dc3957ae56e1ab",
-      "bytes": 5865
+      "sha256": "432126fcf7530f480336ed628ecfdbb2a91a7baf222b7ed91f32c322946f351c",
+      "bytes": 6263
     },
     "analysis/METHODOLOGY.md": {
       "sha256": "ee88ed9a918bc002c00048dda30adcd69cac0112da95d168515d9b4c9ecef17a",
@@ -56,6 +56,26 @@
     "analysis/test_paper_scan.py": {
       "sha256": "b4ad2f84e49c5d00bf7c453c442eafdb2acc4cccf4202eb1dce3a8d760e87523",
       "bytes": 3366
+    },
+    "profit_sources/README_JA.md": {
+      "sha256": "9477ea7899eb33fe313ae1059b44f1201241e71458d424ac6711d8f410a8584f",
+      "bytes": 8224
+    },
+    "profit_sources/ablation_summary.csv": {
+      "sha256": "35508a73e51fb9a358651886ed6be02c403858cf3c0b67ad717e22c602986b47",
+      "bytes": 465
+    },
+    "profit_sources/analysis.json": {
+      "sha256": "4dfeb9c890502bac7ae609131ed6cb12c2277f4fea9a5eb7429bbbd49b1c423d",
+      "bytes": 11597
+    },
+    "profit_sources/analyze.py": {
+      "sha256": "e37acc0e53b4ea1a3595db550335b853503d333100881f2d11a0a8ba032497af",
+      "bytes": 4996
+    },
+    "profit_sources/external_order_counterfactual.csv": {
+      "sha256": "ff54f0058ee183c38149930f9ced4bf4b2385f876ce151f9471dcdb63578c2c2",
+      "bytes": 9379
     },
     "public_rpc/collect_grid.py": {
       "sha256": "9511e8caf857a6965e9cd9ea33d5dd1070ab8338b294f33d6c4981667b519cf2",
