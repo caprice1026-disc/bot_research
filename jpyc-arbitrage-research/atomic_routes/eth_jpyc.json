@@ -1,0 +1,1864 @@
+{
+  "data": [
+    {
+      "id": "eth_0x04607d754b2dca9bca1ce71c118f4382dd6adc38d3a6442e0cfa491db61e289f",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "1.0030528798",
+        "base_token_price_native_currency": "0.000427163047194315",
+        "quote_token_price_usd": "0.00631999343226398",
+        "quote_token_price_native_currency": "0.00000266710467657523",
+        "base_token_price_quote_token": "160.1598358497",
+        "quote_token_price_base_token": "0.006243762643",
+        "address": "0x04607d754b2dca9bca1ce71c118f4382dd6adc38d3a6442e0cfa491db61e289f",
+        "name": "USDC / JPYC 0.05%",
+        "pool_created_at": "2025-10-28T14:03:35Z",
+        "token_price_usd": "0.00631999343226398",
+        "fdv_usd": "30355172.9195941",
+        "market_cap_usd": "134524109.204124",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "-0.08",
+          "h6": "0.48",
+          "h24": "0.41"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 1,
+            "sells": 2,
+            "buyers": 1,
+            "sellers": 2
+          },
+          "h6": {
+            "buys": 15,
+            "sells": 12,
+            "buyers": 13,
+            "sellers": 11
+          },
+          "h24": {
+            "buys": 34,
+            "sells": 37,
+            "buyers": 25,
+            "sellers": 31
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "13196.752056516",
+          "h6": "69452.2656063956",
+          "h24": "176637.478358212"
+        },
+        "reserve_in_usd": "277008.55"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xe00cdf9dcd96fb1bcf834ee5187332210611974d90f14cc6ab632613793d0c8d",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.9966537651",
+        "base_token_price_native_currency": "0.000372949515623514",
+        "quote_token_price_usd": "0.00626174864309586",
+        "quote_token_price_native_currency": "0.00000237111113365878",
+        "base_token_price_quote_token": "157.2889226192",
+        "quote_token_price_base_token": "0.006357726808",
+        "address": "0xe00cdf9dcd96fb1bcf834ee5187332210611974d90f14cc6ab632613793d0c8d",
+        "name": "DAI / JPYC 0.2%",
+        "pool_created_at": "2026-02-26T11:25:35Z",
+        "token_price_usd": "0.00626174864309586",
+        "fdv_usd": "30075420.9442459",
+        "market_cap_usd": "133284340.767242",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "-0.65"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 1,
+            "buyers": 0,
+            "sellers": 1
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 2,
+            "buyers": 0,
+            "sellers": 2
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "3.1308743215",
+          "h24": "160.7008838258"
+        },
+        "reserve_in_usd": "41833.2833"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x6b175474e89094c44da98b954eedeac495271d0f",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xf6422f4adfe469ec64c38a198e1f7811e06a11d9c5fd11c56f601a8708a247eb",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "6.5329814258",
+        "base_token_price_native_currency": "0.00252082900309072",
+        "quote_token_price_usd": "0.00629243294920409",
+        "quote_token_price_native_currency": "0.00000239509581465042",
+        "base_token_price_quote_token": "1052.4960996012",
+        "quote_token_price_base_token": "0.0009501222858",
+        "address": "0xf6422f4adfe469ec64c38a198e1f7811e06a11d9c5fd11c56f601a8708a247eb",
+        "name": "STD / JPYC 0.01%",
+        "pool_created_at": "2026-01-31T22:00:59Z",
+        "token_price_usd": "0.00629243294920409",
+        "fdv_usd": "30222798.8533871",
+        "market_cap_usd": "133937471.025999",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0.3"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 2,
+            "buyers": 0,
+            "sellers": 2
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "36.1857491158"
+        },
+        "reserve_in_usd": "26490.2972"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x041e6fc7f434edf111761d3afe27928507fed870",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xd3588794f98b50a70ff10b3430947687454a6b362be402c366802ed537f1ebdf",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006359635777",
+        "base_token_price_native_currency": "0.00000267065326898797",
+        "quote_token_price_usd": "2447.53",
+        "quote_token_price_native_currency": "1.0",
+        "base_token_price_quote_token": "0.000002670653269",
+        "quote_token_price_base_token": "374440.220904807",
+        "address": "0xd3588794f98b50a70ff10b3430947687454a6b362be402c366802ed537f1ebdf",
+        "name": "JPYC / ETH 0.3%",
+        "pool_created_at": "2026-02-05T17:26:47Z",
+        "token_price_usd": "0.006359635777",
+        "fdv_usd": "30545576.6347715",
+        "market_cap_usd": "135367915.636762",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "1.79"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 1,
+            "buyers": 0,
+            "sellers": 1
+          },
+          "h24": {
+            "buys": 3,
+            "sells": 3,
+            "buyers": 3,
+            "sellers": 3
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "41.6937597508",
+          "h24": "93.3856905448"
+        },
+        "reserve_in_usd": "2551.1574"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0x0000000000000000000000000000000000000000",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xe38fcf30e0d8091bfc812079fb81e358f1135959cae9d7fd69aa35a2ec984c9f",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006587373033",
+        "base_token_price_native_currency": "0.00000239289181318636",
+        "quote_token_price_usd": "0.9990921685",
+        "quote_token_price_native_currency": "0.000381430430121275",
+        "base_token_price_quote_token": "0.006273468565",
+        "quote_token_price_base_token": "159.4014522593",
+        "address": "0xe38fcf30e0d8091bfc812079fb81e358f1135959cae9d7fd69aa35a2ec984c9f",
+        "name": "JPYC / USDT 5%",
+        "pool_created_at": "2026-09-17T12:32:35Z",
+        "token_price_usd": "0.006587373033",
+        "fdv_usd": "31639407.4844719",
+        "market_cap_usd": "140215412.999591",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "45487.1007"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xcc820f103c1698de645fbbafc481037926091161d69a210617f7e21266044ba9",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.007662036771",
+        "base_token_price_native_currency": "0.00000311038360138404",
+        "quote_token_price_usd": "0.999258537",
+        "quote_token_price_native_currency": "0.000404887595585603",
+        "base_token_price_quote_token": "0.007682091611",
+        "quote_token_price_base_token": "130.1728813788",
+        "address": "0xcc820f103c1698de645fbbafc481037926091161d69a210617f7e21266044ba9",
+        "name": "JPYC / USDC 2.236%",
+        "pool_created_at": "2026-09-17T14:39:11Z",
+        "token_price_usd": "0.007662036771",
+        "fdv_usd": "36801058.9872839",
+        "market_cap_usd": "163090149.120422",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "25875.7976"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xb259d26f41da4e356c7f47f0b2c1116716bb2122c54a87db0c22b68aa94b4803",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006438038113",
+        "base_token_price_native_currency": "0.00000241024631365142",
+        "quote_token_price_usd": "0.9990453027",
+        "quote_token_price_native_currency": "0.000381473705755656",
+        "base_token_price_quote_token": "0.006318250189",
+        "quote_token_price_base_token": "158.2716685822",
+        "address": "0xb259d26f41da4e356c7f47f0b2c1116716bb2122c54a87db0c22b68aa94b4803",
+        "name": "JPYC / USDT 2.999%",
+        "pool_created_at": "2026-09-17T12:03:47Z",
+        "token_price_usd": "0.006438038113",
+        "fdv_usd": "30922146.0872698",
+        "market_cap_usd": "137036747.182706",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "22197.1951"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x0327535f8db74c742e8f316a264abfa62b35328ccfffae4dec65a36c2007c539",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.0108934424",
+        "base_token_price_native_currency": "0.00000294352118994425",
+        "quote_token_price_usd": "0.9949738899",
+        "quote_token_price_native_currency": "0.000403079645706246",
+        "base_token_price_quote_token": "0.00730257958",
+        "quote_token_price_base_token": "136.9379120094",
+        "address": "0x0327535f8db74c742e8f316a264abfa62b35328ccfffae4dec65a36c2007c539",
+        "name": "JPYC / USDT 9.8%",
+        "pool_created_at": "2026-09-17T09:32:35Z",
+        "token_price_usd": "0.0108934424",
+        "fdv_usd": "52321625.2177628",
+        "market_cap_usd": "231872176.883178",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "21515.3098"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xfac99259263202da9cace54684d8896b6991182be78e3eef22e0e18621977393",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.998975305",
+        "base_token_price_native_currency": "0.000374799203473269",
+        "quote_token_price_usd": "0.00630329079355842",
+        "quote_token_price_native_currency": "0.00000236532969510476",
+        "base_token_price_quote_token": "158.4553748465",
+        "quote_token_price_base_token": "0.006310925085",
+        "address": "0xfac99259263202da9cace54684d8896b6991182be78e3eef22e0e18621977393",
+        "name": "USDC / JPYC 0.3%",
+        "pool_created_at": "2025-10-27T05:22:35Z",
+        "token_price_usd": "0.00630329079355842",
+        "fdv_usd": "30274949.4998145",
+        "market_cap_usd": "134168585.481306",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "14010.4228"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xce7c1425e868c944bb7e8ef26a41c06536d822e1c591e56207c241debe735c59",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006490386964",
+        "base_token_price_native_currency": "0.00000236681275986753",
+        "quote_token_price_usd": "1.004998819",
+        "quote_token_price_native_currency": "0.000375975974545034",
+        "base_token_price_quote_token": "0.006295117029",
+        "quote_token_price_base_token": "158.8532818989",
+        "address": "0xce7c1425e868c944bb7e8ef26a41c06536d822e1c591e56207c241debe735c59",
+        "name": "JPYC / USDT 5%",
+        "pool_created_at": "2026-09-17T01:02:11Z",
+        "token_price_usd": "0.006490386964",
+        "fdv_usd": "31173579.643535",
+        "market_cap_usd": "138151017.731262",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "10096.2684"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xe6daa6120f30c3b77d231487fb91155955bd9e1d91243180ce1fc1b62af2a190",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.007621715854",
+        "base_token_price_native_currency": "0.00000290831725683359",
+        "quote_token_price_usd": "0.9991074416",
+        "quote_token_price_native_currency": "0.000410477952685606",
+        "base_token_price_quote_token": "0.007085197239",
+        "quote_token_price_base_token": "141.1393312477",
+        "address": "0xe6daa6120f30c3b77d231487fb91155955bd9e1d91243180ce1fc1b62af2a190",
+        "name": "JPYC / USDC 4.5%",
+        "pool_created_at": "2026-09-17T02:08:11Z",
+        "token_price_usd": "0.007621715854",
+        "fdv_usd": "36607396.0632746",
+        "market_cap_usd": "162231898.949776",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "8571.1538"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x51b4bfbf0b645c06e18f6f48bb98324bebc6a48ccbb3a4dcb0de70b9fc028320",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.00800139929",
+        "base_token_price_native_currency": "0.00000296303375472366",
+        "quote_token_price_usd": "0.999232123",
+        "quote_token_price_native_currency": "0.000408562947718321",
+        "base_token_price_quote_token": "0.007252331058",
+        "quote_token_price_base_token": "137.8867004357",
+        "address": "0x51b4bfbf0b645c06e18f6f48bb98324bebc6a48ccbb3a4dcb0de70b9fc028320",
+        "name": "JPYC / USDC 3%",
+        "pool_created_at": "2026-09-17T06:33:23Z",
+        "token_price_usd": "0.00800139929",
+        "fdv_usd": "38431030.2929635",
+        "market_cap_usd": "170313644.058357",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "8591.044"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xae2ff4bf3403a89464fef61023125873ff149211de46bc1196dfbe99e0999e33",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006573671356",
+        "base_token_price_native_currency": "0.00000241024631365142",
+        "quote_token_price_usd": "0.9992030094",
+        "quote_token_price_native_currency": "0.000381533924198472",
+        "base_token_price_quote_token": "0.006317252964",
+        "quote_token_price_base_token": "158.2966529344",
+        "address": "0xae2ff4bf3403a89464fef61023125873ff149211de46bc1196dfbe99e0999e33",
+        "name": "JPYC / USDC 5%",
+        "pool_created_at": "2026-09-17T15:31:59Z",
+        "token_price_usd": "0.006573671356",
+        "fdv_usd": "31573597.7998446",
+        "market_cap_usd": "139923766.19445",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "7641.9793"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x88d25e31ae463748a770c03c0b87810e8cb937a1026a3f2243d875f393a6f82f",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.09570875942",
+        "base_token_price_native_currency": "0.0000370486404367607",
+        "quote_token_price_usd": "0.00630069611782146",
+        "quote_token_price_native_currency": "0.00000237081764942537",
+        "base_token_price_quote_token": "15.6269464443",
+        "quote_token_price_base_token": "0.06399202836",
+        "address": "0x88d25e31ae463748a770c03c0b87810e8cb937a1026a3f2243d875f393a6f82f",
+        "name": "BLD / JPYC 0.01%",
+        "pool_created_at": "2026-02-11T14:45:35Z",
+        "token_price_usd": "0.00630069611782146",
+        "fdv_usd": "30262487.1718849",
+        "market_cap_usd": "134113356.556477",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "6423.9196"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x0899793df24514b690ffbf6363a1c879fd4f37b7",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x1ce8c487edcd0d69e346fb186b8fec60abc292d892306473d3fc902f478cca6c",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.9998181372",
+        "base_token_price_native_currency": "0.000415864859753288",
+        "quote_token_price_usd": "0.006392888545",
+        "quote_token_price_native_currency": "0.00000267305958547251",
+        "base_token_price_quote_token": "155.5763522869",
+        "quote_token_price_base_token": "0.006427712087",
+        "address": "0x1ce8c487edcd0d69e346fb186b8fec60abc292d892306473d3fc902f478cca6c",
+        "name": "DAI / JPYC 0.3%",
+        "pool_created_at": "2025-11-06T23:19:23Z",
+        "token_price_usd": "0.006392888545",
+        "fdv_usd": "30705290.9657299",
+        "market_cap_usd": "136075716.846006",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "5962.0732"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x6b175474e89094c44da98b954eedeac495271d0f",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x3001effdc0807c3ab365107d5707e8792276cae44ef44b3de89f7119a8c66628",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.9956303081",
+        "base_token_price_native_currency": "0.00040414291029873",
+        "quote_token_price_usd": "0.006436794656",
+        "quote_token_price_native_currency": "0.00000261598573758227",
+        "base_token_price_quote_token": "154.4897223607",
+        "quote_token_price_base_token": "0.006472922501",
+        "address": "0x3001effdc0807c3ab365107d5707e8792276cae44ef44b3de89f7119a8c66628",
+        "name": "DAI / JPYC 0.125%",
+        "pool_created_at": "2026-02-21T07:13:23Z",
+        "token_price_usd": "0.006436794656",
+        "fdv_usd": "30916173.7152005",
+        "market_cap_usd": "137010279.600572",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "5719.0024"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x6b175474e89094c44da98b954eedeac495271d0f",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x39681214d043e7883f3b98e7bf47d4a1fa6ee703f989742fea862d165fa9d7a4",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.007196793313",
+        "base_token_price_native_currency": "0.00000295092042331154",
+        "quote_token_price_usd": "0.9948630659",
+        "quote_token_price_native_currency": "0.0004077157260122",
+        "base_token_price_quote_token": "0.007237690957",
+        "quote_token_price_base_token": "138.1656119194",
+        "address": "0x39681214d043e7883f3b98e7bf47d4a1fa6ee703f989742fea862d165fa9d7a4",
+        "name": "JPYC / USDT 3%",
+        "pool_created_at": "2026-09-17T05:41:35Z",
+        "token_price_usd": "0.007196793313",
+        "fdv_usd": "34566476.6623714",
+        "market_cap_usd": "153187217.666255",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "5127.6453"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x1697119b73446e6915892ab983e7a1a24fd35b3f972e9cc7714526004de5fc97",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.01099841441",
+        "base_token_price_native_currency": "0.00000294352118994425",
+        "quote_token_price_usd": "0.9999644281",
+        "quote_token_price_native_currency": "0.000404375673548505",
+        "base_token_price_quote_token": "0.007279174744",
+        "quote_token_price_base_token": "137.3782104678",
+        "address": "0x1697119b73446e6915892ab983e7a1a24fd35b3f972e9cc7714526004de5fc97",
+        "name": "JPYC / USDC 3.9%",
+        "pool_created_at": "2026-09-17T14:05:47Z",
+        "token_price_usd": "0.01099841441",
+        "fdv_usd": "52825809.8422278",
+        "market_cap_usd": "234106556.758405",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "4734.0385"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xb8afb74db9a3bcd6cd545d1829caf8759c284dc5914f12f27a0fa067ad3b81a3",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.01174319585",
+        "base_token_price_native_currency": "0.00000294352118994425",
+        "quote_token_price_usd": "0.9980711125",
+        "quote_token_price_native_currency": "0.000406056694374779",
+        "base_token_price_quote_token": "0.007249039926",
+        "quote_token_price_base_token": "137.9493022717",
+        "address": "0xb8afb74db9a3bcd6cd545d1829caf8759c284dc5914f12f27a0fa067ad3b81a3",
+        "name": "JPYC / USDT 21%",
+        "pool_created_at": "2026-09-17T12:32:11Z",
+        "token_price_usd": "0.01174319585",
+        "fdv_usd": "56403023.9075287",
+        "market_cap_usd": "249959589.018894",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "4078.3165"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x5ef9554e3a9d73c2c0128efcb5666f12b242dc05a64900c7a806b537c1c2ff84",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006303651253",
+        "base_token_price_native_currency": "0.00000231486400625503",
+        "quote_token_price_usd": "0.998975304989893",
+        "quote_token_price_native_currency": "0.00036776061045768",
+        "base_token_price_quote_token": "0.006294485979",
+        "quote_token_price_base_token": "158.8692076355",
+        "address": "0x5ef9554e3a9d73c2c0128efcb5666f12b242dc05a64900c7a806b537c1c2ff84",
+        "name": "JPYC / USDC 0.222%",
+        "pool_created_at": "2026-09-21T04:25:59Z",
+        "token_price_usd": "0.006303651253",
+        "fdv_usd": "30276680.8004554",
+        "market_cap_usd": "134176258.034419",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "3543.5177"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xe7c3d8c9a439fede00d2600032d5db0be71c3c29",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    }
+  ]
+}

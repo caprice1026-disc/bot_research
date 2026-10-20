@@ -1,0 +1,1864 @@
+{
+  "data": [
+    {
+      "id": "eth_0x31f878cb3b1d6c424e8eea4b1980bede0eb3c20306ef289a22bd39702b564e3c",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006317769813",
+        "base_token_price_native_currency": "0.00000231674624658491",
+        "quote_token_price_usd": "0.999434027610701",
+        "quote_token_price_native_currency": "0.000371433399108568",
+        "base_token_price_quote_token": "0.006237312671",
+        "quote_token_price_base_token": "160.3254562972",
+        "address": "0x31f878cb3b1d6c424e8eea4b1980bede0eb3c20306ef289a22bd39702b564e3c",
+        "name": "GYEN / USDC 0.038%",
+        "pool_created_at": "2026-09-14T14:20:47Z",
+        "token_price_usd": "0.006317769813",
+        "fdv_usd": "5684933.80147369",
+        "market_cap_usd": "5906054.42907156",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0.01"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 1,
+            "buyers": 0,
+            "sellers": 1
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 3,
+            "buyers": 0,
+            "sellers": 3
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "1.1105521022",
+          "h24": "78.1459698212"
+        },
+        "reserve_in_usd": "904528.4989"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x1837164d1ac7cb56d75c8964aab903a26ee02286",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006307425085",
+        "base_token_price_native_currency": "0.00000266188278642475728121368049116",
+        "quote_token_price_usd": "1.0001940926",
+        "quote_token_price_native_currency": "0.000423344025464541",
+        "base_token_price_quote_token": "0.006287753284",
+        "quote_token_price_base_token": "159.039318945",
+        "address": "0x1837164d1ac7cb56d75c8964aab903a26ee02286",
+        "name": "GYEN / USDC 0.05%",
+        "pool_created_at": "2022-01-19T01:25:33Z",
+        "token_price_usd": "0.006307425085",
+        "fdv_usd": "5675625.28033174",
+        "market_cap_usd": "5896383.88193983",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "244.3615124028"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x06909fae7748d015083a472b1ecaef1203c19bde",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.952462241",
+        "base_token_price_native_currency": "0.000406042597140746839890265370118",
+        "quote_token_price_usd": "0.0062742913211979",
+        "quote_token_price_native_currency": "0.0000026747827196757913387947855371",
+        "base_token_price_quote_token": "151.8039555714",
+        "quote_token_price_base_token": "0.006587443629",
+        "address": "0x06909fae7748d015083a472b1ecaef1203c19bde",
+        "name": "ZUSD / GYEN 0.05%",
+        "pool_created_at": "2022-11-21T22:04:31Z",
+        "token_price_usd": "0.0062742913211979",
+        "fdv_usd": "5645810.44703075",
+        "market_cap_usd": "5865409.3364712",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "219.1899"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc56c2b7e71b54d38aab6d52e94a04cbfa8f604fa",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x05cc2486a3752335332197bc3d657f326c301030",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.004874402606",
+        "base_token_price_native_currency": "0.00000199996003922487",
+        "quote_token_price_usd": "0.0063656117410441",
+        "quote_token_price_native_currency": "0.000002611800898982090729585736141",
+        "base_token_price_quote_token": "0.7657398541",
+        "quote_token_price_base_token": "1.3059265424",
+        "address": "0x05cc2486a3752335332197bc3d657f326c301030",
+        "name": "JASMY / GYEN 1%",
+        "pool_created_at": "2024-05-25T05:18:23Z",
+        "token_price_usd": "0.0063656117410441",
+        "fdv_usd": "5727983.51710371",
+        "market_cap_usd": "5950778.60221866",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "137.2065"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x7420b4b9a0110cdc71fb720908340c03f9bc03ec",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xc4fa9fd2e51e41c2be2c3a77c53710b224e1b31d",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.005278853569",
+        "base_token_price_native_currency": "0.00000252328218527715",
+        "quote_token_price_usd": "0.999598953613807",
+        "quote_token_price_native_currency": "0.000398848840924666",
+        "base_token_price_quote_token": "0.00632641223",
+        "quote_token_price_base_token": "158.0674738846",
+        "address": "0xc4fa9fd2e51e41c2be2c3a77c53710b224e1b31d",
+        "name": "GYEN / USDC",
+        "pool_created_at": "2021-10-11T01:46:34Z",
+        "token_price_usd": "0.005278853569",
+        "fdv_usd": "4750083.33252139",
+        "market_cap_usd": "4934842.13920847",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "70.1343"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v2",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x77cc1dbfccc9d105835eb14fe250be2615585db35535e6011ba25c1b22cacb48",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.00552821899",
+        "base_token_price_native_currency": "0.00000186685232111162",
+        "quote_token_price_usd": "2973.0429344483",
+        "quote_token_price_native_currency": "1.0",
+        "base_token_price_quote_token": "0.000001866852321",
+        "quote_token_price_base_token": "535661.010081691",
+        "address": "0x77cc1dbfccc9d105835eb14fe250be2615585db35535e6011ba25c1b22cacb48",
+        "name": "GYEN / ETH 0.3%",
+        "pool_created_at": "2025-06-05T15:16:11Z",
+        "token_price_usd": "0.00552821899",
+        "fdv_usd": "5325905.5512823",
+        "market_cap_usd": "5966470.44935049",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "54.6911"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0x0000000000000000000000000000000000000000",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x94d0ba2c98211852f0a41e13f83cbb522ebcc090",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.00705225778471336",
+        "base_token_price_native_currency": "0.00000383616445412534",
+        "quote_token_price_usd": "1839.01183089008",
+        "quote_token_price_native_currency": "1.0",
+        "base_token_price_quote_token": "0.000003836164454",
+        "quote_token_price_base_token": "260677.041341285",
+        "address": "0x94d0ba2c98211852f0a41e13f83cbb522ebcc090",
+        "name": "GYEN / WETH 0.05%",
+        "pool_created_at": "2022-09-21T19:00:00Z",
+        "token_price_usd": "0.00705225778471336",
+        "fdv_usd": "10355709.9660162",
+        "market_cap_usd": "6592677.40946432",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "51.9194"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x611a95bf3cc0ef593f22c4e4d8eb4d6c937e006c",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.007975358172",
+        "base_token_price_native_currency": "0.00000333723480215833393353200862234",
+        "quote_token_price_usd": "1.0001681658",
+        "quote_token_price_native_currency": "0.000522539165934357",
+        "base_token_price_quote_token": "0.006386573524",
+        "quote_token_price_base_token": "156.5784839582",
+        "address": "0x611a95bf3cc0ef593f22c4e4d8eb4d6c937e006c",
+        "name": "GYEN / USDC",
+        "pool_created_at": "2022-09-13T20:38:18Z",
+        "token_price_usd": "0.007975358172",
+        "fdv_usd": "7292453.47270447",
+        "market_cap_usd": "8111443.37400641",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "23.9626747568"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "curve",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xfaa8dfb5be94ed16e54ab11895dc1a965e54a989932f8e4a4c7d94fe30ba9a02",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "4402.4205042584",
+        "base_token_price_native_currency": "2.43749664594177",
+        "quote_token_price_usd": "0.006110562419",
+        "quote_token_price_native_currency": "0.00000338324687239659",
+        "base_token_price_quote_token": "720460.76975019",
+        "quote_token_price_base_token": "0.000001388000627",
+        "address": "0xfaa8dfb5be94ed16e54ab11895dc1a965e54a989932f8e4a4c7d94fe30ba9a02",
+        "name": "XAUt / GYEN 0.3%",
+        "pool_created_at": "2025-12-21T08:16:47Z",
+        "token_price_usd": "0.006110562419",
+        "fdv_usd": "5498481.88047429",
+        "market_cap_usd": "5712350.29243905",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "9.4087"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x68749665ff8d2d112fa859aa293f07a622782f38",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x629ba63c0d829419708e58acb05db7253eca72b3a37e4f3080f6507f84264bc0",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.00620260345",
+        "base_token_price_native_currency": "0.0000032880979481537",
+        "quote_token_price_usd": "1.0005599192",
+        "quote_token_price_native_currency": "0.000523436803782868",
+        "base_token_price_quote_token": "0.006281747719",
+        "quote_token_price_base_token": "159.1913659618",
+        "address": "0x629ba63c0d829419708e58acb05db7253eca72b3a37e4f3080f6507f84264bc0",
+        "name": "GYEN / USDC 0.01%",
+        "pool_created_at": "2026-05-14T22:28:59Z",
+        "token_price_usd": "0.00620260345",
+        "fdv_usd": "5671494.13145645",
+        "market_cap_usd": "6308439.76797533",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "4.2167"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x0d53f528ee3e864512bca9a4fbd46c080baebb5854f3912ffb62fdf01dccd924",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "2.1686930783",
+        "base_token_price_native_currency": "0.000966916999504131",
+        "quote_token_price_usd": "0.00630171211583112",
+        "quote_token_price_native_currency": "0.00000230788256646684",
+        "base_token_price_quote_token": "418.9628248652",
+        "quote_token_price_base_token": "0.002386846614",
+        "address": "0x0d53f528ee3e864512bca9a4fbd46c080baebb5854f3912ffb62fdf01dccd924",
+        "name": "Cake / GYEN 1%",
+        "pool_created_at": "2025-06-13T21:11:11Z",
+        "token_price_usd": "0.00630171211583112",
+        "fdv_usd": "5670484.56572892",
+        "market_cap_usd": "5891043.17727036",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "4.8655"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x152649ea73beab28c5b49b26eb48f7ead6d4c898",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xb6128091c79353510441a8b6dc3c6901395f2413",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "1.04456190568128159590702762443951856655999888",
+        "base_token_price_native_currency": "0.00087144969992575997232930433851",
+        "quote_token_price_usd": "0.00717476988748810277743946173632",
+        "quote_token_price_native_currency": "0.00000598571614710564",
+        "base_token_price_quote_token": "145.5882100836",
+        "quote_token_price_base_token": "0.006868688058",
+        "address": "0xb6128091c79353510441a8b6dc3c6901395f2413",
+        "name": "EUROC / GYEN 0.05%",
+        "pool_created_at": "2022-09-15T18:03:33Z",
+        "token_price_usd": "0.00717476988748810277743946173632",
+        "fdv_usd": "6456090.21196807",
+        "market_cap_usd": "6707205.66367813",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "6.9424"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0x1abaea1f7c830bd89acc67ec4af516284b1bc33c",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x298224577d81155c679d057be30ce5e253cb08c0ec641d4c77f5e052f5c3b04f",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.08466494226",
+        "base_token_price_native_currency": "0.0000228769649664501",
+        "quote_token_price_usd": "0.005037686382",
+        "quote_token_price_native_currency": "0.00000136121246636856",
+        "base_token_price_quote_token": "16.8063146141",
+        "quote_token_price_base_token": "0.05950144472",
+        "address": "0x298224577d81155c679d057be30ce5e253cb08c0ec641d4c77f5e052f5c3b04f",
+        "name": "JOCX / GYEN 0.3%",
+        "pool_created_at": "2025-10-07T20:15:59Z",
+        "token_price_usd": "0.005037686382",
+        "fdv_usd": "4533073.29040788",
+        "market_cap_usd": "4709391.26453491",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "6.8504"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xbb1e1399eee1f577f1b4359224155f5db39ca084",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x500bd6e3cfcae7e8ab97e06ab313f5335cbe6a27",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006192383267",
+        "base_token_price_native_currency": "0.00000257983738103275951965526311963",
+        "quote_token_price_usd": "1.0002173353",
+        "quote_token_price_native_currency": "0.000406465209854436",
+        "base_token_price_quote_token": "0.006347006628",
+        "quote_token_price_base_token": "157.5545857436",
+        "address": "0x500bd6e3cfcae7e8ab97e06ab313f5335cbe6a27",
+        "name": "GYEN / USDC 0.01%",
+        "pool_created_at": "2026-05-14T22:11:11Z",
+        "token_price_usd": "0.006192383267",
+        "fdv_usd": "5662129.99422465",
+        "market_cap_usd": "6012793.61178625",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "2.0149870432"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x860de9f238b37a33722603a0bcc6e340f5513774",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006538725331",
+        "base_token_price_native_currency": "0.00000252085511071542836079499342165",
+        "quote_token_price_usd": "0.999605827",
+        "quote_token_price_native_currency": "0.00040071346770972",
+        "base_token_price_quote_token": "0.006290916862",
+        "quote_token_price_base_token": "158.9593412197",
+        "address": "0x860de9f238b37a33722603a0bcc6e340f5513774",
+        "name": "GYEN / USDC",
+        "pool_created_at": "2022-10-07T19:02:38Z",
+        "token_price_usd": "0.006538725331",
+        "fdv_usd": "5978814.81560621",
+        "market_cap_usd": "6349091.1663982",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "1.7594948753"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "sushiswap",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x6ab019c65a751b56d8ccaacaa56912bf1e972eb3fc4aa6d95442c65784eab155",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.08861497968",
+        "base_token_price_native_currency": "0.0000225153921817975",
+        "quote_token_price_usd": "0.005865849574",
+        "quote_token_price_native_currency": "0.00000149040155637282",
+        "base_token_price_quote_token": "15.1069301327",
+        "quote_token_price_base_token": "0.06619478552",
+        "address": "0x6ab019c65a751b56d8ccaacaa56912bf1e972eb3fc4aa6d95442c65784eab155",
+        "name": "JOCX / GYEN 0.01%",
+        "pool_created_at": "2025-10-09T01:25:59Z",
+        "token_price_usd": "0.005865849574",
+        "fdv_usd": "5278281.34050958",
+        "market_cap_usd": "5483584.85386783",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "0.3828"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xbb1e1399eee1f577f1b4359224155f5db39ca084",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x0593d8e4ae2ddb197e57ff0a16171e2636def6e22f0cd243e180306ea0253d83",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.006344639328",
+        "base_token_price_native_currency": "0.00000231596169692861",
+        "quote_token_price_usd": "0.9992973088",
+        "quote_token_price_native_currency": "0.000367152497041028",
+        "base_token_price_quote_token": "0.006307901255",
+        "quote_token_price_base_token": "158.5313338852",
+        "address": "0x0593d8e4ae2ddb197e57ff0a16171e2636def6e22f0cd243e180306ea0253d83",
+        "name": "GYEN / USDC 0.008%",
+        "pool_created_at": "2026-07-30T13:17:35Z",
+        "token_price_usd": "0.006344639328",
+        "fdv_usd": "5709111.86091143",
+        "market_cap_usd": "5931172.95349387",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "0.2718"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v4-ethereum",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xc065f7d8d250db61340ffe1006fc545bdb25fb1d",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.00715039756020139",
+        "base_token_price_native_currency": "0.00000414693642792062275587938859216",
+        "quote_token_price_usd": "0.993997927246463",
+        "quote_token_price_native_currency": "0.000603517167912682665683079345423",
+        "base_token_price_quote_token": "0.006871281628",
+        "quote_token_price_base_token": "145.5332577199",
+        "address": "0xc065f7d8d250db61340ffe1006fc545bdb25fb1d",
+        "name": "GYEN / USDT 0.05%",
+        "pool_created_at": "2023-03-15T01:35:35Z",
+        "token_price_usd": "0.00715039756020139",
+        "fdv_usd": "10499820.8425765",
+        "market_cap_usd": "6684421.6282069",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "0.0503"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0x6ca34601c452848025713957069ff410d418b5cb",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.00679522532046505272436087179848",
+        "base_token_price_native_currency": "0.00000428788393422824",
+        "quote_token_price_usd": "1.000944126104522179764273395563",
+        "quote_token_price_native_currency": "0.000631609995986119",
+        "base_token_price_quote_token": "0.006788815822",
+        "quote_token_price_base_token": "147.3010943567",
+        "address": "0x6ca34601c452848025713957069ff410d418b5cb",
+        "name": "GYEN / USDC 0.3%",
+        "pool_created_at": "2021-12-29T13:58:00Z",
+        "token_price_usd": "0.00679522532046505272436087179848",
+        "fdv_usd": "9978277.13062332",
+        "market_cap_usd": "6352395.19456544",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "0.0114"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v3",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "id": "eth_0xa0446d06e28a9a29697104e9ac421a6584124036",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.0067803801453590027950673457254579174392157587966529265782467883327303669493438503426556679",
+        "base_token_price_native_currency": "0.00000187068004170061014365535152541",
+        "quote_token_price_usd": "0.998536357755985903068924674769316487436979833733666273482572969242220490655305883338912455",
+        "quote_token_price_native_currency": "0.000337508621811157",
+        "base_token_price_quote_token": "0.005542614087",
+        "quote_token_price_base_token": "180.4202826178",
+        "address": "0xa0446d06e28a9a29697104e9ac421a6584124036",
+        "name": "GYEN / USDT",
+        "pool_created_at": "2022-09-12T15:36:16Z",
+        "token_price_usd": "0.0067803801453590027950673457254579174392157587966529265782467883327303669493438503426556679",
+        "fdv_usd": "9956478.10788677",
+        "market_cap_usd": "6338517.44738874",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0",
+          "m30": "0",
+          "h1": "0",
+          "h6": "0",
+          "h24": "0"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m30": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h1": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h6": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "h24": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "0.0",
+          "m30": "0.0",
+          "h1": "0.0",
+          "h6": "0.0",
+          "h24": "0.0"
+        },
+        "reserve_in_usd": "0.0001506492869"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "eth_0xc08512927d12348f6620a698105e1baac6ecd911",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "eth_0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap_v2",
+            "type": "dex"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,808 @@
+[
+  {
+    "id": "factory-v2-54",
+    "address": "0x982558c80abDD126795F920DE5653804e9eF884A",
+    "coinsAddresses": [
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+      "0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c",
+      "0x0000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "decimals": [
+      "18",
+      "18",
+      "0",
+      "0"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "200",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: jJPY+JPYC",
+    "assetType": "3",
+    "implementationAddress": "0x571FF5b7b346F706aa48d696a9a4a288e9Bb4091",
+    "symbol": "2JPY-f",
+    "priceOracle": null,
+    "implementation": "plain2basic",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c",
+        "usdPrice": 0.006441600708007339,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "JPYC",
+        "name": "JPY Coin (PoS)",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0x982558c80abDD126795F920DE5653804e9eF884A",
+        "https://polygon.curve.finance/factory/54"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0x982558c80abDD126795F920DE5653804e9eF884A",
+        "https://polygon.curve.finance/factory/54/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0x982558c80abDD126795F920DE5653804e9eF884A",
+        "https://polygon.curve.finance/factory/54/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0x982558c80abDD126795F920DE5653804e9eF884A",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1637782801,
+    "creationBlockNumber": 21756934
+  },
+  {
+    "id": "factory-v2-55",
+    "address": "0x1F93F301F7DFb0c301199DB35062945bE35d0aE6",
+    "coinsAddresses": [
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+      "0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c",
+      "0x0000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "decimals": [
+      "18",
+      "18",
+      "0",
+      "0"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "200",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: jJPY+JPYC",
+    "assetType": "0",
+    "implementationAddress": "0x571FF5b7b346F706aa48d696a9a4a288e9Bb4091",
+    "symbol": "2JPY-f",
+    "priceOracle": null,
+    "implementation": "plain2basic",
+    "assetTypeName": "usd",
+    "coins": [
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c",
+        "usdPrice": 0.006441600708007339,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "JPYC",
+        "name": "JPY Coin (PoS)",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0x1F93F301F7DFb0c301199DB35062945bE35d0aE6",
+        "https://polygon.curve.finance/factory/55"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0x1F93F301F7DFb0c301199DB35062945bE35d0aE6",
+        "https://polygon.curve.finance/factory/55/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0x1F93F301F7DFb0c301199DB35062945bE35d0aE6",
+        "https://polygon.curve.finance/factory/55/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0x1F93F301F7DFb0c301199DB35062945bE35d0aE6",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1637783179,
+    "creationBlockNumber": 21757060
+  },
+  {
+    "id": "factory-v2-85",
+    "address": "0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+    "coinsAddresses": [
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+      "0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c",
+      "0x0000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "decimals": [
+      "18",
+      "18",
+      "0",
+      "0"
+    ],
+    "virtualPrice": "1008327699326438733",
+    "amplificationCoefficient": "200",
+    "totalSupply": "1342103721237212399376796",
+    "name": "Curve.fi Factory Plain Pool: 2jpy",
+    "assetType": "3",
+    "implementationAddress": "0x571FF5b7b346F706aa48d696a9a4a288e9Bb4091",
+    "symbol": "2jpy-f",
+    "priceOracle": null,
+    "implementation": "plain2basic",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "1124069172959385088404723"
+      },
+      {
+        "address": "0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c",
+        "usdPrice": 0.006441600708007339,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "JPYC",
+        "name": "JPY Coin (PoS)",
+        "poolBalance": "231773459378753217710765"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+        "https://polygon.curve.finance/factory/85"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+        "https://polygon.curve.finance/factory/85/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+        "https://polygon.curve.finance/factory/85/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+    "usdTotal": 8592.568013676044,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 8592.568013676044,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1639438545,
+    "creationBlockNumber": 22492211
+  },
+  {
+    "id": "factory-v2-255",
+    "address": "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    "coinsAddresses": [
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+      "0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB",
+      "0x0000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "decimals": [
+      "18",
+      "18",
+      "0",
+      "0"
+    ],
+    "virtualPrice": "1030044417773861307",
+    "amplificationCoefficient": "200",
+    "totalSupply": "478227497299820727469540",
+    "name": "Curve.fi Factory Plain Pool: 2jpy-2",
+    "assetType": "0",
+    "implementationAddress": "0x571FF5b7b346F706aa48d696a9a4a288e9Bb4091",
+    "symbol": "2jpy-2-f",
+    "priceOracle": null,
+    "implementation": "plain2basic",
+    "assetTypeName": "usd",
+    "coins": [
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "418083954629015248162597"
+      },
+      {
+        "address": "0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB",
+        "usdPrice": 0.006478135129466428,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "JPYC",
+        "name": "JPY Coin",
+        "poolBalance": "75642354755531585649686"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+        "https://polygon.curve.finance/factory/255"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+        "https://polygon.curve.finance/factory/255/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+        "https://polygon.curve.finance/factory/255/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    "usdTotal": 3130.622929696046,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 3130.622929696046,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1653036495,
+    "creationBlockNumber": 28542302
+  },
+  {
+    "id": "factory-v2-260",
+    "address": "0x873aC1d622b57788f74E36402435a04ed8bAfDe2",
+    "coinsAddresses": [
+      "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c",
+      "0x8ca194A3b22077359b5732DE53373D4afC11DeE3",
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9"
+    ],
+    "decimals": [
+      "6",
+      "18",
+      "18",
+      "18"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "10",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: exchangePool",
+    "assetType": "3",
+    "implementationAddress": "0x991b05d5316fa3A2C053F84658b84987cd5c9970",
+    "symbol": "USDEURCADJ-f",
+    "priceOracle": null,
+    "priceOracles": null,
+    "implementation": "plain4basic",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        "usdPrice": 1,
+        "decimals": "6",
+        "isBasePoolLpToken": false,
+        "symbol": "USDC.e",
+        "name": "USD Coin (PoS)",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c",
+        "usdPrice": 1.12303,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jEUR",
+        "name": "Jarvis Synthetic Euro",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8ca194A3b22077359b5732DE53373D4afC11DeE3",
+        "usdPrice": 0.7119718,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jCAD",
+        "name": "Jarvis Synthetic Canadian Dollar",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0x873aC1d622b57788f74E36402435a04ed8bAfDe2",
+        "https://polygon.curve.finance/factory/260"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0x873aC1d622b57788f74E36402435a04ed8bAfDe2",
+        "https://polygon.curve.finance/factory/260/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0x873aC1d622b57788f74E36402435a04ed8bAfDe2",
+        "https://polygon.curve.finance/factory/260/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0x873aC1d622b57788f74E36402435a04ed8bAfDe2",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1653490079,
+    "creationBlockNumber": 28756027
+  },
+  {
+    "id": "factory-v2-261",
+    "address": "0xCBEBe4fb9FfA26912D60e6acBf7985eAe5590d96",
+    "coinsAddresses": [
+      "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c",
+      "0x8ca194A3b22077359b5732DE53373D4afC11DeE3",
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9"
+    ],
+    "decimals": [
+      "6",
+      "18",
+      "18",
+      "18"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "10",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: exchangePool",
+    "assetType": "3",
+    "implementationAddress": "0x991b05d5316fa3A2C053F84658b84987cd5c9970",
+    "symbol": "USDEURCADJ-f",
+    "priceOracle": null,
+    "priceOracles": null,
+    "implementation": "plain4basic",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        "usdPrice": 1,
+        "decimals": "6",
+        "isBasePoolLpToken": false,
+        "symbol": "USDC.e",
+        "name": "USD Coin (PoS)",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c",
+        "usdPrice": 1.12303,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jEUR",
+        "name": "Jarvis Synthetic Euro",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8ca194A3b22077359b5732DE53373D4afC11DeE3",
+        "usdPrice": 0.7119718,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jCAD",
+        "name": "Jarvis Synthetic Canadian Dollar",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0xCBEBe4fb9FfA26912D60e6acBf7985eAe5590d96",
+        "https://polygon.curve.finance/factory/261"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0xCBEBe4fb9FfA26912D60e6acBf7985eAe5590d96",
+        "https://polygon.curve.finance/factory/261/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0xCBEBe4fb9FfA26912D60e6acBf7985eAe5590d96",
+        "https://polygon.curve.finance/factory/261/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0xCBEBe4fb9FfA26912D60e6acBf7985eAe5590d96",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1653490165,
+    "creationBlockNumber": 28756068
+  },
+  {
+    "id": "factory-v2-262",
+    "address": "0x00A54587359bb0620Ecf66E163799f3622F24977",
+    "coinsAddresses": [
+      "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c",
+      "0x8ca194A3b22077359b5732DE53373D4afC11DeE3",
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9"
+    ],
+    "decimals": [
+      "6",
+      "18",
+      "18",
+      "18"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "10",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: USDC+jEUR+CAD+jJPY",
+    "assetType": "3",
+    "implementationAddress": "0x991b05d5316fa3A2C053F84658b84987cd5c9970",
+    "symbol": "MultiPool-f",
+    "priceOracle": null,
+    "priceOracles": null,
+    "implementation": "plain4basic",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        "usdPrice": 1,
+        "decimals": "6",
+        "isBasePoolLpToken": false,
+        "symbol": "USDC.e",
+        "name": "USD Coin (PoS)",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c",
+        "usdPrice": 1.12303,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jEUR",
+        "name": "Jarvis Synthetic Euro",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8ca194A3b22077359b5732DE53373D4afC11DeE3",
+        "usdPrice": 0.7119718,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jCAD",
+        "name": "Jarvis Synthetic Canadian Dollar",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0x00A54587359bb0620Ecf66E163799f3622F24977",
+        "https://polygon.curve.finance/factory/262"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0x00A54587359bb0620Ecf66E163799f3622F24977",
+        "https://polygon.curve.finance/factory/262/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0x00A54587359bb0620Ecf66E163799f3622F24977",
+        "https://polygon.curve.finance/factory/262/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0x00A54587359bb0620Ecf66E163799f3622F24977",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1653490283,
+    "creationBlockNumber": 28756125
+  },
+  {
+    "id": "factory-v2-263",
+    "address": "0xB95Ae886e346Bd4fb8c444e4FC56d61941Da94b7",
+    "coinsAddresses": [
+      "0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+      "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+      "0x0000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "decimals": [
+      "18",
+      "18",
+      "0",
+      "0"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "10",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: JPYCv1/JPYCv2",
+    "assetType": "0",
+    "implementationAddress": "0x8925D9d9B4569D737a48499DeF3f67BaA5a144b9",
+    "symbol": "JPYCv1v2-f",
+    "priceOracle": null,
+    "implementation": "plain2balances",
+    "assetTypeName": "usd",
+    "coins": [
+      {
+        "address": "0xE8dCeA7Fb2Baf7a9F4d9af608F06d78a687F8d9A",
+        "usdPrice": 0.00670598591975328,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "2jpy-f",
+        "name": "Curve.fi Factory Plain Pool: 2jpy",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+        "usdPrice": 0.006874239589438144,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "2jpy-2-f",
+        "name": "Curve.fi Factory Plain Pool: 2jpy-2",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0xB95Ae886e346Bd4fb8c444e4FC56d61941Da94b7",
+        "https://polygon.curve.finance/factory/263"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0xB95Ae886e346Bd4fb8c444e4FC56d61941Da94b7",
+        "https://polygon.curve.finance/factory/263/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0xB95Ae886e346Bd4fb8c444e4FC56d61941Da94b7",
+        "https://polygon.curve.finance/factory/263/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0xB95Ae886e346Bd4fb8c444e4FC56d61941Da94b7",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1653492687,
+    "creationBlockNumber": 28757229
+  },
+  {
+    "id": "factory-v2-371",
+    "address": "0xe23CB450722F6B5466e60D036981b4160721D146",
+    "coinsAddresses": [
+      "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+      "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4",
+      "0x7D645CBbCAdE2A130bF1bf0528b8541d32D3f8Cf"
+    ],
+    "decimals": [
+      "18",
+      "18",
+      "18",
+      "18"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "200",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: wmUSD",
+    "assetType": "3",
+    "implementationAddress": "0xAc273d5b4FC06625d8b1abA3BE8De15bDFb8E39f",
+    "symbol": "wmUSD-f",
+    "priceOracle": null,
+    "priceOracles": null,
+    "implementation": "plain4optimized",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        "usdPrice": 0.09352395350030603,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "WPOL",
+        "name": "Wrapped Polygon Ecosystem Token",
+        "poolBalance": "1"
+      },
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "52905531747802702243"
+      },
+      {
+        "address": "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4",
+        "usdPrice": 1.1212856549893877,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "EURA",
+        "name": "EURA (previously agEUR)",
+        "poolBalance": "283390001700775424"
+      },
+      {
+        "address": "0x7D645CBbCAdE2A130bF1bf0528b8541d32D3f8Cf",
+        "usdPrice": null,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "ALRTO",
+        "name": "Alerto",
+        "poolBalance": "61890436619288895271079699"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0xe23CB450722F6B5466e60D036981b4160721D146",
+        "https://polygon.curve.finance/factory/371"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0xe23CB450722F6B5466e60D036981b4160721D146",
+        "https://polygon.curve.finance/factory/371/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0xe23CB450722F6B5466e60D036981b4160721D146",
+        "https://polygon.curve.finance/factory/371/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0xe23CB450722F6B5466e60D036981b4160721D146",
+    "usdTotal": 0.6519103659723497,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0.6519103659723497,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1671144538,
+    "creationBlockNumber": 36877778
+  },
+  {
+    "id": "factory-v2-416",
+    "address": "0x1B33488CEa0087452b13b24318fc8d7bd0ed441f",
+    "coinsAddresses": [
+      "0x482bc619eE7662759CDc0685B4E78f464Da39C73",
+      "0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB",
+      "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+      "0x0000000000000000000000000000000000000000"
+    ],
+    "decimals": [
+      "6",
+      "18",
+      "18",
+      "0"
+    ],
+    "virtualPrice": 0,
+    "amplificationCoefficient": "200",
+    "totalSupply": "0",
+    "name": "Curve.fi Factory Plain Pool: 3JPYpool",
+    "assetType": "3",
+    "implementationAddress": "0x493084cA44C779Af27a416ac1F71e3823BF21b53",
+    "symbol": "CRVJPY-f",
+    "priceOracle": null,
+    "priceOracles": null,
+    "implementation": "plain3basic",
+    "assetTypeName": "other",
+    "coins": [
+      {
+        "address": "0x482bc619eE7662759CDc0685B4E78f464Da39C73",
+        "usdPrice": 0.006322719967362708,
+        "decimals": "6",
+        "isBasePoolLpToken": false,
+        "symbol": "GYEN",
+        "name": "GMO JPY (PoS)",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB",
+        "usdPrice": 0.006478135129466428,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "JPYC",
+        "name": "JPY Coin",
+        "poolBalance": "0"
+      },
+      {
+        "address": "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
+        "usdPrice": 0.00631596,
+        "decimals": "18",
+        "isBasePoolLpToken": false,
+        "symbol": "jJPY",
+        "name": "Jarvis Synthetic Japanese Yen",
+        "poolBalance": "0"
+      }
+    ],
+    "poolUrls": {
+      "swap": [
+        "https://www.curve.finance/dex/polygon/pools/0x1B33488CEa0087452b13b24318fc8d7bd0ed441f",
+        "https://polygon.curve.finance/factory/416"
+      ],
+      "deposit": [
+        "https://www.curve.finance/dex/polygon/pools/0x1B33488CEa0087452b13b24318fc8d7bd0ed441f",
+        "https://polygon.curve.finance/factory/416/deposit"
+      ],
+      "withdraw": [
+        "https://www.curve.finance/dex/polygon/pools/0x1B33488CEa0087452b13b24318fc8d7bd0ed441f",
+        "https://polygon.curve.finance/factory/416/withdraw"
+      ]
+    },
+    "lpTokenAddress": "0x1B33488CEa0087452b13b24318fc8d7bd0ed441f",
+    "usdTotal": 0,
+    "isMetaPool": false,
+    "usdTotalExcludingBasePool": 0,
+    "usesRateOracle": false,
+    "isBroken": false,
+    "hasMethods": {
+      "exchange_received": false,
+      "exchange_extended": false
+    },
+    "creationTs": 1684850434,
+    "creationBlockNumber": 43053564
+  }
+]

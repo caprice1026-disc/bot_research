@@ -41,3 +41,5 @@ HL current APIでgrowthMode enabled、deployerFeeScale1.0を確認。公式料�
 ## 保存した公開スナップショット
 
 `jpy_market_snapshot.json` は metaAndAssetCtxs 応答から xyz:JPY のみ抽出。`jpy_book.json` は取得時点の板、`jpy_funding.json` と `jpy_funding_7d.json` は funding 履歴です。今後の価格・板・funding・料率は変わり得ます。LP＋ヘッジの実装やバックテストは含みません。
+
+Hookプールの注文経路・afterSwapの条件は [追加調査](HOOK_ROUTING.md) を参照。コード上の可能性であり、配備・forkテスト・収益検証は未実施です。

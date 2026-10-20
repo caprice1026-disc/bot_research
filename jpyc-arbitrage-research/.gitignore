@@ -9,3 +9,6 @@ replay_data/replay_rpc_*.json
 replay_data/event_block_rpc_*.json
 analysis/measured_results/*capital_*.csv
 analysis/measured_results/measured_quote_audit.csv
+
+lp_strategies/results/*_observations.csv
+lp_strategies/results/*_actions.csv

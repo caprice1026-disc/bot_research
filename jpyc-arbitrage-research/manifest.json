@@ -6,12 +6,12 @@
   ],
   "files": {
     ".gitignore": {
-      "sha256": "9598cf23a22a63d52b78933642805c8f38fa6139bdf01fd1b6858cf2e59197eb",
-      "bytes": 244
+      "sha256": "3803f8cdd32a2aa47dc69b0e642a77524a9057453e2f7fe46099ece5a6b14b12",
+      "bytes": 322
     },
     "README.md": {
-      "sha256": "a8ce04c1d1a4e6b73dea1b8ae4fbbc973e37c589830dbc9715be4b2b3ba3cdd2",
-      "bytes": 6533
+      "sha256": "891a4ad3da7601d15e0ec840c7110077a66a36dc6eb6ca063d4a9e7ad3d5c8cc",
+      "bytes": 7071
     },
     "analysis/METHODOLOGY.md": {
       "sha256": "ee88ed9a918bc002c00048dda30adcd69cac0112da95d168515d9b4c9ecef17a",
@@ -57,9 +57,41 @@
       "sha256": "b4ad2f84e49c5d00bf7c453c442eafdb2acc4cccf4202eb1dce3a8d760e87523",
       "bytes": 3366
     },
+    "atomic_routes/README.md": {
+      "sha256": "649965e65810e3179ed6a9f5a2e5ac5ba28d5d094ddb4492bef1213dfa782322",
+      "bytes": 5848
+    },
+    "atomic_routes/README_JA.md": {
+      "sha256": "1674b0bfc4f60e944bd3a193b7e971938b43105a86ba4430ced240a35a812c81",
+      "bytes": 3392
+    },
+    "atomic_routes/curve_jpy_pools.json": {
+      "sha256": "c06c18355bc138cedc5b3b65bc22e0a0042e363c14554b6da1fd4dc1b2f057fd",
+      "bytes": 25564
+    },
+    "atomic_routes/eth_gyen.json": {
+      "sha256": "ef02c592760f7ff358116cfd47a0b8a7e15f681c2f6dfe4bf8255153b38aaad5",
+      "bytes": 49773
+    },
+    "atomic_routes/eth_jpyc.json": {
+      "sha256": "4e586743765500c7beecbcf0134138646f5ff77be520e9d878bfbf07fd498280",
+      "bytes": 50032
+    },
+    "atomic_routes/polygon_jpyc.json": {
+      "sha256": "3027860efc9e8fddd171ce79d0dfa77e0f7caef271e6d4b01d4316a671301507",
+      "bytes": 50727
+    },
+    "atomic_routes/rpc_getters.json": {
+      "sha256": "13ed449840515e70bee0ac580b90b89bceb9de51231565a0a8ce24b0820c5888",
+      "bytes": 97
+    },
+    "lp_hedge/HOOK_ROUTING.md": {
+      "sha256": "b868a27ec444e64cf15f393ffb85911a4c30cb50e7565408726aea0e3c6a461c",
+      "bytes": 4734
+    },
     "lp_hedge/README_JA.md": {
-      "sha256": "b5870aedbc75cfa8e2cb9a43db584628e42426e8d9dd355ea126d7669f67ce57",
-      "bytes": 5242
+      "sha256": "f8e3826ea39c4cd54640658d74788ff782562678e7f47a1ff4f04b6f293d9aae",
+      "bytes": 5435
     },
     "lp_hedge/jpy_book.json": {
       "sha256": "e81e13057cde60b35d2073f0f81ab6e709d003e25bb3b6e30592ce3a7f0f8fb3",
@@ -76,6 +108,26 @@
     "lp_hedge/jpy_market_snapshot.json": {
       "sha256": "50b41d36333d326129b9bb9ac37ad9e6f0fea85b3e9e0e15631270779ed04b8c",
       "bytes": 950
+    },
+    "lp_strategies/README.md": {
+      "sha256": "e9346f304af8184d57502204971ba6828326b2db70fe96f9d223dd6a48a915e3",
+      "bytes": 9959
+    },
+    "lp_strategies/lp_sim.py": {
+      "sha256": "f4c0cb392c8863e9f454afda6927822d7554764dfb9320590400410d3ce8409e",
+      "bytes": 13188
+    },
+    "lp_strategies/results/summaries.json": {
+      "sha256": "76d976b56a83e4f3d0ac5215e3fdec29df52312c0ec88436fdb92d0234553e50",
+      "bytes": 60932
+    },
+    "lp_strategies/results/summary.csv": {
+      "sha256": "3c286a2491843a6ed96df314a845b91af61cc8f3274d68a32db8ab5ec5dda824",
+      "bytes": 24442
+    },
+    "lp_strategies/test_lp_sim.py": {
+      "sha256": "d71c03a36458720610165c5ebe00d1484182d7f0f340f2cbc443120f9b345135",
+      "bytes": 2030
     },
     "profit_sources/README_JA.md": {
       "sha256": "9477ea7899eb33fe313ae1059b44f1201241e71458d424ac6711d8f410a8584f",
