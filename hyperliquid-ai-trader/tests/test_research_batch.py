@@ -161,7 +161,7 @@ def test_batch_cli_submits_gemini_provider_only_when_config_permits_paid_api(tmp
         {
             "allow_paid_api": True,
             "budget_usd": "0.25",
-            "trader_model": "gemini-3.5-flash",
+            "trader_model": "gemini-3.6-flash",
         }
     )
     config_path = tmp_path / "pilot.json"
@@ -172,7 +172,7 @@ def test_batch_cli_submits_gemini_provider_only_when_config_permits_paid_api(tmp
         constitution="c",
         instruction="i",
         strategy={},
-        requested_model="gemini-3.5-flash",
+        requested_model="gemini-3.6-flash",
         temperature=0,
         thinking="none",
         max_output_tokens=200,
@@ -200,7 +200,7 @@ def test_batch_cli_submits_gemini_provider_only_when_config_permits_paid_api(tmp
     class FakeGeminiProvider:
         def __init__(self, *, api_key, model):
             assert api_key == "test-key"
-            assert model == "gemini-3.5-flash"
+            assert model == "gemini-3.6-flash"
 
         def submit(self, requests):
             submitted.extend(requests)

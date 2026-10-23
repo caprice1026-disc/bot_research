@@ -82,6 +82,7 @@ class Gemini:
         budget["estimated_usd"] = str(dec(budget["estimated_usd"]) + reservation)
         bv = self.store.write(budget_key, budget, bv)
         record = {"status": "unknown", "role": role, "model": model, "at": started, "inputs": inputs,
+                  "input_usd_per_million": str(input_rate), "output_usd_per_million": str(output_rate),
                   "estimated_usd": str(reservation), "billing_tier": cfg.billing_tier, "config_hash": cfg.fingerprint()}
         rv = self.store.write(key, record, version)
         started_mono = time.monotonic()
