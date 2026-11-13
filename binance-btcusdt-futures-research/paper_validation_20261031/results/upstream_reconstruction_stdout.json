@@ -1,0 +1,176 @@
+{
+  "neural_means": {
+    "myopic": {
+      "D": 0.6101826652426596,
+      "max_deviation": 0.0031984505288219687,
+      "certificate": 0.006423255275651005,
+      "J": 1.3186009380265091
+    },
+    "paired_centered": {
+      "D": 0.24925880107123577,
+      "max_deviation": 0.000594048100869936,
+      "certificate": 0.0016253621452234051,
+      "J": 1.4721412489705463
+    },
+    "paired_mean": {
+      "D": 0.2506919567930278,
+      "max_deviation": 0.0006063643132411584,
+      "certificate": 0.002229291745265406,
+      "J": 1.472015478703639
+    }
+  },
+  "ppo_means": {
+    "continuation": {
+      "D": 1.1525193788731518,
+      "max_deviation": 0.01180377788768032,
+      "certificate": 0.017234057555423853,
+      "J": 1.4517800467079818
+    },
+    "myopic": {
+      "D": 1.728010158225746,
+      "max_deviation": 0.023491562691279548,
+      "certificate": 0.0327908652644991,
+      "J": 1.2763241843954949
+    }
+  },
+  "comparisons": [
+    {
+      "experiment": "neural",
+      "baseline": "myopic",
+      "metric": "D",
+      "difference": -0.36092386417142386,
+      "ci95": [
+        -0.3898780699045163,
+        -0.32884589397104413
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "myopic",
+      "metric": "max_deviation",
+      "difference": -0.0026044024279520328,
+      "ci95": [
+        -0.0029748223406553752,
+        -0.002275825821250378
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "myopic",
+      "metric": "certificate",
+      "difference": -0.004797893130427599,
+      "ci95": [
+        -0.00547669405161981,
+        -0.004200316251258876
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "myopic",
+      "metric": "J",
+      "difference": 0.15354031094403725,
+      "ci95": [
+        0.14773462032158496,
+        0.15912997822779343
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "paired_mean",
+      "metric": "D",
+      "difference": -0.0014331557217920662,
+      "ci95": [
+        -0.002525900797430348,
+        -0.0003012006462732984
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "paired_mean",
+      "metric": "max_deviation",
+      "difference": -1.231621237122245e-05,
+      "ci95": [
+        -1.9688685690460055e-05,
+        -4.904560729678669e-06
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "paired_mean",
+      "metric": "certificate",
+      "difference": -0.0006039296000420007,
+      "ci95": [
+        -0.0009048759147221372,
+        -0.0003607807111700338
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "neural",
+      "baseline": "paired_mean",
+      "metric": "J",
+      "difference": 0.0001257702669073879,
+      "ci95": [
+        -9.656177715677533e-05,
+        0.00036693618673576005
+      ],
+      "seeds": 20
+    },
+    {
+      "experiment": "ppo",
+      "baseline": "myopic",
+      "metric": "D",
+      "difference": -0.5754907793525945,
+      "ci95": [
+        -0.7390034723372981,
+        -0.4036003541398629
+      ],
+      "seeds": 10
+    },
+    {
+      "experiment": "ppo",
+      "baseline": "myopic",
+      "metric": "max_deviation",
+      "difference": -0.01168778480359923,
+      "ci95": [
+        -0.015502586519677059,
+        -0.007473213668306392
+      ],
+      "seeds": 10
+    },
+    {
+      "experiment": "ppo",
+      "baseline": "myopic",
+      "metric": "certificate",
+      "difference": -0.015556807709075238,
+      "ci95": [
+        -0.020439408928020885,
+        -0.010254265890562022
+      ],
+      "seeds": 10
+    },
+    {
+      "experiment": "ppo",
+      "baseline": "myopic",
+      "metric": "J",
+      "difference": 0.17545586231248675,
+      "ci95": [
+        0.1226937413674257,
+        0.22341881648400053
+      ],
+      "seeds": 10
+    }
+  ],
+  "reconstruction": {
+    "neural_records": 1620,
+    "ppo_records": 40,
+    "max_error": 9.867107131356079e-14,
+    "certificate_violations": 0
+  }
+}

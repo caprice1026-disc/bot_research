@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "identity": "1208207bf08df1d69d891b7ead1dde78f70217c6aecbb3f1bbc5c9d095ccf95b",
+  "settings": {
+    "status": "post_hoc_sensitivity_after_primary_results",
+    "rationale": "Primary fast rule arms lost almost all capital to turnover; add lower-turnover controls and latency sensitivity without selecting a winner.",
+    "daily_momentum_days": [
+      3,
+      7,
+      14,
+      28
+    ],
+    "daily_reversion_days": [
+      3,
+      7
+    ],
+    "decision_delay_minutes": [
+      0,
+      1,
+      5,
+      10
+    ],
+    "common_signal_weight": 0.75,
+    "net_target_cap": 0.35,
+    "static_shared_scale": 0.5
+  },
+  "artifacts": {
+    "concentration.csv": "9e690f53775df330a03d37e3de937333232b908ccd1d3087850d04f3afd012c7",
+    "daily.csv": "80547b0c1ec88244fe06806175eebbbf00b49b6d0114c936b8fbf309cfa8e9b1",
+    "monthly.csv": "e407b64b40a2a9268ea9fe4c670157f0224854110a577d31aa50c769351570c0",
+    "paired_uncertainty.csv": "1a0b93bd6e111b67eda0782989a10571b075480503d6b5207bb3bdb1eb3e7950",
+    "performance.csv": "08e107896cce5eaa70c9219d8d53c181729d1afb98783986152817f74f70508d"
+  },
+  "scope": "post hoc rule controls and fixed-policy latency sensitivity, not a new untouched validation set"
+}

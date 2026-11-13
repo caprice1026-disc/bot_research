@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-13",
+  "audit_status": "known_failure_reproduced",
+  "safety_check": "failed",
+  "exit_code": 1,
+  "runner": {
+    "path": "binance-btcusdt-futures-research/paper_review_20261113/gap_boundary_audit.py",
+    "sha256": "44f59d33f5b3fea780faeb8c916f49ca06c0694366ad2f9977991f95c17b2646"
+  },
+  "legacy_source": {
+    "path": "binance-btcusdt-futures-research/paper_validation_20261031/engine.py",
+    "sha256": "0ebf9dde3c90fca41cc8694243fae1e39db0fcda7ade65001e9c448ffe8d838e",
+    "behavior": "_replay applies the scheduled target quantity before checking stressed equity against maintenance margin."
+  },
+  "fixture": {
+    "kind": "synthetic_three_minute_boundary_gap_not_historical_data",
+    "prices_and_mark_prices": [
+      100.0,
+      40.0,
+      40.0
+    ],
+    "initial_equity_usdt": 10000.0,
+    "execution_minute_indices": [
+      0,
+      1
+    ],
+    "target_exposure_multiples": [
+      2.0,
+      0.0
+    ],
+    "fee_bps": 0.0,
+    "slippage_bps": 0.0,
+    "funding_rates": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "maintenance_margin_rate_proxy": 0.005
+  },
+  "expected_pre_order_condition": {
+    "minute_index": 1,
+    "old_quantity": 200.0,
+    "equity_after_opening_gap_usdt": -2000.0,
+    "maintenance_requirement_usdt": 40.0,
+    "maintenance_breach": true,
+    "requirement": "Recognize the pre-existing position's maintenance breach before processing an elective boundary-flat target; do not interpret the flattened position as evidence that no breach occurred."
+  },
+  "observed_legacy_behavior": {
+    "equity_path_usdt": [
+      10000.0,
+      -2000.0,
+      -2000.0
+    ],
+    "quantity_path": [
+      200.0,
+      -0.0,
+      -0.0
+    ],
+    "exposure_path": [
+      2.0,
+      0.0,
+      0.0
+    ],
+    "negative_final_equity": true,
+    "liquidation_proxy_count": 0,
+    "near_liquidation_minutes": 0
+  },
+  "interpretation": "This reproduces a missed gap-boundary insolvency condition in a proxy engine. It is a failing behavioral audit, not a passed safety test. It does not establish the frequency of the defect in historical data or invalidate unrelated saved PnL results by itself.",
+  "saved_summary_inspection": {
+    "inspection_scope": "Saved CSV summaries only; no historical replay or event-path audit.",
+    "negative_equity_detection": "return_pct < -100 with positive initial capital; precision is limited to the saved summary.",
+    "limitation": "No negative reported ending equity or recorded liquidation events does not exclude missed intraperiod insolvency or other latent errors. Liquidation counts are model outputs, not observed exchange events.",
+    "files": [
+      {
+        "path": "binance-btcusdt-futures-research/paper_validation_20261031/results/performance.csv",
+        "sha256": "5cc3a5e1052793df659d373bd9f013c4d3b403a70d51b7ed1b78b06ef6acd562",
+        "rows": 48,
+        "minimum_reported_return_pct": -99.99999999979062,
+        "negative_final_equity_implied_by_reported_return_rows": [],
+        "exactly_minus_100_percent_rounded_rows": [],
+        "recorded_liquidation_proxy_count_sum": 0,
+        "rows_with_recorded_liquidation_proxy_events": [],
+        "recorded_near_liquidation_minutes_sum": 0
+      },
+      {
+        "path": "binance-btcusdt-futures-research/paper_validation_20261031/results/supplement/performance.csv",
+        "sha256": "08e107896cce5eaa70c9219d8d53c181729d1afb98783986152817f74f70508d",
+        "rows": 25,
+        "minimum_reported_return_pct": -10.102000993300075,
+        "negative_final_equity_implied_by_reported_return_rows": [],
+        "exactly_minus_100_percent_rounded_rows": [],
+        "recorded_liquidation_proxy_count_sum": 0,
+        "rows_with_recorded_liquidation_proxy_events": [],
+        "recorded_near_liquidation_minutes_sum": 0
+      },
+      {
+        "path": "binance-btcusdt-futures-research/paper_validation_20261031/results/leverage_stress/performance.csv",
+        "sha256": "ae2d4267392ca78e39e2ffc0f43a03d11ced81313777a79e6fa3a2330915f886",
+        "rows": 15,
+        "minimum_reported_return_pct": -100.0,
+        "negative_final_equity_implied_by_reported_return_rows": [],
+        "exactly_minus_100_percent_rounded_rows": [
+          {
+            "csv_line": 6,
+            "method": "long_1x",
+            "return_pct": -100.0,
+            "net_pnl_usdt": -10000.0,
+            "liquidation_proxy_count": 0,
+            "exposure_multiplier": 20.0
+          },
+          {
+            "csv_line": 11,
+            "method": "rl_net",
+            "return_pct": -100.0,
+            "net_pnl_usdt": -10000.0,
+            "liquidation_proxy_count": 0,
+            "exposure_multiplier": 20.0
+          }
+        ],
+        "recorded_liquidation_proxy_count_sum": 0,
+        "rows_with_recorded_liquidation_proxy_events": [],
+        "recorded_near_liquidation_minutes_sum": 0
+      }
+    ],
+    "total_rows": 88
+  },
+  "changes_to_legacy_study": "None: no engine, report, manifest, market input, or historical backtest output was modified."
+}

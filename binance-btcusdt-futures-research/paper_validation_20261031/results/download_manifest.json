@@ -1,0 +1,301 @@
+{
+  "archives": [
+    {
+      "kind": "fundingRate",
+      "month": "2025-10",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-10.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2025-10.zip",
+      "sha256": "9ecdedab6344fc4cdb154763266b8e09627a71c3cc5574cf868158b541c259c2",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2025-11",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-11.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2025-11.zip",
+      "sha256": "23735400405627d610123e3a43db3e98ae7addb93459cd670e65a7659a5f081b",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2025-12",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-12.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2025-12.zip",
+      "sha256": "35318b789f020b0e04c9043112480743855554e52e1d188437cbdaa67246d51d",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-01",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-01.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-01.zip",
+      "sha256": "fcdc796484f395830d418588a34a26baed8849dbef0ff2b56173247e493ff51f",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-02",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-02.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-02.zip",
+      "sha256": "80df1dd669dc1e3afc360c9da8b9a949a127fce088eedbf5bf708bd37b0a1f58",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-03",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-03.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-03.zip",
+      "sha256": "5c069d5e9597a44fd0e213395082e59ff223fb99c9eab3a2a5a2a5622ba7867c",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-04",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-04.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-04.zip",
+      "sha256": "51cdeb4de7d5ef1d4eece80b6115e391bdf7a2d0803bf9ad8371ab23340b22d3",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-05",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-05.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-05.zip",
+      "sha256": "445b65fd6b17bfcfb5e4d035db29fad34f729fa078f0449024db42621be84e6e",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-06",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-06.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-06.zip",
+      "sha256": "cff97ce688329592bccbbf5873b5c7021649e093f5f5806e332c5b4fb7fd6a00",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-07",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-07.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-07.zip",
+      "sha256": "e36fcc66f493d7d9ec348c852fc22e9f318c79cf7adae17398a3994ae0adc41e",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-08",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-08.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-08.zip",
+      "sha256": "7c108b3a02bd6dc7345ca7323e3a49664edcea0afdcf780ffb3b44762c45a964",
+      "status": "verified"
+    },
+    {
+      "kind": "fundingRate",
+      "month": "2026-09",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2026-09.zip",
+      "path": "data\\paper_validation_20261031\\raw\\fundingRate\\BTCUSDT-fundingRate-2026-09.zip",
+      "sha256": "913cd31b8f924a06717a2fac17f3df6132c24ccded209eb3e4ae7d83e1b247f2",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2025-10",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2025-10.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2025-10.zip",
+      "sha256": "bb7f53350fe27b6d8e38b5856ffc43f9ecda9d568d5bf31d0db0cd011da7100f",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2025-11",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2025-11.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2025-11.zip",
+      "sha256": "981da0b054f99b959fe6245fb363336b46908d358f37251d59bad308f375bc54",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2025-12",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2025-12.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2025-12.zip",
+      "sha256": "2d5b2e1887dac1dfe450010877de7203a72e19df7a771067b980bbb07ad3069c",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-01",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-01.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-01.zip",
+      "sha256": "58e9c620a6acda209d25766b3cf4262f3104649f5c26f247d933e0da8bb7946f",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-02",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-02.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-02.zip",
+      "sha256": "805626ad2dc5b704d52c211996d12e9e4b1be234998f3dba4b3d34ff79be0337",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-03",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-03.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-03.zip",
+      "sha256": "c472a865f230bf1b5b17e124770a83c083144e3e11a115733288fb8f3e3b8baa",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-04",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-04.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-04.zip",
+      "sha256": "515b86570f0c6924f6dc2cf90589d3db90f3de9c6bfd9a22dde0429995dc5405",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-05",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-05.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-05.zip",
+      "sha256": "d91548e94220d5211bb32447cc4b604ee266d145f2092edc5ec613328cbbc20a",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-06",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-06.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-06.zip",
+      "sha256": "9b214199eb5063585c7ed0f59ba19323326d68ac024b85106713989399204490",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-07",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-07.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-07.zip",
+      "sha256": "f18440bb58f0c7e1ff63cbb906132002877c4914540c8aebab920da6937cff73",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-08",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-08.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-08.zip",
+      "sha256": "adfd0846ea580681aeb18a6bdf06660dcfcc1a7b6819ea2eecfc3c53240ec67a",
+      "status": "verified"
+    },
+    {
+      "kind": "klines",
+      "month": "2026-09",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2026-09.zip",
+      "path": "data\\paper_validation_20261031\\raw\\klines\\BTCUSDT-1m-2026-09.zip",
+      "sha256": "e1a821b5bf6b48d57da01c3e390b8a467a698155def5c18c2c63c0eb044a3247",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2025-10",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2025-10.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2025-10.zip",
+      "sha256": "628766a37dca06405268f2d4269598198d5c822aa4477a6804a192212ffa1f6e",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2025-11",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2025-11.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2025-11.zip",
+      "sha256": "1915d3d64c34b3b1e7309740091f39f525ff68ff543e7685518c0a0970636d66",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2025-12",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2025-12.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2025-12.zip",
+      "sha256": "e1ed1dcd4ed9e7cf174a1c2e04f50f04e4fe52c787836cde8f6fadd32f3aef30",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-01",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-01.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-01.zip",
+      "sha256": "aa48fc9892158909320230708e8d04d8750b1b7b97c936bc926144ad28ec9021",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-02",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-02.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-02.zip",
+      "sha256": "2205f17c1d774577a2aeeb1015787d9f966437eaf27090d477f16ae1bdddc4d1",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-03",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-03.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-03.zip",
+      "sha256": "7731b4b15be1e59eb80422e7eee0067af124c42804c5e575e4cf5ed508d94687",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-04",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-04.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-04.zip",
+      "sha256": "a1655f959e24c73a010b949649d45fcb2854bb9e2f5fe8e998269eb6ad4585e4",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-05",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-05.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-05.zip",
+      "sha256": "c9e4475e8762b4e52b899785deca52bceb0efb9bf08bd411b3147cd5e1da5e25",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-06",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-06.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-06.zip",
+      "sha256": "5d5d8b86efbe709e034409634347a161183e7c0df3854f8d96c9778dc1c923ba",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-06-29",
+      "url": "https://data.binance.vision/data/futures/um/daily/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-06-29.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-06-29.zip",
+      "sha256": "200e2ef30a86e9f91c011dae30d864f73c8480fddecc73ea227958596f6cd11c",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-07",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-07.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-07.zip",
+      "sha256": "5bb16a0707eef96d648480ab45943f25b27425154b2ccb881c200cfd51e594ed",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-08",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-08.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-08.zip",
+      "sha256": "3bd0556d903ce14f833ed58c78fd8d3309bc1a3804bb401c9fa2dd9d902f2c37",
+      "status": "verified"
+    },
+    {
+      "kind": "markPriceKlines",
+      "month": "2026-09",
+      "url": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/BTCUSDT-1m-2026-09.zip",
+      "path": "data\\paper_validation_20261031\\raw\\markPriceKlines\\BTCUSDT-1m-2026-09.zip",
+      "sha256": "68dfd75f32b99bd8019e914395d2a7d60d5c1a74a700fde9991bf19b0c39322e",
+      "status": "verified"
+    }
+  ],
+  "failures": []
+}

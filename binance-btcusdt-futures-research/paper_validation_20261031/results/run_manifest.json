@@ -1,0 +1,78 @@
+{
+  "status": "complete",
+  "identity": "0e563f9ed3594afd54a43699116f258c5f5ba51072fdfc01fbbf7b39c4ac7ab3",
+  "inputs": {
+    "config": {
+      "schema_version": 1,
+      "symbol": "BTCUSDT",
+      "market": "Binance USD-M perpetual",
+      "start": "2025-10-01",
+      "end_exclusive": "2026-10-01",
+      "test_start": "2026-01-01",
+      "training_months": 3,
+      "decision_minutes": 5,
+      "execution_delay_minutes": 1,
+      "initial_equity": 10000.0,
+      "fee_bps": 5.0,
+      "slippage_bps": [
+        1.0,
+        3.0,
+        5.0
+      ],
+      "actions": [
+        -1.0,
+        -0.5,
+        0.0,
+        0.5,
+        1.0
+      ],
+      "rl_discount": 0.99,
+      "rl_iterations": 2000,
+      "rl_risk_penalties": [
+        0.0,
+        10.0,
+        50.0
+      ],
+      "maintenance_margin_rate_proxy": 0.005,
+      "near_liquidation_margin_multiple": 2.0,
+      "bootstrap_samples": 2000,
+      "bootstrap_block_days": [
+        7,
+        30
+      ],
+      "seed": 20261031,
+      "upstream_revision": "9e5b2aaf14123e8f960fd304e46bfefa519dafac"
+    },
+    "sources": {
+      "data_inputs.py": "5b42215fcb0ea1d94c867ec6f323e6352cba87f450e48248b4e840a4bc9f6fd4",
+      "engine.py": "0ebf9dde3c90fca41cc8694243fae1e39db0fcda7ade65001e9c448ffe8d838e",
+      "experiments.py": "d446de4aa8364186cda44a73274a3b167114c05bdcb42e44cb1ec71798b523af",
+      "operational_audit.py": "a79b94cecc684bd18b84dacd45e61798bb16f4903233f5c76d50aa202c63fdf2",
+      "run_study.py": "1af7b7892b5422f2ede4b40b374ec6b2b65c31b2a831dbb41097f06b42272a7d",
+      "test_study.py": "f74d6ca426d7bfa2aa974ace101a10ac608dfefcb5192a7da4a4e11efb11518e"
+    },
+    "data": "021af1f7ad33153ea20870287cdef75d28b8522f7013f69073bf9d15d3ea860f"
+  },
+  "artifacts": {
+    "results\\concentration.csv": "5d68bcb8fae4b415055681378a6d0b785f3c807a3585c9eb7f3c2323a280d45a",
+    "results\\daily.csv": "67fde6b46eb206bb490ec20f6822c078aef5c839047b7899a70cd4ae8f428667",
+    "results\\data_quality.json": "6855a13161fa15529c0ab21fe8621c33bd001d4dfb601467ded5c8c3810380be",
+    "results\\download_manifest.json": "165b315dc93439e3782ef2330808a9217745696540cc3b0c30f2131b38a842b6",
+    "results\\equity_curves.png": "733b8763c7b0d2ed21be09b58deaac386dc0576d921b7861e9bdb1a5eeb33356",
+    "results\\fault_summary.csv": "4c46b35dbe7989ec667a4214f15d4553d2b59488c9692e2cf3c744dc36e97215",
+    "results\\fault_trials.csv": "b8cb42731b011143739b6066716b388f32c040948291c06aea216337027cd1b9",
+    "results\\fit_records.csv": "2b9600104c3999dd8b459959bea185d05e3732570c711b6573a8b6f16827db32",
+    "results\\monthly.csv": "28743002211fa9e96ded9dde72ee940d42843a828ddeb52b9b762f98610a9649",
+    "results\\paired_uncertainty.csv": "98117ff1992af8c2d2278bdbbb7e74b494d3d5ef9d270c7def64998665f72d6d",
+    "results\\performance.csv": "5cc3a5e1052793df659d373bd9f013c4d3b403a70d51b7ed1b78b06ef6acd562",
+    "results\\upstream_provenance.json": "97c1cbc65cc376e4b07b5b644662d096c465e8d9a7a8f04500b0fa3004fe803f",
+    "results\\upstream_reconstruction_stdout.json": "a3e1f2204d34fba597228b3be2371c9fddd69bf26d7fa4b3a6287d421df7be99"
+  },
+  "environment": {
+    "python": "3.10.9 (tags/v3.10.9:1dd9be6, Dec  6 2022, 20:01:21) [MSC v.1934 64 bit (AMD64)]",
+    "numpy": "1.23.5",
+    "pandas": "2.0.3",
+    "platform": "Windows-10-10.0.26300-SP0"
+  },
+  "scope": "independent paper-inspired experiments; no LLM inference; not reproduction of historical paper runs"
+}

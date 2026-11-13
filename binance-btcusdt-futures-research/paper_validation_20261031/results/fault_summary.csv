@@ -1,0 +1,7 @@
+scenario,mode,trials,unintended_notional_usdt,missing_protection,fees_usdt
+SL_registered_TP_missing,blind_retry,100,100000.0,100,100.0
+SL_registered_TP_missing,receipt_reconcile,100,0.0,0,50.0
+after_fill_before_ack,blind_retry,100,100000.0,100,100.0
+after_fill_before_ack,receipt_reconcile,100,0.0,0,50.0
+partial_fill,blind_retry,100,150000.0,100,100.0
+partial_fill,receipt_reconcile,100,0.0,0,25.0
