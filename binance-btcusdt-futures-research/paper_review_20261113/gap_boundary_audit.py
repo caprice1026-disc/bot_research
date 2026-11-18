@@ -88,6 +88,11 @@ def main() -> int:
     sys.dont_write_bytecode = True
     source = LEGACY / "engine.py"
     source_hash = sha256(source)
+    # Keep this dated diagnostic from overwriting its archived result with
+    # the output of a different engine. Reproduce the old audit at 6db1f50.
+    if source_hash != "0ebf9dde3c90fca41cc8694243fae1e39db0fcda7ade65001e9c448ffe8d838e":
+        print("Historical audit requires the engine at 6db1f50; no output was written.", file=sys.stderr)
+        return 2
     module_name = "legacy_gap_boundary_audit_engine"
     spec = importlib.util.spec_from_file_location(module_name, source)
     if spec is None or spec.loader is None:

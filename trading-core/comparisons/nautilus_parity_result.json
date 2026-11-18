@@ -1,0 +1,107 @@
+{
+  "fixture": "synthetic_zero_spread_linear_perp_target_tape",
+  "data_sha256": "8178a1d5af52b23ed8e8be32997081c61832cf31af2dd234b9b4406571acdcbf",
+  "python": "3.12.16",
+  "nautilus_trader": "1.231.0",
+  "fee_rate": "0.001",
+  "status": "PASS",
+  "core": {
+    "fills": [
+      {
+        "timestamp_ms": 1700000000000,
+        "signed_quantity": "1",
+        "price": "1E+2",
+        "fee": "0.1"
+      },
+      {
+        "timestamp_ms": 1700000060000,
+        "signed_quantity": "1",
+        "price": "1.1E+2",
+        "fee": "0.11"
+      },
+      {
+        "timestamp_ms": 1700000180000,
+        "signed_quantity": "-1",
+        "price": "1.2E+2",
+        "fee": "0.12"
+      },
+      {
+        "timestamp_ms": 1700000240000,
+        "signed_quantity": "-1",
+        "price": "9E+1",
+        "fee": "0.09"
+      },
+      {
+        "timestamp_ms": 1700000300000,
+        "signed_quantity": "-1",
+        "price": "95",
+        "fee": "0.095"
+      },
+      {
+        "timestamp_ms": 1700000360000,
+        "signed_quantity": "1",
+        "price": "85",
+        "fee": "0.085"
+      }
+    ],
+    "cash": "10009.4",
+    "fees": "0.6",
+    "gross_realized_pnl": "1E+1",
+    "quantity": "0"
+  },
+  "nautilus": {
+    "fills": [
+      {
+        "timestamp_ms": 1700000000000,
+        "signed_quantity": "1",
+        "price": "1E+2",
+        "fee": "0.1"
+      },
+      {
+        "timestamp_ms": 1700000060000,
+        "signed_quantity": "1",
+        "price": "1.1E+2",
+        "fee": "0.11"
+      },
+      {
+        "timestamp_ms": 1700000180000,
+        "signed_quantity": "-1",
+        "price": "1.2E+2",
+        "fee": "0.12"
+      },
+      {
+        "timestamp_ms": 1700000240000,
+        "signed_quantity": "-1",
+        "price": "9E+1",
+        "fee": "0.09"
+      },
+      {
+        "timestamp_ms": 1700000300000,
+        "signed_quantity": "-1",
+        "price": "95",
+        "fee": "0.095"
+      },
+      {
+        "timestamp_ms": 1700000360000,
+        "signed_quantity": "1",
+        "price": "85",
+        "fee": "0.085"
+      }
+    ],
+    "cash": "10009.4",
+    "fees": "0.6",
+    "gross_realized_pnl": "1E+1",
+    "quantity": "0"
+  },
+  "not_validated": [
+    "real-market profitability",
+    "OHLC intrabar path",
+    "L2 depth or maker queues",
+    "latency",
+    "funding",
+    "liquidation",
+    "inverse contracts",
+    "Polymarket settlement",
+    "live execution"
+  ]
+}

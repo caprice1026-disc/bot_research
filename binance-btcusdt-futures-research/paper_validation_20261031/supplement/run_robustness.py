@@ -46,7 +46,7 @@ def main():
     stats_rows=[];daily_frames=[];daily_returns={};monthly_rows=[]
     for slip in config["slippage_bps"]:
         for name,paths in scenarios.items():
-            eq=np.zeros(end-start);exp=np.zeros(end-start);total=np.zeros(9)
+            eq=np.zeros(end-start);exp=np.zeros(end-start);total=np.zeros(10)
             for target in paths:
                 a,b,_,t=replay(m,execution,target,start,end,config,slip)
                 eq+=a;exp+=b/len(paths);total+=t

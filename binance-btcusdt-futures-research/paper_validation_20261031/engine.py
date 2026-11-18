@@ -106,14 +106,16 @@ def _replay(open_price, high, low, close, mark_open, mark_high, mark_low,
             fixed_quantity):
     """Linear futures equity; fees/slippage charged on actual quantity changes.
 
-    At each minute boundary: price PnL, Funding on pre-existing position, order;
-    then adverse mark-price test. Terminal position is closed at last close.
+    At the open: price PnL, Funding on the old quantity, maintenance on the
+    old quantity at opening mark, then the elective order (only if solvent).
+    Check the new position at opening mark before considering later extremes.
+    Terminal position is closed at last close. This is a flat-rate OHLC proxy.
     """
     n = end-start
     equity_path = np.empty(n)
     exposure_path = np.empty(n)
     qty_path = np.empty(n)
-    fees = slips = funding_paid = turnover = gross = 0.
+    fees = slips = funding_paid = turnover = gross = shortfall = 0.
     equity, q, prev_price, k = equity0, 0., open_price[start], 0
     trades = near = liquidations = 0
     bankrupt = False
@@ -125,9 +127,14 @@ def _replay(open_price, high, low, close, mark_open, mark_high, mark_low,
         paid = q*mark_open[t]*funding[t]
         equity -= paid
         funding_paid += paid
+        opening_mark = mark_open[t]
+        old_mark_equity = equity + q*(opening_mark-price)
+        old_maintenance = abs(q)*opening_mark*mmr
+        gap_breach = q != 0. and old_mark_equity <= old_maintenance
+        near_open = q != 0. and old_mark_equity <= near_multiple*old_maintenance
         if k < len(execution) and t == execution[k]:
             target = targets[k]
-            if not bankrupt and (not fixed_quantity or k == 0):
+            if not bankrupt and not gap_breach and (not fixed_quantity or k == 0):
                 # Solve q_new = target * equity_after_cost / price exactly.
                 direction = np.sign(target*equity/price-q)
                 new_q = target*(equity/price+(fee+slip)*direction*q)/(1+target*(fee+slip)*direction)
@@ -140,15 +147,21 @@ def _replay(open_price, high, low, close, mark_open, mark_high, mark_low,
                 equity -= traded*(fee+slip)
                 q = new_q
             k += 1
-        adverse = mark_low[t] if q >= 0 else mark_high[t]
+        # An opening breach is already observable: do not price its exit
+        # at a low/high only known after the opening order.
+        open_maintenance = abs(q)*opening_mark*mmr
+        open_breach = q != 0. and equity+q*(opening_mark-price) <= open_maintenance
+        adverse = opening_mark if open_breach else (mark_low[t] if q >= 0 else mark_high[t])
         stressed = equity+q*(adverse-price)
         maintenance = abs(q)*adverse*mmr
-        if q != 0. and stressed <= near_multiple*maintenance:
+        if near_open or (q != 0. and stressed <= near_multiple*maintenance):
             near += 1
         if q != 0. and stressed <= maintenance:
-            # Conservative worst minute mark and assumed ordinary close costs.
-            # This is NOT Binance's tiered liquidation/insurance-engine model.
-            equity = max(0., stressed-abs(q)*adverse*(fee+slip))
+            # Mark-price proxy fill, regular close costs and a zero equity floor.
+            # Record the deficit absorbed by that modeling assumption separately.
+            net_exit = stressed-abs(q)*adverse*(fee+slip)
+            shortfall += max(0., -net_exit)
+            equity = max(0., net_exit)
             gross += q*(adverse-price)
             fees += abs(q)*adverse*fee
             slips += abs(q)*adverse*slip
@@ -173,7 +186,7 @@ def _replay(open_price, high, low, close, mark_open, mark_high, mark_low,
                 trades += 1
             q = 0.
         equity_path[t-start] = equity
-    totals = np.array([equity,fees,slips,funding_paid,turnover,gross,trades,near,liquidations])
+    totals = np.array([equity,fees,slips,funding_paid,turnover,gross,trades,near,liquidations,shortfall])
     return equity_path,exposure_path,qty_path,totals
 
 
@@ -202,4 +215,5 @@ def performance(equity, exposure, totals, initial, timestamp):
                 daily_es05_pct=float(tail*100), fees_usdt=float(totals[1]), slippage_usdt=float(totals[2]),
                 funding_paid_usdt=float(totals[3]), turnover_equity=float(totals[4]/initial), gross_pnl_usdt=float(totals[5]),
                 order_count=int(totals[6]), near_liquidation_minutes=int(totals[7]), liquidation_proxy_count=int(totals[8]),
+                liquidation_floor_credit_usdt=float(totals[9]),
                 mean_abs_exposure=float(np.mean(exposure)),max_abs_exposure=float(np.max(exposure))),daily,daily_returns

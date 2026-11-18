@@ -131,7 +131,7 @@ def run(config):
     for slip in config["slippage_bps"]:
         for name,paths in scenarios.items():
             paths=list(paths)
-            aggregate=np.zeros(end-start); exp=np.zeros(end-start); total=np.zeros(9)
+            aggregate=np.zeros(end-start); exp=np.zeros(end-start); total=np.zeros(10)
             for target in paths:
                 equity,exposure,qty,totals=replay(market,execution,target,start,end,config,slip_bps=slip)
                 aggregate+=equity; exp+=exposure/len(paths); total+=totals
@@ -144,7 +144,7 @@ def run(config):
             if slip==1.:
                 individual_daily[name]=returns.to_numpy()
                 curve_store[name]=daily.to_numpy()/initial
-            if abs(aggregate[-1]-(initial+total[5]-total[1]-total[2]-total[3]))>1e-5:
+            if abs(aggregate[-1]-(initial+total[5]-total[1]-total[2]-total[3]+total[9]))>1e-5:
                 raise AssertionError("self-financing ledger does not reconcile")
         print(f"replay complete, slippage {slip} bp",flush=True)
     summary=pd.DataFrame(summaries)

@@ -1,0 +1,651 @@
+{
+  "status": "PASS",
+  "source_filename": "market_1m.npz",
+  "source_sha256": "021af1f7ad33153ea20870287cdef75d28b8522f7013f69073bf9d15d3ea860f",
+  "window_start_utc": "2025-10-01T01:00:00+00:00",
+  "window_end_exclusive_utc": "2025-10-01T02:00:00+00:00",
+  "bars": 60,
+  "window_ohlcv_sha256": "259cae80f951909c43ef9361e2e6d41d0407c4cc029aa5db7b96d4fe4f6f3b1a",
+  "execution_tape_sha256": "8766efaaba6dff287d8ca267e2a2e895da85d49ff936aa8c6d5c1e0f3896204a",
+  "strategy": "previous_bar_direction_every_5m_size_0.010_flat_before_reverse_final_scheduled_close",
+  "python": "3.12.16",
+  "nautilus_trader": "1.231.0",
+  "input_type": "real_1m_ohlcv_open_as_zero_spread_L1_proxy_NOT_recorded_quotes",
+  "fee_rate": "0.001",
+  "cash_fee_absolute_tolerance_usdt": "1E-7",
+  "fill_count": 10,
+  "max_fill_fee_delta": "0",
+  "core_minus_nautilus": {
+    "cash": "0.000000",
+    "fees": "0.000000",
+    "gross_realized_pnl": "0.000",
+    "quantity": "0"
+  },
+  "core": {
+    "fills": [
+      {
+        "timestamp_ms": 1759280400000,
+        "signed_quantity": "0.01",
+        "price": "114181",
+        "fee": "1.14181"
+      },
+      {
+        "timestamp_ms": 1759281300000,
+        "signed_quantity": "-0.01",
+        "price": "114283.3",
+        "fee": "1.142833"
+      },
+      {
+        "timestamp_ms": 1759281600000,
+        "signed_quantity": "-0.01",
+        "price": "114203.3",
+        "fee": "1.142033"
+      },
+      {
+        "timestamp_ms": 1759281900000,
+        "signed_quantity": "0.01",
+        "price": "114253.8",
+        "fee": "1.142538"
+      },
+      {
+        "timestamp_ms": 1759282200000,
+        "signed_quantity": "0.01",
+        "price": "114315.7",
+        "fee": "1.143157"
+      },
+      {
+        "timestamp_ms": 1759282500000,
+        "signed_quantity": "-0.01",
+        "price": "114166.2",
+        "fee": "1.141662"
+      },
+      {
+        "timestamp_ms": 1759282800000,
+        "signed_quantity": "0.01",
+        "price": "114333.2",
+        "fee": "1.143332"
+      },
+      {
+        "timestamp_ms": 1759283100000,
+        "signed_quantity": "-0.01",
+        "price": "114345.4",
+        "fee": "1.143454"
+      },
+      {
+        "timestamp_ms": 1759283400000,
+        "signed_quantity": "0.01",
+        "price": "114358.1",
+        "fee": "1.143581"
+      },
+      {
+        "timestamp_ms": 1759283940000,
+        "signed_quantity": "-0.01",
+        "price": "114471.1",
+        "fee": "1.144711"
+      }
+    ],
+    "cash": "9988.845889",
+    "fees": "11.429111",
+    "gross_realized_pnl": "0.275",
+    "quantity": "0"
+  },
+  "nautilus": {
+    "fills": [
+      {
+        "timestamp_ms": 1759280400000,
+        "signed_quantity": "0.01",
+        "price": "114181",
+        "fee": "1.14181"
+      },
+      {
+        "timestamp_ms": 1759281300000,
+        "signed_quantity": "-0.01",
+        "price": "114283.3",
+        "fee": "1.142833"
+      },
+      {
+        "timestamp_ms": 1759281600000,
+        "signed_quantity": "-0.01",
+        "price": "114203.3",
+        "fee": "1.142033"
+      },
+      {
+        "timestamp_ms": 1759281900000,
+        "signed_quantity": "0.01",
+        "price": "114253.8",
+        "fee": "1.142538"
+      },
+      {
+        "timestamp_ms": 1759282200000,
+        "signed_quantity": "0.01",
+        "price": "114315.7",
+        "fee": "1.143157"
+      },
+      {
+        "timestamp_ms": 1759282500000,
+        "signed_quantity": "-0.01",
+        "price": "114166.2",
+        "fee": "1.141662"
+      },
+      {
+        "timestamp_ms": 1759282800000,
+        "signed_quantity": "0.01",
+        "price": "114333.2",
+        "fee": "1.143332"
+      },
+      {
+        "timestamp_ms": 1759283100000,
+        "signed_quantity": "-0.01",
+        "price": "114345.4",
+        "fee": "1.143454"
+      },
+      {
+        "timestamp_ms": 1759283400000,
+        "signed_quantity": "0.01",
+        "price": "114358.1",
+        "fee": "1.143581"
+      },
+      {
+        "timestamp_ms": 1759283940000,
+        "signed_quantity": "-0.01",
+        "price": "114471.1",
+        "fee": "1.144711"
+      }
+    ],
+    "cash": "9988.845889",
+    "fees": "11.429111",
+    "gross_realized_pnl": "0.275",
+    "quantity": "0"
+  },
+  "decision_audit": [
+    {
+      "execution_ms": 1759280400000,
+      "signal_bar_open_ms": 1759280340000,
+      "signal_available_ms": 1759280400000,
+      "previous_open": "114144.1",
+      "previous_close": "114181.1",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280460000,
+      "signal_bar_open_ms": 1759280400000,
+      "signal_available_ms": 1759280460000,
+      "previous_open": "114181.0",
+      "previous_close": "114140.1",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280520000,
+      "signal_bar_open_ms": 1759280460000,
+      "signal_available_ms": 1759280520000,
+      "previous_open": "114140.1",
+      "previous_close": "114112.3",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280580000,
+      "signal_bar_open_ms": 1759280520000,
+      "signal_available_ms": 1759280580000,
+      "previous_open": "114112.4",
+      "previous_close": "114097.3",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280640000,
+      "signal_bar_open_ms": 1759280580000,
+      "signal_available_ms": 1759280640000,
+      "previous_open": "114097.4",
+      "previous_close": "114148.3",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280700000,
+      "signal_bar_open_ms": 1759280640000,
+      "signal_available_ms": 1759280700000,
+      "previous_open": "114148.2",
+      "previous_close": "114193.5",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280760000,
+      "signal_bar_open_ms": 1759280700000,
+      "signal_available_ms": 1759280760000,
+      "previous_open": "114193.5",
+      "previous_close": "114194.4",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280820000,
+      "signal_bar_open_ms": 1759280760000,
+      "signal_available_ms": 1759280820000,
+      "previous_open": "114194.4",
+      "previous_close": "114248.1",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280880000,
+      "signal_bar_open_ms": 1759280820000,
+      "signal_available_ms": 1759280880000,
+      "previous_open": "114248.0",
+      "previous_close": "114251.2",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759280940000,
+      "signal_bar_open_ms": 1759280880000,
+      "signal_available_ms": 1759280940000,
+      "previous_open": "114251.1",
+      "previous_close": "114239.6",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759281000000,
+      "signal_bar_open_ms": 1759280940000,
+      "signal_available_ms": 1759281000000,
+      "previous_open": "114239.6",
+      "previous_close": "114242.9",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759281060000,
+      "signal_bar_open_ms": 1759281000000,
+      "signal_available_ms": 1759281060000,
+      "previous_open": "114242.9",
+      "previous_close": "114319.5",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759281120000,
+      "signal_bar_open_ms": 1759281060000,
+      "signal_available_ms": 1759281120000,
+      "previous_open": "114319.5",
+      "previous_close": "114265.8",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759281180000,
+      "signal_bar_open_ms": 1759281120000,
+      "signal_available_ms": 1759281180000,
+      "previous_open": "114265.9",
+      "previous_close": "114270.1",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759281240000,
+      "signal_bar_open_ms": 1759281180000,
+      "signal_available_ms": 1759281240000,
+      "previous_open": "114270.1",
+      "previous_close": "114283.5",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759281300000,
+      "signal_bar_open_ms": 1759281240000,
+      "signal_available_ms": 1759281300000,
+      "previous_open": "114283.5",
+      "previous_close": "114283.3",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759281360000,
+      "signal_bar_open_ms": 1759281300000,
+      "signal_available_ms": 1759281360000,
+      "previous_open": "114283.3",
+      "previous_close": "114283.3",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759281420000,
+      "signal_bar_open_ms": 1759281360000,
+      "signal_available_ms": 1759281420000,
+      "previous_open": "114283.3",
+      "previous_close": "114275.0",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759281480000,
+      "signal_bar_open_ms": 1759281420000,
+      "signal_available_ms": 1759281480000,
+      "previous_open": "114275.0",
+      "previous_close": "114343.2",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759281540000,
+      "signal_bar_open_ms": 1759281480000,
+      "signal_available_ms": 1759281540000,
+      "previous_open": "114343.3",
+      "previous_close": "114252.7",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759281600000,
+      "signal_bar_open_ms": 1759281540000,
+      "signal_available_ms": 1759281600000,
+      "previous_open": "114252.8",
+      "previous_close": "114203.3",
+      "target": "-0.010"
+    },
+    {
+      "execution_ms": 1759281660000,
+      "signal_bar_open_ms": 1759281600000,
+      "signal_available_ms": 1759281660000,
+      "previous_open": "114203.3",
+      "previous_close": "114225.1",
+      "target": "-0.010"
+    },
+    {
+      "execution_ms": 1759281720000,
+      "signal_bar_open_ms": 1759281660000,
+      "signal_available_ms": 1759281720000,
+      "previous_open": "114225.1",
+      "previous_close": "114170.6",
+      "target": "-0.010"
+    },
+    {
+      "execution_ms": 1759281780000,
+      "signal_bar_open_ms": 1759281720000,
+      "signal_available_ms": 1759281780000,
+      "previous_open": "114170.6",
+      "previous_close": "114193.2",
+      "target": "-0.010"
+    },
+    {
+      "execution_ms": 1759281840000,
+      "signal_bar_open_ms": 1759281780000,
+      "signal_available_ms": 1759281840000,
+      "previous_open": "114193.2",
+      "previous_close": "114242.6",
+      "target": "-0.010"
+    },
+    {
+      "execution_ms": 1759281900000,
+      "signal_bar_open_ms": 1759281840000,
+      "signal_available_ms": 1759281900000,
+      "previous_open": "114242.7",
+      "previous_close": "114253.9",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759281960000,
+      "signal_bar_open_ms": 1759281900000,
+      "signal_available_ms": 1759281960000,
+      "previous_open": "114253.8",
+      "previous_close": "114269.7",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282020000,
+      "signal_bar_open_ms": 1759281960000,
+      "signal_available_ms": 1759282020000,
+      "previous_open": "114269.7",
+      "previous_close": "114288.0",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282080000,
+      "signal_bar_open_ms": 1759282020000,
+      "signal_available_ms": 1759282080000,
+      "previous_open": "114288.0",
+      "previous_close": "114268.8",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282140000,
+      "signal_bar_open_ms": 1759282080000,
+      "signal_available_ms": 1759282140000,
+      "previous_open": "114268.7",
+      "previous_close": "114302.0",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282200000,
+      "signal_bar_open_ms": 1759282140000,
+      "signal_available_ms": 1759282200000,
+      "previous_open": "114302.0",
+      "previous_close": "114315.7",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282260000,
+      "signal_bar_open_ms": 1759282200000,
+      "signal_available_ms": 1759282260000,
+      "previous_open": "114315.7",
+      "previous_close": "114259.5",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282320000,
+      "signal_bar_open_ms": 1759282260000,
+      "signal_available_ms": 1759282320000,
+      "previous_open": "114259.5",
+      "previous_close": "114210.7",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282380000,
+      "signal_bar_open_ms": 1759282320000,
+      "signal_available_ms": 1759282380000,
+      "previous_open": "114210.7",
+      "previous_close": "114195.9",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282440000,
+      "signal_bar_open_ms": 1759282380000,
+      "signal_available_ms": 1759282440000,
+      "previous_open": "114195.9",
+      "previous_close": "114180.0",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282500000,
+      "signal_bar_open_ms": 1759282440000,
+      "signal_available_ms": 1759282500000,
+      "previous_open": "114180.0",
+      "previous_close": "114166.2",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282560000,
+      "signal_bar_open_ms": 1759282500000,
+      "signal_available_ms": 1759282560000,
+      "previous_open": "114166.2",
+      "previous_close": "114215.3",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282620000,
+      "signal_bar_open_ms": 1759282560000,
+      "signal_available_ms": 1759282620000,
+      "previous_open": "114215.2",
+      "previous_close": "114244.1",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282680000,
+      "signal_bar_open_ms": 1759282620000,
+      "signal_available_ms": 1759282680000,
+      "previous_open": "114244.1",
+      "previous_close": "114283.7",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282740000,
+      "signal_bar_open_ms": 1759282680000,
+      "signal_available_ms": 1759282740000,
+      "previous_open": "114283.6",
+      "previous_close": "114290.2",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759282800000,
+      "signal_bar_open_ms": 1759282740000,
+      "signal_available_ms": 1759282800000,
+      "previous_open": "114290.2",
+      "previous_close": "114333.2",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282860000,
+      "signal_bar_open_ms": 1759282800000,
+      "signal_available_ms": 1759282860000,
+      "previous_open": "114333.2",
+      "previous_close": "114354.8",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282920000,
+      "signal_bar_open_ms": 1759282860000,
+      "signal_available_ms": 1759282920000,
+      "previous_open": "114354.9",
+      "previous_close": "114388.4",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759282980000,
+      "signal_bar_open_ms": 1759282920000,
+      "signal_available_ms": 1759282980000,
+      "previous_open": "114388.4",
+      "previous_close": "114420.1",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283040000,
+      "signal_bar_open_ms": 1759282980000,
+      "signal_available_ms": 1759283040000,
+      "previous_open": "114420.0",
+      "previous_close": "114403.0",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283100000,
+      "signal_bar_open_ms": 1759283040000,
+      "signal_available_ms": 1759283100000,
+      "previous_open": "114403.0",
+      "previous_close": "114345.4",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759283160000,
+      "signal_bar_open_ms": 1759283100000,
+      "signal_available_ms": 1759283160000,
+      "previous_open": "114345.4",
+      "previous_close": "114366.0",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759283220000,
+      "signal_bar_open_ms": 1759283160000,
+      "signal_available_ms": 1759283220000,
+      "previous_open": "114366.1",
+      "previous_close": "114321.4",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759283280000,
+      "signal_bar_open_ms": 1759283220000,
+      "signal_available_ms": 1759283280000,
+      "previous_open": "114321.4",
+      "previous_close": "114324.3",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759283340000,
+      "signal_bar_open_ms": 1759283280000,
+      "signal_available_ms": 1759283340000,
+      "previous_open": "114324.4",
+      "previous_close": "114319.8",
+      "target": "0"
+    },
+    {
+      "execution_ms": 1759283400000,
+      "signal_bar_open_ms": 1759283340000,
+      "signal_available_ms": 1759283400000,
+      "previous_open": "114319.9",
+      "previous_close": "114358.1",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283460000,
+      "signal_bar_open_ms": 1759283400000,
+      "signal_available_ms": 1759283460000,
+      "previous_open": "114358.1",
+      "previous_close": "114320.8",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283520000,
+      "signal_bar_open_ms": 1759283460000,
+      "signal_available_ms": 1759283520000,
+      "previous_open": "114320.7",
+      "previous_close": "114300.4",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283580000,
+      "signal_bar_open_ms": 1759283520000,
+      "signal_available_ms": 1759283580000,
+      "previous_open": "114300.4",
+      "previous_close": "114367.7",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283640000,
+      "signal_bar_open_ms": 1759283580000,
+      "signal_available_ms": 1759283640000,
+      "previous_open": "114367.8",
+      "previous_close": "114390.0",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283700000,
+      "signal_bar_open_ms": 1759283640000,
+      "signal_available_ms": 1759283700000,
+      "previous_open": "114390.0",
+      "previous_close": "114443.9",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283760000,
+      "signal_bar_open_ms": 1759283700000,
+      "signal_available_ms": 1759283760000,
+      "previous_open": "114444.0",
+      "previous_close": "114489.3",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283820000,
+      "signal_bar_open_ms": 1759283760000,
+      "signal_available_ms": 1759283820000,
+      "previous_open": "114489.3",
+      "previous_close": "114482.5",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283880000,
+      "signal_bar_open_ms": 1759283820000,
+      "signal_available_ms": 1759283880000,
+      "previous_open": "114482.6",
+      "previous_close": "114490.2",
+      "target": "0.010"
+    },
+    {
+      "execution_ms": 1759283940000,
+      "signal_bar_open_ms": 1759283880000,
+      "signal_available_ms": 1759283940000,
+      "previous_open": "114490.3",
+      "previous_close": "114471.1",
+      "target": "0"
+    }
+  ],
+  "limitations": [
+    "No measured quote spread or depth",
+    "Zero feed and order latency",
+    "Prior-bar signal assumed available exactly at next open: optimistic boundary",
+    "No funding events in selected window",
+    "No liquidation or maker queue comparison",
+    "Fee is fixed experimental 0.1%, not asserted venue tier",
+    "No profitability or robustness conclusion"
+  ]
+}

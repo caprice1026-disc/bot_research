@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "fixture": "synthetic_maker_entry_latency",
+  "python": "3.12.16",
+  "hftbacktest": "2.4.4",
+  "source_rows_sha256": "b8bb330614aff324d2f714f8798d0d591432b2deb043a6ea9d43dcd7fbe6b475",
+  "queue_model": "risk_adverse",
+  "exchange_model": "no_partial_fill",
+  "maker_fee": 0,
+  "taker_fee": 0,
+  "fast": {
+    "entry_latency_ns": 10000000,
+    "response_latency_ns": 0,
+    "submitted_ns": 1700000000100000000,
+    "observed_ns": 1700000002100000000,
+    "status": "FILLED",
+    "position": 1.0,
+    "filled_qty": 1.0,
+    "fill_price": 100.0,
+    "liquidity_role": "maker_post_only",
+    "exchange_processed_ns": 1700000000300000000
+  },
+  "slow": {
+    "entry_latency_ns": 500000000,
+    "response_latency_ns": 0,
+    "submitted_ns": 1700000000100000000,
+    "observed_ns": 1700000002100000000,
+    "status": "NEW",
+    "position": 0.0,
+    "filled_qty": 0.0,
+    "fill_price": null,
+    "liquidity_role": null,
+    "exchange_processed_ns": 1700000000600000000
+  },
+  "not_validated": [
+    "real queue calibration",
+    "partial fills",
+    "market impact",
+    "profitability",
+    "live execution"
+  ]
+}

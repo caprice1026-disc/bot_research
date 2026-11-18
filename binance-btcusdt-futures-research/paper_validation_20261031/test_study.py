@@ -16,6 +16,69 @@ CFG=dict(initial_equity=10000.,fee_bps=5.,maintenance_margin_rate_proxy=.005,nea
 
 
 class AccountingTests(unittest.TestCase):
+    def _gap(self, side, mark, rate=0., fee_bps=0., initial=10000., trade=None, extreme=None):
+        """Three priced minutes: open, scheduled flat, attempted re-entry."""
+        m=constant_market(3)
+        for key in ("open","high","low","close"):
+            m[key][1:] = mark if trade is None else trade
+        for key in ("mark_open","mark_high","mark_low"):
+            m[key][1:] = mark
+        if extreme is not None:
+            m["mark_low" if side > 0 else "mark_high"][1] = extreme
+        m["funding_rate"][1]=rate
+        cfg={**CFG,"fee_bps":fee_bps,"initial_equity":initial}
+        return replay(m,[0,1,2],[side*2.,0.,side],0,3,cfg,0.)
+
+    def test_opening_gap_liquidates_old_long_and_short_before_flat_and_halts(self):
+        for side,mark in [(1,40.),(-1,160.)]:
+            with self.subTest(side=side):
+                eq,exp,q,t=self._gap(side,mark)
+                np.testing.assert_allclose(eq,[10000.,0.,0.])
+                np.testing.assert_allclose(q,[side*200.,0.,0.])
+                self.assertEqual(t[5],-12000.)   # 200 * adverse 60
+                self.assertEqual(t[6],2)         # open + forced exit, not a later re-entry
+                self.assertEqual(t[7],1)         # a minute counted at most once
+                self.assertEqual(t[8],1)
+                self.assertEqual(t[9],2000.)     # proxy floor, not investment PnL
+                self.assertAlmostEqual(eq[-1],10000.+t[5]-t[1]-t[2]-t[3]+t[9])
+
+    def test_gap_uses_mark_open_not_trade_open_or_future_minute_extreme(self):
+        # 200 * (50.25 - 100) = -9,950. Equity 50 <= maintenance 50.25.
+        # Trade open is 95; the minute's later worst mark is 1. Neither prices the forced exit.
+        eq,_,q,t=self._gap(1,50.25,trade=95.,extreme=1.)
+        np.testing.assert_allclose(eq,[10000.,50.,50.])
+        self.assertEqual(t[8],1)
+        self.assertEqual(t[9],0.)
+        self.assertEqual(q[-1],0.)
+
+    def test_boundary_funding_can_trigger_or_avert_breach_before_flat(self):
+        # Old q=200, mark 50.5: equity 100, maintenance 50.5.
+        # Paying 50.5 (rate 0.005) leaves 49.5 and triggers liquidation.
+        eq,_,_,t=self._gap(1,50.5,rate=.005)
+        self.assertAlmostEqual(t[3],50.5)
+        self.assertAlmostEqual(eq[1],49.5)
+        self.assertEqual(t[8],1)
+        # Old equity 50 at mark 50.25; receiving 50.25 averts opening breach.
+        eq,_,_,t=self._gap(1,50.25,rate=-.005,extreme=1.)
+        self.assertAlmostEqual(t[3],-50.25)
+        self.assertAlmostEqual(eq[1],100.25)
+        self.assertEqual(t[8],0)  # elective flat before any later extreme
+
+    def test_gap_floor_reconciles_actual_forced_close_fees(self):
+        # 10,020 starting cash, 200 @ 100, 20 entry fee. At 40: -2,000
+        # before 8 forced-close fee; the model absorbs the resulting 2,008.
+        eq,_,_,t=self._gap(1,40.,fee_bps=10.,initial=10020.)
+        self.assertAlmostEqual(t[1],28.)
+        self.assertAlmostEqual(t[4],28000.)
+        self.assertAlmostEqual(t[9],2008.)
+        self.assertAlmostEqual(eq[-1],10020.+t[5]-t[1]-t[2]-t[3]+t[9])
+
+    def test_solvent_flat_is_not_liquidated_by_future_intrabar_low(self):
+        eq,_,_,t=self._gap(1,60.,extreme=1.)
+        self.assertEqual(eq[1],2000.)
+        self.assertEqual(t[8],0)
+        self.assertEqual(t[9],0.)
+
     def test_round_trip_cost_is_charged_on_actual_notional(self):
         m=constant_market()
         eq,_,_,totals=replay(m,[0],[1.],0,10,CFG,slip_bps=1.)
