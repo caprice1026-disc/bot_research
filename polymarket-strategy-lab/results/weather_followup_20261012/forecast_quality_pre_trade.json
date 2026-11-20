@@ -1,0 +1,80 @@
+{
+  "chicago": {
+    "frozen_original": {
+      "days": 7,
+      "mae_f": 2.210311568954199,
+      "rmse_f": 2.431973258106955,
+      "mean_categorical_brier": 0.9004588726477986
+    },
+    "ncep_nbm_conus": {
+      "days": 7,
+      "mae_f": 1.0428571428571343,
+      "rmse_f": 1.1324562432417091,
+      "mean_categorical_brier": 0.6293798951344306
+    },
+    "gfs_global": {
+      "days": 7,
+      "mae_f": 1.461904761904766,
+      "rmse_f": 1.5952568584539775,
+      "mean_categorical_brier": 0.7546674990737292
+    },
+    "ecmwf_ifs025": {
+      "days": 7,
+      "mae_f": 3.4747619047619014,
+      "rmse_f": 3.5883159157341606,
+      "mean_categorical_brier": 1.0446237945489312
+    }
+  },
+  "nyc": {
+    "frozen_original": {
+      "days": 7,
+      "mae_f": 1.6470605397520066,
+      "rmse_f": 1.7632231191718575,
+      "mean_categorical_brier": 0.6963306090143303
+    },
+    "ncep_nbm_conus": {
+      "days": 7,
+      "mae_f": 1.1561904761904762,
+      "rmse_f": 1.4425990653996914,
+      "mean_categorical_brier": 0.675745810481616
+    },
+    "gfs_global": {
+      "days": 7,
+      "mae_f": 3.194285714285712,
+      "rmse_f": 3.3345121725031097,
+      "mean_categorical_brier": 0.9179082770644137
+    },
+    "ecmwf_ifs025": {
+      "days": 7,
+      "mae_f": 1.085714285714285,
+      "rmse_f": 1.3630032200173927,
+      "mean_categorical_brier": 0.6616223203270206
+    }
+  },
+  "atlanta": {
+    "frozen_original": {
+      "days": 7,
+      "mae_f": 1.1813901047884343,
+      "rmse_f": 1.415701277215017,
+      "mean_categorical_brier": 0.6596044011289238
+    },
+    "ncep_nbm_conus": {
+      "days": 7,
+      "mae_f": 2.9547619047619116,
+      "rmse_f": 3.3909138628689566,
+      "mean_categorical_brier": 0.9327560438391151
+    },
+    "gfs_global": {
+      "days": 7,
+      "mae_f": 2.423809523809527,
+      "rmse_f": 3.2588585010949362,
+      "mean_categorical_brier": 0.8416029899924808
+    },
+    "ecmwf_ifs025": {
+      "days": 7,
+      "mae_f": 0.6161904761904761,
+      "rmse_f": 0.9589114198460212,
+      "mean_categorical_brier": 0.5995889697746177
+    }
+  }
+}

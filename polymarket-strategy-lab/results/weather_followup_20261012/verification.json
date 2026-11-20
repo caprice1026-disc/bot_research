@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "checked_at_utc": "2026-10-11T17:26:09.679886+00:00",
+  "scenario_fills_checked": 593,
+  "city_days": 21,
+  "markets": 231,
+  "input_files_hashed": 1792,
+  "summary_sha256": "b5fda0f8f65c779e35308dc334bcfb4185cd168b85b3bc56d4663c87e91a7613",
+  "scope": "Data identity, fixed fit, point-in-time books and accounting; not profitability or live fills"
+}

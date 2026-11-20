@@ -1,0 +1,55 @@
+{
+  "scope": "Post-result description of primary selected fills only",
+  "providers": {
+    "frozen_original": {
+      "source_path": "results\\weather_followup_20261012\\frozen_original\\primary_fills.json",
+      "source_sha256": "c4a4b8b770306b77a943c7a8e3e1a8f93212760ced2e6774ea40565463da89bc",
+      "sides": {
+        "Yes": {
+          "fills": 4,
+          "wins": 0,
+          "net_pnl": -1.21441,
+          "mean_predicted_win_probability": 0.2928760582138556,
+          "observed_win_rate": 0.0
+        },
+        "No": {
+          "fills": 13,
+          "wins": 2,
+          "net_pnl": -21.69258,
+          "mean_predicted_win_probability": 0.7691685086128082,
+          "observed_win_rate": 0.15384615384615385
+        }
+      },
+      "sigma_by_city_f": {
+        "chicago": 2.0,
+        "nyc": 2.252746378019626,
+        "atlanta": 2.0
+      }
+    },
+    "ncep_nbm_conus": {
+      "source_path": "results\\weather_followup_20261012\\ncep_nbm_conus\\primary_fills.json",
+      "source_sha256": "a24ef72b0e875837e4f1b3f8bfcc1ecbb1731ae0cf450661313032cf47852b78",
+      "sides": {
+        "Yes": {
+          "fills": 4,
+          "wins": 0,
+          "net_pnl": -2.32791,
+          "mean_predicted_win_probability": 0.29183134214082485,
+          "observed_win_rate": 0.0
+        },
+        "No": {
+          "fills": 13,
+          "wins": 1,
+          "net_pnl": -28.37918,
+          "mean_predicted_win_probability": 0.7514027929297026,
+          "observed_win_rate": 0.07692307692307693
+        }
+      },
+      "sigma_by_city_f": {
+        "chicago": 2.0,
+        "nyc": 2.288642623362429,
+        "atlanta": 2.0
+      }
+    }
+  }
+}

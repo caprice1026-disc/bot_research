@@ -1,0 +1,15 @@
+{
+  "checked_date_jst": "2026-10-12",
+  "sources": [
+    {"url": "https://open-meteo.com/en/docs/single-runs-api", "use": "Initialization-specific historical forecasts; run time is not publication time; 4-6 hour global-model publication lag"},
+    {"url": "https://open-meteo.com/en/docs/gfs-api", "use": "NBM CONUS 2.5km numerical guidance via Open-Meteo; distinct from a final human-adjusted NWS point forecast"},
+    {"url": "https://www.weather.gov/news/200318-nbm32", "use": "NWS explanation of the blend's bias correction and component weighting, not a guarantee of current local trading accuracy"},
+    {"url": "https://www.ecmwf.int/en/elibrary/81748-evaluation-ecmwf-forecasts", "use": "2026 forecast performance evaluation; short-range surface-variable leadership varies across centres"},
+    {"url": "https://developer.accuweather.com/faq", "use": "Official FAQ explicitly says historical forecasts are not offered by Developer Portal or Enterprise APIs"},
+    {"url": "https://www.weathercompany.com/news/twco-widens-lead-as-worlds-most-accurate-forecaster/", "use": "ForecastWatch aggregate accuracy claim; study commissioned by The Weather Company; no proof for exact airport daily-high bucket profit"},
+    {"url": "https://developer.weather.com/docs/getting-started", "use": "API key and account required; available credentials and initialization-specific archive for this study not established"},
+    {"url": "https://open-meteo.com/en/pricing", "use": "Evaluation free tier and commercial licensing distinction; current exact subscription prices not established"},
+    {"url": "https://docs.polymarket.com/trading/fees", "use": "Weather taker rate 0.05 and shares * rate * price * (1-price), 5 decimal rounding"}
+  ],
+  "unsupported_claims_not_used": ["Any commercial forecaster is always best at these airports", "Weather observation history is a historical forecast", "Better temperature MAE guarantees higher trading profit"]
+}
