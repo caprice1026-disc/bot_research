@@ -1,0 +1,30 @@
+{
+  "source": "https://arxiv.org/html/2606.04574v3",
+  "evidence": "arithmetic on author-reported table, not a rerun",
+  "seeds": [
+    0,
+    1,
+    42,
+    100,
+    999
+  ],
+  "cagr_pct": [
+    33.46,
+    48.69,
+    199.45,
+    -3.0,
+    43.2
+  ],
+  "mdd_pct": [
+    42.5,
+    47.95,
+    35.27,
+    42.48,
+    59.11
+  ],
+  "mean_cagr_pct": 64.36,
+  "median_cagr_pct": 43.2,
+  "mean_cagr_excluding_best_seed_pct": 30.587500000000002,
+  "positive_seed_count": 4,
+  "mean_mdd_pct": 45.462
+}
