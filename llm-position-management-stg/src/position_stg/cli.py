@@ -11,11 +11,16 @@ from .reporting import archive, daily_summary
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sqlite", help="Local development only; omitted uses GCP ADC")
+    parser.add_argument("--env-file", help="Explicit .env for run-testnet-local; never copied to SQLite")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("status")
     commands.add_parser("pause")
     commands.add_parser("resume")
     commands.add_parser("fixture")
+    local_run = commands.add_parser("run-testnet-local", help="Continuous live Testnet runner with SQLite")
+    local_run.add_argument("--max-cycles", type=int, help="Optional finite number of five-minute decisions")
+    commands.add_parser("testnet-summary", help="Read local Testnet history; no network access")
+    commands.add_parser("testnet-stop", help="Request orderly local shutdown; retain exchange stop orders")
     testnet = commands.add_parser("testnet-tick")
     testnet.add_argument("--decision", required=True, help="JSON file with one explicit test scenario")
     report = commands.add_parser("report")
@@ -27,6 +32,42 @@ def main():
     cost.add_argument("--usd", required=True)
     cost.add_argument("--source", choices=["estimate", "billing"], required=True)
     args = parser.parse_args()
+    if args.command in {"run-testnet-local", "testnet-summary", "testnet-stop"}:
+        if not args.sqlite:
+            raise SystemExit("local Testnet commands require --sqlite")
+        if args.command == "run-testnet-local":
+            if args.max_cycles is not None and args.max_cycles < 1:
+                raise SystemExit("--max-cycles must be positive")
+            from .local import load_environment, live_configuration, process_lock, run_local
+            try:
+                values = load_environment(args.env_file)
+                cfg, credentials = live_configuration(values)
+                with process_lock(args.sqlite):
+                    store = SQLiteStore(args.sqlite)
+                    control, version = store.read("live-control")
+                    store.write("live-control", {"stop_requested": False, "at": time.time()}, version)
+                    run_local(cfg, credentials, values, store, max_cycles=args.max_cycles)
+            except KeyboardInterrupt:
+                print(json.dumps({"status": "stopped", "exchange_stops_retained": True}), flush=True)
+            except Exception as exc:
+                # Provider exceptions can contain HTTP details; never print their raw messages.
+                print(json.dumps({"status": "startup_failed", "error_type": type(exc).__name__}), flush=True)
+                raise SystemExit(1) from None
+        else:
+            from pathlib import Path
+            if not Path(args.sqlite).is_file():
+                raise SystemExit("local Testnet database does not exist")
+            store = SQLiteStore(args.sqlite)
+            if args.command == "testnet-summary":
+                from .live import summary
+                print(json.dumps(summary(store), ensure_ascii=False, indent=2))
+            else:
+                _, version = store.read("live-control")
+                store.write("live-control", {"stop_requested": True, "at": time.time()}, version)
+                print(json.dumps({"status": "stop_requested", "exchange_stops_retained": True}))
+        return
+    if args.env_file:
+        raise SystemExit("--env-file is supported by run-testnet-local only")
     cfg = Config.from_env()
     if args.command == "testnet-tick" and not cfg.bot_id.endswith("-testnet"):
         raise SystemExit("use a separate BOT_ID ending in -testnet")

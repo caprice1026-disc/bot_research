@@ -9,12 +9,15 @@ from .config import dec
 
 
 class Market:
-    def __init__(self, session=None, clock=time.time):
+    def __init__(self, session=None, clock=time.time, *, base_url="https://api.hyperliquid.xyz"):
+        if base_url not in {"https://api.hyperliquid.xyz", "https://api.hyperliquid-testnet.xyz"}:
+            raise ValueError("unsupported Hyperliquid market endpoint")
         self.session = session or requests.Session()
         self.clock = clock
+        self.base_url = base_url
 
     def info(self, body):
-        response = self.session.post("https://api.hyperliquid.xyz/info", json=body, timeout=(5, 10))
+        response = self.session.post(self.base_url + "/info", json=body, timeout=(5, 10))
         response.raise_for_status()
         return response.json()
 

@@ -3,6 +3,7 @@ import json
 import sqlite3
 import time
 import uuid
+from contextlib import contextmanager, closing
 from copy import deepcopy
 from pathlib import Path
 
@@ -16,10 +17,15 @@ class SQLiteStore:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.path = str(path)
         with self.connect() as db:
+            db.execute("PRAGMA journal_mode=WAL")
             db.execute("CREATE TABLE IF NOT EXISTS docs (id TEXT PRIMARY KEY, version INTEGER, body TEXT)")
 
+    @contextmanager
     def connect(self):
-        return sqlite3.connect(self.path, timeout=10)
+        with closing(sqlite3.connect(self.path, timeout=10)) as db, db:
+            db.execute("PRAGMA synchronous=NORMAL")
+            db.execute("PRAGMA busy_timeout=10000")
+            yield db
 
     def read(self, key):
         with self.connect() as db:
@@ -37,7 +43,8 @@ class SQLiteStore:
 
     def items(self, prefix):
         with self.connect() as db:
-            rows = db.execute("SELECT id,version,body FROM docs ORDER BY id").fetchall()
+            rows = db.execute("SELECT id,version,body FROM docs WHERE id>=? AND id<? ORDER BY id",
+                              (prefix, prefix + "\uffff")).fetchall()
         return [(key, json.loads(body), version) for key, version, body in rows if key.startswith(prefix)]
 
     def read_many(self, keys):

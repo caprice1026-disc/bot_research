@@ -1,8 +1,36 @@
-# 継続保有型BTC bot：初期実装
+# 継続保有型BTC bot
 
-Hyperliquid Mainnetの公開データで仮想売買し、Geminiの判断・継続保有・費用を記録する。Cloud Runへ配備するHTTPアプリ、Firestore永続化、管理CLI、Testnet専用の注文検証経路を含む。実資金を使う注文経路はない。
+Hyperliquid Mainnetの公開データによる仮想売買と、ローカルで継続保有するTestnet常時運転を持つ。Geminiの判断・理由・戦略レビュー・実行結果を記録する。Cloud Run用HTTPアプリ、Firestore接続、管理CLIも含む。Mainnetの実資金を使う注文経路はない。
 
-この版は接続前の初期実装である。GCPプロジェクト作成、実Gemini・Firestore・Discord・Hyperliquidへの接続、Testnet実注文、30日評価は未実施。オフラインのテスト成功は、これらの成功や収益性を示さない。
+GCPへの配備と30日評価は未実施。ローカルTestnetの運転記録はshadowの収益比較と分ける。接続・注文・保護の成功は収益性の証明にはしない。
+
+## ローカルTestnet常時運転
+
+`run-testnet-local` は5分ごとに判断し、holdなら5分を越えて保有する。2時間ごとのレビューは相場仮説・売買ルール・失敗傾向を更新する。約15秒ごとに注文とSLを照合し、モデルの応答待ち中も保護確認を続ける。初回レビュー成功前、戦略期限切れ、期限超過応答、照合未完了時にはリスクを増やさない。ニュース・Discord・Firestoreはこの経路では使わない。
+
+市場特徴量も発注もTestnetのBTCを使用する。新規DBでの起動には建玉・注文のない専用口座を要求し、Agent認可と担保を確認する。Unified AccountのSpot USDC共有担保に対応する。フラットで起動する際に3倍isolatedへ設定し、数量は現在純資産3倍とSL追加損失3%の両方で制限する。未知の注文や説明できない建玉変更は停止状態とする。
+
+リポジトリルートで実行する。新しい端末ではPython 3.12以上の仮想環境へ `pip install -e './llm-position-management-stg[test]'` で導入する。既存端末の環境は次のパス。
+
+```powershell
+$botPython = '.\llm-position-management-stg\.venv\Scripts\python.exe'
+& $botPython -X utf8 -B -m position_stg.cli --env-file .env --sqlite llm-position-management-stg/data/testnet-live.db run-testnet-local
+```
+
+`.env` はこのコマンドで明示的に読み込む。`GEMINI_API_KEY`、`TRADER_MODEL=gemini-3.6-flash`、`REVIEWER_MODEL=gemini-3.8-flash`、`HL_test_wallet`、`HL_test_wallet_private_key` を使える。`TESTNET_ACCOUNT_ADDRESS`、`TESTNET_PRIVATE_KEY` という名前も受け付けるが、両方を指定するなら一致が必要。`BOT_ID` の既定は `btc-continuous-v1-testnet`、明示する場合も末尾を `-testnet` とする。`HL_NETWORK=mainnet` は拒否する。キーやアドレスはDB・起動ログへコピーしない。
+
+無指定では常時運転する。有限の動作確認には末尾へ `--max-cycles 1` を付ける。開始が5分枠から60秒以上遅れている場合、その枠を見送って次の枠へ進む。別プロセスが同じDBを使用している場合は起動を拒否する。停止・再開には同じSQLiteと同じ設定を使い、進行中の枠や結果不明の有料呼び出しを再送しない。設定の指紋が変わったDBはそのまま再利用しない。
+
+SQLiteだけからサマリーを読み、後で判断理由と戦略を確認できる。
+
+```powershell
+& $botPython -X utf8 -B -m position_stg.cli --sqlite llm-position-management-stg/data/testnet-live.db testnet-summary
+& $botPython -X utf8 -B -m position_stg.cli --sqlite llm-position-management-stg/data/testnet-live.db testnet-stop
+```
+
+`testnet-stop` は次の安全な区切りでプロセスを終了させる要求で、全決済の指示ではない。取引所に受理されたSLは残す。Windowsのバックグラウンド起動には `Start-Process -WindowStyle Hidden` とstdout/stderrのファイル出力を使う。PCのスリープ・再起動中はbotが動かないため、再開時に同じDBから照合する。
+
+DBの `docs` テーブルには、`runtime`（注文管理）、`live-runtime`（戦略と処理位置）、`live-cycle-*`（判断理由・提案・前後状態・適用結果）、`llm-live-*`（モデル入力・応答・token・応答時間・費用推定）、`intent-*`（送信前の注文意図）、`live-fill-*`、`live-funding-*`、`live-account-*` を保存する。サマリーは口座評価差、観測した約定損益・手数料・Funding、API判明分と不明予約額を区別する。入出金と含み損益を分離した完全会計や、取引所履歴の無期限保存を保証しない。取得不足・不明応答をゼロ損失や成功取引として扱わない。
 
 ## 起動とオフライン確認
 
@@ -63,7 +91,7 @@ position-stg archive --bucket YOUR_ARCHIVE_BUCKET
 
 ## Testnetでの注文機能検証
 
-Testnet専用の口座・別BOT_ID・別状態保存先を使う。`testnet-tick`は明示した1判断を検証するCLIで、30日の収益評価経路とは独立する。継続自動運転やGeminiへの直接接続はこの経路ではまだ行わない。既存Testnet接続部品と同じ公式SDKを使い、Mainnetの秘密鍵や発注先を受け付けない。
+Testnet専用の口座・別BOT_ID・別状態保存先を使う。`testnet-tick`は明示した1判断を検証するCLIで、30日の収益評価経路とは独立する。この単発コマンド自体はGeminiへ接続しない。継続自動運転には上の `run-testnet-local` を使う。既存Testnet接続部品と同じ公式SDKを使い、Mainnetの発注先を受け付けない。
 
 ```powershell
 $env:BOT_ID = 'btc-validation-testnet'
