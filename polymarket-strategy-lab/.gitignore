@@ -3,6 +3,10 @@ data/*
 data/weather_deep/*
 !data/weather_deep/metadata-manifest.json
 !data/weather_deep/books-manifest.json
+!data/weather_followup_20261012/
+data/weather_followup_20261012/*
+!data/weather_followup_20261012/metadata-manifest.json
+!data/weather_followup_20261012/books-manifest.json
 references/sources/
 references/archives/
 research/probes/
@@ -10,3 +14,10 @@ __pycache__/
 .pytest_cache/
 .probe-deps/
 .plot-deps/
+
+# Reproducible console transcripts; retain scripts, configs and research results.
+research/**/*-log.txt
+research/**/test-results.txt
+research/**/*-install.txt
+# REPORT.md links this historical test transcript as public validation evidence.
+!research/test-results.txt

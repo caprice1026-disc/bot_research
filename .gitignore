@@ -136,6 +136,12 @@ celerybeat.pid
 
 # Environments
 .env
+# Local environment variants can contain secrets; templates remain trackable.
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+!.env.template
 .envrc
 .venv
 env/
