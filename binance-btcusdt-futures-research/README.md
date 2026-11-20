@@ -37,3 +37,7 @@ python -m venv .venv
 - `results/verification.json`: 画像・CSV・入力ハッシュ・直接将来参照監査
 
 Fundingの遅延、Metricsの公式欠損、清算・CMEギャップ価格の不在は、埋めずに`insufficient_data`または明示的な代理指標として記録します。結果は探索的研究であり、売買推奨や実運用の成績ではありません。
+
+## AIトレーダー論文の検証（2026-10-31）
+
+[検証レポート](paper_validation_20261031/REPORT.md)では、2026年10月23〜30日の3論文を一次資料と照合し、公式RL保存結果1,660件を再計算しています。Binance BTCUSDT無期限先物の2025年10月〜2026年9月データを使い、報酬・集中リスク・再起動復旧を独立した応用実験として検証しました。[再現手順](paper_validation_20261031/README.md)と結果CSVを保存しています。

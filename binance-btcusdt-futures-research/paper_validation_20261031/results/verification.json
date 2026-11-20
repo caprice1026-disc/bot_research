@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "experiment_rows": 48,
+  "monthly_fits": 63,
+  "checked_artifacts": 13,
+  "data_status": "complete",
+  "future_label_boundary": "passed",
+  "fault_trials": 600,
+  "scope": "artifact integrity and specified invariants, not proof of profitability"
+}

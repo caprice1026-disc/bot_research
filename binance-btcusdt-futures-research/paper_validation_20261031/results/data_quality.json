@@ -1,0 +1,26 @@
+{
+  "status": "complete",
+  "start": "2025-10-01",
+  "end_exclusive": "2026-10-01",
+  "symbol": "BTCUSDT",
+  "archives": 37,
+  "klines": {
+    "rows": 525600,
+    "missing": 0,
+    "duplicate": 0
+  },
+  "markPriceKlines": {
+    "rows": 525600,
+    "missing": 0,
+    "duplicate": 0
+  },
+  "funding": {
+    "rows": 1095,
+    "missing": 0,
+    "duplicate": 0,
+    "max_timestamp_offset_ms": 26,
+    "settlement_price": "archived mark-price 1m open at normalized boundary (approximation)"
+  },
+  "normalized_sha256": "021af1f7ad33153ea20870287cdef75d28b8522f7013f69073bf9d15d3ea860f",
+  "source_manifest_sha256": "165b315dc93439e3782ef2330808a9217745696540cc3b0c30f2131b38a842b6"
+}

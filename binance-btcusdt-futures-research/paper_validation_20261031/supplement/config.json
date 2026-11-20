@@ -1,0 +1,10 @@
+{
+  "status": "post_hoc_sensitivity_after_primary_results",
+  "rationale": "Primary fast rule arms lost almost all capital to turnover; add lower-turnover controls and latency sensitivity without selecting a winner.",
+  "daily_momentum_days": [3, 7, 14, 28],
+  "daily_reversion_days": [3, 7],
+  "decision_delay_minutes": [0, 1, 5, 10],
+  "common_signal_weight": 0.75,
+  "net_target_cap": 0.35,
+  "static_shared_scale": 0.5
+}
