@@ -3,6 +3,7 @@ import json
 import time
 from datetime import datetime, timezone
 from .config import dec
+from .entries import SIDES, side_schema, validate_entries
 
 TRADER_SCHEMA = {"type": "object", "properties": {
     "intent": {"type": "string", "enum": ["hold", "set_target"]},
@@ -29,6 +30,43 @@ Do not change risk limits, account, model, permissions, stopping or resumption r
 Keep the strategy unchanged if evidence is insufficient. Distinguish facts and hypotheses.
 Evidence IDs must refer to the supplied news. Do not invent sources. No browsing.
 """
+
+LIVE_REVIEW_PROMPT = """Review this BTC Hyperliquid Testnet strategy. Use only supplied observations.
+Return both long and short entry plans. For each choose an hourly trend and a completed 5m candle trigger.
+Direction comparisons are mirrored: above for longs, below for shorts. sma20_cross requires a fresh crossing;
+sma20_retest requires the previous close on the trend side, a touch of the SMA and a close back on that side;
+six_bar_breakout compares the close to the preceding six highs/lows. close_vs_sma20 only checks the last close.
+Set a positive maximum bid/ask spread in basis points and a signed maximum notional/equity multiple from
+entry_contract.multiples for that side. If there are no available sizes, disable the side and use 0.0.
+For each side give a concise rationale, invalidation for a protective stop, and concrete reconsideration
+condition (especially if disabled). Consider trend continuation as well as reversal. A signal permits an entry;
+it never obliges a trade. Use entry_summary to distinguish absent signals, wide spreads and discretionary holds.
+Use active_rules for management of existing positions only. Express all sizing in the structured fields;
+never prescribe margin percentages, passive orders, or alter risk limits. No news is supplied: evidence_ids=[].
+Use short concrete explanations (under 500 characters each) and at most 10 rules and failure modes. No browsing.
+"""
+LIVE_TRADER_PROMPT = TRADER_PROMPT + """This account trades on Hyperliquid Testnet. Use entry_contract for executable sizes,
+costs and order type. entry_checks evaluates both plans using the current closed candles and book. Only open/add
+on an eligible side up to its signed max_target_multiple. Entry conditions do not prevent reducing or closing a
+position or maintaining its protective stop. Keep targets in equity notional units. If flat, consider each
+eligible side and its invalidation and costs. Explain briefly why you acted or declined an eligible signal;
+if neither side qualifies, identify the failed conditions. No minimum trade count.
+"""
+
+
+def live_review_schema(cfg):
+    sides = {side: side_schema(cfg, side) for side in SIDES}
+    entries = {"type": "object", "properties": sides, "required": list(sides), "additionalProperties": False}
+    return {**REVIEW_SCHEMA, "properties": {**REVIEW_SCHEMA["properties"], "entries": entries},
+            "required": [*REVIEW_SCHEMA["required"], "entries"]}
+
+
+def validate_live_review(raw, cfg):
+    if not isinstance(raw, dict) or "entries" not in raw:
+        raise ValueError("missing directional strategy")
+    validate_review({k: v for k, v in raw.items() if k != "entries"}, [])
+    validate_entries(raw["entries"], cfg)
+    return raw
 
 
 def validate_review(raw, news):
@@ -57,7 +95,12 @@ class Gemini:
     def call(self, role, request_id, inputs):
         cfg = self.cfg
         schema = TRADER_SCHEMA if role == "trader" else REVIEW_SCHEMA
-        prompt = (TRADER_PROMPT if role == "trader" else REVIEW_PROMPT) + json.dumps(inputs, default=str, sort_keys=True)
+        instructions = TRADER_PROMPT if role == "trader" else REVIEW_PROMPT
+        if "entry_contract" in inputs:
+            instructions = LIVE_TRADER_PROMPT if role == "trader" else LIVE_REVIEW_PROMPT
+            if role == "reviewer":
+                schema = live_review_schema(cfg)
+        prompt = instructions + json.dumps(inputs, default=str, sort_keys=True)
         if len(prompt.encode()) > cfg.max_prompt_bytes:
             raise ValueError("prompt too large")
         key = "llm-" + request_id

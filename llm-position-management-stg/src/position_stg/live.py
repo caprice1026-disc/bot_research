@@ -12,7 +12,8 @@ import uuid
 
 from .config import dec
 from .domain import parse_decision
-from .policy import validate_review
+from .entries import entry_contract, entry_summary, evaluate_entries, permits_increase
+from .policy import validate_live_review
 from .store import Conflict
 
 
@@ -237,7 +238,7 @@ class LiveRunner:
         return market, features
 
     def _fresh_strategy(self, state):
-        return (state["last_review"] is not None
+        return (state["last_review"] is not None and "entries" in (state.get("strategy") or {})
                 and (state["last_review_attempt"] is None or state["last_review_attempt"] <= state["last_review"])
                 and 0 <= self.clock() - state["last_review"] <= self.cfg.strategy_ttl_seconds)
 
@@ -297,17 +298,20 @@ class LiveRunner:
             event["market_before"] = deepcopy(market)
             event["features"] = features
             state = self._state()
-            due = state["last_review_attempt"] is None or self.clock() - state["last_review_attempt"] >= REVIEW_SECONDS
+            due = (not state.get("directional_review_attempted") or state["last_review_attempt"] is None
+                   or self.clock() - state["last_review_attempt"] >= REVIEW_SECONDS)
+            contract = entry_contract(self.cfg)
             if due:
                 phase = "reviewer"
-                self._update(last_review_attempt=self.clock())
+                self._update(last_review_attempt=self.clock(), directional_review_attempted=True)
+                recent = [r for r in state["recent_decisions"] if slot - REVIEW_SECONDS <= r["scheduled_at"] < slot]
                 raw = self._policy_call("reviewer", slot, {
                     "market": market, "features": features, "account": before["snapshot"],
                     "strategy": state["strategy"], "news": [], "news_status": "disabled",
-                    "recent_decisions": state["recent_decisions"][-24:],
+                    "entry_contract": contract, "entry_summary": entry_summary(recent), "recent_decisions": recent,
                     "execution_evidence": self._review_evidence(state),
                 }, event)
-                strategy = validate_review(raw, [])
+                strategy = validate_live_review(raw, self.cfg)
                 strategy_version = state["strategy_version"] + 1
                 strategy = {**strategy, "version": strategy_version, "updated_at": self.clock()}
                 state = self._update(strategy=strategy, strategy_version=strategy_version,
@@ -328,16 +332,22 @@ class LiveRunner:
                 return event
             phase = "trader"
             runtime = self.store.read("runtime")[0] or {}
+            entries = state["strategy"]["entries"]
+            checks = evaluate_entries(entries, features, market)
+            event.update(market_before=deepcopy(market), features=features, entry_checks=checks)
             inputs = {"market": market, "features": features,
                       "account": deepcopy(runtime.get("account", before["snapshot"])),
                       "account_snapshot": before["snapshot"], "equity": before["snapshot"]["equity"],
                       "strategy": state["strategy"], "recent_decisions": state["recent_decisions"][-6:],
+                      "entry_contract": contract, "entry_checks": checks,
                       "risk": {"max_exposure": str(self.cfg.max_exposure), "stop_risk": str(self.cfg.stop_risk)}}
             raw = self._policy_call("trader", slot, inputs, event)
-            parse_decision(raw)
+            decision = parse_decision(raw)
             event["proposal"], event["reason"] = deepcopy(raw), raw["reason"]
             phase = "execution"
-            applied = self.controller.tick(raw, slot, allow_increase=self._fresh_strategy(self._state()),
+            entry_allowed = permits_increase(decision, entries, checks)
+            event["entry_allows_increase"] = entry_allowed
+            applied = self.controller.tick(raw, slot, allow_increase=entry_allowed and self._fresh_strategy(self._state()),
                                            observed_mark=market["mark"], expected_quantity=before["snapshot"]["quantity"])
             event["execution"] = deepcopy(applied)
             event["decision_status"] = applied.get("status", "unknown")
@@ -366,7 +376,8 @@ class LiveRunner:
                         event["status"] = "partial"
             self.store.write(key, event, version)
             state = self._state()
-            recent = {k: deepcopy(event.get(k)) for k in ("scheduled_at", "status", "decision_status", "proposal", "reason", "errors")}
+            recent = {k: deepcopy(event.get(k)) for k in ("scheduled_at", "status", "decision_status", "proposal", "reason",
+                                                          "errors", "entry_checks", "entry_allows_increase")}
             execution = event.get("execution", {})
             recent["execution"] = {k: deepcopy(execution[k]) for k in ("status", "plan", "error_type") if k in execution}
             for source, name in ((event.get("before_trader", event.get("before", {})), "account_before"),
@@ -455,7 +466,9 @@ def summary(store, *, limit=6):
             "last_maintenance": state.get("last_maintenance"),
             "last_maintenance_error": state.get("last_maintenance_error"),
             "last_loop_error": state.get("last_loop_error"),
-            "recent_decisions": [{k: r.get(k) for k in ("scheduled_at", "status", "decision_status", "reason", "proposal", "errors")} for r in cycles[-limit:]],
+            "entry_summary_last_24_cycles": entry_summary(cycles[-24:]),
+            "recent_decisions": [{k: r.get(k) for k in ("scheduled_at", "status", "decision_status", "reason", "proposal",
+                                                         "entry_checks", "entry_allows_increase", "errors")} for r in cycles[-limit:]],
             "observed_fills": len(fills), "observed_funding_events": len(funding),
             "observed_closed_pnl_usdc": closed, "observed_fees_usdc": fees,
             "observed_funding_usdc": funding_usdc, "observed_realized_net_usdc": observed_net if audit_ok else None,

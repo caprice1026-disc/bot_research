@@ -2,10 +2,14 @@ from copy import deepcopy
 from dataclasses import replace
 import threading
 import time
+import pytest
 
 from position_stg.config import Config
 from position_stg.live import LiveRunner, summary
 from position_stg.store import SQLiteStore
+from position_stg.entries import evaluate_entries, permits_increase
+from position_stg.policy import validate_live_review
+from position_stg.domain import parse_decision
 
 
 class FakeExchange:
@@ -51,10 +55,21 @@ class FakeMarket:
         self.clock = clock
 
     def snapshot(self):
-        return {"mark": "100", "at": self.clock(), "step": ".01", "bids": [], "asks": []}
+        return {"mark": "100", "at": self.clock(), "step": ".01",
+                "bids": [{"px": "99.99"}], "asks": [{"px": "100.01"}]}
 
     def features(self, now):
-        return {"5m": {"return": "0"}, "1h": {"return": "0"}, "4h": {"return": "0"}}
+        bars = [{"c": "99", "h": "99.5", "l": "98"} for _ in range(59)]
+        bars.append({"c": "100", "h": "100", "l": "99"})
+        return {"5m": {"bars": bars, "sma20": "99.05"},
+                "1h": {"bars": [{"c": "101"}], "sma20": "100", "sma50": "99"}}
+
+
+def entry_plans():
+    return {side: {"enabled": True, "trend": "hourly_close_vs_sma20", "trigger": "six_bar_breakout",
+                   "max_spread_bps": 10, "max_target_multiple": cap, "rationale": "follow the break",
+                   "invalidation": "close back in prior range", "reconsider_when": "hourly trend changes"}
+            for side, cap in (("long", "1.0"), ("short", "-1.0"))}
 
 
 class FakePolicy:
@@ -80,7 +95,7 @@ class FakePolicy:
                          "at": self.clock()}, 0)
         if role == "reviewer":
             return {"market_hypothesis": "test", "active_rules": ["wait"], "failure_modes": [],
-                    "change_reason": "initial", "evidence_ids": []}
+                    "change_reason": "initial", "evidence_ids": [], "entries": entry_plans()}
         return {"intent": "hold" if self.target == "hold" else "set_target",
                 "target_multiple": None if self.target == "hold" else self.target,
                 "stop_price": None if self.target in {"hold", "0"} else "99", "reason": "retain position"}
@@ -265,6 +280,55 @@ def test_reviewer_gets_twenty_four_decisions_and_actual_execution_evidence(tmp_p
     assert inputs["recent_decisions"][-1]["account_after"]["equity"] == "500"
     assert inputs["execution_evidence"]["window_fill_count"] == 1
     assert inputs["execution_evidence"]["cumulative_observed"]["observed_fees_usdc"] == "0.05"
+    counts = inputs["entry_summary"]
+    assert counts["slots"] == counts["assessed"] == counts["long"]["eligible_but_held"] == 24
+    assert counts["short"]["failed_trend"] == counts["short"]["failed_trigger"] == 24
+    assert inputs["entry_contract"]["multiples"]["short"][0] == "-0.5"
+    assert summary(store)["recent_decisions"][-1]["entry_checks"]["long"]["eligible"]
+
+
+def test_legacy_strategy_reviewed_before_trading_and_entry_gate_controls_increases(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    runner._state()
+    runner._update(strategy={"version": 4, "active_rules": ["wait"]}, strategy_version=4,
+                   last_review=clock[0]-300, last_review_attempt=clock[0]-300,
+                   recent_decisions=[{"scheduled_at": clock[0]-300, "reason": "legacy hold"}])
+    policy.target = "-0.5"
+    result = runner.run(clock[0])
+    assert result["review"]["version"] == 5 and result["status"] == "complete"
+    assert policy.calls[0][2]["entry_summary"]["unassessed"] == 1
+    assert not result["entry_allows_increase"] and not ctl.tick_calls[-1][2]["allow_increase"]
+    assert summary(store)["entry_summary_last_24_cycles"]["short"]["eligible"] == 0
+    clock[0] += 300
+    policy.target = "2.0"  # Qualified long, but above the selected 1x cap.
+    assert runner.run(clock[0])["entry_allows_increase"] is False
+    assert not ctl.tick_calls[-1][2]["allow_increase"]
+
+
+def test_short_retest_spread_and_size_contract(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    plans = entry_plans()
+    plan = plans["short"]
+    plan.update(trend="any", trigger="sma20_retest", max_target_multiple="-0.5")
+    f = runner.market.features(clock[0])
+    f["5m"]["bars"][-2]["c"] = "98"
+    f["5m"]["bars"][-1] = {"h": "100", "l": "97", "c": "97.5"}
+    f["5m"]["sma20"] = "99"
+    book = runner.market.snapshot()
+    checks = evaluate_entries(plans, f, book)
+    short = parse_decision({"intent": "set_target", "target_multiple": "-0.5", "stop_price": "101", "reason": "retest"})
+    assert checks["short"]["eligible"] and permits_increase(short, plans, checks)
+    book["asks"][0]["px"] = "101"
+    checks = evaluate_entries(plans, f, book)
+    assert checks["short"]["signal_met"] and checks["short"]["failed"] == ["spread"]
+    assert not permits_increase(short, plans, checks)
+    assert permits_increase({**short, "target_multiple": 0}, plans, checks)
+    review = {"entries": plans, "market_hypothesis": "test", "active_rules": [], "failure_modes": [],
+              "change_reason": "test", "evidence_ids": []}
+    validate_live_review(review, runner.cfg)
+    plan["max_target_multiple"] = "-0.2"
+    with pytest.raises(ValueError):
+        validate_live_review(review, runner.cfg)
 
 
 def test_timed_out_worker_never_applies_late_result_or_overlaps_another_call(tmp_path):
