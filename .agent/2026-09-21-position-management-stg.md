@@ -1,3 +1,5 @@
+> 2026-10-11追記: Traderの現行既定値はgemini-3.6-flash。モデル・単価の更新は[移行記録](../docs/gemini-36-migration-20261011.md)を参照。以下の当初設計・進捗記録は当時の内容を維持する。
+
 # 継続保有botの初期クラウド実装
 
 このExecPlanは `PLANS.md` に従う。Progress、Surprises & Discoveries、Decision Log、Outcomes & Retrospectiveを実装・検証に合わせて更新する。

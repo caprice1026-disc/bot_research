@@ -25,6 +25,30 @@ def test_fixture_restart_idempotence(tmp_path):
     assert result["accounts"]["llm"]["fills"] >= 4
 
 
+def test_model_migration_preserves_position_and_starts_new_evaluation_segment(tmp_path):
+    from dataclasses import replace
+    from decimal import Decimal
+    clock, store, market, policy, runner = setup(tmp_path)
+    old_cfg = replace(Config(), trader_model="gemini-3.5-flash",
+                      trader_output_usd_per_million=Decimal("9"))
+    runner.cfg = old_cfg
+    runner.run(clock[0])
+    clock[0] += 300
+    runner.run(clock[0])
+    before = deepcopy(store.read("runtime")[0]["accounts"]["llm"])
+    assert dec(before["quantity"]) > 0
+    runner.cfg = Config()
+    policy.target = "hold"
+    clock[0] += 300
+    runner.run(clock[0])
+    state = store.read("runtime")[0]
+    for key in ("cash", "quantity", "entry", "stop", "fills"):
+        assert state["accounts"]["llm"][key] == before[key]
+    assert state["config_hash"] == Config().fingerprint()
+    assert state["evaluation_segment_started_at"] == clock[0]
+    assert state["config_changes"] >= 1
+
+
 def test_lease_fencing_and_admin_conflict(tmp_path):
     store = SQLiteStore(tmp_path / "state.db")
     clock = [100]

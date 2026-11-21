@@ -256,8 +256,8 @@ class _SavedBatchProvider:
         return self.results.get(provider_job_id, [])
 
 
-_GEMINI_35_FLASH_BATCH_INPUT_USD_PER_BYTE_UPPER_BOUND = Decimal("0.00000075")
-_GEMINI_35_FLASH_BATCH_OUTPUT_USD_PER_TOKEN = Decimal("0.0000045")
+_GEMINI_36_FLASH_BATCH_INPUT_USD_PER_BYTE_UPPER_BOUND = Decimal("0.00000075")
+_GEMINI_36_FLASH_BATCH_OUTPUT_USD_PER_TOKEN = Decimal("0.00000375")
 
 
 def _gemini_api_key(*, env_file: Path, variable: str) -> str:
@@ -273,12 +273,12 @@ def _gemini_api_key(*, env_file: Path, variable: str) -> str:
 def _gemini_batch_reservation(*, requests: list[PreparedModelRequest], max_output_tokens: int) -> Decimal:
     if max_output_tokens <= 0:
         raise BatchError("max_output_tokens must be positive")
-    output = _GEMINI_35_FLASH_BATCH_OUTPUT_USD_PER_TOKEN * max_output_tokens * len(requests)
+    output = _GEMINI_36_FLASH_BATCH_OUTPUT_USD_PER_TOKEN * max_output_tokens * len(requests)
     # A UTF-8 byte cannot be cheaper than this upper bound on a token count.
     # Reserving it prevents a long prompt from silently exceeding the public cap.
     input_upper_bound = sum(
         Decimal(len(request.canonical_payload.encode("utf-8")))
-        * _GEMINI_35_FLASH_BATCH_INPUT_USD_PER_BYTE_UPPER_BOUND
+        * _GEMINI_36_FLASH_BATCH_INPUT_USD_PER_BYTE_UPPER_BOUND
         for request in requests
     )
     return output + input_upper_bound
@@ -700,8 +700,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.max_output_tokens <= 0:
                 raise BatchError("max_output_tokens must be positive")
             if args.provider == "gemini":
-                if config.trader_model != "gemini-3.5-flash":
-                    raise BatchError("Gemini Batch pilot requires trader_model=gemini-3.5-flash")
+                if config.trader_model != "gemini-3.6-flash":
+                    raise BatchError("Gemini Batch pilot requires trader_model=gemini-3.6-flash")
                 if any(
                     json.loads(request.canonical_payload).get("max_output_tokens") != args.max_output_tokens
                     for request in requests

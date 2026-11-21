@@ -19,6 +19,7 @@ class FakeClient:
 
     def generate_content(self, **kwargs):
         self.calls += 1
+        self.kwargs = kwargs
         if self.fail:
             raise ConnectionError("synthetic transport failure")
         return SimpleNamespace(text=json.dumps({"intent":"hold"}),
@@ -32,7 +33,12 @@ def test_cached_response_has_no_second_charge_or_request(tmp_path):
     second = policy.decide(observation(),"request:0")
     assert first == second
     assert client.calls == 1
-    assert first.estimated_cost_usd == Decimal("0.000285")
+    assert first.estimated_cost_usd == Decimal("0.0002625")
+    assert client.kwargs["model"] == "gemini-3.6-flash"
+    config = client.kwargs["config"]
+    assert config.response_mime_type == "application/json"
+    assert config.max_output_tokens == 512
+    assert config.automatic_function_calling.disable
     assert first.received_at_ms > 0
 
 
@@ -73,3 +79,13 @@ def test_schema_encodes_hold_nulls_and_no_resize_position_constraint():
     assert hold["properties"]["stop_price"] == {"type": "null"}
     assert flat["properties"]["target_fraction"]["enum"] == ["0"]
     assert len(response_schema(True, has_position=True)["anyOf"]) == 3
+
+
+def test_migration_does_not_reuse_old_model_budget_ledger(tmp_path):
+    from llm_position_management.store import RunStore, StoreError
+    store = RunStore(tmp_path / "budget.db")
+    store.begin("budget", "gemini-3.5-flash:standard:1.5:9:minimal:512:1")
+    client = FakeClient()
+    with pytest.raises(StoreError):
+        GeminiPolicy(tmp_path, Decimal("1"), True, lambda t: {}, client=client)
+    assert client.calls == 0

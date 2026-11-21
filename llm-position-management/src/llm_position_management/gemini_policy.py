@@ -11,6 +11,12 @@ from .policy import PolicyResponse
 from .store import RunStore
 
 
+# Conservative Standard rates, including the announced 2027-01-01 increase.
+MODEL = "gemini-3.6-flash"
+INPUT_USD_PER_MILLION = Decimal("1.50")
+OUTPUT_USD_PER_MILLION = Decimal("7.50")
+
+
 PROMPT = """You manage one simulated BTC perpetual position. Reassess every five minutes;
 do not close merely because five minutes elapsed. Use ONLY the supplied past/current
 market and account observations. No browsing or remembered historical outcomes.
@@ -59,7 +65,7 @@ class GeminiPolicy:
         directory.mkdir(parents=True, exist_ok=True)
         self.budget = budget
         self.store = RunStore(directory / "budget.db")
-        self.store.begin("budget", f"gemini-3.5-flash:standard:1.5:9:minimal:512:{budget}")
+        self.store.begin("budget", f"{MODEL}:standard:{INPUT_USD_PER_MILLION}:{OUTPUT_USD_PER_MILLION}:minimal:512:{budget}")
         self.client = client
 
     def reserve_cost_usd(self, observation, request_id):
@@ -97,7 +103,7 @@ class GeminiPolicy:
         self.store.reserve_model_request("budget", request_id, self.reservation, budget_limit=self.budget)
         started = perf_counter()
         try:
-            response = self.client.models.generate_content(model="gemini-3.5-flash", contents=prompt,
+            response = self.client.models.generate_content(model=MODEL, contents=prompt,
                 config=types.GenerateContentConfig(temperature=0, max_output_tokens=512,
                     thinking_config=types.ThinkingConfig(thinking_level="minimal"),
                     response_mime_type="application/json", response_json_schema=schema,
@@ -112,7 +118,7 @@ class GeminiPolicy:
             raise RuntimeError("missing usage; reservation retained")
         input_tokens = usage.prompt_token_count or 0
         output_tokens = (usage.candidates_token_count or 0) + (usage.thoughts_token_count or 0)
-        cost = (Decimal(input_tokens)*Decimal("1.5") + Decimal(output_tokens)*9)/1_000_000
+        cost = (Decimal(input_tokens)*INPUT_USD_PER_MILLION + Decimal(output_tokens)*OUTPUT_USD_PER_MILLION)/1_000_000
         try:
             payload = json.loads(response.text or "")
             if not isinstance(payload, dict):
@@ -126,7 +132,10 @@ class GeminiPolicy:
                 and payload.get("target_fraction") != "0"):
             payload = None
             validation_error = "no_resize_position_must_hold_or_close"
-        saved = {"request_hash": request_hash, "request": request, "payload": payload,
+        saved = {"requested_model": MODEL, "returned_model": getattr(response, "model_version", None),
+                 "input_usd_per_million": str(INPUT_USD_PER_MILLION),
+                 "output_usd_per_million": str(OUTPUT_USD_PER_MILLION),
+                 "request_hash": request_hash, "request": request, "payload": payload,
                  "raw_payload": raw_payload, "validation_error": validation_error,
                  "received_at_ms": int(observation["as_of_ms"])+latency_ms,
                  "latency_ms": latency_ms, "input_tokens": input_tokens,

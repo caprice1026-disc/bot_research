@@ -4,6 +4,8 @@ GeminiのFunction Callingで売買方向を判断し、Python側の固定Risk En
 
 既存の読み取り・署名確認CLI `hl-testnet-check` も互換機能として残しています。
 
+[Gemini 3.6 Flash移行・料金・旧実験の扱い・検証範囲](../docs/gemini-36-migration-20261011.md)
+
 ## 安全境界
 
 - Geminiへ公開する関数は `open_position` だけです。coin、size、leverage、network、walletは引数に含めません。
@@ -128,23 +130,23 @@ Cloud Runのインフラはv0.1の対象外ですが、`TradingService.run_once(
 
 ### 固定v001 Gemini Batch pilot
 
-`configs\research\llm_pilot_v001_gemini_35_flash_minimal.json`はstrategy v001、`gemini-3.5-flash`、50地点、300秒保有条件、`thinking=minimal`、最大出力512 token、$0.35の保守的な予約上限を固定します。Gemini 3.5 Flashではthinkingを完全には無効化できず、`max_output_tokens`にはthinking tokenも含まれるためです。Gemini Batchは現行Free Tierで使えないため、この設定は小額の有料実験です。pilotの損益をstrategy採用には使いません。
+`configs\research\llm_pilot_v001_gemini_36_flash_minimal.json`はstrategy v001、`gemini-3.6-flash`、50地点、300秒保有条件、`thinking=minimal`、最大出力512 token、$0.35の保守的な予約上限を固定します。Gemini 3.6 Flashではthinkingを完全には無効化できず、`max_output_tokens`にはthinking tokenも含まれるためです。Gemini Batchは現行Free Tierで使えないため、この設定は小額の有料実験です。pilotの損益をstrategy採用には使いません。
 
 ```powershell
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli points `
-  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --config configs\research\llm_pilot_v001_gemini_36_flash_minimal.json `
   --candles data\research\binance-BTCUSDT-1m.jsonl `
   --count 50 --seed 20260917 `
   --output data\research\llm-pilot-v001\points.jsonl
 
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli prepare-requests `
-  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --config configs\research\llm_pilot_v001_gemini_36_flash_minimal.json `
   --points data\research\llm-pilot-v001\points.jsonl `
   --trial-prefix pilot-v001-gemini35-minimal --temperature 0 --thinking minimal --max-output-tokens 512 `
   --output data\research\llm-pilot-v001\requests.jsonl
 
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli batch `
-  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --config configs\research\llm_pilot_v001_gemini_36_flash_minimal.json `
   --action submit --provider gemini --requests data\research\llm-pilot-v001\requests.jsonl `
   --store data\research\llm-pilot-v001\ledger.sqlite --max-output-tokens 512
 ```
@@ -153,20 +155,20 @@ Batch jobが完了するまで、同じ送信を再実行せず次の`sync`だ�
 
 ```powershell
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli batch `
-  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --config configs\research\llm_pilot_v001_gemini_36_flash_minimal.json `
   --action sync --provider gemini --requests data\research\llm-pilot-v001\requests.jsonl `
   --store data\research\llm-pilot-v001\ledger.sqlite `
   --max-output-tokens 512 `
   --responses-output data\research\llm-pilot-v001\responses.jsonl
 
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli validate-responses `
-  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --config configs\research\llm_pilot_v001_gemini_36_flash_minimal.json `
   --requests data\research\llm-pilot-v001\requests.jsonl `
   --responses data\research\llm-pilot-v001\responses.jsonl `
   --output data\research\llm-pilot-v001\decisions.jsonl
 
 .\.venv\Scripts\python.exe -m hyperliquid_ai_trader.research.cli evaluate-decisions `
-  --config configs\research\llm_pilot_v001_gemini_35_flash_minimal.json `
+  --config configs\research\llm_pilot_v001_gemini_36_flash_minimal.json `
   --candles data\research\binance-BTCUSDT-1m.jsonl `
   --funding-csv ..\binance-btcusdt-futures-research\data\research\BTCUSDT-funding-2025-09-01_2026-08-31.csv `
   --points data\research\llm-pilot-v001\points.jsonl `

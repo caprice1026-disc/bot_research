@@ -108,7 +108,7 @@ class GeminiBatchProvider:
             if payload.get("requested_model") != self.model or request.requested_model != self.model:
                 raise BatchError("prepared request model does not match Gemini Batch model")
             if payload.get("thinking") != "minimal":
-                raise BatchError("Gemini 3.5 Flash Batch pilot requires thinking=minimal")
+                raise BatchError("Gemini 3.6 Flash Batch pilot requires thinking=minimal")
             max_output_tokens = payload.get("max_output_tokens")
             temperature = payload.get("temperature")
             if not isinstance(max_output_tokens, int) or max_output_tokens <= 0:
@@ -200,7 +200,7 @@ class GeminiBatchProvider:
             normalized.append(
                 {
                     "request_id": request_id,
-                    "returned_model": self.model,
+                    "returned_model": getattr(response, "model_version", None) or self.model,
                     "received_at_ms": time.time_ns() // 1_000_000,
                     "function_calls": calls,
                     "input_tokens": prompt_tokens,
