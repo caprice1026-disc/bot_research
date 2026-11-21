@@ -18,7 +18,7 @@ def main():
     commands.add_parser("resume")
     commands.add_parser("fixture")
     local_run = commands.add_parser("run-testnet-local", help="Continuous live Testnet runner with SQLite")
-    local_run.add_argument("--max-cycles", type=int, help="Optional finite number of five-minute decisions")
+    local_run.add_argument("--max-cycles", type=int, help="Optional finite number of ten-minute decisions")
     commands.add_parser("testnet-summary", help="Read local Testnet history; no network access")
     commands.add_parser("testnet-stop", help="Request orderly local shutdown; retain exchange stop orders")
     testnet = commands.add_parser("testnet-tick")

@@ -116,7 +116,7 @@ def account_preflight(exchange, credentials, store):
 
 
 def run_local(cfg, credentials, values, store, *, max_cycles=None):
-    from .live import LiveRunner
+    from .live import DECISION_SECONDS, REVIEW_SECONDS, LiveRunner
     from .market import Market
     from .policy import Gemini
     from .testnet import TestnetController, TestnetExchange
@@ -131,5 +131,5 @@ def run_local(cfg, credentials, values, store, *, max_cycles=None):
                         Gemini(cfg, store, api_key=values["GEMINI_API_KEY"]), controller)
     print(json.dumps({"event": "started", "pid": os.getpid(), "bot_id": cfg.bot_id,
                       "trader_model": cfg.trader_model, "reviewer_model": cfg.reviewer_model,
-                      "decision_interval_seconds": 300, "review_interval_seconds": cfg.review_interval_seconds}), flush=True)
+                      "decision_interval_seconds": DECISION_SECONDS, "review_interval_seconds": REVIEW_SECONDS}), flush=True)
     return runner.run_forever(max_cycles=max_cycles)

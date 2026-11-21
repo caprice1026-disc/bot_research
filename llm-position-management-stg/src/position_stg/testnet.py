@@ -12,6 +12,10 @@ def cloid(intent):
     return "0x" + hashlib.blake2b(intent.encode(), digest_size=16).hexdigest()
 
 
+def ioc_limit_price(mark, buy):
+    return float(f"{float(mark * (dec('1.005') if buy else dec('.995'))):.5g}")
+
+
 class TestnetExchange:
     def __init__(self, private_key, address):
         from eth_account import Account
@@ -81,7 +85,7 @@ class TestnetExchange:
     def order(self, delta, mark, client_id, *, stop=None, reduce_only=False):
         from hyperliquid.utils.types import Cloid
         buy = delta > 0
-        px = float(f"{float(mark * (dec('1.005') if buy else dec('.995'))):.5g}")
+        px = ioc_limit_price(mark, buy)
         order_type = {"limit": {"tif": "Ioc"}}
         if stop is not None:
             trigger = float(f"{float(stop):.5g}")

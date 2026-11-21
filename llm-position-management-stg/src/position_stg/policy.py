@@ -41,31 +41,54 @@ entry_contract.multiples for that side. If there are no available sizes, disable
 For each side give a concise rationale, invalidation for a protective stop, and concrete reconsideration
 condition (especially if disabled). Consider trend continuation as well as reversal. A signal permits an entry;
 it never obliges a trade. Use entry_summary to distinguish absent signals, wide spreads and discretionary holds.
-Use active_rules for management of existing positions only. Express all sizing in the structured fields;
+Compare candidate rule changes against the current strategy using rule_change_examples. Each row has an exact
+scheduled_at, actual position quantity and displayed spread. Each side lists the matching trends/triggers
+and signed BTC order deltas by target multiple after sizing, risk, and visible IOC depth checks. A feasible
+entry also requires that side to be enabled, its trend/trigger to match, its spread cap to admit the row,
+and its multiplier cap to admit the selected target multiple. Deltas are single-observation estimates, not fills.
+Some rows use a hypothetical 2x 5-minute ATR stop to make a like-for-like comparison on historically flat slots.
+For each changed enabled/trend/trigger/max_spread_bps/max_target_multiple field, cite in rule_change_evidence_slots
+the supplied scheduled_at values on that side where the change affects feasible order sizes. In change_reason
+state what would change at each cited time, taking into account current positions, order depth and size limits.
+Keep the original field if no adequate example exists. Use empty lists for unchanged sides and initial setup.
+Do not imply profitability from a signal, displayed quote or hypothetical fill.
+Use active_rules for discretionary management only. The runner pins each position's hourly close versus SMA20
+exit check and handles it before the trader. Do not weaken, delay or override that exit or widen its protective
+stop. The rebalance threshold is a 5% minimum absolute notional delta relative to equity. Express all sizing in the structured fields;
 never prescribe margin percentages, passive orders, or alter risk limits. No news is supplied: evidence_ids=[].
 Use short concrete explanations (under 500 characters each) and at most 10 rules and failure modes. No browsing.
 """
-LIVE_TRADER_PROMPT = TRADER_PROMPT + """This account trades on Hyperliquid Testnet. Use entry_contract for executable sizes,
+LIVE_TRADER_PROMPT = TRADER_PROMPT.replace("Five minutes is reassessment", "Ten minutes is reassessment") + """This account trades on Hyperliquid Testnet. Use entry_contract for executable sizes,
 costs and order type. entry_checks evaluates both plans using the current closed candles and book. Only open/add
 on an eligible side up to its signed max_target_multiple. Entry conditions do not prevent reducing or closing a
 position or maintaining its protective stop. Keep targets in equity notional units. If flat, consider each
 eligible side and its invalidation and costs. Explain briefly why you acted or declined an eligible signal;
-if neither side qualifies, identify the failed conditions. No minimum trade count.
+if neither side qualifies, identify the failed conditions. The runner evaluates the OPEN position's pinned
+exit first. In discretionary management consider exits, reductions, holds, then adds. Do not widen the current
+protective stop. A reversal closes first and waits for a later entry decision. No minimum trade count.
 """
 
 
 def live_review_schema(cfg):
     sides = {side: side_schema(cfg, side) for side in SIDES}
     entries = {"type": "object", "properties": sides, "required": list(sides), "additionalProperties": False}
-    return {**REVIEW_SCHEMA, "properties": {**REVIEW_SCHEMA["properties"], "entries": entries},
-            "required": [*REVIEW_SCHEMA["required"], "entries"]}
+    slots = {"type": "object", "properties": {side: {"type": "array", "items": {"type": "integer"}} for side in SIDES},
+             "required": list(SIDES), "additionalProperties": False}
+    extra = {"entries": entries, "rule_change_evidence_slots": slots}
+    return {**REVIEW_SCHEMA, "properties": {**REVIEW_SCHEMA["properties"], **extra},
+            "required": [*REVIEW_SCHEMA["required"], *extra]}
 
 
 def validate_live_review(raw, cfg):
     if not isinstance(raw, dict) or "entries" not in raw:
         raise ValueError("missing directional strategy")
-    validate_review({k: v for k, v in raw.items() if k != "entries"}, [])
+    validate_review({k: v for k, v in raw.items() if k not in {"entries", "rule_change_evidence_slots"}}, [])
     validate_entries(raw["entries"], cfg)
+    if "rule_change_evidence_slots" in raw:
+        slots = raw["rule_change_evidence_slots"]
+        if (not isinstance(slots, dict) or set(slots) != set(SIDES)
+                or any(not isinstance(v, list) or len(v) > 24 or any(type(t) is not int for t in v) for v in slots.values())):
+            raise ValueError("invalid rule change evidence slots")
     return raw
 
 

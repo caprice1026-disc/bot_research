@@ -1,7 +1,7 @@
 """Continuous Testnet orchestration; every exchange action stays in its controller.
 
 The live ledger is separate from the shadow simulator and controller runtime.
-An attempted five-minute slot is never replayed, including after interruption.
+An attempted ten-minute slot is never replayed, including after interruption.
 """
 from copy import deepcopy
 import hashlib
@@ -11,13 +11,14 @@ import time
 import uuid
 
 from .config import dec
-from .domain import parse_decision
+from .domain import parse_decision, plan
 from .entries import entry_contract, entry_summary, evaluate_entries, permits_increase
 from .policy import validate_live_review
+from .review_evidence import apply_review_evidence, build_review_evidence
 from .store import Conflict
 
 
-DECISION_SECONDS = 300
+DECISION_SECONDS = 600
 REVIEW_SECONDS = 7200
 PROTECTION_SECONDS = 15
 HISTORY_OVERLAP_SECONDS = 7200
@@ -242,6 +243,62 @@ class LiveRunner:
                 and (state["last_review_attempt"] is None or state["last_review_attempt"] <= state["last_review"])
                 and 0 <= self.clock() - state["last_review"] <= self.cfg.strategy_ttl_seconds)
 
+    def _position_exit(self, snapshot, hourly, slot):
+        qty = dec(snapshot["quantity"])
+        state = self._state()
+        policy = state.get("position_exit")
+        if not qty:
+            if policy is not None:
+                self._update(position_exit=None)
+            return None
+        side = "long" if qty > 0 else "short"
+        if policy is None or policy["side"] != side:
+            # An existing position from a v1 ledger has no persisted exit policy.
+            runtime = self.store.read("runtime")[0] or {}
+            policy = {"side": side, "rule": "hourly_close_vs_sma20",
+                      "strategy_version": state["strategy_version"], "opened_slot": slot,
+                      "stop_price": runtime.get("stop"), "last_trader_hour": None, "legacy": True}
+            self._update(position_exit=policy)
+        close, sma = dec(hourly["bars"][-1]["c"]), dec(hourly["sma20"])
+        adverse = close < sma if side == "long" else close > sma
+        if adverse and policy.get("exit_triggered_slot") is None:
+            policy = {**policy, "exit_triggered_slot": slot}
+            self._update(position_exit=policy)
+        return {**policy, "triggered": policy.get("exit_triggered_slot") is not None,
+                "hourly_close": str(close), "hourly_sma20": str(sma)}
+
+    def _apply_decision(self, event, raw, market, snapshot, *, allow_increase):
+        if self._stop_requested():
+            event.update(status="skipped", decision_status="stop_requested")
+            return event
+        applied = self.controller.tick(raw, event["scheduled_at"], allow_increase=allow_increase,
+                                       observed_mark=market["mark"], expected_quantity=snapshot["quantity"])
+        event["execution"] = deepcopy(applied)
+        event["decision_status"] = applied.get("status", "unknown")
+        event["status"] = "complete" if applied.get("status") in {"checked", "complete"} else "partial"
+        return event
+
+    def _exit_position(self, event, market, snapshot):
+        reason = "Complete the exit triggered by the position's hourly SMA20 condition."
+        raw = {"intent": "set_target", "target_multiple": "0", "stop_price": None, "reason": reason}
+        event.update(proposal=raw, reason=reason, decision_source="position_exit")
+        return self._apply_decision(event, raw, market, snapshot, allow_increase=False)
+
+    def _can_add(self, entry, checks, snapshot, market, account):
+        if not checks["eligible"]:
+            return False
+        qty, equity, mark = (dec(snapshot[k]) for k in ("quantity", "equity", "mark"))
+        desired = equity * abs(dec(entry["max_target_multiple"]))
+        min_change = max(self.cfg.min_notional, equity * self.cfg.rebalance_threshold)
+        if desired - abs(qty) * mark < min_change:
+            return False
+        if not account or account["stop"] is None:
+            return True
+        probe = {"intent": "set_target", "target_multiple": entry["max_target_multiple"],
+                 "stop_price": account["stop"], "reason": "Estimate room at the current stop"}
+        target = plan(account, mark, snapshot["step"], probe, self.cfg, observed_mark=market["mark"])
+        return abs(dec(target["target"])) > abs(qty)
+
     def _review_evidence(self, state):
         since = state["last_review"] if state["last_review"] is not None else state["started_at"]
         fills = [r for _, r, _ in self.store.items("live-fill-") if r["at"] >= since]
@@ -264,7 +321,7 @@ class LiveRunner:
     def run(self, scheduled_at):
         now = self.clock()
         if scheduled_at > now + 2 or int(scheduled_at) != scheduled_at or int(scheduled_at) % DECISION_SECONDS:
-            raise ValueError("scheduled_at must be a nonfuture five-minute boundary")
+            raise ValueError("scheduled_at must be a nonfuture ten-minute boundary")
         state = self._state()
         slot = int(scheduled_at)
         key = "live-cycle-" + str(slot)
@@ -297,21 +354,31 @@ class LiveRunner:
             market, features = self._observation()
             event["market_before"] = deepcopy(market)
             event["features"] = features
+            snapshot = before["snapshot"]
+            position_exit = self._position_exit(snapshot, features["1h"], slot)
+            event["position_exit"] = position_exit
+            if position_exit and position_exit["triggered"]:
+                phase = "execution"
+                return self._exit_position(event, market, snapshot)
             state = self._state()
-            due = (not state.get("directional_review_attempted") or state["last_review_attempt"] is None
-                   or self.clock() - state["last_review_attempt"] >= REVIEW_SECONDS)
+            last_review_slot = state.get("last_review_slot")
+            due = last_review_slot is None or slot - last_review_slot >= REVIEW_SECONDS
             contract = entry_contract(self.cfg)
             if due:
                 phase = "reviewer"
-                self._update(last_review_attempt=self.clock(), directional_review_attempted=True)
+                self._update(last_review_attempt=self.clock(), last_review_slot=slot, directional_review_attempted=True)
                 recent = [r for r in state["recent_decisions"] if slot - REVIEW_SECONDS <= r["scheduled_at"] < slot]
+                examples = build_review_evidence(self.store, recent, self.cfg)
                 raw = self._policy_call("reviewer", slot, {
                     "market": market, "features": features, "account": before["snapshot"],
                     "strategy": state["strategy"], "news": [], "news_status": "disabled",
                     "entry_contract": contract, "entry_summary": entry_summary(recent), "recent_decisions": recent,
                     "execution_evidence": self._review_evidence(state),
+                    "rule_change_examples": examples,
                 }, event)
                 strategy = validate_live_review(raw, self.cfg)
+                strategy, evidence_result = apply_review_evidence(strategy, state["strategy"], examples, self.cfg)
+                event["rule_change_evidence"] = evidence_result
                 strategy_version = state["strategy_version"] + 1
                 strategy = {**strategy, "version": strategy_version, "updated_at": self.clock()}
                 state = self._update(strategy=strategy, strategy_version=strategy_version,
@@ -323,6 +390,12 @@ class LiveRunner:
                 if before.get("status") not in SAFE_MAINTENANCE or before.get("manual_pause"):
                     raise LiveSafetyError("maintenance not ready after review")
                 market, features = self._observation()
+                snapshot = before["snapshot"]
+                position_exit = self._position_exit(snapshot, features["1h"], slot)
+                event.update(market_before=deepcopy(market), features=features, position_exit=position_exit)
+                if position_exit and position_exit["triggered"]:
+                    phase = "execution"
+                    return self._exit_position(event, market, snapshot)
             event["strategy"] = deepcopy(state["strategy"])
             if not self._fresh_strategy(state):
                 event.update(status="blocked", decision_status="strategy_expired_or_missing")
@@ -335,24 +408,55 @@ class LiveRunner:
             entries = state["strategy"]["entries"]
             checks = evaluate_entries(entries, features, market)
             event.update(market_before=deepcopy(market), features=features, entry_checks=checks)
+            event["review_risk_state"] = {k: runtime["account"][k] for k in (
+                "stop", "manual_pause", "dd_stopped_at", "partial") if k in runtime.get("account", {})}
+            hour = features["1h"]["bars"][-1]["t"]
+            qty = dec(snapshot["quantity"])
+            if not qty and not any(checks[side]["eligible"] for side in entries):
+                event.update(status="complete", decision_status="flat_no_entry", decision_source="entry_filter",
+                             reason="Neither side satisfies the entry conditions.")
+                return event
+            if position_exit and position_exit["last_trader_hour"] == hour:
+                side = position_exit["side"]
+                if not self._can_add(entries[side], checks[side], snapshot, market, runtime.get("account")):
+                    event.update(status="complete", decision_status="position_unchanged", decision_source="entry_filter",
+                                 reason="The hourly candle is unchanged and there is no eligible position increase.")
+                    return event
             inputs = {"market": market, "features": features,
-                      "account": deepcopy(runtime.get("account", before["snapshot"])),
-                      "account_snapshot": before["snapshot"], "equity": before["snapshot"]["equity"],
+                      "account": deepcopy(runtime.get("account", snapshot)),
+                      "account_snapshot": snapshot, "equity": snapshot["equity"], "position_exit": position_exit,
                       "strategy": state["strategy"], "recent_decisions": state["recent_decisions"][-6:],
                       "entry_contract": contract, "entry_checks": checks,
                       "risk": {"max_exposure": str(self.cfg.max_exposure), "stop_risk": str(self.cfg.stop_risk)}}
             raw = self._policy_call("trader", slot, inputs, event)
             decision = parse_decision(raw)
-            event["proposal"], event["reason"] = deepcopy(raw), raw["reason"]
-            phase = "execution"
-            entry_allowed = permits_increase(decision, entries, checks)
+            event.update(proposal=deepcopy(raw), reason=raw["reason"], decision_source="trader")
+            entry_allowed = permits_increase(decision, entries, checks) and self._fresh_strategy(self._state())
+            target = decision["target_multiple"]
+            if qty and target is not None and qty * target < 0:
+                raw = {**raw, "target_multiple": "0", "stop_price": None}
+                entry_allowed = False
+            if position_exit:
+                policy = self._state()["position_exit"]
+                current_stop = (runtime.get("account") or {}).get("stop")
+                limits = [dec(price) for price in (policy["stop_price"], current_stop) if price is not None]
+                if limits and raw["stop_price"] is not None:
+                    protected = max(limits) if qty > 0 else min(limits)
+                    proposed = dec(raw["stop_price"])
+                    if (qty > 0 and proposed < protected) or (qty < 0 and proposed > protected):
+                        raw = {**raw, "stop_price": str(protected)}
+                self._update(position_exit={**policy, "last_trader_hour": hour})
+            elif target and entry_allowed and decision["stop_price"] is not None:
+                # Persist before submission so a fill followed by a crash retains its opening strategy.
+                self._update(position_exit={"side": "long" if target > 0 else "short",
+                                            "rule": "hourly_close_vs_sma20", "strategy_version": state["strategy_version"],
+                                            "opened_slot": slot, "stop_price": str(decision["stop_price"]),
+                                            "last_trader_hour": hour})
+            if raw != event["proposal"]:
+                event["execution_decision"] = deepcopy(raw)
             event["entry_allows_increase"] = entry_allowed
-            applied = self.controller.tick(raw, slot, allow_increase=entry_allowed and self._fresh_strategy(self._state()),
-                                           observed_mark=market["mark"], expected_quantity=before["snapshot"]["quantity"])
-            event["execution"] = deepcopy(applied)
-            event["decision_status"] = applied.get("status", "unknown")
-            event["status"] = "complete" if applied.get("status") in {"checked", "complete"} else "partial"
-            return event
+            phase = "execution"
+            return self._apply_decision(event, raw, market, snapshot, allow_increase=entry_allowed)
         except Exception as exc:
             event["errors"].append(_error(phase, exc))
             event["status"] = "error"
@@ -361,6 +465,10 @@ class LiveRunner:
         finally:
             try:
                 event["after"] = self.maintain()
+                after = event["after"]
+                if (after.get("status") in SAFE_MAINTENANCE and not after.get("manual_pause")
+                        and dec(after["snapshot"]["quantity"]) == 0 and self._state().get("position_exit") is not None):
+                    self._update(position_exit=None)
                 if (event["after"].get("status") not in SAFE_MAINTENANCE or event["after"].get("manual_pause")) and event["status"] == "complete":
                     event["status"] = "partial"
             except Exception as exc:
@@ -376,8 +484,9 @@ class LiveRunner:
                         event["status"] = "partial"
             self.store.write(key, event, version)
             state = self._state()
-            recent = {k: deepcopy(event.get(k)) for k in ("scheduled_at", "status", "decision_status", "proposal", "reason",
-                                                          "errors", "entry_checks", "entry_allows_increase")}
+            recent = {k: deepcopy(event.get(k)) for k in (
+                "scheduled_at", "status", "decision_status", "proposal", "reason", "errors", "entry_checks",
+                "entry_allows_increase", "decision_source", "position_exit")}
             execution = event.get("execution", {})
             recent["execution"] = {k: deepcopy(execution[k]) for k in ("status", "plan", "error_type") if k in execution}
             for source, name in ((event.get("before_trader", event.get("before", {})), "account_before"),
@@ -467,8 +576,10 @@ def summary(store, *, limit=6):
             "last_maintenance_error": state.get("last_maintenance_error"),
             "last_loop_error": state.get("last_loop_error"),
             "entry_summary_last_24_cycles": entry_summary(cycles[-24:]),
+            "position_exit": state.get("position_exit") if latest and dec(latest["quantity"]) else None,
             "recent_decisions": [{k: r.get(k) for k in ("scheduled_at", "status", "decision_status", "reason", "proposal",
-                                                         "entry_checks", "entry_allows_increase", "errors")} for r in cycles[-limit:]],
+                                                         "entry_checks", "entry_allows_increase", "decision_source",
+                                                         "position_exit", "rule_change_evidence", "errors")} for r in cycles[-limit:]],
             "observed_fills": len(fills), "observed_funding_events": len(funding),
             "observed_closed_pnl_usdc": closed, "observed_fees_usdc": fees,
             "observed_funding_usdc": funding_usdc, "observed_realized_net_usdc": observed_net if audit_ok else None,

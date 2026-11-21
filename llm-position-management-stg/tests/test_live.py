@@ -20,7 +20,7 @@ class FakeExchange:
 
     def snapshot(self):
         return {"quantity": self.quantity, "entry": "100", "equity": "500",
-                "mark": "100", "step": ".01", "orders": []}
+                "mark": "100", "step": ".01", "orders": [], "available_collateral": "500"}
 
     def fills(self, since):
         return deepcopy([row for row in self.fill_rows if row["time"] / 1000 >= since])
@@ -45,7 +45,7 @@ class FakeController:
 
     def tick(self, raw, slot, **kwargs):
         self.tick_calls.append((deepcopy(raw), slot, kwargs))
-        if raw["intent"] == "set_target":
+        if raw["intent"] == "set_target" and (kwargs["allow_increase"] or float(raw["target_multiple"]) == 0):
             self.exchange.quantity = raw["target_multiple"]
         return {"status": "checked", "snapshot": self.exchange.snapshot(), "plan": raw}
 
@@ -53,16 +53,23 @@ class FakeController:
 class FakeMarket:
     def __init__(self, clock):
         self.clock = clock
+        self.hourly_close = "101"
+        self.fast_close = "100"
 
     def snapshot(self):
         return {"mark": "100", "at": self.clock(), "step": ".01",
-                "bids": [{"px": "99.99"}], "asks": [{"px": "100.01"}]}
+                "bids": [{"px": "99.99", "sz": "20"}],
+                "asks": [{"px": "100.01", "sz": "20"}]}
 
     def features(self, now):
-        bars = [{"c": "99", "h": "99.5", "l": "98"} for _ in range(59)]
-        bars.append({"c": "100", "h": "100", "l": "99"})
-        return {"5m": {"bars": bars, "sma20": "99.05"},
-                "1h": {"bars": [{"c": "101"}], "sma20": "100", "sma50": "99"}}
+        fast_end = int(now // 300) * 300
+        hourly_end = int(now // 3600) * 3600
+        bars = [{"c": "99", "h": "99.5", "l": "98", "t": (fast_end - 300 * i) * 1000}
+                for i in range(60, 1, -1)]
+        bars.append({"c": self.fast_close, "h": "100", "l": "98", "t": (fast_end - 300) * 1000})
+        return {"5m": {"bars": bars, "sma20": "99.05", "atr14": "1"},
+                "1h": {"bars": [{"c": self.hourly_close, "t": (hourly_end - 3600) * 1000}],
+                       "sma20": "100", "sma50": "99"}}
 
 
 def entry_plans():
@@ -78,6 +85,7 @@ class FakePolicy:
         self.calls = []
         self.fail = None
         self.target = "hold"
+        self.stop_override = None
         self.delay = 0
         self.hook = None
 
@@ -96,9 +104,12 @@ class FakePolicy:
         if role == "reviewer":
             return {"market_hypothesis": "test", "active_rules": ["wait"], "failure_modes": [],
                     "change_reason": "initial", "evidence_ids": [], "entries": entry_plans()}
-        return {"intent": "hold" if self.target == "hold" else "set_target",
-                "target_multiple": None if self.target == "hold" else self.target,
-                "stop_price": None if self.target in {"hold", "0"} else "99", "reason": "retain position"}
+        hold = self.target == "hold"
+        stop = self.stop_override if hold else "99"
+        return {"intent": "hold" if hold else "set_target",
+                "target_multiple": None if hold else self.target,
+                "stop_price": None if self.target == "0" else stop,
+                "reason": "retain position"}
 
 
 def setup(tmp_path, **config):
@@ -119,16 +130,140 @@ def test_continuous_hold_and_same_slot_restart_never_resubmit(tmp_path):
     assert [role for role, _, _ in policy.calls] == ["reviewer", "trader"]
     assert policy.calls[0][2]["news"] == []
     assert policy.calls[0][2]["news_status"] == "disabled"
-    clock[0] += 300
+    clock[0] += 600
     policy.target = "hold"
-    assert runner.run(clock[0])["status"] == "complete"
+    runner.market.fast_close = "99"
+    result = runner.run(clock[0])
+    assert result["status"] == "complete"
+    assert result["decision_status"] == "position_unchanged"
     assert ctl.exchange.quantity == "1"
+    assert [role for role, _, _ in policy.calls] == ["reviewer", "trader"]
     count = len(policy.calls)
     restarted = LiveRunner(runner.cfg, store, runner.market, policy, ctl, clock=lambda: clock[0])
     assert restarted.run(clock[0])["status"] == "duplicate"
-    assert len(policy.calls) == count and len(ctl.tick_calls) == 2
-    assert ctl.tick_calls[-1][2] == {"allow_increase": True, "observed_mark": "100", "expected_quantity": "1"}
-    assert summary(store)["recent_decisions"][-1]["reason"] == "retain position"
+    assert len(policy.calls) == count and len(ctl.tick_calls) == 1
+    assert summary(store)["recent_decisions"][-1]["decision_status"] == "position_unchanged"
+
+
+def test_ten_minute_boundary_and_flat_entry_gate(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    runner.market.fast_close = "99"
+    result = runner.run(clock[0])
+    assert result["status"] == "complete"
+    assert result["decision_status"] == "flat_no_entry"
+    assert result["entry_checks"]["long"]["failed"] == ["trigger"]
+    assert not result["entry_checks"]["short"]["eligible"]
+    assert [role for role, _, _ in policy.calls] == ["reviewer"]
+    assert ctl.tick_calls == []
+    clock[0] += 300
+    with pytest.raises(ValueError):
+        runner.run(clock[0])
+    clock[0] += 300
+    runner.market.fast_close = "100"
+    assert runner.run(clock[0])["status"] == "complete"
+    assert [role for role, _, _ in policy.calls] == ["reviewer", "trader"]
+
+
+def test_pinned_exit_survives_restart_and_new_strategy(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    policy.target = "1"
+    result = runner.run(clock[0])
+    assert result["status"] == "complete" and ctl.exchange.quantity == "1"
+    state = runner._state()
+    pinned = state["position_exit"]
+    assert pinned["side"] == "long"
+    assert pinned["rule"] == "hourly_close_vs_sma20"
+    assert pinned["strategy_version"] == state["strategy_version"]
+    assert pinned["opened_slot"] == clock[0]
+    updated = {**state["strategy"], "version": 2, "active_rules": ["hold even if the trend reverses"]}
+    runner._update(strategy=updated, strategy_version=2)
+    clock[0] += 3600
+    runner.market.hourly_close = "99"
+    runner._update(last_review_attempt=clock[0])
+    restarted = LiveRunner(runner.cfg, store, runner.market, policy, ctl, clock=lambda: clock[0])
+    result = restarted.run(clock[0])
+    assert result["status"] == "complete" and result["decision_source"] == "position_exit"
+    assert result["position_exit"]["triggered"]
+    assert [role for role, _, _ in policy.calls] == ["reviewer", "trader"]
+    raw, _, args = ctl.tick_calls[-1]
+    assert raw["intent"] == "set_target" and float(raw["target_multiple"]) == 0
+    assert raw["stop_price"] is None and not args["allow_increase"]
+    assert float(ctl.exchange.quantity) == 0
+    assert restarted._state().get("position_exit") is None
+
+
+def test_fresh_hourly_bar_calls_trader_even_without_possible_add(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    policy.target = "1"
+    assert runner.run(clock[0])["status"] == "complete"
+    policy.target = "hold"
+    runner.market.fast_close = "99"
+    clock[0] += 3600
+    result = runner.run(clock[0])
+    assert result["status"] == "complete" and result["reason"] == "retain position"
+    assert [role for role, _, _ in policy.calls] == ["reviewer", "trader", "trader"]
+    assert ctl.exchange.quantity == "1"
+
+
+def test_partial_exit_retries_after_hourly_condition_recovers(tmp_path, monkeypatch):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    policy.target = "1"
+    runner.run(clock[0])
+    execute = ctl.tick
+
+    def partial_close(raw, slot, **kwargs):
+        assert raw["target_multiple"] == "0"
+        ctl.exchange.quantity = ".2"
+        return {"status": "target_not_reached", "snapshot": ctl.exchange.snapshot()}
+
+    monkeypatch.setattr(ctl, "tick", partial_close)
+    clock[0] += 3600
+    runner.market.hourly_close = "99"
+    first = runner.run(clock[0])
+    assert first["decision_source"] == "position_exit"
+    assert first["status"] == "partial"
+    assert runner._state()["position_exit"]["exit_triggered_slot"] == clock[0]
+
+    monkeypatch.setattr(ctl, "tick", execute)
+    clock[0] += 3600
+    runner.market.hourly_close = "101"
+    retried = runner.run(clock[0])
+    assert retried["decision_source"] == "position_exit"
+    assert float(ctl.exchange.quantity) == 0
+    assert runner._state()["position_exit"] is None
+
+
+@pytest.mark.parametrize(("protected_stop", "proposed_stop", "expected_stop"), [
+    (None, "98", "99"),
+    ("99.5", "99.2", "99.5"),
+])
+def test_trader_cannot_widen_position_stop(tmp_path, protected_stop, proposed_stop, expected_stop):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    policy.target = "1"
+    assert runner.run(clock[0])["status"] == "complete"
+    if protected_stop is not None:
+        store.write("runtime", {"account": {"stop": protected_stop}}, 0)
+    policy.target = "hold"
+    policy.stop_override = proposed_stop
+    clock[0] += 3600
+    result = runner.run(clock[0])
+    assert result["status"] == "complete" and ctl.exchange.quantity == "1"
+    assert result["proposal"]["stop_price"] == proposed_stop
+    assert result["execution_decision"]["stop_price"] == expected_stop
+    assert ctl.tick_calls[-1][0]["stop_price"] == expected_stop
+
+
+def test_possible_same_side_add_calls_trader_on_unchanged_hourly_bar(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    policy.target = "1"
+    assert runner.run(clock[0])["status"] == "complete"
+    policy.target = "hold"
+    clock[0] += 600
+    result = runner.run(clock[0])
+    assert result["status"] == "complete" and result["reason"] == "retain position"
+    assert result["entry_checks"]["long"]["eligible"]
+    assert [role for role, _, _ in policy.calls] == ["reviewer", "trader", "trader"]
+    assert ctl.exchange.quantity == "1"
 
 
 def test_interrupted_slot_and_existing_llm_reservation_are_not_replayed(tmp_path):
@@ -136,8 +271,8 @@ def test_interrupted_slot_and_existing_llm_reservation_are_not_replayed(tmp_path
     store.write("live-cycle-1800000000", {"status": "started", "scheduled_at": int(clock[0])}, 0)
     assert runner.run(clock[0])["previous_status"] == "started"
     assert policy.calls == [] and ctl.tick_calls == []
-    clock[0] += 300
-    store.write("llm-live-reviewer-1800000300", {"status": "unknown", "estimated_usd": ".1"}, 0)
+    clock[0] += 600
+    store.write("llm-live-reviewer-1800000600", {"status": "unknown", "estimated_usd": ".1"}, 0)
     assert runner.run(clock[0])["status"] == "error"
     assert policy.calls == []
 
@@ -147,7 +282,7 @@ def test_review_failure_preserves_protection_and_does_not_retry_every_slot(tmp_p
     policy.fail = "reviewer"
     assert runner.run(clock[0])["status"] == "error"
     initial_maintenance = ctl.maintenance_calls
-    clock[0] += 300
+    clock[0] += 600
     assert runner.run(clock[0])["decision_status"] == "strategy_expired_or_missing"
     assert len(policy.calls) == 1 and ctl.tick_calls == []
     assert ctl.maintenance_calls > initial_maintenance
@@ -160,20 +295,20 @@ def test_review_failure_preserves_protection_and_does_not_retry_every_slot(tmp_p
 def test_review_interval_expired_strategy_and_late_start(tmp_path):
     clock, store, ctl, policy, runner = setup(tmp_path)
     runner.run(clock[0])
-    clock[0] += 6900
+    clock[0] += 6600
     runner.run(clock[0])
     assert sum(role == "reviewer" for role, _, _ in policy.calls) == 1
-    clock[0] += 300
+    clock[0] += 600
     runner.run(clock[0])
     assert sum(role == "reviewer" for role, _, _ in policy.calls) == 2
     state, version = store.read("live-runtime")
-    clock[0] += 300
+    clock[0] += 600
     state.update(last_review=clock[0] - 21601, last_review_attempt=clock[0])
     store.write("live-runtime", state, version)
     calls = len(policy.calls)
     assert runner.run(clock[0])["decision_status"] == "strategy_expired_or_missing"
     assert len(policy.calls) == calls
-    clock[0] += 361
+    clock[0] += 661
     assert runner.run(clock[0] - 61)["decision_status"] == "late_start"
     assert len(policy.calls) == calls
 
@@ -209,7 +344,7 @@ def test_summary_deduplicates_real_events_and_exposes_missing_history(tmp_path):
     assert report["accounting_status"] == "partial_or_unavailable"
     assert report["observed_realized_net_usdc"] is None
     assert report["history"]["funding"]["error_type"] == "TimeoutError"
-    clock[0] += 300
+    clock[0] += 600
     result = runner.run(clock[0])
     assert result["status"] == "partial"
     assert result["errors"][-1]["phase"] == "funding_history"
@@ -220,7 +355,7 @@ def test_unknown_position_and_stop_request_suppress_models_and_orders(tmp_path):
     ctl.status = "paused"
     assert runner.run(clock[0])["status"] == "blocked"
     assert policy.calls == [] and ctl.tick_calls == []
-    clock[0] += 300
+    clock[0] += 600
     ctl.status = "checked"
     store.write("live-control", {"stop_requested": True}, 0)
     assert runner.run(clock[0])["decision_status"] == "stop_requested"
@@ -264,25 +399,26 @@ def test_bounded_loop_outputs_cycle_and_returns(tmp_path, capsys):
     assert '"event": "testnet_cycle"' in capsys.readouterr().out
 
 
-def test_reviewer_gets_twenty_four_decisions_and_actual_execution_evidence(tmp_path):
+def test_reviewer_gets_twelve_decisions_and_actual_execution_evidence(tmp_path):
     clock, store, ctl, policy, runner = setup(tmp_path)
     runner.run(clock[0])
-    for i in range(1, 24):
-        clock[0] = 1800000000 + 300 * i
+    for i in range(1, 12):
+        clock[0] = 1800000000 + 600 * i
         runner.run(clock[0])
-    clock[0] += 300
+    clock[0] += 600
     ctl.exchange.fill_rows = [{"time": int(clock[0] * 1000), "coin": "BTC", "tid": 9,
                                "oid": 2, "closedPnl": "2", "fee": ".05", "feeToken": "USDC"}]
     runner.run(clock[0])
     inputs = [inputs for role, _, inputs in policy.calls if role == "reviewer"][-1]
-    assert len(inputs["recent_decisions"]) == 24
+    assert len(inputs["recent_decisions"]) == 12
+    assert inputs["rule_change_examples"]
     assert inputs["recent_decisions"][-1]["execution"]["status"] == "checked"
     assert inputs["recent_decisions"][-1]["account_after"]["equity"] == "500"
     assert inputs["execution_evidence"]["window_fill_count"] == 1
     assert inputs["execution_evidence"]["cumulative_observed"]["observed_fees_usdc"] == "0.05"
     counts = inputs["entry_summary"]
-    assert counts["slots"] == counts["assessed"] == counts["long"]["eligible_but_held"] == 24
-    assert counts["short"]["failed_trend"] == counts["short"]["failed_trigger"] == 24
+    assert counts["slots"] == counts["assessed"] == counts["long"]["eligible_but_held"] == 12
+    assert counts["short"]["failed_trend"] == counts["short"]["failed_trigger"] == 12
     assert inputs["entry_contract"]["multiples"]["short"][0] == "-0.5"
     assert summary(store)["recent_decisions"][-1]["entry_checks"]["long"]["eligible"]
 
@@ -291,15 +427,15 @@ def test_legacy_strategy_reviewed_before_trading_and_entry_gate_controls_increas
     clock, store, ctl, policy, runner = setup(tmp_path)
     runner._state()
     runner._update(strategy={"version": 4, "active_rules": ["wait"]}, strategy_version=4,
-                   last_review=clock[0]-300, last_review_attempt=clock[0]-300,
-                   recent_decisions=[{"scheduled_at": clock[0]-300, "reason": "legacy hold"}])
+                   last_review=clock[0]-600, last_review_attempt=clock[0]-600,
+                   recent_decisions=[{"scheduled_at": clock[0]-600, "reason": "legacy hold"}])
     policy.target = "-0.5"
     result = runner.run(clock[0])
     assert result["review"]["version"] == 5 and result["status"] == "complete"
     assert policy.calls[0][2]["entry_summary"]["unassessed"] == 1
     assert not result["entry_allows_increase"] and not ctl.tick_calls[-1][2]["allow_increase"]
     assert summary(store)["entry_summary_last_24_cycles"]["short"]["eligible"] == 0
-    clock[0] += 300
+    clock[0] += 600
     policy.target = "2.0"  # Qualified long, but above the selected 1x cap.
     assert runner.run(clock[0])["entry_allows_increase"] is False
     assert not ctl.tick_calls[-1][2]["allow_increase"]
@@ -339,7 +475,7 @@ def test_timed_out_worker_never_applies_late_result_or_overlaps_another_call(tmp
         result = runner.run(clock[0])
         assert result["status"] == "error" and result["errors"][0]["error_type"] == "TimeoutError"
         calls = len(policy.calls)
-        clock[0] += 300
+        clock[0] += 600
         assert runner.run(clock[0])["status"] == "error"
         assert len(policy.calls) == calls and ctl.tick_calls == []
     finally:
@@ -356,7 +492,7 @@ def test_failed_new_review_blocks_old_strategy_until_successful_review(tmp_path)
     policy.fail = "reviewer"
     assert runner.run(clock[0])["status"] == "error"
     calls, orders = len(policy.calls), len(ctl.tick_calls)
-    clock[0] += 300
+    clock[0] += 600
     assert runner.run(clock[0])["decision_status"] == "strategy_expired_or_missing"
     assert len(policy.calls) == calls and len(ctl.tick_calls) == orders
 
