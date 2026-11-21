@@ -88,6 +88,7 @@ class FakePolicy:
         self.stop_override = None
         self.delay = 0
         self.hook = None
+        self.review_trigger = None
 
     def call(self, role, request_id, inputs):
         self.calls.append((role, request_id, deepcopy(inputs)))
@@ -102,8 +103,21 @@ class FakePolicy:
                          "estimated_usd": ".001", "input_tokens": 10, "output_tokens": 5,
                          "at": self.clock()}, 0)
         if role == "reviewer":
-            return {"market_hypothesis": "test", "active_rules": ["wait"], "failure_modes": [],
-                    "change_reason": "initial", "evidence_ids": [], "entries": entry_plans()}
+            review = {"market_hypothesis": "test", "active_rules": ["wait"], "failure_modes": [],
+                      "change_reason": "initial", "evidence_ids": [], "entries": entry_plans()}
+            if "improvement_feedback" in inputs:
+                current = inputs["strategy"]
+                review["entries"] = deepcopy(current["entries"])
+                improvement = {"previous": {"status": "mixed", "finding": "Recent data", "limit": "Small sample"},
+                               "next": deepcopy(current["improvement"]["next"])}
+                improvement["next"].update(action="observe", target={"side": "none", "field": "none"})
+                review.update(improvement=improvement, rule_change_evidence_slots={"long": [], "short": []})
+                if self.review_trigger:
+                    review["entries"]["long"]["trigger"] = self.review_trigger
+                    improvement["next"].update(action="test_change", target={"side": "long", "field": "trigger"})
+                    review["rule_change_evidence_slots"]["long"] = [
+                        row["scheduled_at"] for row in inputs["rule_change_examples"]]
+            return review
         hold = self.target == "hold"
         stop = self.stop_override if hold else "99"
         return {"intent": "hold" if hold else "set_target",
@@ -121,6 +135,50 @@ def setup(tmp_path, **config):
     market = FakeMarket(lambda: clock[0])
     runner = LiveRunner(cfg, store, market, policy, controller, clock=lambda: clock[0])
     return clock, store, controller, policy, runner
+
+
+def test_new_run_seeds_without_legacy_rules_and_tracks_the_adopted_experiment(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    old_slot = int(clock[0] - 600)
+    runner._state()
+    runner._update(strategy_version=13, strategy={"entries": entry_plans(), "version": 13},
+                   recent_decisions=[{"scheduled_at": old_slot}])
+    preflight = {"quantity": "0", "open_orders": 0}
+    seed, started = runner.start_strategy_run(preflight)
+    assert started and seed["run"] == "hourly-pullback" and seed["version"] == 1
+    assert all(rule["enabled"] and rule["trigger"] == "sma20_retest" for rule in seed["entries"].values())
+    assert runner.run(clock[0])["decision_status"] == "flat_no_entry"
+    assert policy.calls == []
+
+    first_slot = clock[0]
+    policy.review_trigger = "six_bar_breakout"
+    clock[0] += 7200
+    change = runner.run(clock[0])["review"]
+    assert change["version"] == 2 and change["improvement"]["result"]["status"] == "applied"
+    assert change["entries"]["long"]["trigger"] == "six_bar_breakout"
+    assert change["improvement"]["previous"]["status"] == "baseline"
+    reviewer = policy.calls[0][2]
+    assert [r["scheduled_at"] for r in reviewer["recent_decisions"]] == [first_slot]
+    assert runner.start_strategy_run(preflight) == (change, False)
+
+    policy.review_trigger = None
+    clock[0] += 600
+    runner.run(clock[0])
+    clock[0] += 6600
+    latest = runner.run(clock[0])["review"]["improvement"]
+    assert latest["result"]["status"] == "observe"
+    assert latest["feedback"]["trial_version"] == 2
+    assert latest["feedback"]["applied_changes"]["long"]["trigger"]["before"] == "sma20_retest"
+    assert latest["feedback"]["feasibility"]["long"]["added"] >= 1
+    assert latest["feedback"]["observed"]["completed_episodes"] == 0
+    assert runner._state()["strategy_trial"]["version"] == 2
+
+
+def test_new_run_preserves_previous_state_if_account_is_not_flat(tmp_path):
+    clock, store, ctl, policy, runner = setup(tmp_path)
+    with pytest.raises(RuntimeError, match="requires a flat account"):
+        runner.start_strategy_run({"quantity": ".01", "open_orders": 0})
+    assert runner._state().get("strategy_run") is None
 
 
 def test_continuous_hold_and_same_slot_restart_never_resubmit(tmp_path):

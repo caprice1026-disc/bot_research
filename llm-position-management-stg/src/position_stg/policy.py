@@ -4,6 +4,7 @@ import time
 from datetime import datetime, timezone
 from .config import dec
 from .entries import SIDES, side_schema, validate_entries
+from .review_evidence import ENTRY_FIELDS
 
 TRADER_SCHEMA = {"type": "object", "properties": {
     "intent": {"type": "string", "enum": ["hold", "set_target"]},
@@ -58,6 +59,21 @@ stop. The rebalance threshold is a 5% minimum absolute notional delta relative t
 never prescribe margin percentages, passive orders, or alter risk limits. No news is supplied: evidence_ids=[].
 Use short concrete explanations (under 500 characters each) and at most 10 rules and failure modes. No browsing.
 """
+IMPROVEMENT_PROMPT = """Use improvement_feedback to evaluate the last actually adopted experiment on observations
+after it started. Record improvement.previous with a status, a finding supported by concrete counts or metrics,
+and the main limitation. Use baseline when no experimental change was adopted, and insufficient when there are
+too few observations for the claimed outcome. Use feasibility for paired opportunity counts, and observed for
+actual fills and fee- and funding-adjusted cash flow. Avoid conclusions about returns from no fills, open
+positions, a single interval, an unpaired comparison, or incomplete execution history.
+Record improvement.next with one concrete hypothesis, a measurable metric and expected direction, and criteria
+to keep or roll back the change. State the required sample period or size in those criteria. If there is evidence
+for one executable experiment, choose test_change, set target.side and target.field, change exactly that entry
+field, and cite specific rule_change_examples where it affects feasible orders. If keeping or observing, set both
+target fields to none and retain executable entry fields. Use observe to collect evidence before testing an idea
+that current parameters cannot express. Continue observing an active experiment when its follow-up is insufficient
+unless a documented risk or execution problem warrants an evidence-backed rollback. There is no trade quota.
+Keep all improvement text fields nonempty and under 500 characters each.
+"""
 LIVE_TRADER_PROMPT = TRADER_PROMPT.replace("Five minutes is reassessment", "Ten minutes is reassessment") + """This account trades on Hyperliquid Testnet. Use entry_contract for executable sizes,
 costs and order type. entry_checks evaluates both plans using the current closed candles and book. Only open/add
 on an eligible side up to its signed max_target_multiple. Entry conditions do not prevent reducing or closing a
@@ -69,26 +85,85 @@ protective stop. A reversal closes first and waits for a later entry decision. N
 """
 
 
-def live_review_schema(cfg):
+def _object_schema(properties):
+    return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
+
+
+def _enum_schema(values):
+    return {"type": "string", "enum": list(values)}
+
+
+IMPROVEMENT_SCHEMA = _object_schema({
+    "previous": _object_schema({
+        "status": _enum_schema(("baseline", "insufficient", "supported", "not_supported", "mixed")),
+        "finding": {"type": "string"},
+        "limit": {"type": "string"},
+    }),
+    "next": _object_schema({
+        "hypothesis": {"type": "string"},
+        "action": _enum_schema(("keep", "observe", "test_change")),
+        "metric": {"type": "string"},
+        "expected_direction": _enum_schema(("increase", "decrease", "stable")),
+        "accept_if": {"type": "string"},
+        "rollback_if": {"type": "string"},
+        "target": _object_schema({
+            "side": _enum_schema((*SIDES, "none")),
+            "field": _enum_schema((*ENTRY_FIELDS, "none")),
+        }),
+    }),
+})
+
+
+def live_review_schema(cfg, *, improvement=False):
     sides = {side: side_schema(cfg, side) for side in SIDES}
-    entries = {"type": "object", "properties": sides, "required": list(sides), "additionalProperties": False}
-    slots = {"type": "object", "properties": {side: {"type": "array", "items": {"type": "integer"}} for side in SIDES},
-             "required": list(SIDES), "additionalProperties": False}
+    entries = _object_schema(sides)
+    slots = _object_schema({side: {"type": "array", "items": {"type": "integer"}} for side in SIDES})
     extra = {"entries": entries, "rule_change_evidence_slots": slots}
+    if improvement:
+        extra["improvement"] = IMPROVEMENT_SCHEMA
     return {**REVIEW_SCHEMA, "properties": {**REVIEW_SCHEMA["properties"], **extra},
             "required": [*REVIEW_SCHEMA["required"], *extra]}
 
 
-def validate_live_review(raw, cfg):
+def _validate_improvement(value, schema):
+    if schema["type"] == "object":
+        properties = schema["properties"]
+        if not isinstance(value, dict) or set(value) != set(properties):
+            raise ValueError("invalid improvement fields")
+        for key, child in properties.items():
+            _validate_improvement(value[key], child)
+    elif not isinstance(value, str) or not value.strip() or len(value) > 500:
+        raise ValueError("invalid improvement text")
+    elif "enum" in schema and value not in schema["enum"]:
+        raise ValueError("invalid improvement choice")
+
+
+def validate_live_review(raw, cfg, *, improvement_feedback=None):
     if not isinstance(raw, dict) or "entries" not in raw:
         raise ValueError("missing directional strategy")
-    validate_review({k: v for k, v in raw.items() if k not in {"entries", "rule_change_evidence_slots"}}, [])
+    extra = {"entries", "rule_change_evidence_slots", "improvement"}
+    validate_review({k: v for k, v in raw.items() if k not in extra}, [])
     validate_entries(raw["entries"], cfg)
     if "rule_change_evidence_slots" in raw:
         slots = raw["rule_change_evidence_slots"]
         if (not isinstance(slots, dict) or set(slots) != set(SIDES)
                 or any(not isinstance(v, list) or len(v) > 24 or any(type(t) is not int for t in v) for v in slots.values())):
             raise ValueError("invalid rule change evidence slots")
+    if improvement_feedback is not None or "improvement" in raw:
+        improvement = raw.get("improvement")
+        _validate_improvement(improvement, IMPROVEMENT_SCHEMA)
+        next_step = improvement["next"]
+        target = next_step["target"]
+        if next_step["action"] == "test_change":
+            if "none" in target.values():
+                raise ValueError("improvement experiment requires one directional field")
+        elif target != {"side": "none", "field": "none"}:
+            raise ValueError("improvement observation cannot target an executable change")
+        feedback_status = (improvement_feedback or {}).get("status")
+        status = {"no_trial": "baseline", "insufficient": "insufficient"}.get(feedback_status)
+        if status:
+            previous = {**improvement["previous"], "status": status}
+            raw = {**raw, "improvement": {**improvement, "previous": previous}}
     return raw
 
 
@@ -122,7 +197,10 @@ class Gemini:
         if "entry_contract" in inputs:
             instructions = LIVE_TRADER_PROMPT if role == "trader" else LIVE_REVIEW_PROMPT
             if role == "reviewer":
-                schema = live_review_schema(cfg)
+                improvement = "improvement_feedback" in inputs
+                schema = live_review_schema(cfg, improvement=improvement)
+                if improvement:
+                    instructions += IMPROVEMENT_PROMPT
         prompt = instructions + json.dumps(inputs, default=str, sort_keys=True)
         if len(prompt.encode()) > cfg.max_prompt_bytes:
             raise ValueError("prompt too large")

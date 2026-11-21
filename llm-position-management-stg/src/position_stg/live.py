@@ -12,9 +12,11 @@ import uuid
 
 from .config import dec
 from .domain import parse_decision, plan
-from .entries import entry_contract, entry_summary, evaluate_entries, permits_increase
+from .entries import SIDES, entry_contract, entry_summary, evaluate_entries, permits_increase
+from .improvement import evaluate_improvement
+from .initial_strategy import STRATEGY_RUN, initial_strategy
 from .policy import validate_live_review
-from .review_evidence import apply_review_evidence, build_review_evidence
+from .review_evidence import ENTRY_FIELDS, apply_review_evidence, build_review_evidence
 from .store import Conflict
 
 
@@ -69,6 +71,26 @@ class LiveRunner:
         state.update(deepcopy(values))
         self.store.write("live-runtime", state, version)
         return state
+
+    def start_strategy_run(self, preflight):
+        """Initialize this strategy once, keeping the existing reconciliation ledger."""
+        state = self._state()
+        if state.get("strategy_run") == STRATEGY_RUN:
+            return state["strategy"], False
+        if dec(preflight["quantity"]) or preflight["open_orders"]:
+            raise LiveSafetyError("a new strategy run requires a flat account with no open orders")
+        now = self.clock()
+        next_slot = int(now // DECISION_SECONDS) * DECISION_SECONDS
+        if now > next_slot + min(60, self.cfg.max_start_delay_seconds):
+            next_slot += DECISION_SECONDS
+        strategy = {**initial_strategy(self.cfg), "version": 1, "updated_at": now, "run": STRATEGY_RUN}
+        trial = {"version": 1, "activated_slot": next_slot, "activated_at": now,
+                 "previous_entries": None, "entries": deepcopy(strategy["entries"]),
+                 "plan": deepcopy(strategy["improvement"]["next"]), "opening_position": "0"}
+        self._update(strategy=strategy, strategy_version=1, strategy_run=STRATEGY_RUN,
+                     strategy_started_at=now, strategy_seed_slot=next_slot, strategy_trial=trial,
+                     last_review=None, last_review_slot=None, last_review_attempt=None, position_exit=None)
+        return strategy, True
 
     def _put(self, key, value):
         old, version = self.store.read(key)
@@ -239,9 +261,12 @@ class LiveRunner:
         return market, features
 
     def _fresh_strategy(self, state):
-        return (state["last_review"] is not None and "entries" in (state.get("strategy") or {})
-                and (state["last_review_attempt"] is None or state["last_review_attempt"] <= state["last_review"])
-                and 0 <= self.clock() - state["last_review"] <= self.cfg.strategy_ttl_seconds)
+        updated_at = state["last_review"]
+        if updated_at is None:
+            updated_at = state.get("strategy_started_at")
+        return (updated_at is not None and "entries" in (state.get("strategy") or {})
+                and (state["last_review_attempt"] is None or state["last_review_attempt"] <= updated_at)
+                and 0 <= self.clock() - updated_at <= self.cfg.strategy_ttl_seconds)
 
     def _position_exit(self, snapshot, hourly, slot):
         qty = dec(snapshot["quantity"])
@@ -300,23 +325,67 @@ class LiveRunner:
         return abs(dec(target["target"])) > abs(qty)
 
     def _review_evidence(self, state):
-        since = state["last_review"] if state["last_review"] is not None else state["started_at"]
+        since = state["last_review"]
+        if since is None:
+            since = state.get("strategy_started_at", state["started_at"])
         fills = [r for _, r, _ in self.store.items("live-fill-") if r["at"] >= since]
         funding = [r for _, r, _ in self.store.items("live-funding-") if r["at"] >= since]
         fills.sort(key=lambda r: r["at"])
         funding.sort(key=lambda r: r["at"])
-        cumulative = summary(self.store)
         fill_fields = {"time", "coin", "side", "px", "sz", "closedPnl", "fee", "feeToken", "tid", "oid"}
-        return {"since": since, "until": self.clock(), "window_kind": "provider_event_time",
+        evidence = {"since": since, "until": self.clock(), "window_kind": "provider_event_time",
                 "fills": [{k: v for k, v in r["raw"].items() if k in fill_fields} for r in fills[-20:]],
                 "funding": [r["raw"] for r in funding[-20:]],
                 "window_fill_count": len(fills), "window_funding_count": len(funding),
                 "samples_truncated": len(fills) > 20 or len(funding) > 20,
-                "cumulative_observed": {k: cumulative[k] for k in (
+                "note": "Samples are bounded and provider history may be incomplete."}
+        if state.get("strategy_run") is None:
+            cumulative = summary(self.store)
+            evidence["cumulative_observed"] = {k: cumulative[k] for k in (
                     "observed_fills", "observed_funding_events", "observed_closed_pnl_usdc",
                     "observed_fees_usdc", "observed_funding_usdc", "observed_realized_net_usdc",
-                    "accounting_status", "history", "api_estimated_known_usd", "api_unknown_reserved_usd")},
-                "note": "Cumulative totals include late-discovered events; samples are bounded and history may be incomplete."}
+                    "accounting_status", "history", "api_estimated_known_usd", "api_unknown_reserved_usd")}
+        return evidence
+
+    def _improvement_feedback(self, state, examples, slot):
+        trial = state["strategy_trial"]
+        since, until = trial["activated_at"], self.clock()
+        evidence = {"since": since, "until": until, "opening_position": trial["opening_position"], "history_complete": all(
+            state["audit_health"].get(kind, {}).get("status") == "observed" for kind in ("fill", "funding"))}
+        for kind, field in (("fill", "fills"), ("funding", "funding")):
+            evidence[field] = [row["raw"] for _, row, _ in self.store.items(f"live-{kind}-")
+                               if since <= row["at"] < until]
+        return evaluate_improvement(trial, examples, evidence, until_slot=slot)
+
+    def _apply_improvement(self, strategy, state, evidence_result, feedback, snapshot, slot, now):
+        previous = state["strategy"]
+        improvement = strategy["improvement"]
+        idea = improvement["next"]
+        side, field = idea["target"]["side"], idea["target"]["field"]
+        admitted = [(side, field) for side in SIDES for field in ENTRY_FIELDS
+                    if strategy["entries"][side][field] != previous["entries"][side][field]]
+        applied = idea["action"] == "test_change" and admitted == [(side, field)]
+        trial = state["strategy_trial"]
+        if applied:
+            result = {"status": "applied", "side": side, "field": field,
+                      "from": previous["entries"][side][field], "to": strategy["entries"][side][field]}
+            runtime = self.store.read("runtime")[0] or {}
+            trial = {"version": strategy["version"], "activated_slot": slot, "activated_at": now,
+                     "previous_entries": deepcopy(previous["entries"]), "entries": deepcopy(strategy["entries"]),
+                     "plan": {**idea, "change": result},
+                     "opening_position": runtime.get("last_quantity", snapshot["quantity"])}
+        else:
+            strategy["entries"] = deepcopy(previous["entries"])
+            # Entry-related commentary continues to follow the rules actually in use.
+            strategy["active_rules"] = deepcopy(previous["active_rules"])
+            status = "deferred" if idea["action"] == "test_change" else "observe"
+            result = {"status": status, "side": side, "field": field}
+            strategy["change_reason"] = "Executable rules retained. " + (
+                "The proposed single change did not pass the cited feasibility check."
+                if status == "deferred" else "Continue observing the current rules.")
+        strategy["improvement"] = {**improvement, "feedback": feedback, "result": result}
+        evidence_result["activation"] = result
+        return trial
 
     def run(self, scheduled_at):
         now = self.clock()
@@ -332,7 +401,8 @@ class LiveRunner:
                     "maintenance_status": maintenance.get("status")}
         event = {"at": now, "scheduled_at": slot, "network": "testnet", "status": "started",
                  "config_hash": self.cfg.fingerprint(), "errors": [],
-                 "news": [], "news_status": "disabled", "decision_status": "not_attempted"}
+                 "news": [], "news_status": "disabled", "decision_status": "not_attempted",
+                 "strategy_run": state.get("strategy_run")}
         try:
             version = self.store.write(key, event, version)
         except Conflict:
@@ -362,27 +432,41 @@ class LiveRunner:
                 return self._exit_position(event, market, snapshot)
             state = self._state()
             last_review_slot = state.get("last_review_slot")
+            if last_review_slot is None:
+                last_review_slot = state.get("strategy_seed_slot")
             due = last_review_slot is None or slot - last_review_slot >= REVIEW_SECONDS
             contract = entry_contract(self.cfg)
             if due:
                 phase = "reviewer"
                 self._update(last_review_attempt=self.clock(), last_review_slot=slot, directional_review_attempted=True)
-                recent = [r for r in state["recent_decisions"] if slot - REVIEW_SECONDS <= r["scheduled_at"] < slot]
+                since = max(slot - REVIEW_SECONDS, state.get("strategy_seed_slot", 0))
+                recent = [r for r in state["recent_decisions"] if since <= r["scheduled_at"] < slot
+                          and r.get("strategy_run") == state.get("strategy_run")]
                 examples = build_review_evidence(self.store, recent, self.cfg)
-                raw = self._policy_call("reviewer", slot, {
+                inputs = {
                     "market": market, "features": features, "account": before["snapshot"],
                     "strategy": state["strategy"], "news": [], "news_status": "disabled",
                     "entry_contract": contract, "entry_summary": entry_summary(recent), "recent_decisions": recent,
                     "execution_evidence": self._review_evidence(state),
                     "rule_change_examples": examples,
-                }, event)
-                strategy = validate_live_review(raw, self.cfg)
+                }
+                feedback = None
+                if state.get("strategy_trial"):
+                    feedback = self._improvement_feedback(state, examples, slot)
+                    inputs["improvement_feedback"] = feedback
+                raw = self._policy_call("reviewer", slot, inputs, event)
+                strategy = validate_live_review(raw, self.cfg, improvement_feedback=feedback)
                 strategy, evidence_result = apply_review_evidence(strategy, state["strategy"], examples, self.cfg)
                 event["rule_change_evidence"] = evidence_result
                 strategy_version = state["strategy_version"] + 1
-                strategy = {**strategy, "version": strategy_version, "updated_at": self.clock()}
-                state = self._update(strategy=strategy, strategy_version=strategy_version,
-                                     last_review=self.clock())
+                reviewed_at = self.clock()
+                strategy = {**strategy, "version": strategy_version, "updated_at": reviewed_at}
+                updates = {"strategy": strategy, "strategy_version": strategy_version, "last_review": reviewed_at}
+                if feedback is not None:
+                    strategy["run"] = state["strategy_run"]
+                    updates["strategy_trial"] = self._apply_improvement(
+                        strategy, state, evidence_result, feedback, snapshot, slot, reviewed_at)
+                state = self._update(**updates)
                 event["review"] = deepcopy(strategy)
                 # Review latency and protection may change both market and account.
                 before = self.maintain()
@@ -425,7 +509,9 @@ class LiveRunner:
             inputs = {"market": market, "features": features,
                       "account": deepcopy(runtime.get("account", snapshot)),
                       "account_snapshot": snapshot, "equity": snapshot["equity"], "position_exit": position_exit,
-                      "strategy": state["strategy"], "recent_decisions": state["recent_decisions"][-6:],
+                      "strategy": state["strategy"],
+                      "recent_decisions": [r for r in state["recent_decisions"]
+                                           if r.get("strategy_run") == state.get("strategy_run")][-6:],
                       "entry_contract": contract, "entry_checks": checks,
                       "risk": {"max_exposure": str(self.cfg.max_exposure), "stop_risk": str(self.cfg.stop_risk)}}
             raw = self._policy_call("trader", slot, inputs, event)
@@ -486,7 +572,7 @@ class LiveRunner:
             state = self._state()
             recent = {k: deepcopy(event.get(k)) for k in (
                 "scheduled_at", "status", "decision_status", "proposal", "reason", "errors", "entry_checks",
-                "entry_allows_increase", "decision_source", "position_exit")}
+                "entry_allows_increase", "decision_source", "position_exit", "strategy_run")}
             execution = event.get("execution", {})
             recent["execution"] = {k: deepcopy(execution[k]) for k in ("status", "plan", "error_type") if k in execution}
             for source, name in ((event.get("before_trader", event.get("before", {})), "account_before"),

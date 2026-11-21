@@ -129,7 +129,9 @@ def run_local(cfg, credentials, values, store, *, max_cycles=None):
     controller = TestnetController(cfg, store, exchange)
     runner = LiveRunner(cfg, store, Market(base_url="https://api.hyperliquid-testnet.xyz"),
                         Gemini(cfg, store, api_key=values["GEMINI_API_KEY"]), controller)
+    strategy, seeded = runner.start_strategy_run(preflight)
     print(json.dumps({"event": "started", "pid": os.getpid(), "bot_id": cfg.bot_id,
                       "trader_model": cfg.trader_model, "reviewer_model": cfg.reviewer_model,
+                      "strategy_run": strategy["run"], "strategy_version": strategy["version"], "strategy_seeded": seeded,
                       "decision_interval_seconds": DECISION_SECONDS, "review_interval_seconds": REVIEW_SECONDS}), flush=True)
     return runner.run_forever(max_cycles=max_cycles)
