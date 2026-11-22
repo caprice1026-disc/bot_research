@@ -21,7 +21,7 @@ def dec(value):
 @dataclass(frozen=True)
 class Config:
     bot_id: str = "btc-shadow-v1"
-    trader_model: str = "gemini-3.5-flash"
+    trader_model: str = "gemini-3.6-flash"
     reviewer_model: str = "gemini-3.8-flash"
     initial_equity: Decimal = Decimal("500")
     max_exposure: Decimal = Decimal("3")
@@ -43,8 +43,9 @@ class Config:
     llm_monthly_budget_usd: Decimal = Decimal("20")
     llm_budget_action: str = "notify_only"
     billing_tier: str = "paid"
+    # Conservative Standard rates effective 2027-01-01; 2026 promotion is lower.
     trader_input_usd_per_million: Decimal = Decimal("1.50")
-    trader_output_usd_per_million: Decimal = Decimal("9")
+    trader_output_usd_per_million: Decimal = Decimal("7.50")
     reviewer_input_usd_per_million: Decimal = Decimal("1.50")
     reviewer_output_usd_per_million: Decimal = Decimal("7.50")
     trader_max_output_tokens: int = 2048

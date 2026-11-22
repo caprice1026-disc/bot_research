@@ -9,7 +9,7 @@ from pathlib import Path
 
 from trading_core.market_data.binance_replay import load
 from .cli import _account, _costs, _limits, _write_json, _write_jsonl
-from .gemini_policy import GeminiPolicy, PROMPT, response_schema
+from .gemini_policy import GeminiPolicy, MODEL, INPUT_USD_PER_MILLION, OUTPUT_USD_PER_MILLION, PROMPT, response_schema
 from .metrics import evaluate
 from .policy import PolicyResponse
 from .report import build_report
@@ -69,13 +69,14 @@ def run(data: Path, output: Path, arm: str, budget: Decimal, max_slots: int, api
             raise ValueError("Gemini API key unavailable before starting run")
     ticks, funding, identity = load(data, DATA_START, DATA_END)
     api_directory = api_ledger or output / "api"
-    run_id = "protocol-v2-" + arm
+    run_id = "protocol-v3-" + arm
     canary = arm == "canary"
     start = DATA_START + 8*3_600_000 if canary else COMPARE_START
     end = start + 65*60_000 if canary else DATA_END
     selected = [tick for tick in ticks if start < tick.timestamp_ms <= end]
-    experiment = {"version": 2, "data": identity, "budget_usd": str(budget), "settings": SETTINGS,
-        "model": "gemini-3.5-flash", "thinking": "minimal", "max_output_tokens": 512,
+    experiment = {"version": 3, "data": identity, "budget_usd": str(budget), "settings": SETTINGS,
+        "model": MODEL, "input_usd_per_million": str(INPUT_USD_PER_MILLION),
+        "output_usd_per_million": str(OUTPUT_USD_PER_MILLION), "thinking": "minimal", "max_output_tokens": 512,
         "prompt_sha256": hashlib.sha256(PROMPT.encode()).hexdigest(),
         "schema_sha256": hashlib.sha256(json.dumps([response_schema(r,p) for r in (False,True) for p in (False,True)],sort_keys=True).encode()).hexdigest(),
         "api_ledger": str(api_directory),
